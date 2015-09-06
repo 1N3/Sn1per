@@ -1,0 +1,518 @@
+#!/bin/bash
+# + -- --=[Sn1per v1.3 by 1N3 v20150906
+# + -- --=[http://crowdshield.com
+#
+# Sn1per - Automated Pentest Recon Tool
+#
+# FEATURED:
+# - Automatically collect recon info (ie. whois, ping, DNS, etc.)
+# - Automatically collects Google hacking recon info
+# - Automatically run port scans
+# - Automatically brute force sub-domains via DNS
+# - Automatically run targeted nmap scripts against open ports
+# - Automatically scans all web applications
+# - Automatically brute forces all open services
+#
+# INSTALL:
+# ./install.sh - Installs all dependencies. Best run from Kali Linux. 
+#
+# USAGE:
+# ./sn1per <target>
+#
+
+TARGET="$1"
+LOOT_DIR="loot"
+FINDSPLOIT_DIR="Findsploit"
+CMSMAP="CMSmap/cmsmap.py"
+SAMRDUMP="bin/samrdump.py"
+DNSDICT6="bin/dnsdict6"
+INURLBR="bin/inurlbr.php"
+USER_FILE="BruteX/simple-users.txt"
+PASS_FILE="BruteX/password.lst"
+DNS_FILE="BruteX/namelist.txt"
+SUPER_MICRO_SCAN="SuperMicro-Password-Scanner/supermicro_scan.sh"
+THREADS="30"
+OKBLUE='\033[94m'
+OKRED='\033[91m'
+OKGREEN='\033[92m'
+OKORANGE='\033[93m'
+RESET='\e[0m'
+
+if [ -z $TARGET ]; then
+	echo -e "$OKRED                ____               $RESET"
+	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+	echo -e "$OKRED               /_/                 $RESET"
+	echo -e "$RESET"
+	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
+	echo -e "$OKORANGE + -- --=[sn1per v1.3 by 1N3"
+	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>"
+	exit
+fi
+
+clear
+
+echo -e "$OKRED                ____               $RESET"
+echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+echo -e "$OKRED               /_/                 $RESET"
+echo -e "$RESET"
+echo -e "$OKORANGE + -- --=[http://crowdshield.com"
+echo -e "$OKORANGE + -- --=[sn1per v1.3 by 1N3"
+echo -e "$RESET"
+
+echo -e "$OKGREEN################################### Running recon #################################$RESET"
+nslookup $TARGET
+host $TARGET
+dig -x $TARGET
+whois $TARGET
+theharvester -d $TARGET -b google
+theharvester -d $TARGET -b bing
+theharvester -d $TARGET -b linkedin
+theharvester -d $TARGET -b people123
+dnsenum $TARGET
+dnsdict6 $TARGET $DNS_FILE -4 | awk '{print $1}' | sort -u | sed -r 's/.com./.com/g' > $LOOT_DIR/domains-$TARGET.txt
+cat $LOOT_DIR/domains-$TARGET.txt
+echo ""
+echo -e "$OKBLUE+ -- --=[Checking for SPF records on $TARGET...$RESET $OKORANGE"
+curl -s -X POST http://www.kitterman.com/getspf2.py --data 'serial=fred12&domain=$TARGET' | egrep spf1 --color
+echo ""
+echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
+ping -c 1 $TARGET
+echo ""
+echo -e "$OKGREEN################################### Running port scan ##############################$RESET"
+nmap -sS -sV -T4 -A -O --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+echo ""
+echo -e "$OKGREEN################################### Running Intrusive Scans ########################$RESET"
+port_21=`grep 'portid="21"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_22=`grep 'portid="22"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_23=`grep 'portid="23"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_25=`grep 'portid="25"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_53=`grep 'portid="53"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_80=`grep 'portid="80"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_110=`grep 'portid="110"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_111=`grep 'portid="111"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_135=`grep 'portid="135"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_139=`grep 'portid="139"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_162=`grep 'portid="162"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_443=`grep 'portid="443"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_445=`grep 'portid="445"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_512=`grep 'portid="512"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_513=`grep 'portid="513"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_514=`grep 'portid="514"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_1099=`grep 'portid="1099"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_1524=`grep 'portid="1524"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_2049=`grep 'portid="2049"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_2121=`grep 'portid="2121"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_3306=`grep 'portid="3306"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_3389=`grep 'portid="3389"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_5432=`grep 'portid="5432"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_5800=`grep 'portid="5800"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_5900=`grep 'portid="5900"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_6667=`grep 'portid="6667"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_8000=`grep 'portid="8000"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_8009=`grep 'portid="8009"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_8080=`grep 'portid="8080"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+
+if [ -z "$port_21" ]
+then
+	echo -e "$OKRED+ -- --=[Port 21 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 21 opened... running tests...$RESET"	
+	nmap -sV -sC -p 21 --script=ftp-* $TARGET
+	
+fi
+
+if [ -z "$port_22" ]
+then
+	echo -e "$OKRED+ -- --=[Port 22 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 22 opened... running tests...$RESET"
+	nmap -sV -sC -p 22 --script=ssh-* $TARGET
+fi
+
+if [ -z "$port_23" ]
+then
+	echo -e "$OKRED+ -- --=[Port 23 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 23 opened... running tests...$RESET"
+	echo ""
+	cisco-torch -A $TARGET
+	nmap -sV --script=telnet* -p 23 $TARGET
+fi
+
+if [ -z "$port_25" ]
+then
+	echo -e "$OKRED+ -- --=[Port 25 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 25 opened... running tests...$RESET"
+	nmap -sV --script=smtp* -p 25 192.168.1.113	
+	smtp-user-enum -M VRFY -U $USER_FILE -t $TARGET
+fi
+
+if [ -z "$port_53" ]
+then
+	echo -e "$OKRED+ -- --=[Port 53 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 53 opened... running tests...$RESET"
+	nmap -sV --script=dns* -p 25 192.168.1.113	
+fi
+
+if [ -z "$port_80" ]
+then
+	echo -e "$OKRED+ -- --=[Port 80 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 80 opened... running tests...$RESET"
+	goohak $TARGET 2> /dev/null
+	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
+	rm -Rf output/ cookie.txt exploits.conf
+	nmap -sV -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-drupal-modules,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-email-harvest,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper $TARGET
+	wafw00f http://$TARGET
+	echo ""
+	whatweb http://$TARGET
+	xsstracer $TARGET 80
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I http://$TARGET | egrep -i 'X-Content'
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if X-Frame options are enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I http://$TARGET | egrep -i 'X-Frame'
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if X-XSS-Protection header is enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I http://$TARGET | egrep -i 'X-XSS'
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking HTTP methods on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I -X OPTIONS http://$TARGET | grep Allow
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if TRACE method is enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I -X TRACE http://$TARGET | grep TRACE
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for open proxy on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -x http://$TARGET:80 -L http://crowdshield.com/.testing/openproxy.txt
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Enumerating software on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I http://$TARGET | egrep -i "Server:|X-Powered|ASP|JSP|PHP|.NET"
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if Strict-Transport-Security is enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I http://$TARGET/ | egrep -i "Strict-Transport-Security"
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for Flash cross-domain policy on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure http://$TARGET/crossdomain.xml
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for Silverlight cross-domain policy on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure http://$TARGET/clientaccesspolicy.xml
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for HTML5 cross-origin resource sharing on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I http://$TARGET | egrep -i "Access-Control-Allow-Origin"
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Retrieving robots.txt on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure http://$TARGET/robots.txt
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Retrieving sitemap.xml on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure http://$TARGET/sitemap.xml
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking cookie attributes on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I http://$TARGET | egrep -i "Cookie:"
+	echo ""
+	echo -e "$RESET"
+
+	nikto -h http://$TARGET 
+	wpscan --url http://$TARGET --batch
+	python $CMSMAP -t http://$TARGET
+	python /usr/share/sqlmap/sqlmap.py -u "http://$TARGET" --batch --crawl=5 -f
+fi
+
+if [ -z "$port_110" ]
+then
+	echo -e "$OKRED+ -- --=[Port 110 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 110 opened... running tests...$RESET"
+	nmap -sV --script=pop* -p 110 $TARGET
+fi
+
+if [ -z "$port_111" ]
+then
+	echo -e "$OKRED+ -- --=[Port 111 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 111 opened... running tests...$RESET"
+	showmount -a $TARGET
+	showmount -d $TARGET
+	showmount -e $TARGET
+fi
+
+if [ -z "$port_135" ]
+then
+	echo -e "$OKRED+ -- --=[Port 135 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 135 opened... running tests...$RESET"
+	rpcinfo -p $TARGET
+	nmap -p 135 --script=rpc* $TARGET
+fi
+
+if [ -z "$port_139" ]
+then
+	echo -e "$OKRED+ -- --=[Port 139 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 139 opened... running tests...$RESET"
+	enum4linux $TARGET
+	python $SAMRDUMP $TARGET
+	nbtscan $TARGET
+	nmap -sV --script=/usr/share/nmap/scripts/smb-check-vulns.nse --script=/usr/share/nmap/scripts/smb-os-discovery.nse --script=/usr/share/nmap/scripts/smb-enum-domains.nse --script=/usr/share/nmap/scripts/smb-server-stats.nse --script=/usr/share/nmap/scripts/smb-ls.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-054.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-061.nse --script=/usr/share/nmap/scripts/smb-system-info.nse --script=/usr/share/nmap/scripts/smb-enum-shares.nse --script=/usr/share/nmap/scripts/smb-enum-users.nse --script=/usr/share/nmap/scripts/smbv2-enabled.nse --script=/usr/share/nmap/scripts/smb-mbenum.nse --script-args=unsafe=1 -p 139 $TARGET
+fi
+
+if [ -z "$port_162" ]
+then
+	echo -e "$OKRED+ -- --=[Port 162 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 162 opened... running tests...$RESET"
+	for a in `cat brutex/snmp-community-strings.txt`; do snmpwalk $TARGET -c $a; done;
+	nmap -p 162 --script=snmp* $TARGET
+fi
+
+if [ -z "$port_443" ]
+then
+	echo -e "$OKRED+ -- --=[Port 443 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 443 opened... running tests...$RESET"
+	nmap -sV -p 443 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-drupal-modules,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-email-harvest,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,tls-nextprotoneg,ssl* $TARGET
+	goohak $TARGET 2> /dev/null 
+	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
+	rm -Rf output/ cookie.txt exploits.conf
+	wafw00f https://$TARGET
+	echo ""
+	whatweb https://$TARGET
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I https://$TARGET | egrep -i 'X-Content'
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if X-Frame options are enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I https://$TARGET | egrep -i 'X-Frame'
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if X-XSS-Protection header is enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I https://$TARGET | egrep -i 'X-XSS'
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking HTTP methods on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I -X OPTIONS https://$TARGET | grep Allow
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if TRACE method is enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I -X TRACE https://$TARGET | grep TRACE
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for open proxy on $TARGET...$RESET $OKORANGE"
+	curl -x https://$TARGET:443 -L https://crowdshield.com/.testing/openproxy.txt -s --insecure
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Enumerating software on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I https://$TARGET | egrep -i "Server:|X-Powered|ASP|JSP|PHP|.NET"
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking if Strict-Transport-Security is enabled on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I https://$TARGET/ | egrep -i "Strict-Transport-Security"
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for Flash cross-domain policy on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure https://$TARGET/crossdomain.xml
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for Silverlight cross-domain policy on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure https://$TARGET/clientaccesspolicy.xml
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for HTML5 cross-origin resource sharing on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I https://$TARGET | egrep -i "Access-Control-Allow-Origin"
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Retrieving robots.txt on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure https://$TARGET/robots.txt
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Retrieving sitemap.xml on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure https://$TARGET/sitemap.xml
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking cookie attributes on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure -I https://$TARGET | egrep -i "Cookie:"
+	echo -e "$RESET"
+	sslscan --no-failed $TARGET 
+	echo ""
+	nikto -h https://$TARGET 
+	wpscan --url https://$TARGET --batch
+	python $CMSMAP -t https://$TARGET
+	python /usr/share/sqlmap/sqlmap.py -u "https://$TARGET" --batch --crawl=5 -f
+fi
+
+if [ -z "$port_445" ]
+then
+	echo -e "$OKRED+ -- --=[Port 445 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 445 opened... running tests...$RESET"
+	enum4linux $TARGET
+	python $SAMRDUMP $TARGET
+	nbtscan $TARGET
+	nmap --script=/usr/share/nmap/scripts/smb-check-vulns.nse --script=/usr/share/nmap/scripts/smb-os-discovery.nse --script=/usr/share/nmap/scripts/smb-enum-domains.nse --script=/usr/share/nmap/scripts/smb-server-stats.nse --script=/usr/share/nmap/scripts/smb-ls.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-054.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-061.nse --script=/usr/share/nmap/scripts/smb-system-info.nse --script=/usr/share/nmap/scripts/smb-enum-shares.nse --script=/usr/share/nmap/scripts/smb-enum-users.nse --script=/usr/share/nmap/scripts/smbv2-enabled.nse --script=/usr/share/nmap/scripts/smb-mbenum.nse --script-args=unsafe=1 -p 139 $TARGET
+fi
+
+if [ -z "$port_512" ]
+then
+	echo -e "$OKRED+ -- --=[Port 512 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 512 opened... running tests...$RESET"
+	nmap -sV -p 512 --script=rexec* $TARGET
+fi
+
+if [ -z "$port_513" ]
+then
+	echo -e "$OKRED+ -- --=[Port 513 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 513 opened... running tests...$RESET"
+	nmap -sV -p 513 --script=rexec* $TARGET
+fi
+
+if [ -z "$port_514" ]
+then
+	echo -e "$OKRED+ -- --=[Port 514 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 514 opened... running tests...$RESET"
+	amap $TARGET 514 -A
+fi
+
+if [ -z "$port_514" ]
+then
+	echo -e "$OKRED+ -- --=[Port 514 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 514 opened... running tests...$RESET"
+	amap -A $TARGET 1524
+fi
+
+if [ -z "$port_2121" ]
+then
+	echo -e "$OKRED+ -- --=[Port 2121 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 2121 opened... running tests...$RESET"
+	nmap -sV --script=ftp* -p 2121 $TARGET
+fi
+
+if [ -z "$port_3306" ]
+then
+	echo -e "$OKRED+ -- --=[Port 3306 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 3306 opened... running tests...$RESET"
+	nmap -sV --script=mysql* -p 3306 $TARGET
+fi
+
+if [ -z "$port_3389" ]
+then
+	echo -e "$OKRED+ -- --=[Port 3389 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 3389 opened... running tests...$RESET"
+	nmap -sV --script=rdp-* -p 3389 $TARGET
+fi
+
+if [ -z "$port_5432" ]
+then
+	echo -e "$OKRED+ -- --=[Port 5432 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 5432 opened... running tests...$RESET"
+	nmap -sV --script=pgsql-brute -p 5432 $TARGET
+fi
+
+if [ -z "$port_5800" ]
+then
+	echo -e "$OKRED+ -- --=[Port 5800 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 5800 opened... running tests...$RESET"
+	nmap -sV --script=vnc* -p 5800 $TARGET
+fi
+
+if [ -z "$port_5900" ]
+then
+	echo -e "$OKRED+ -- --=[Port 5900 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 5900 opened... running tests...$RESET"
+	nmap -sV --script=vnc* -p 5900 $TARGET
+fi
+
+if [ -z "$port_6000" ]
+then
+	echo -e "$OKRED+ -- --=[Port 6000 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 6000 opened... running tests...$RESET"
+	nmap -sV --script=x11* -p 6000 $TARGET
+fi
+
+if [ -z "$port_6667" ]
+then
+	echo -e "$OKRED+ -- --=[Port 6667 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 6667 opened... running tests...$RESET"
+	nmap -sV --script=irc* -p 6667 $TARGET
+fi
+
+if [ -z "$port_8000" ]
+then
+	echo -e "$OKRED+ -- --=[Port 8000 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 8000 opened... running tests...$RESET"
+	wafw00f http://$TARGET:8000
+	echo ""
+	whatweb http://$TARGET:8000
+	echo ""
+	xsstracer $TARGET 8000
+	nikto -h http://$TARGET:8000 
+fi
+
+if [ -z "$port_8100" ]
+then
+	echo -e "$OKRED+ -- --=[Port 8100 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 8100 opened... running tests...$RESET"
+	wafw00f http://$TARGET:8100
+	echo ""
+	whatweb http://$TARGET:8100
+	echo ""
+	xsstracer $TARGET 8100
+	nikto -h http://$TARGET:8100 
+fi
+
+if [ -z "$port_8080" ]
+then
+	echo -e "$OKRED+ -- --=[Port 8080 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 8080 opened... running tests...$RESET"
+	wafw00f http://$TARGET:8080
+	echo ""
+	whatweb http://$TARGET:8080
+	echo ""
+	xsstracer $TARGET 8080
+	nikto -h http://$TARGET:8080 
+	nmap -p 8080 --script=proxy-* $TARGET
+fi
+
+if [ -z "$port_8180" ]
+then
+	echo -e "$OKRED+ -- --=[Port 8180 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 8180 opened... running tests...$RESET"
+	wafw00f http://$TARGET:8180
+	echo ""
+	whatweb http://$TARGET:8180
+	echo ""
+	xsstracer $TARGET 8180
+	nikto -h http://$TARGET:8180 
+	nmap -p 8180 --script=proxy-* $TARGET
+fi
+
+if [ -z "$port_49152" ]
+then
+	echo -e "$OKRED+ -- --=[Port 49152 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 49152 opened... running tests...$RESET"
+	$SUPER_MICRO_SCAN $TARGET
+fi
+
+echo -e "$OKGREEN################################### Running Brute Force #############################$RESET"
+cd BruteX/
+brutex $TARGET
+rm -f hydra.restore
+cd ..
+echo ""
+rm -f scan.log
+echo -e "$OKGREEN################################### Done! ###########################################$RESET"
+exit 0
