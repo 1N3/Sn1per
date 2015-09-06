@@ -10,5 +10,6 @@ git clone https://github.com/1N3/XSSTracer.git
 git clone https://github.com/1N3/SuperMicro-Password-Scanner
 git clone https://github.com/Dionach/CMSmap.git
 mkdir loot
+chmod +rx sniper
 echo "Be sure to install the following packages manually and update the sniper script references: dig dnsdict6 cmsmap samrdump inurlbr wafw00f showmount samrdump rpcinfo"
 echo "Done!"
