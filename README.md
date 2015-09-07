@@ -1,15 +1,18 @@
-+ -- --=[Sn1per v1.3 by 1N3 v20150906
++ -- --=[Sn1per v1.3 by 1N3
 + -- --=[http://crowdshield.com
  
-Sn1per - Automated Pentest Recon Tool
+Sn1per - Automated Pentest Recon Scanner
 
-FEATURED:
-- Automatically collect recon info (ie. whois, ping, DNS, etc.)
-- Automatically collects Google hacking recon info
-- Automatically runs port scans
-- Automatically brute forces sub-domains and DNS
-- Automatically run nmap scripts against open ports
-- Automatically scans all web applications
+ABOUT:
+Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. 
+
+FEATURES:
+- Automatically collects basic recon (ie. whois, ping, DNS, etc.)
+- Automatically launches Google hacking queries against a target domain
+- Automatically enumerates open ports
+- Automatically brute forces sub-domains and DNS info
+- Automatically runs targeted nmap scripts against open ports
+- Automatically scans all web applications for common vulnerabilities
 - Automatically brute forces all open services
 
 INSTALL:
