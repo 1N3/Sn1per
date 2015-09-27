@@ -19,7 +19,7 @@
 # USAGE:
 # ./sn1per <target>
 #
-
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 TARGET="$1"
 LOOT_DIR="loot"
 FINDSPLOIT_DIR="Findsploit"
@@ -75,7 +75,7 @@ theharvester -d $TARGET -b bing
 theharvester -d $TARGET -b linkedin
 theharvester -d $TARGET -b people123
 dnsenum $TARGET
-dnsdict6 $TARGET $DNS_FILE -4 | awk '{print $1}' | sort -u | sed -r 's/.com./.com/g' > $LOOT_DIR/domains-$TARGET.txt
+$DNSDICT6 $TARGET $DNS_FILE -4 | awk '{print $1}' | sort -u | sed -r 's/.com./.com/g' > $LOOT_DIR/domains-$TARGET.txt
 cat $LOOT_DIR/domains-$TARGET.txt
 echo ""
 echo -e "$OKBLUE+ -- --=[Checking for SPF records on $TARGET...$RESET $OKORANGE"
@@ -508,8 +508,8 @@ else
 fi
 
 echo -e "$OKGREEN################################### Running Brute Force #############################$RESET"
-cd BruteX/
-brutex $TARGET
+cd $DIR/BruteX
+$DIR/BruteX/brutex $TARGET
 rm -f hydra.restore
 cd ..
 echo ""
