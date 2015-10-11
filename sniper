@@ -19,18 +19,23 @@
 # USAGE:
 # ./sn1per <target>
 #
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+##FINDSPLOIT_DIR="$DIR/Findsploit" Not used on script
+
+SCRIPT_PATH=`realpath ${BASH_SOURCE[0]}`
+DIR=`dirname $SCRIPT_PATH`
 TARGET="$1"
-LOOT_DIR="loot"
-FINDSPLOIT_DIR="Findsploit"
-CMSMAP="CMSmap/cmsmap.py"
-SAMRDUMP="bin/samrdump.py"
-DNSDICT6="bin/dnsdict6"
-INURLBR="bin/inurlbr.php"
-USER_FILE="BruteX/simple-users.txt"
-PASS_FILE="BruteX/password.lst"
-DNS_FILE="BruteX/namelist.txt"
-SUPER_MICRO_SCAN="SuperMicro-Password-Scanner/supermicro_scan.sh"
+LOOT_DIR="$DIR/loot"
+CMSMAP="$DIR/CMSmap/cmsmap.py"
+BRUTEX="$DIR/BruteX/brutex"
+GOOHAK="$DIR/Goohak/goohak"
+XSSTRACER="$DIR/XSSTracer/xsstracer.py"
+SAMRDUMP="$DIR/bin/samrdump.py"
+DNSDICT6="$DIR/bin/dnsdict6"
+INURLBR="$DIR/bin/inurlbr.php"
+USER_FILE="$DIR/BruteX/simple-users.txt"
+PASS_FILE="$DIR/BruteX/password.lst"
+DNS_FILE="$DIR/BruteX/namelist.txt"
+SUPER_MICRO_SCAN="$DIR/SuperMicro-Password-Scanner/supermicro_scan.sh"
 THREADS="30"
 OKBLUE='\033[94m'
 OKRED='\033[91m'
@@ -152,7 +157,7 @@ then
 	echo -e "$OKRED+ -- --=[Port 25 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 25 opened... running tests...$RESET"
-	nmap -sV --script=smtp* -p 25 192.168.1.113	
+	nmap -sV --script=smtp* -p 25 $TARGET
 	smtp-user-enum -M VRFY -U $USER_FILE -t $TARGET
 fi
 
@@ -161,7 +166,7 @@ then
 	echo -e "$OKRED+ -- --=[Port 53 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 53 opened... running tests...$RESET"
-	nmap -sV --script=dns* -p 25 192.168.1.113	
+	nmap -sV --script=dns* -p 53 $TARGET
 fi
 
 if [ -z "$port_80" ]
@@ -169,9 +174,9 @@ then
 	echo -e "$OKRED+ -- --=[Port 80 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 80 opened... running tests...$RESET"
-	goohak $TARGET 2> /dev/null
+	$GOOHAK $TARGET 2> /dev/null
 	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
-	rm -Rf output/ cookie.txt exploits.conf
+	rm -Rf $DIR/output/ $DIR/cookie.txt $DIR/exploits.conf
 	nmap -sV -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-drupal-modules,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-email-harvest,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper $TARGET
 	wafw00f http://$TARGET
 	echo ""
@@ -281,9 +286,9 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 443 opened... running tests...$RESET"
 	nmap -sV -p 443 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-drupal-modules,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-email-harvest,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,tls-nextprotoneg,ssl* $TARGET
-	goohak $TARGET 2> /dev/null 
+	$GOOHAK $TARGET 2> /dev/null 
 	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
-	rm -Rf output/ cookie.txt exploits.conf
+	rm -Rf $DIR/output/ $DIR/cookie.txt $DIR/exploits.conf
 	wafw00f https://$TARGET
 	echo ""
 	whatweb https://$TARGET
@@ -454,7 +459,7 @@ else
 	echo ""
 	whatweb http://$TARGET:8000
 	echo ""
-	xsstracer $TARGET 8000
+	python $XSSTRACER $TARGET 8000
 	nikto -h http://$TARGET:8000 
 fi
 
@@ -467,7 +472,7 @@ else
 	echo ""
 	whatweb http://$TARGET:8100
 	echo ""
-	xsstracer $TARGET 8100
+	python $XSSTRACER $TARGET 8100
 	nikto -h http://$TARGET:8100 
 fi
 
@@ -480,7 +485,7 @@ else
 	echo ""
 	whatweb http://$TARGET:8080
 	echo ""
-	xsstracer $TARGET 8080
+	python $XSSTRACER $TARGET 8080
 	nikto -h http://$TARGET:8080 
 	nmap -p 8080 --script=proxy-* $TARGET
 fi
@@ -494,7 +499,7 @@ else
 	echo ""
 	whatweb http://$TARGET:8180
 	echo ""
-	xsstracer $TARGET 8180
+	python $XSSTRACER $TARGET 8180
 	nikto -h http://$TARGET:8180 
 	nmap -p 8180 --script=proxy-* $TARGET
 fi
@@ -509,10 +514,8 @@ fi
 
 echo -e "$OKGREEN################################### Running Brute Force #############################$RESET"
 cd $DIR/BruteX
-$DIR/BruteX/brutex $TARGET
-rm -f hydra.restore
-cd ..
-echo ""
-rm -f scan.log
-echo -e "$OKGREEN################################### Done! ###########################################$RESET"
+$BRUTEX $TARGET
+rm -f $DIR/BruteX/hydra.restore
+rm -f $DIR/scan.log
+echo -e "\n$OKGREEN################################### Done! ###########################################$RESET"
 exit 0
