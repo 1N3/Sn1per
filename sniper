@@ -19,18 +19,23 @@
 # USAGE:
 # ./sn1per <target>
 #
+##FINDSPLOIT_DIR="$DIR/Findsploit" Not used on script
 
+SCRIPT_PATH=`realpath ${BASH_SOURCE[0]}`
+DIR=`dirname $SCRIPT_PATH`
 TARGET="$1"
-LOOT_DIR="loot"
-FINDSPLOIT_DIR="Findsploit"
-CMSMAP="CMSmap/cmsmap.py"
-SAMRDUMP="bin/samrdump.py"
-DNSDICT6="bin/dnsdict6"
-INURLBR="bin/inurlbr.php"
-USER_FILE="BruteX/simple-users.txt"
-PASS_FILE="BruteX/password.lst"
-DNS_FILE="BruteX/namelist.txt"
-SUPER_MICRO_SCAN="SuperMicro-Password-Scanner/supermicro_scan.sh"
+LOOT_DIR="$DIR/loot"
+CMSMAP="$DIR/CMSmap/cmsmap.py"
+BRUTEX="$DIR/BruteX/brutex"
+GOOHAK="$DIR/Goohak/goohak"
+XSSTRACER="$DIR/XSSTracer/xsstracer.py"
+SAMRDUMP="$DIR/bin/samrdump.py"
+DNSDICT6="$DIR/bin/dnsdict6"
+INURLBR="$DIR/bin/inurlbr.php"
+USER_FILE="$DIR/BruteX/simple-users.txt"
+PASS_FILE="$DIR/BruteX/password.lst"
+DNS_FILE="$DIR/BruteX/namelist.txt"
+SUPER_MICRO_SCAN="$DIR/SuperMicro-Password-Scanner/supermicro_scan.sh"
 THREADS="30"
 OKBLUE='\033[94m'
 OKRED='\033[91m'
@@ -73,6 +78,7 @@ theharvester -d $TARGET -b google
 theharvester -d $TARGET -b bing
 theharvester -d $TARGET -b linkedin
 theharvester -d $TARGET -b people123
+<<<<<<< HEAD
 dnsrecon -d $TARGET
 dnsrecon -d $TARGET -t zonewalk
 dnsrecon -d quora.com -t axfr
@@ -81,6 +87,14 @@ cd Breach-Miner
 python breachminer.py $TARGET
 cd ..
 mv -f *_ips.txt loot/ 2>/dev/null
+=======
+dnsenum $TARGET
+$DNSDICT6 $TARGET $DNS_FILE -4 | awk '{print $1}' | sort -u | sed -r 's/.com./.com/g' > $LOOT_DIR/domains-$TARGET.txt
+cat $LOOT_DIR/domains-$TARGET.txt
+echo ""
+echo -e "$OKBLUE+ -- --=[Checking for SPF records on $TARGET...$RESET $OKORANGE"
+curl -s -X POST http://www.kitterman.com/getspf2.py --data 'serial=fred12&domain=$TARGET' | egrep spf1 --color
+>>>>>>> 49e9ae3bace624829af4ed4d40ba52553a84727c
 echo ""
 echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
 ping -c 1 $TARGET
@@ -155,7 +169,7 @@ then
 	echo -e "$OKRED+ -- --=[Port 25 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 25 opened... running tests...$RESET"
-	nmap -sV --script=smtp* -p 25 192.168.1.113	
+	nmap -sV --script=smtp* -p 25 $TARGET
 	smtp-user-enum -M VRFY -U $USER_FILE -t $TARGET
 fi
 
@@ -164,7 +178,7 @@ then
 	echo -e "$OKRED+ -- --=[Port 53 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 53 opened... running tests...$RESET"
-	nmap -sV --script=dns* -p 25 192.168.1.113	
+	nmap -sV --script=dns* -p 53 $TARGET
 fi
 
 if [ -z "$port_80" ]
@@ -172,6 +186,13 @@ then
 	echo -e "$OKRED+ -- --=[Port 80 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 80 opened... running tests...$RESET"
+<<<<<<< HEAD
+=======
+	$GOOHAK $TARGET 2> /dev/null
+	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
+	rm -Rf $DIR/output/ $DIR/cookie.txt $DIR/exploits.conf
+	nmap -sV -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-drupal-modules,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-email-harvest,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper $TARGET
+>>>>>>> 49e9ae3bace624829af4ed4d40ba52553a84727c
 	wafw00f http://$TARGET
 	echo ""
 	whatweb http://$TARGET
@@ -290,6 +311,13 @@ then
 	echo -e "$OKRED+ -- --=[Port 443 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 443 opened... running tests...$RESET"
+<<<<<<< HEAD
+=======
+	nmap -sV -p 443 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-drupal-modules,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-email-harvest,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,tls-nextprotoneg,ssl* $TARGET
+	$GOOHAK $TARGET 2> /dev/null 
+	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
+	rm -Rf $DIR/output/ $DIR/cookie.txt $DIR/exploits.conf
+>>>>>>> 49e9ae3bace624829af4ed4d40ba52553a84727c
 	wafw00f https://$TARGET
 	echo ""
 	whatweb https://$TARGET
@@ -475,11 +503,15 @@ else
 	echo ""
 	whatweb http://$TARGET:8000
 	echo ""
+<<<<<<< HEAD
 	xsstracer $TARGET 8000
 	sslscan --no-failed $TARGET:8000
 	cd MassBleed
 	./massbleed $TARGET port 8000
 	cd ..
+=======
+	python $XSSTRACER $TARGET 8000
+>>>>>>> 49e9ae3bace624829af4ed4d40ba52553a84727c
 	nikto -h http://$TARGET:8000 
 fi
 
@@ -492,11 +524,15 @@ else
 	echo ""
 	whatweb http://$TARGET:8100
 	echo ""
+<<<<<<< HEAD
 	xsstracer $TARGET 8100
 	sslscan --no-failed $TARGET:8100
 	cd MassBleed
 	./massbleed $TARGET port 8100
 	cd ..
+=======
+	python $XSSTRACER $TARGET 8100
+>>>>>>> 49e9ae3bace624829af4ed4d40ba52553a84727c
 	nikto -h http://$TARGET:8100 
 fi
 
@@ -509,11 +545,15 @@ else
 	echo ""
 	whatweb http://$TARGET:8080
 	echo ""
+<<<<<<< HEAD
 	xsstracer $TARGET 8080
 	sslscan --no-failed $TARGET:8080
 	cd MassBleed
 	./massbleed $TARGET port 8080
 	cd ..
+=======
+	python $XSSTRACER $TARGET 8080
+>>>>>>> 49e9ae3bace624829af4ed4d40ba52553a84727c
 	nikto -h http://$TARGET:8080 
 	nmap -p 8080 --script=*proxy* $TARGET
 fi
@@ -527,11 +567,15 @@ else
 	echo ""
 	whatweb http://$TARGET:8180
 	echo ""
+<<<<<<< HEAD
 	xsstracer $TARGET 8180
 	sslscan --no-failed $TARGET:8180
 	cd MassBleed
 	./massbleed $TARGET port 8180
 	cd ..
+=======
+	python $XSSTRACER $TARGET 8180
+>>>>>>> 49e9ae3bace624829af4ed4d40ba52553a84727c
 	nikto -h http://$TARGET:8180 
 	nmap -p 8180 --script=*proxy* $TARGET
 fi
@@ -563,6 +607,7 @@ else
 fi
 
 echo -e "$OKGREEN################################### Running Brute Force #############################$RESET"
+<<<<<<< HEAD
 cd yasuo
 ruby yasuo.rb -r $TARGET -b all
 cd ../BruteX/
@@ -572,4 +617,11 @@ cd ..
 echo ""
 rm -f scan.log
 echo -e "$OKGREEN################################### Done! ###########################################$RESET"
+=======
+cd $DIR/BruteX
+$BRUTEX $TARGET
+rm -f $DIR/BruteX/hydra.restore
+rm -f $DIR/scan.log
+echo -e "\n$OKGREEN################################### Done! ###########################################$RESET"
+>>>>>>> 49e9ae3bace624829af4ed4d40ba52553a84727c
 exit 0
