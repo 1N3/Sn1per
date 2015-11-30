@@ -47,7 +47,7 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.3 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.4 by 1N3"
 	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>"
 	exit
 fi
@@ -62,7 +62,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v1.3 by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v1.4 by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN################################### Running recon #################################$RESET"
 nslookup $TARGET
