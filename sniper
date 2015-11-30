@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v1.3 by 1N3 v20150906
+# + -- --=[Sn1per v1.4 by 1N3 v20151130
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -47,7 +47,7 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.3 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.4 by 1N3"
 	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>"
 	exit
 fi
@@ -62,9 +62,8 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v1.3 by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v1.4 by 1N3"
 echo -e "$RESET"
-
 echo -e "$OKGREEN################################### Running recon #################################$RESET"
 nslookup $TARGET
 host $TARGET
@@ -74,18 +73,21 @@ theharvester -d $TARGET -b google
 theharvester -d $TARGET -b bing
 theharvester -d $TARGET -b linkedin
 theharvester -d $TARGET -b people123
-dnsenum $TARGET
-dnsdict6 $TARGET $DNS_FILE -4 | awk '{print $1}' | sort -u | sed -r 's/.com./.com/g' > $LOOT_DIR/domains-$TARGET.txt
-cat $LOOT_DIR/domains-$TARGET.txt
-echo ""
-echo -e "$OKBLUE+ -- --=[Checking for SPF records on $TARGET...$RESET $OKORANGE"
-curl -s -X POST http://www.kitterman.com/getspf2.py --data 'serial=fred12&domain=$TARGET' | egrep spf1 --color
+dnsrecon -d $TARGET
+dnsrecon -d $TARGET -t zonewalk
+dnsrecon -d quora.com -t axfr
+dnsenum $TARGET -f BruteX/namelist.txt
+cd Breach-Miner
+python breachminer.py $TARGET
+cd ..
+mv -f *_ips.txt loot/ 2>/dev/null
 echo ""
 echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
 ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN################################### Running port scan ##############################$RESET"
 nmap -sS -sV -T4 -A -O --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+nmap -sU -sV -T4 -A -O -p 53,67,68,88,161,162,137,138,139,389,520,521,2049 --open $TARGET -oX $LOOT_DIR/nmap-udp-$TARGET.xml
 echo ""
 echo -e "$OKGREEN################################### Running Intrusive Scans ########################$RESET"
 port_21=`grep 'portid="21"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
@@ -118,6 +120,7 @@ port_8000=`grep 'portid="8000"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_8009=`grep 'portid="8009"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_8080=`grep 'portid="8080"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 
 if [ -z "$port_21" ]
@@ -169,63 +172,70 @@ then
 	echo -e "$OKRED+ -- --=[Port 80 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 80 opened... running tests...$RESET"
-	goohak $TARGET 2> /dev/null
-	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
-	rm -Rf output/ cookie.txt exploits.conf
-	nmap -sV -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-drupal-modules,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-email-harvest,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper $TARGET
 	wafw00f http://$TARGET
 	echo ""
 	whatweb http://$TARGET
 	xsstracer $TARGET 80
 	echo ""
+	goohak $TARGET > /dev/null
+	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
+	rm -Rf output/ cookie.txt exploits.conf
+	nmap -sV -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper $TARGET
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I http://$TARGET | egrep -i 'X-Content'
+	curl -s --insecure -I http://$TARGET | egrep -i 'X-Content' | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking if X-Frame options are enabled on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I http://$TARGET | egrep -i 'X-Frame'
+	curl -s --insecure -I http://$TARGET | egrep -i 'X-Frame' | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking if X-XSS-Protection header is enabled on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I http://$TARGET | egrep -i 'X-XSS'
+	curl -s --insecure -I http://$TARGET | egrep -i 'X-XSS' | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking HTTP methods on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I -X OPTIONS http://$TARGET | grep Allow
+	curl -s --insecure -I -X OPTIONS http://$TARGET | grep Allow | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking if TRACE method is enabled on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I -X TRACE http://$TARGET | grep TRACE
+	curl -s --insecure -I -X TRACE http://$TARGET | grep TRACE | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for open proxy on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -x http://$TARGET:80 -L http://crowdshield.com/.testing/openproxy.txt
+	curl -s --insecure -x http://$TARGET:80 -L http://crowdshield.com/.testing/openproxy.txt | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Enumerating software on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I http://$TARGET | egrep -i "Server:|X-Powered|ASP|JSP|PHP|.NET"
+	curl -s --insecure -I http://$TARGET | egrep -i "Server:|X-Powered|ASP|JSP|PHP|.NET" | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking if Strict-Transport-Security is enabled on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I http://$TARGET/ | egrep -i "Strict-Transport-Security"
+	curl -s --insecure -I http://$TARGET/ | egrep -i "Strict-Transport-Security" | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for Flash cross-domain policy on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure http://$TARGET/crossdomain.xml
+	curl -s --insecure http://$TARGET/crossdomain.xml | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for Silverlight cross-domain policy on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure http://$TARGET/clientaccesspolicy.xml
+	curl -s --insecure http://$TARGET/clientaccesspolicy.xml | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for HTML5 cross-origin resource sharing on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I http://$TARGET | egrep -i "Access-Control-Allow-Origin"
+	curl -s --insecure -I http://$TARGET | egrep -i "Access-Control-Allow-Origin" | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Retrieving robots.txt on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure http://$TARGET/robots.txt
+	curl -s --insecure http://$TARGET/robots.txt | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Retrieving sitemap.xml on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure http://$TARGET/sitemap.xml
+	curl -s --insecure http://$TARGET/sitemap.xml | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking cookie attributes on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I http://$TARGET | egrep -i "Cookie:"
+	curl -s --insecure -I http://$TARGET | egrep -i "Cookie:" | tail -n 10
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for ASP.NET Detailed Errors on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure http://$TARGET/%3f.jsp | egrep -i 'Error|Exception' | tail -n 10
+	curl -s --insecure http://$TARGET/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for Rom-0 Router Vulnerabilities on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure http://$TARGET/rom-0 | grep 200 | tail -n 10
 	echo ""
 	echo -e "$RESET"
 
 	nikto -h http://$TARGET 
 	wpscan --url http://$TARGET --batch
 	python $CMSMAP -t http://$TARGET
-	python /usr/share/sqlmap/sqlmap.py -u "http://$TARGET" --batch --crawl=5 -f
+	sqlmap -u "http://$TARGET" --batch --crawl=5 -f
 fi
 
 if [ -z "$port_110" ]
@@ -280,22 +290,27 @@ then
 	echo -e "$OKRED+ -- --=[Port 443 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 443 opened... running tests...$RESET"
-	nmap -sV -p 443 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-drupal-modules,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-email-harvest,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,tls-nextprotoneg,ssl* $TARGET
-	goohak $TARGET 2> /dev/null 
-	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
-	rm -Rf output/ cookie.txt exploits.conf
 	wafw00f https://$TARGET
 	echo ""
 	whatweb https://$TARGET
 	echo ""
+	sslscan --no-failed $TARGET 
+	echo ""
+	cd MassBleed
+	./massbleed $TARGET port 443
+	cd ..
+	nmap -sV -p 443 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,tls-nextprotoneg,ssl* $TARGET
+	goohak $TARGET > /dev/null 
+	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
+	rm -Rf output/ cookie.txt exploits.conf
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I https://$TARGET | egrep -i 'X-Content'
+	curl -s --insecure -I https://$TARGET | egrep -i 'X-Content' | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking if X-Frame options are enabled on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I https://$TARGET | egrep -i 'X-Frame'
+	curl -s --insecure -I https://$TARGET | egrep -i 'X-Frame' | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking if X-XSS-Protection header is enabled on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I https://$TARGET | egrep -i 'X-XSS'
+	curl -s --insecure -I https://$TARGET | egrep -i 'X-XSS' | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking HTTP methods on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I -X OPTIONS https://$TARGET | grep Allow
@@ -304,38 +319,44 @@ else
 	curl -s --insecure -I -X TRACE https://$TARGET | grep TRACE
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for open proxy on $TARGET...$RESET $OKORANGE"
-	curl -x https://$TARGET:443 -L https://crowdshield.com/.testing/openproxy.txt -s --insecure
+	curl -x https://$TARGET:443 -L https://crowdshield.com/.testing/openproxy.txt -s --insecure | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Enumerating software on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I https://$TARGET | egrep -i "Server:|X-Powered|ASP|JSP|PHP|.NET"
+	curl -s --insecure -I https://$TARGET | egrep -i "Server:|X-Powered|ASP|JSP|PHP|.NET" | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking if Strict-Transport-Security is enabled on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I https://$TARGET/ | egrep -i "Strict-Transport-Security"
+	curl -s --insecure -I https://$TARGET/ | egrep -i "Strict-Transport-Security" | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for Flash cross-domain policy on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure https://$TARGET/crossdomain.xml
+	curl -s --insecure https://$TARGET/crossdomain.xml | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for Silverlight cross-domain policy on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure https://$TARGET/clientaccesspolicy.xml
+	curl -s --insecure https://$TARGET/clientaccesspolicy.xml | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for HTML5 cross-origin resource sharing on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I https://$TARGET | egrep -i "Access-Control-Allow-Origin"
+	curl -s --insecure -I https://$TARGET | egrep -i "Access-Control-Allow-Origin" | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Retrieving robots.txt on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure https://$TARGET/robots.txt
+	curl -s --insecure https://$TARGET/robots.txt | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Retrieving sitemap.xml on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure https://$TARGET/sitemap.xml
+	curl -s --insecure https://$TARGET/sitemap.xml | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking cookie attributes on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -I https://$TARGET | egrep -i "Cookie:"
-	echo -e "$RESET"
-	sslscan --no-failed $TARGET 
+	curl -s --insecure -I https://$TARGET | egrep -i "Cookie:" | tail -n 10
 	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for ASP.NET Detailed Errors on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure https://$TARGET/%3f.jsp | egrep -i 'Error|Exception' | tail -n 10
+	curl -s --insecure https://$TARGET/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
+	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for Rom-0 Router Vulnerabilities on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure https://$TARGET/rom-0 | grep 200 | tail -n 10
+	echo ""
+	echo -e "$RESET"
 	nikto -h https://$TARGET 
 	wpscan --url https://$TARGET --batch
 	python $CMSMAP -t https://$TARGET
-	python /usr/share/sqlmap/sqlmap.py -u "https://$TARGET" --batch --crawl=5 -f
+	sqlmap -u "https://$TARGET" --batch --crawl=5 -f
 fi
 
 if [ -z "$port_445" ]
@@ -455,6 +476,10 @@ else
 	whatweb http://$TARGET:8000
 	echo ""
 	xsstracer $TARGET 8000
+	sslscan --no-failed $TARGET:8000
+	cd MassBleed
+	./massbleed $TARGET port 8000
+	cd ..
 	nikto -h http://$TARGET:8000 
 fi
 
@@ -468,6 +493,10 @@ else
 	whatweb http://$TARGET:8100
 	echo ""
 	xsstracer $TARGET 8100
+	sslscan --no-failed $TARGET:8100
+	cd MassBleed
+	./massbleed $TARGET port 8100
+	cd ..
 	nikto -h http://$TARGET:8100 
 fi
 
@@ -481,8 +510,12 @@ else
 	whatweb http://$TARGET:8080
 	echo ""
 	xsstracer $TARGET 8080
+	sslscan --no-failed $TARGET:8080
+	cd MassBleed
+	./massbleed $TARGET port 8080
+	cd ..
 	nikto -h http://$TARGET:8080 
-	nmap -p 8080 --script=proxy-* $TARGET
+	nmap -p 8080 --script=*proxy* $TARGET
 fi
 
 if [ -z "$port_8180" ]
@@ -495,8 +528,30 @@ else
 	whatweb http://$TARGET:8180
 	echo ""
 	xsstracer $TARGET 8180
+	sslscan --no-failed $TARGET:8180
+	cd MassBleed
+	./massbleed $TARGET port 8180
+	cd ..
 	nikto -h http://$TARGET:8180 
-	nmap -p 8180 --script=proxy-* $TARGET
+	nmap -p 8180 --script=*proxy* $TARGET
+fi
+
+if [ -z "$port_8443" ]
+then
+	echo -e "$OKRED+ -- --=[Port 8443 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 8443 opened... running tests...$RESET"
+	wafw00f http://$TARGET:8443
+	echo ""
+	whatweb http://$TARGET:8443
+	echo ""
+	xsstracer $TARGET 8443
+	sslscan --no-failed $TARGET:8443
+	cd MassBleed
+	./massbleed $TARGET port 8443
+	cd ..
+	nikto -h http://$TARGET:8443 
+	nmap -p 8443 --script=*proxy* $TARGET
 fi
 
 if [ -z "$port_49152" ]
@@ -508,8 +563,10 @@ else
 fi
 
 echo -e "$OKGREEN################################### Running Brute Force #############################$RESET"
-cd BruteX/
-brutex $TARGET
+cd yasuo
+ruby yasuo.rb -r $TARGET -b all
+cd ../BruteX/
+./brutex $TARGET
 rm -f hydra.restore
 cd ..
 echo ""
