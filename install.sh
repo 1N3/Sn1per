@@ -13,6 +13,7 @@ git clone https://github.com/1N3/MassBleed.git
 git clone https://github.com/1N3/SuperMicro-Password-Scanner
 git clone https://github.com/Dionach/CMSmap.git
 git clone https://github.com/0xsauby/yasuo.git
+gem install ruby-nmap net-http-persistent mechanize text-table
 git clone https://github.com/vishnuraju/Breach-Miner-automated-.git Breach-Miner
 mkdir loot
 chmod +rx sniper
