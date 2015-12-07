@@ -3,7 +3,7 @@
 #
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo "Installing sn1per dependencies..."
-apt-get install host whois theharvester dnsenum dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester nmap dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
+apt-get install host whois theharvester dnsenum dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
 git clone https://github.com/1N3/Findsploit.git
 git clone https://github.com/1N3/BruteX.git
 git clone https://github.com/1N3/Goohak.git
