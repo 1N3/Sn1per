@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v1.4 by 1N3 v20151130
+# + -- --=[Sn1per v1.4b by 1N3 v20151210
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -22,7 +22,6 @@
 
 TARGET="$1"
 LOOT_DIR="loot"
-FINDSPLOIT_DIR="Findsploit"
 CMSMAP="CMSmap/cmsmap.py"
 SAMRDUMP="bin/samrdump.py"
 DNSDICT6="bin/dnsdict6"
@@ -568,6 +567,7 @@ ruby yasuo.rb -r $TARGET -b all
 cd ../BruteX/
 ./brutex $TARGET
 rm -f hydra.restore
+mv loot/* ../loot/
 cd ..
 echo ""
 rm -f scan.log
