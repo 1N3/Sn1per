@@ -1,4 +1,4 @@
-+ -- --=[Sn1per v1.4 by 1N3
++ -- --=[Sn1per v1.4c by 1N3
 + -- --=[http://crowdshield.com
  
 # Sn1per - Automated Pentest Recon Scanner
@@ -29,6 +29,7 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 https://goo.gl/96LCAg
 
 ## CHANGELOG:
+* v1.4c - Reordered 3rd party extensions
 * v1.4b - Fixed install.sh executable references
 * v1.4b - Fixed Yasou dependencies in install.sh
 * v1.4b - Fixed minor issues with BruteX loot directory

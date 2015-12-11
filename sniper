@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v1.4b by 1N3 v20151210
+# + -- --=[Sn1per v1.4c by 1N3 v20151210
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -46,7 +46,7 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.4 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.4c by 1N3"
 	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>"
 	exit
 fi
@@ -61,7 +61,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v1.4 by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v1.4c by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN################################### Running recon #################################$RESET"
 nslookup $TARGET
@@ -76,9 +76,6 @@ dnsrecon -d $TARGET
 dnsrecon -d $TARGET -t zonewalk
 dnsrecon -d quora.com -t axfr
 dnsenum $TARGET -f BruteX/namelist.txt
-cd Breach-Miner
-python breachminer.py $TARGET
-cd ..
 mv -f *_ips.txt loot/ 2>/dev/null
 echo ""
 echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
@@ -562,8 +559,6 @@ else
 fi
 
 echo -e "$OKGREEN################################### Running Brute Force #############################$RESET"
-cd yasuo
-ruby yasuo.rb -r $TARGET -b all
 cd ../BruteX/
 ./brutex $TARGET
 rm -f hydra.restore
@@ -571,5 +566,11 @@ mv loot/* ../loot/
 cd ..
 echo ""
 rm -f scan.log
+echo -e "$OKGREEN################################### Running 3rd Party Extensions ####################$RESET"
+cd Breach-Miner
+python breachminer.py $TARGET
+cd ..
+cd yasuo
+ruby yasuo.rb -r $TARGET -b all
 echo -e "$OKGREEN################################### Done! ###########################################$RESET"
 exit 0
