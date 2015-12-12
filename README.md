@@ -1,4 +1,4 @@
-+ -- --=[Sn1per v1.4d by 1N3
++ -- --=[Sn1per v1.4e by 1N3
 + -- --=[http://crowdshield.com
  
 # Sn1per - Automated Pentest Recon Scanner
@@ -17,7 +17,7 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 
 ## INSTALL:
 ```
-./install.sh - Installs all dependencies. Best run from Kali Linux. 
+./install.sh - Installs all dependencies OR upgrades existing Sn1per installations. Best run from Kali Linux. 
 ```
 
 ## USAGE:
@@ -29,6 +29,8 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 https://goo.gl/96LCAg
 
 ## CHANGELOG:
+* v1.4e - Fixed reported errors install.sh
+* v1.4e - Added auto-upgrade option to install.sh for existing Sn1per installs
 * v1.4d - Fixed missing rake gem install dependency
 * v1.4c - Reordered 3rd party extensions
 * v1.4b - Fixed install.sh executable references

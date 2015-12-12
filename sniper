@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v1.4d by 1N3 v20151210
+# + -- --=[Sn1per v1.4e by 1N3 v20151212
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -46,7 +46,7 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.4d by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.4e by 1N3"
 	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>"
 	exit
 fi
@@ -61,7 +61,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v1.4d by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v1.4e by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN################################### Running recon #################################$RESET"
 nslookup $TARGET
