@@ -1,4 +1,4 @@
-+ -- --=[Sn1per v1.4e by 1N3
++ -- --=[Sn1per v1.4f by 1N3
 + -- --=[http://crowdshield.com
  
 # Sn1per - Automated Pentest Recon Scanner
@@ -29,6 +29,7 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 https://goo.gl/96LCAg
 
 ## CHANGELOG:
+* v1.4f - Fixed BruteX directory bug
 * v1.4e - Fixed reported errors install.sh
 * v1.4e - Added auto-upgrade option to install.sh for existing Sn1per installs
 * v1.4d - Fixed missing rake gem install dependency

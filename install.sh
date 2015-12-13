@@ -20,7 +20,7 @@ echo ""
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per installation. Are you sure you want to continue?$RESET"
+echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per installation. Are you sure you want to continue? (Ctrl+C to exit) $RESET"
 read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
