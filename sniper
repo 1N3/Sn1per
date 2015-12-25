@@ -77,6 +77,7 @@ dnsrecon -d $TARGET -t zonewalk
 dnsrecon -d quora.com -t axfr
 dnsenum $TARGET -f BruteX/namelist.txt
 mv -f *_ips.txt loot/ 2>/dev/null
+shodan host $TARGET
 echo ""
 echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
 ping -c 1 $TARGET
@@ -91,12 +92,14 @@ port_22=`grep 'portid="22"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_23=`grep 'portid="23"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_25=`grep 'portid="25"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_53=`grep 'portid="53"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_79=`grep 'portid="79"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_80=`grep 'portid="80"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_110=`grep 'portid="110"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_111=`grep 'portid="111"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_135=`grep 'portid="135"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_139=`grep 'portid="139"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_162=`grep 'portid="162"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_389=`grep 'portid="162"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_443=`grep 'portid="443"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_445=`grep 'portid="445"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_512=`grep 'portid="512"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
@@ -151,8 +154,9 @@ then
 	echo -e "$OKRED+ -- --=[Port 25 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 25 opened... running tests...$RESET"
-	nmap -sV --script=smtp* -p 25 192.168.1.113	
+	nmap -sV --script=smtp* -p 25 $TARGET
 	smtp-user-enum -M VRFY -U $USER_FILE -t $TARGET
+	msfconsole -x "use scanner/smtp/smtp_enum; set RHOSTS "$TARGET"; run;" 
 fi
 
 if [ -z "$port_53" ]
@@ -160,7 +164,16 @@ then
 	echo -e "$OKRED+ -- --=[Port 53 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 53 opened... running tests...$RESET"
-	nmap -sV --script=dns* -p 25 192.168.1.113	
+	nmap -sV --script=dns* -p $TARGET	
+fi
+
+if [ -z "$port_79" ]
+then
+	echo -e "$OKRED+ -- --=[Port 79 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 79 opened... running tests...$RESET"
+	nmap -sV --script=finger* -p 79 $TARGET
+	bin/fingertool.sh $TARGET BruteX/simple-users.txt
 fi
 
 if [ -z "$port_80" ]
@@ -281,6 +294,14 @@ else
 	nmap -p 162 --script=snmp* $TARGET
 fi
 
+if [ -z "$port_389" ]
+then
+	echo -e "$OKRED+ -- --=[Port 389 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 389 opened... running tests...$RESET"
+	nmap -p 389 --script=ldap* $TARGET
+fi
+
 if [ -z "$port_443" ]
 then
 	echo -e "$OKRED+ -- --=[Port 443 closed... skipping.$RESET"
@@ -363,7 +384,7 @@ else
 	enum4linux $TARGET
 	python $SAMRDUMP $TARGET
 	nbtscan $TARGET
-	nmap --script=/usr/share/nmap/scripts/smb-check-vulns.nse --script=/usr/share/nmap/scripts/smb-os-discovery.nse --script=/usr/share/nmap/scripts/smb-enum-domains.nse --script=/usr/share/nmap/scripts/smb-server-stats.nse --script=/usr/share/nmap/scripts/smb-ls.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-054.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-061.nse --script=/usr/share/nmap/scripts/smb-system-info.nse --script=/usr/share/nmap/scripts/smb-enum-shares.nse --script=/usr/share/nmap/scripts/smb-enum-users.nse --script=/usr/share/nmap/scripts/smbv2-enabled.nse --script=/usr/share/nmap/scripts/smb-mbenum.nse --script-args=unsafe=1 -p 139 $TARGET
+	nmap --script=/usr/share/nmap/scripts/smb-check-vulns.nse --script=/usr/share/nmap/scripts/smb-os-discovery.nse --script=/usr/share/nmap/scripts/smb-enum-domains.nse --script=/usr/share/nmap/scripts/smb-server-stats.nse --script=/usr/share/nmap/scripts/smb-ls.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-054.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-061.nse --script=/usr/share/nmap/scripts/smb-system-info.nse --script=/usr/share/nmap/scripts/smb-enum-shares.nse --script=/usr/share/nmap/scripts/smb-enum-users.nse --script=/usr/share/nmap/scripts/smbv2-enabled.nse --script=/usr/share/nmap/scripts/smb-mbenum.nse --script-args=unsafe=1 -p 445 $TARGET
 fi
 
 if [ -z "$port_512" ]
@@ -396,6 +417,17 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 514 opened... running tests...$RESET"
 	amap -A $TARGET 1524
+fi
+
+if [ -z "$port_2049" ]
+then
+	echo -e "$OKRED+ -- --=[Port 2049 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 2049 opened... running tests...$RESET"
+	nmap -sV --script=nfs* -p 2049 $TARGET
+	rpcinfo -p $TARGET
+	showmount -e $TARGET
+	smbclient -L $TARGET -U " "%" "
 fi
 
 if [ -z "$port_2121" ]
@@ -512,6 +544,7 @@ else
 	cd ..
 	nikto -h http://$TARGET:8080 
 	nmap -p 8080 --script=*proxy* $TARGET
+	
 fi
 
 if [ -z "$port_8180" ]
@@ -559,18 +592,14 @@ else
 fi
 
 echo -e "$OKGREEN################################### Running Brute Force #############################$RESET"
-cd BruteX/
+cd yasuo
+ruby yasuo.rb -r $TARGET -b all
+cd ../BruteX
 ./brutex $TARGET
 rm -f hydra.restore
 mv loot/* ../loot/
 cd ..
 echo ""
 rm -f scan.log
-echo -e "$OKGREEN################################### Running 3rd Party Extensions ####################$RESET"
-cd Breach-Miner
-python breachminer.py $TARGET
-cd ..
-cd yasuo
-ruby yasuo.rb -r $TARGET -b all
 echo -e "$OKGREEN################################### Done! ###########################################$RESET"
 exit 0
