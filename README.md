@@ -25,7 +25,9 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 ```
 
 ## SAMPLE REPORT:
-https://goo.gl/96LCAg
+```
+https://gist.github.com/1N3/8214ec2da2c91691bcbc
+```
 
 ## CHANGELOG:
 * v1.5 - Added Metasploit scan and auto-exploit modules
