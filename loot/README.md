@@ -1,4 +1,4 @@
-+ -- --=[Sn1per v1.4g by 1N3
++ -- --=[Sn1per v1.5 by 1N3
 + -- --=[http://crowdshield.com
  
 # Sn1per - Automated Pentest Recon Scanner
@@ -11,7 +11,8 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 * Automatically launches Google hacking queries against a target domain
 * Automatically enumerates open ports
 * Automatically brute forces sub-domains and DNS info
-* Automatically runs targeted nmap scripts against open ports
+* Automatically runs targeted NMap scripts against open ports
+* Automatically runs targeted Metasploit scan and exploit modules
 * Automatically scans all web applications for common vulnerabilities
 * Automatically brute forces all open services
 
@@ -29,6 +30,11 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 https://goo.gl/96LCAg
 
 ## CHANGELOG:
+* v1.5 - Added Metasploit scan and auto-exploit modules
+* v1.5 - Added additional port checks
+* v1.5 - Added full TCP/UDP NMap XML output
+* v1.5 - Auto tune scan for either IP or hostname/domain
+* v1.4h - Added auto IP/domain name scan configurations
 * v1.4g - Added finger enumeration scripts
 * v1.4g - Fixed nmap -p 445 target issue
 * v1.4g - Fixed smtp-enum target issue
@@ -46,3 +52,9 @@ https://goo.gl/96LCAg
 * v1.4 - Fixed minor errors with nmap
 * v1.4 - Removed debug output from goohak from displaying on console
 
+## FUTURE:
+* Add in detection and auto exploitation for Apache Tomcat, PHPMyAdmin, Webmin, MS08-067, Open Proxy, etc.
+* Add in Juniper backdoor password to password list
+* Add auth bypass string to password list
+* Add in OpenVAS integration
+* Look into HTML reporting or text based output options to save scan data

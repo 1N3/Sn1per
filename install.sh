@@ -19,18 +19,20 @@ echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
 echo ""
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+export SNIPER_DIR="$DIR"
 
-echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per installation. Are you sure you want to continue? (Ctrl+C to exit) $RESET"
+echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per installation. Are you sure you want to continue?$RESET"
 read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
 apt-get install host whois theharvester dnsenum dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
-gem install ruby-nmap net-http-persistent mechanize text-table rake
+gem install rake
+gem install ruby-nmap net-http-persistent mechanize text-table
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
-rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Breach-Miner/
+rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/
 
 echo -e "$OKORANGE + -- --=[Downloading extensions...$RESET"
 git clone https://github.com/1N3/Findsploit.git
@@ -41,7 +43,6 @@ git clone https://github.com/1N3/MassBleed.git
 git clone https://github.com/1N3/SuperMicro-Password-Scanner
 git clone https://github.com/Dionach/CMSmap.git
 git clone https://github.com/0xsauby/yasuo.git
-git clone https://github.com/vishnuraju/Breach-Miner-automated-.git Breach-Miner
 
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 mkdir loot 2> /dev/null
