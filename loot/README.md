@@ -25,9 +25,14 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 ```
 
 ## SAMPLE REPORT:
-https://goo.gl/96LCAg
+```
+https://gist.github.com/1N3/8214ec2da2c91691bcbc
+```
 
 ## CHANGELOG:
+* v1.5a - Fixed syntax error with port 8081 checks
+* v1.5a - Added Arachni integration
+* v1.5a - Added vsftpd, proftpd, mysql, unrealircd auto exploits
 * v1.5 - Added Metasploit scan and auto-exploit modules
 * v1.5 - Added additional port checks
 * v1.5 - Added full TCP/UDP NMap XML output
@@ -51,7 +56,7 @@ https://goo.gl/96LCAg
 * v1.4 - Removed debug output from goohak from displaying on console
 
 ## FUTURE:
-* Add in detection and auto exploitation for Apache Tomcat, PHPMyAdmin, Webmin, MS08-067, Open Proxy, etc.
+* Add in detection and auto exploitation for Tomcat, JBoss, PHPMyAdmin
 * Add in Juniper backdoor password to password list
 * Add auth bypass string to password list
 * Add in OpenVAS integration
