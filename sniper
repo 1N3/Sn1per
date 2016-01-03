@@ -84,10 +84,10 @@ if [ $SCAN_TYPE == "DOMAIN" ];
 then
 	dig -x $TARGET
 	whois $TARGET
-	theharvester -d $TARGET -b google
-	theharvester -d $TARGET -b bing
-	theharvester -d $TARGET -b linkedin
-	theharvester -d $TARGET -b people123
+	theHarvester -d $TARGET -b google
+	theHarvester -d $TARGET -b bing
+	theHarvester -d $TARGET -b linkedin
+	theHarvester -d $TARGET -b people123
 	dnsrecon -d $TARGET
 	dnsrecon -d $TARGET -t zonewalk
 	dnsrecon -d quora.com -t axfr
