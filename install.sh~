@@ -33,7 +33,7 @@ gem install ruby-nmap net-http-persistent mechanize text-table
 echo -e "$OKORANGE + -- --=[Installing shodan...$RESET"
 echo -e "$OKGREEN + -- --=[Please enter your shodan API key or hit enter to skip...$RESET"
 read API_KEY
-if [ -n "$API_KEY" ]; then
+if [ -n $API_KEY]; then
 	easy_install shodan
 	shodan init $API_KEY
 fi
