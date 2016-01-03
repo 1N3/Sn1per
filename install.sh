@@ -19,13 +19,12 @@ echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
 echo ""
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-export SNIPER_DIR="$DIR"
 
 echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per installation. Are you sure you want to continue?$RESET"
 read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install host whois arachni theharvester dnsenum dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
+apt-get install host whois arachni theHarvester dnsenum dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake

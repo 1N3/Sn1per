@@ -30,6 +30,8 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.5b - Added Squid Proxy checks port 3128/tcp
+* v1.5b - Fixed syntax error with theHarvester in install.sh
 * v1.5a - Fixed syntax error with port 8081 checks
 * v1.5a - Added Arachni integration
 * v1.5a - Added vsftpd, proftpd, mysql, unrealircd auto exploits
