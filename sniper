@@ -21,9 +21,6 @@
 # ./sn1per <target>
 #
 
-# SET SNIPER INSTALL DIR FOR GLOBAL SNIPER ACCESS
-#SNIPER_DIR="/pentest/web/Sn1per/"
-
 TARGET="$1"
 LOOT_DIR="loot"
 CMSMAP="CMSmap/cmsmap.py"
@@ -63,9 +60,7 @@ else
 	SCAN_TYPE="DOMAIN"
 fi
 
-if [ -x $SNIPER_DIR ]; then
-	cd $SNIPER_DIR
-fi
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 clear
 
