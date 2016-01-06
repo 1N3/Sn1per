@@ -30,6 +30,7 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.5d - Fixed minor issues with port 513/tmp and 514/tcp checks
 * v1.5c - Fixed issue which broke link to sniper directory
 * v1.5b - Added Squid Proxy checks port 3128/tcp
 * v1.5b - Fixed shodan setup options in install.sh
