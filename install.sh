@@ -24,19 +24,11 @@ echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per insta
 read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install host whois arachni theHarvester dnsenum dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
+apt-get install waffit host whois arachni theHarvester dnsenum dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
 gem install ruby-nmap net-http-persistent mechanize text-table
-
-echo -e "$OKORANGE + -- --=[Installing shodan...$RESET"
-echo -e "$OKGREEN + -- --=[Please enter your shodan API key or hit enter to skip...$RESET"
-read API_KEY
-if [ -n "$API_KEY" ]; then
-	easy_install shodan
-	shodan init $API_KEY
-fi
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
 rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/

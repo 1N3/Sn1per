@@ -90,7 +90,6 @@ then
 	dnsrecon -d quora.com -t axfr
 	dnsenum $TARGET -f BruteX/wordlists/namelist.txt
 	mv -f *_ips.txt loot/ 2>/dev/null
-	shodan host $TARGET
 fi
 echo ""
 echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
@@ -211,7 +210,6 @@ else
 		goohak $TARGET > /dev/null
 		php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
 		rm -Rf output/ cookie.txt exploits.conf
-	
 	fi
 	
 	nmap -sV -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,http-phpmyadmin-dir-traversal $TARGET
