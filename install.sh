@@ -24,7 +24,7 @@ echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per insta
 read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install waffit host whois arachni theHarvester dnsenum dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
+apt-get install unicornscan waffit host whois arachni theHarvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
@@ -42,6 +42,7 @@ git clone https://github.com/1N3/MassBleed.git
 git clone https://github.com/1N3/SuperMicro-Password-Scanner
 git clone https://github.com/Dionach/CMSmap.git
 git clone https://github.com/0xsauby/yasuo.git
+git clone https://github.com/johndekroon/serializekiller.git
 
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 mkdir loot 2> /dev/null
@@ -69,6 +70,7 @@ ln -s $DIR/Findsploit/compilesploit /usr/bin/compilesploit
 ln -s $DIR/MassBleed/massbleed /usr/bin/massbleed
 ln -s $DIR/BruteX/brutex /usr/bin/brutex
 
+echo -e "$OKORANGE + -- --=[For universal sniper access, be sure to edit sniper to include the full path for the SNIPER_DIR variable. $RESET"
 echo -e "$OKORANGE + -- --=[Done!$RESET"
 
 # REMOVED BUT STILL AVAILABLE IF NEEDED

@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v1.5 by 1N3
+# + -- --=[Sn1per v1.6 by 1N3
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -13,15 +13,25 @@
 # - Automatically scans all web applications
 # - Automatically brute forces all open services
 # - Automatically runs targeted metasploit scan and exploit modules
+# - Automatically scan multiple hosts
 #
 # INSTALL:
 # ./install.sh - Installs all dependencies. Best run from Kali Linux. 
 #
 # USAGE:
-# ./sn1per <target>
+# ./sniper <target>
+# ./sniper <target> stealth <report>
+# ./sniper <target> port <portnum>
+# ./sniper <target> nobrute <report>
+# ./sniper <targets.txt> airstrike <report>
+# ./sniper <targets.txt> nuke <report>
 #
+# UNCOMMENT AND SET TARGET DIR FOR UNIVERSAL ACCESS (ie. sniper <target>)
+# cd /pentest/web/Sn1per/ 
 
 TARGET="$1"
+MODE="$2"
+OPT1="$3"
 LOOT_DIR="loot"
 CMSMAP="CMSmap/cmsmap.py"
 SAMRDUMP="bin/samrdump.py"
@@ -47,9 +57,159 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.5 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.6 by 1N3"
 	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>"
 	exit
+fi
+
+if [ "$MODE" = "report" ]; then
+	./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
+	exit
+fi
+
+if [ "$MODE" = "stealth" ]; then
+	if [ "$OPT1" = "report" ]; then
+		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		exit
+	fi
+	echo -e "$OKRED                ____               $RESET"
+	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+	echo -e "$OKRED               /_/                 $RESET"
+	echo -e "$RESET"
+	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
+	echo -e "$OKORANGE + -- --=[sn1per v1.6 by 1N3"
+	echo -e "$OKRED " 	
+	echo -e "$OKRED     ./\."
+	echo -e "$OKRED   ./    '\."
+	echo -e "$OKRED   \.       '\."
+	echo -e "$OKRED     '\.       '\."
+	echo -e "$OKRED        '\.       '\."
+	echo -e "$OKRED           '\.       '\."
+	echo -e "$OKRED           ./           '\."
+	echo -e "$OKRED         ./            ____'\."
+	echo -e "$OKRED       ./                  <  '\."
+	echo -e "$OKRED       \-------\            '>   '\."
+	echo -e "$OKRED         '\=====>        ___<       '\."
+	echo -e "$OKRED        ./-----/             __________'\."
+	echo -e "$OKRED "'       \.------\       _____   ___(_)(_\."\'
+	echo -e "$OKRED          '\=====>          <            ./'"
+	echo -e "$OKRED         ./-----/            '>        ./"
+	echo -e "$OKRED         \.               ___<       ./"
+	echo -e "$OKRED           '\.                     ./"
+	echo -e "$OKRED              '\.                ./"
+	echo -e "$OKRED                 '\.           ./"
+	echo -e "$OKRED                 ./          ./"
+	echo -e "$OKRED               ./          ./  Carl Pilcher"
+	echo -e "$OKRED             ./          ./"
+	echo -e "$OKRED           ./          ./"
+	echo -e "$OKRED         ./          ./"
+	echo -e "$OKRED         \.        ./"
+	echo -e "$OKRED           '\.   ./"
+	echo -e "$OKRED              '\/"
+	echo -e "$RESET"
+	echo -e "$OKGREEN + -- --=[Launching stealth scan: $TARGET $RESET"
+	echo -e "$OKGREEN $RESET"
+	unicornscan $TARGET 2> /dev/null
+	wafw00f http://$TARGET
+	whatweb http://$TARGET
+	xsstracer $TARGET 80
+	sslscan --no-failed $TARGET
+	exit
+fi
+
+if [ "$MODE" = "airstrike" ]; then
+	if [ "$OPT1" = "report" ]; then
+		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		exit
+	fi
+	echo -e "$OKRED                ____               $RESET"
+	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+	echo -e "$OKRED               /_/                 $RESET"
+	echo -e "$RESET"
+	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
+	echo -e "$OKORANGE + -- --=[sn1per v1.6 by 1N3"
+	echo -e "$OKRED                                         |"
+	echo -e "$OKRED                  |                      |"
+	echo -e "$OKRED                  |                    -/_\-"
+	echo -e "$OKRED                -/_\-   ______________(/ . \)______________"
+	echo -e "$OKRED   ____________(/ . \)_____________    \___/     <>"
+	echo -e "$OKRED   <>           \___/      <>    <>"
+	echo -e "$OKRED "
+	echo -e "$OKRED      ||"
+	echo -e "$OKRED      <>"
+	echo -e "$OKRED                            ||"
+	echo -e "$OKRED                            <>"
+	echo -e "$OKRED                                       ||"
+	echo -e "$OKRED                                       ||            BIG"
+	echo -e "$OKRED        _____               __         <>      (^)))^ BOOM!"
+	echo -e "$OKRED  BOOM!/((  )\       BOOM!((  )))            (     ( )"
+	echo -e "$OKRED ---- (__()__))          (() ) ))           (  (  (   )"
+	echo -e "$OKRED     ||  |||____|------    \  (/   ___     (__\     /__)"
+	echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
+	echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
+	echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
+	echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
+	echo -e "$OKRED __________________________________________________________"
+	echo -e "$OKRED Bomb raid (contributed by Michael aka SNOOPY@DRYCAS.CLUB.CC.CMU.EDU)"
+	echo -e "$RESET"
+	for a in `cat $TARGET`;
+	do 
+		echo -e "$OKGREEN + -- --=[Launching airstrike: $a $RESET"
+		unicornscan $a 2> /dev/null
+		wafw00f http://$a
+		whatweb http://$a
+		xsstracer $a 80
+		sslscan --no-failed $a
+	done;
+	exit
+fi
+
+if [ "$MODE" = "port" ]; then
+	echo -e "$OKRED                ____               $RESET"
+	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+	echo -e "$OKRED               /_/                 $RESET"
+	echo -e "$RESET"
+	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
+	echo -e "$OKORANGE + -- --=[sn1per v1.6 by 1N3"
+	echo -e "$RESET"
+	if [ -z "$OPT1" ]; then
+		echo -e "$OKRED + -- --=[Error: You need to enter a port number. $RESET"
+		exit
+	fi
+fi
+
+if [ "$MODE" = "nuke" ]; then
+	if [ "$OPT1" = "report" ]; then
+		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		exit
+	fi
+	for a in `cat $TARGET`; do
+		echo -e "$OKRED "
+		echo -e "$OKRED                              ____"
+		echo -e "$OKRED                      __,-~~/~    \`---."
+		echo -e "$OKRED                    _/_,---(      ,    )"
+		echo -e "$OKRED                __ /        <    /   )  \___"
+		echo -e "$OKRED - ------===;;;'====------------------===;;;===----- -  -"
+		echo -e "$OKRED                   \/  ~'~'~'~'~'~\~'~)~'/"
+		echo -e "$OKRED                   (_ (   \  (     >    \)"
+		echo -e "$OKRED                    \_( _ <         >_>'"
+		echo -e "$OKRED                       ~ \`-i' ::>|--\""
+		echo -e "$OKRED                           I;|.|.|"
+		echo -e "$OKRED                          <|i::|i|\`."
+		echo -e "$OKRED                        (\` ^''\`-' ')"
+		echo -e "$OKRED --------------------------------------------------------- $RESET"
+		echo -e "$OKGREEN + -- --=[WARNING! Nuking ALL target! $RESET"
+		./sniper $a
+	done
 fi
 
 REGEX='^[0-9]+$'
@@ -72,7 +232,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v1.5 by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v1.6 by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN################################### Running recon #################################$RESET"
 nslookup $TARGET
@@ -81,10 +241,10 @@ if [ $SCAN_TYPE == "DOMAIN" ];
 then
 	dig -x $TARGET
 	whois $TARGET
-	theharvester -d $TARGET -b google
-	theharvester -d $TARGET -b bing
-	theharvester -d $TARGET -b linkedin
-	theharvester -d $TARGET -b people123
+	theharvester -d $TARGET -b google 2> /dev/null 
+	theharvester -d $TARGET -b bing 2> /dev/null
+	theharvester -d $TARGET -b linkedin 2> /dev/null
+	theharvester -d $TARGET -b people123 2> /dev/null
 	dnsrecon -d $TARGET
 	dnsrecon -d $TARGET -t zonewalk
 	dnsrecon -d quora.com -t axfr
@@ -96,8 +256,13 @@ echo -e "$OKGREEN################################### Pinging host ##############
 ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN################################### Running port scan ##############################$RESET"
-nmap -sS -sV -T4 -A -O -p 1-65535 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
-nmap -sU -sV -T4 -A -O -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 --open $TARGET
+if [ -z "$OPT1" ]; then
+	nmap -sS -sV -T4 -A -O -p 1-65535 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	nmap -sU -sV -T4 -A -O -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 --open $TARGET
+else
+	nmap -sS -sV -T4 -A -O -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	nmap -sU -sV -T4 -A -O -p U:$OPT1 --open $TARGET
+fi
 echo ""
 echo -e "$OKGREEN################################### Running Intrusive Scans ########################$RESET"
 port_21=`grep 'portid="21"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
@@ -265,6 +430,7 @@ else
 	echo -e "$RESET"
 
 	nikto -h http://$TARGET 
+	dirb http://$TARGET
 	wpscan --url http://$TARGET --batch
 	python $CMSMAP -t http://$TARGET
 	arachni http://$TARGET --output-only-positives --scope-include-subdomains
@@ -399,6 +565,7 @@ else
 	echo ""
 	echo -e "$RESET"
 	nikto -h https://$TARGET 
+	dirb http://$TARGET
 	wpscan --url https://$TARGET --batch
 	python $CMSMAP -t https://$TARGET
 	arachni https://$TARGET --output-only-positives --scope-include-subdomains
@@ -648,15 +815,22 @@ else
 	$SUPER_MICRO_SCAN $TARGET
 fi
 
-echo -e "$OKGREEN################################### Running Brute Force #############################$RESET"
-cd yasuo
-ruby yasuo.rb -r $TARGET -b all
-cd ../BruteX
-./brutex $TARGET
-rm -f hydra.restore
-mv loot/* ../loot/
-cd ..
-echo ""
-rm -f scan.log
+echo -e "$OKGREEN################################### Launching 3rd Party Modules ########################$RESET"
+python serializekiller/serializekiller.py --url $TARGET
+
+if [ "$MODE" = "nobrute" ]; then
+	echo -e "$OKGREEN################################### Skipping Brute Force ############################$RESET"
+else
+	echo -e "$OKGREEN################################### Running Brute Force #############################$RESET"
+	cd yasuo
+	ruby yasuo.rb -r $TARGET -b all
+	cd ../BruteX
+	./brutex $TARGET
+	rm -f hydra.restore
+	mv loot/* ../loot/
+	cd ..
+	echo ""
+	rm -f scan.log
+fi
 echo -e "$OKGREEN################################### Done! ###########################################$RESET"
 exit 0
