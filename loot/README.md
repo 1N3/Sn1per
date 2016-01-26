@@ -22,7 +22,7 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 
 ## USAGE:
 ```
-# ./sniper <target> report
+# ./sniper <target> <report>
 # ./sniper <target> stealth <report>
 # ./sniper <target> port <portnum> 
 # ./sniper <target> nobrute <report>
@@ -31,10 +31,10 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 ```
 
 ### MODES:
-* REPORT MODE: Outputs all results to text in the loot directory for later reference. To enable reporting, append 'report' to any sniper mode or command.
-* STEALTH MODE: Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking
-* PORT MODE: Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
-* NOBRUTE MODE: Launches a full scan against a target host/domain without brute forcing services.
+* REPORT: Outputs all results to text in the loot directory for later reference. To enable reporting, append 'report' to any sniper mode or command.
+* STEALTH: Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking
+* PORT: Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
+* NOBRUTE: Launches a full scan against a target host/domain without brute forcing services.
 * AIRSTRIKE: Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IP's that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.
 * NUKE: Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke. 
 
