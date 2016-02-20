@@ -132,10 +132,7 @@ if [ "$MODE" = "stealth" ]; then
 	then
 		dig -x $TARGET
 		whois $TARGET
-		theharvester -d $TARGET -b google 2> /dev/null 
-		theharvester -d $TARGET -b bing 2> /dev/null
-		theharvester -d $TARGET -b linkedin 2> /dev/null
-		theharvester -d $TARGET -b people123 2> /dev/null
+		theharvester -d $TARGET -l 200 -b all -v -n -t 2> /dev/null
 		dnsrecon -d $TARGET
 		dnsrecon -d $TARGET -t zonewalk
 		dnsrecon -d $TARGET -t axfr
@@ -200,10 +197,7 @@ if [ "$MODE" = "airstrike" ]; then
 		then
 			dig -x $a
 			whois $a
-			theharvester -d $a -b google 2> /dev/null 
-			theharvester -d $a-b bing 2> /dev/null
-			theharvester -d $a -b linkedin 2> /dev/null
-			theharvester -d $a -b people123 2> /dev/null
+			theharvester -d $TARGET -l 200 -b all -v -n -t 2> /dev/null
 			dnsrecon -d $a
 			dnsrecon -d $a -t zonewalk
 			dnsrecon -d $a -t axfr
@@ -280,10 +274,7 @@ if [ $SCAN_TYPE == "DOMAIN" ];
 then
 	dig -x $TARGET
 	whois $TARGET
-	theharvester -d $TARGET -b google 2> /dev/null 
-	theharvester -d $TARGET -b bing 2> /dev/null
-	theharvester -d $TARGET -b linkedin 2> /dev/null
-	theharvester -d $TARGET -b people123 2> /dev/null
+	theharvester -d $TARGET -l 200 -b all -v -n -t 2> /dev/null
 	dnsrecon -d $TARGET
 	dnsrecon -d $TARGET -t zonewalk
 	dnsrecon -d $TARGET -t axfr
