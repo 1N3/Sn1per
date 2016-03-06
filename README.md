@@ -46,6 +46,8 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.6b - Added Sublist3r sub-domain brute tool
+* v1.6b - Added cutycapt web screenshot util
 * v1.6a - Added improvements to recon phase
 * v1.6a - Fixed small issue with 3rd party extension
 * v1.6a - Various improvements to overall optimization of scans
