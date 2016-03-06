@@ -24,14 +24,14 @@ echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per insta
 read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install unicornscan waffit host whois arachni theHarvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
+apt-get install cutycapt unicornscan waffit host whois arachni theHarvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
 gem install ruby-nmap net-http-persistent mechanize text-table
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
-rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/
+rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/
 
 echo -e "$OKORANGE + -- --=[Downloading extensions...$RESET"
 git clone https://github.com/1N3/Findsploit.git
@@ -43,6 +43,7 @@ git clone https://github.com/1N3/SuperMicro-Password-Scanner
 git clone https://github.com/Dionach/CMSmap.git
 git clone https://github.com/0xsauby/yasuo.git
 git clone https://github.com/johndekroon/serializekiller.git
+git clone https://github.com/aboul3la/Sublist3r.git
 
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 mkdir loot 2> /dev/null

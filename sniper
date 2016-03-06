@@ -138,6 +138,7 @@ if [ "$MODE" = "stealth" ]; then
 		dnsrecon -d $TARGET -t axfr
 		dnsenum $TARGET -f BruteX/wordlists/namelist.txt
 		mv -f *_ips.txt loot/ 2>/dev/null
+		python Sublist3r/sublist3r.py -d $TARGET -b -t 30 2>/dev/null
 	fi
 	echo ""
 	echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
@@ -146,6 +147,7 @@ if [ "$MODE" = "stealth" ]; then
 	whatweb http://$TARGET
 	xsstracer $TARGET 80
 	sslscan --no-failed $TARGET
+	cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
 	exit
 fi
 
@@ -203,6 +205,7 @@ if [ "$MODE" = "airstrike" ]; then
 			dnsrecon -d $a -t axfr
 			dnsenum $a -f BruteX/wordlists/namelist.txt
 			mv -f *_ips.txt loot/ 2>/dev/null
+			python Sublist3r/sublist3r.py -d $TARGET -b -t 30 2>/dev/null
 		fi
 		echo ""
 		echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
@@ -211,6 +214,7 @@ if [ "$MODE" = "airstrike" ]; then
 		whatweb http://$a
 		xsstracer $a 80
 		sslscan --no-failed $a
+		cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
 	done;
 	exit
 fi
@@ -280,6 +284,7 @@ then
 	dnsrecon -d $TARGET -t axfr
 	dnsenum $TARGET -f BruteX/wordlists/namelist.txt
 	mv -f *_ips.txt loot/ 2>/dev/null
+	python Sublist3r/sublist3r.py -d $TARGET -b -t 30 2>/dev/null
 fi
 echo ""
 echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
@@ -460,6 +465,7 @@ else
 	echo -e "$RESET"
 
 	nikto -h http://$TARGET 
+	cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
 	
 	if [ "$MODE" = "web" ]
 	then
@@ -601,6 +607,7 @@ else
 	echo ""
 	echo -e "$RESET"
 	nikto -h https://$TARGET 
+	cutycapt --url=https://$TARGET --out=loot/$TARGET-port443.jpg
 	
 	if [ "$MODE" = "web" ]
 	then
@@ -761,6 +768,7 @@ else
 	./massbleed $TARGET port 8000
 	cd ..
 	nikto -h http://$TARGET:8000 
+	cutycapt --url=http://$TARGET:8000 --out=loot/$TARGET-port8000.jpg
 	#arachni http://$TARGET:8000 --output-only-positives
 fi
 
@@ -779,6 +787,7 @@ else
 	./massbleed $TARGET port 8100
 	cd ..
 	nikto -h http://$TARGET:8100 
+	cutycapt --url=http://$TARGET:8100 --out=loot/$TARGET-port8100.jpg
 	#arachni http://$TARGET:8100 --output-only-positives
 fi
 
@@ -797,6 +806,7 @@ else
 	./massbleed $TARGET port 8080
 	cd ..
 	nikto -h http://$TARGET:8080 
+	cutycapt --url=http://$TARGET:8080 --out=loot/$TARGET-port8080.jpg
 	nmap -p 8080 --script=*proxy* $TARGET
 	#arachni http://$TARGET:8080 --output-only-positives
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
@@ -817,6 +827,7 @@ else
 	./massbleed $TARGET port 8180
 	cd ..
 	nikto -h http://$TARGET:8180 
+	cutycapt --url=http://$TARGET:8180 --out=loot/$TARGET-port8180.jpg
 	nmap -p 8180 --script=*proxy* $TARGET
 	#arachni http://$TARGET:8180 --output-only-positives
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8180; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
@@ -837,6 +848,7 @@ else
 	./massbleed $TARGET port 8443
 	cd ..
 	nikto -h https://$TARGET:8443 
+	cutycapt --url=https://$TARGET:8443 --out=loot/$TARGET-port8443.jpg
 	nmap -p 8443 --script=*proxy* $TARGET
 	#arachni https://$TARGET:8443 --output-only-positives
 fi

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE nmaprun>
-<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.01 scan initiated Sat Feb 20 08:18:44 2016 as: nmap -sS -sV -T4 -A -O -p 1-65535 -&#45;open -oX loot/nmap-crowdshield.com.xml crowdshield.com -->
-<nmaprun scanner="nmap" args="nmap -sS -sV -T4 -A -O -p 1-65535 -&#45;open -oX loot/nmap-crowdshield.com.xml crowdshield.com" start="1455974324" startstr="Sat Feb 20 08:18:44 2016" version="7.01" xmloutputversion="1.04">
-<scaninfo type="syn" protocol="tcp" numservices="65535" services="1-65535"/>
