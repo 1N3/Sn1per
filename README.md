@@ -25,7 +25,7 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 # ./sniper <target> <report>
 # ./sniper <target> stealth <report>
 # ./sniper <target> port <portnum> 
-# ./sniper <target> web
+# ./sniper <target> web <report>
 # ./sniper <target> nobrute <report>
 # ./sniper <targets.txt> airstrike <report>
 # ./sniper <targets.txt> nuke <report>
@@ -46,6 +46,9 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.6c - Add report mode for web scans
+* v1.6c - Fixed issues with Sublist3r and theharvester
+* v1.6c - Added Shocker Shellshock exploitation scanner
 * v1.6b - Added Sublist3r sub-domain brute tool
 * v1.6b - Added cutycapt web screenshot util
 * v1.6a - Added improvements to recon phase
@@ -91,5 +94,4 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 * v1.4 - Removed debug output from goohak from displaying on console
 
 ## FUTURE:
-* Add in OpenVAS integration
 * Look into HTML reporting options
