@@ -13,7 +13,9 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 * Automatically runs targeted Metasploit scan and exploit modules
 * Automatically scans all web applications for common vulnerabilities
 * Automatically brute forces all open services
+* Automatically exploit remote hosts to gain remote shell access
 * Performs high level enumeration of multiple hosts
+* Auto-pwn added for Metasploitable, ShellShock, MS08-067, Default Tomcat Creds
 
 ## INSTALL:
 ```
@@ -46,6 +48,10 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.6d - Added xprobe2 OS finger printing tool
+* v1.6d - Added jexbos JBoss autopwn
+* v1.6d - Merged fix for theharvester package (CC. @RubenRocha)
+* v1.6d - Merged fix for SuperMicroScanner (CC. @mero01)
 * v1.6c - Add report mode for web scans
 * v1.6c - Fixed issues with Sublist3r and theharvester
 * v1.6c - Added Shocker Shellshock exploitation scanner

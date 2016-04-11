@@ -24,7 +24,7 @@ echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per insta
 read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install cutycapt unicornscan waffit host whois arachni theHarvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
+apt-get install xprobe2 cutycapt unicornscan waffit host whois arachni theharvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
@@ -45,6 +45,7 @@ git clone https://github.com/0xsauby/yasuo.git
 git clone https://github.com/johndekroon/serializekiller.git
 git clone https://github.com/aboul3la/Sublist3r.git
 git clone https://github.com/nccgroup/shocker.git
+git clone https://github.com/joaomatosf/jexboss.git
 
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 mkdir loot 2> /dev/null
@@ -55,6 +56,7 @@ chmod +x $DIR/XSSTracer/xsstracer.py
 chmod +x $DIR/MassBleed/massbleed
 chmod +x $DIR/MassBleed/heartbleed.py
 chmod +x $DIR/MassBleed/openssl_ccs.pl
+chmod +x $DIR/SuperMicro-Password-Scanner/supermicro_scan.sh
 rm -f /usr/bin/sniper
 rm -f /usr/bin/goohak
 rm -f /usr/bin/xsstracer
