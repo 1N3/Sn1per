@@ -74,9 +74,10 @@ ln -s $DIR/Findsploit/compilesploit /usr/bin/compilesploit
 ln -s $DIR/MassBleed/massbleed /usr/bin/massbleed
 ln -s $DIR/BruteX/brutex /usr/bin/brutex
 
+# REMOVED BUT STILL AVAILABLE IF NEEDED
+# echo -e "$OKGREEN + -- --=[Be sure to install the following packages manually and update the sniper script references: dig dnsdict6 cmsmap samrdump inurlbr wafw00f showmount samrdump rpcinfo snmpwalk$RESET"
+
 echo -e "$OKORANGE + -- --=[For universal sniper access, be sure to edit sniper to include the full path for the SNIPER_DIR variable. $RESET"
 echo -e "$OKORANGE + -- --=[Done!$RESET"
 
-# REMOVED BUT STILL AVAILABLE IF NEEDED
-# echo -e "$OKGREEN + -- --=[Be sure to install the following packages manually and update the sniper script references: dig dnsdict6 cmsmap samrdump inurlbr wafw00f showmount samrdump rpcinfo snmpwalk$RESET"
 
