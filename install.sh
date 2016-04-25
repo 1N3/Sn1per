@@ -31,7 +31,7 @@ gem install rake
 gem install ruby-nmap net-http-persistent mechanize text-table
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
-rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/
+rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/ jexboss/ CrackMapExec/
 
 echo -e "$OKORANGE + -- --=[Downloading extensions...$RESET"
 git clone https://github.com/1N3/Findsploit.git
@@ -46,6 +46,7 @@ git clone https://github.com/johndekroon/serializekiller.git
 git clone https://github.com/aboul3la/Sublist3r.git
 git clone https://github.com/nccgroup/shocker.git
 git clone https://github.com/joaomatosf/jexboss.git
+git clone https://github.com/byt3bl33d3r/CrackMapExec.git
 
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 mkdir loot 2> /dev/null

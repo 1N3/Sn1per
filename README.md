@@ -48,6 +48,8 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.6e - Added reporting option for nobrute mode (CC. @mero01)
+* v1.6e - Improved SMB scan performance/optimization added
 * v1.6d - Improved NMap scan performance options
 * v1.6d - Added xprobe2 OS finger printing tool
 * v1.6d - Added jexbos JBoss autopwn

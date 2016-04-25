@@ -29,7 +29,7 @@
 # ./sniper <targets.txt> nuke <report>
 #
 # UNCOMMENT AND SET TARGET DIR FOR UNIVERSAL ACCESS (ie. sniper <target>)
-# cd /pentest/web/Sn1per/ 
+#cd /pentest/web/Sn1per/ 
 
 clear
 
@@ -89,9 +89,15 @@ if [ "$MODE" = "web" ]; then
 	fi
 fi
 
+if [ "$MODE" = "nobrute" ]; then
+	if [ "$OPT1" = "report" ]; then
+		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+	fi
+fi
+
 if [ "$MODE" = "stealth" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
 		exit
 	fi
 	echo -e "$OKRED                ____               $RESET"
@@ -151,7 +157,7 @@ if [ "$MODE" = "stealth" ]; then
 	fi
 	echo ""
 	echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
-	unicornscan $TARGET 2> /dev/null
+	unicornscan $TARGET:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 2> /dev/null
 	xprobe2 $TARGET
 	wafw00f http://$TARGET
 	whatweb http://$TARGET
@@ -207,45 +213,42 @@ if [ "$MODE" = "airstrike" ]; then
 		echo -e "$OKGREEN################################### Running recon #################################$RESET"
 		nslookup $a
 		host $a
+		
+		if [[ ${a:0:1} =~ $REGEX ]]; 
+		then 
+			SCAN_TYPE="IP"
+		else 
+			SCAN_TYPE="DOMAIN"
+		fi
+		
 		if [ $SCAN_TYPE == "DOMAIN" ];
 		then
 			dig -x $a
 			whois $a
-			theharvester -d $TARGET -l 200 -b all -v -t 2> /dev/null
+			theharvester -d $a -l 200 -b all -v -t 2> /dev/null
 			dnsrecon -d $a
 			dnsrecon -d $a -t zonewalk
 			dnsrecon -d $a -t axfr
 			dnsenum $a -f BruteX/wordlists/namelist.txt
 			mv -f *_ips.txt loot/ 2>/dev/null
-			python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
+			python Sublist3r/sublist3r.py -d $a -vvv 2>/dev/null
 		fi
 		echo ""
 		echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
-		unicornscan $a 2> /dev/null
-		xprobe2 $TARGET
+		unicornscan $a:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 2> /dev/null
+		xprobe2 $a
 		wafw00f http://$a
 		whatweb http://$a
 		xsstracer $a 80
 		sslscan --no-failed $a
-		cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
+		cutycapt --url=http://$a --out=loot/$a-port80.jpg
 		echo -e "$OKGREEN################################### Done! #########################################$RESET"
 		clear
-		exit
 	done;
 	exit
 fi
 
 if [ "$MODE" = "port" ]; then
-	echo -e "$OKRED                ____               $RESET"
-	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
-	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
-	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
-	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
-	echo -e "$OKRED               /_/                 $RESET"
-	echo -e "$RESET"
-	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.6 by 1N3"
-	echo -e "$RESET"
 	if [ -z "$OPT1" ]; then
 		echo -e "$OKRED + -- --=[Error: You need to enter a port number. $RESET"
 		exit
@@ -308,15 +311,17 @@ echo ""
 echo -e "$OKGREEN################################### Pinging host ###################################$RESET"
 ping -c 1 $TARGET
 echo ""
-echo -e "$OKGREEN################################### Running port scan ##############################$RESET"
+echo -e "$OKGREEN################################### Running TCP port scan ##########################$RESET"
 if [ -z "$OPT1" ]; then
-	nmap -sV -T5 -A --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
-	nmap -sU -sV -T5 -A -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 --open $TARGET
+	nmap -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	echo -e "$OKGREEN################################### Running UDP port scan ##########################$RESET"
+	nmap -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 elif [ "$OPT1" == "web" ]; then
-	nmap -sV -T5 -A -p 80,443 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	nmap -sV -T5 -p 80,443 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 else
-	nmap -sV -T5 -A -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
-	nmap -sU -sV -T5 -A -p U:$OPT1 --open $TARGET
+	nmap -T5 -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	echo -e "$OKGREEN################################### Running UDP port scan ##########################$RESET"
+	nmap -sU -T5 -p U:$OPT1 --open $TARGET
 fi
 echo ""
 echo -e "$OKGREEN################################### Running Intrusive Scans ########################$RESET"
@@ -533,6 +538,7 @@ then
 	echo -e "$OKRED+ -- --=[Port 139 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 139 opened... running tests...$RESET"
+	SMB="1"
 	enum4linux $TARGET
 	python $SAMRDUMP $TARGET
 	nbtscan $TARGET
@@ -647,6 +653,9 @@ fi
 if [ -z "$port_445" ]
 then
 	echo -e "$OKRED+ -- --=[Port 445 closed... skipping.$RESET"
+elif [ $SMB = "1" ]
+then
+	echo -e "$OKRED+ -- --=[Port 445 scanned... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 445 opened... running tests...$RESET"
 	enum4linux $TARGET
