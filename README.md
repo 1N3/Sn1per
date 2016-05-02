@@ -48,6 +48,10 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.7 - Improved web scan performance
+* v1.7 - Fixed issue with inurlbr output
+* v1.7 - Added remote desktop viewing for RDP connections
+* v1.7 - Added experimental Metasploit exploit for Apache Struts RCE (CVE-2016-3081)
 * v1.6e - Added reporting option for nobrute mode (CC. @mero01)
 * v1.6e - Improved SMB scan performance/optimization added
 * v1.6d - Improved NMap scan performance options

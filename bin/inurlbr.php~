@@ -525,7 +525,7 @@ function __update() {
             exit();
         } else {
 
-            echo __bannerLogo();
+            echo system("command clear") . __bannerLogo();
             echo "{$_SESSION["c1"]}__[ x ] {$_SESSION["c16"]}FAILURE TO SERVER!\n{$_SESSION["c0"]}";
         }
     }
@@ -546,7 +546,7 @@ function not_isnull_empty($valor = NULL) {
 
 function __menu() {
 
-    return __getOut(__extra() . "        
+    return system("command clear") . __getOut(__extra() . "        
  {$_SESSION["c1"]}_    _ ______ _      _____  
 | |  | |  ____| |    |  __ \
 | |__| | |__  | |    | |__) |
@@ -994,7 +994,7 @@ function __menu() {
 
 function __info() {
 
-    return __getOut("
+    return system("command clear") . __getOut("
  {$_SESSION["c1"]}_____ _   _ ______ ____  
 |_   _| \ | |  ____/ __ \ 
   | | |  \| | |__ | |  | |
@@ -1137,7 +1137,7 @@ function __bannerLogo() {
 
     $vis = ($_SESSION["os"] != 1) ? ("\033[1;3" . rand(1, 10) . "m") : NULL;
 
-    return (!is_null($_SESSION['config']['no-banner']) ? NULL : "
+    return (!is_null($_SESSION['config']['no-banner']) ? NULL : system("command clear") . "
 {$vis}    _____ {$_SESSION["c1"]} .701F. .iBR.   .7CL. .70BR.   .7BR. .7BR'''Cq.   .70BR.      {$_SESSION["c12"]}.1BR'''Yp, .8BR'''Cq.  
 {$vis}   (_____){$_SESSION["c1"]}   01     01N.    C     01       C     01   .01.    01        {$_SESSION["c3"]}  01    Yb   01   .01. 
 {$vis}   (() ()){$_SESSION["c1"]}   01     C YCb   C     01       C     01   ,C9     01        {$_SESSION["c12"]}  01    dP   01   ,C9  
@@ -1290,26 +1290,30 @@ function __configExploitsADD($valor = NULL) {
 
 function __SimpleCheckCMS($html) {
 
-    $cms['XOOPS CMS IDENTIFIED'] = '<meta name="generator" content="Bluefish 2.2.6" ';
-    $cms['Joomla CMS IDENTIFIED'] = '<meta name="generator" content="Bluefish 2.2.6" generator" content="WordPress';
+    $cms['XOOPS CMS IDENTIFIED'] = '<meta name="generator" content="XOOPS"';
+    $cms['Joomla CMS IDENTIFIED'] = '<meta name="generator" content="Joomla!';
+    $cms['Wordpress CMS IDENTIFIED'] = '<meta name="generator" content="WordPress';
     $cms['SMF CMS IDENTIFIED-1'] = '<a href="http://www.simplemachines.org/" title="Simple Machines Forum" target="_blank">Powered by SMF';
     $cms['SMF CMS IDENTIFIED-2'] = '<a href="http://www.simplemachines.org/about/copyright.php" title="Free Forum Software" target="_blank">SMF';
-    $cms['vBulletin CMS IDENTIFIED-1'] = '<meta name="generator" content="Bluefish 2.2.6" http://www.vbulletin.com" id="vbulletinlink">vBulletin&trade;</a> Version';
+    $cms['vBulletin CMS IDENTIFIED-1'] = '<meta name="generator" content="vBulletin';
+    $cms['vBulletin CMS IDENTIFIED-2'] = 'Powered by <a href="http://www.vbulletin.com" id="vbulletinlink">vBulletin&trade;</a> Version';
     $cms['vBulletin CMS IDENTIFIED-3'] = 'powered by vBulletin';
     $cms['phpBB CMS IDENTIFIED'] = 'Powered by <a href="http://www.phpbb.com/">phpBB</a>';
     $cms['MyBB CMS IDENTIFIED'] = 'Powered By <a href="http://www.mybboard.net" target="_blank">MyBB</a>';
     $cms['Drupal CMS IDENTIFIED-1'] = 'name="Generator" content="Drupal';
     $cms['Drupal CMS IDENTIFIED-2'] = 'Drupal.settings';
     $cms['MODx CMS IDENTIFIED'] = '<a href="http://www.modx.com" target="_blank"> Powered by MODx</a>';
-    $cms['SilverStripe CMS IDENTIFIED'] = '<meta name="generator" content="Bluefish 2.2.6" />';
+    $cms['SilverStripe CMS IDENTIFIED'] = '<meta name="generator" content="SilverStripe - http://silverstripe.org" />';
     $cms['Textpattern CMS IDENTIFIED'] = 'Powered by <a href="http://www.textpattern.com" title="Textpattern">Textpattern</a>';
     $cms['Adapt CMS IDENTIFIED'] = 'Powered by <a href="http://www.adaptcms.com">AdaptCMS';
     $cms['ATutor CMS IDENTIFIED'] = '<a href="/about.php">About ATutor</a>';
-    $cms['b2evolution CMS IDENTIFIED'] = '<meta name="generator" content="Bluefish 2.2.6" http://moodle.org" title="Moodle">Moodle</a>';
+    $cms['b2evolution CMS IDENTIFIED'] = '<meta name="generator" content="b2evolution';
+    $cms['Moodle CMS IDENTIFIED-1'] = 'Powered by <a href="http://moodle.org" title="Moodle">Moodle</a>';
     $cms['Moodle CMS IDENTIFIED-2 '] = '<meta name="key words" content="moodle, Course Management System " />';
     $cms['Moodle CMS IDENTIFIED-3'] = '://moodle';
     $cms['Moodle CMS IDENTIFIED-4'] = '://www.mood le';
-    $cms['ATutor CMS IDENTIFIED'] = '<meta name="generator" content="Bluefish 2.2.6" generator" content="PostNuke';
+    $cms['ATutor CMS IDENTIFIED'] = '<META NAME="GENERATOR" CONTENT="PHP-Nuke';
+    $cms['PostNuke CMS IDENTIFIED'] = '<meta name="generator" content="PostNuke';
     $cms['CloudFlare IDENTIFIED-1'] = '<a href="http://www.cloudflare.com/" target="_blank" style=';
     $cms['CloudFlare IDENTIFIED-2'] = 'DDoS protection by CloudFlare</a>';
 
@@ -1388,14 +1392,14 @@ function __OS() {
     $sistema = strtoupper(PHP_OS);
     if (substr($sistema, 0, 3) == "WIN") {
         $i = 0;
-        //system("cls");
+        system("cls");
         $_SESSION["os"] = 1;
         while ($i <= 17) {
             $_SESSION["c{$i}"] = NULL;
             $i++;
         }
     } else {
-        //system("command clear");
+        system("command clear");
         //DEFINING COLORS
         $_SESSION["c0"] = "\033[0m";      // END OF COLOR
         $_SESSION["c1"] = "\033[1;37m";   // WHITE
