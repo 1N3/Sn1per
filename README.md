@@ -48,6 +48,7 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.7b - Improved passive recon performance
 * v1.7a - Improved NMap http scan performance
 * v1.7a - Removed joomscan due to verbosity issues
 * v1.7 - Added uniscan web vulnerability scanner
@@ -111,4 +112,5 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 * v1.4 - Removed debug output from goohak from displaying on console
 
 ## FUTURE:
-* Look into HTML reporting options
+* Add install.sh for Ubuntu based systems
+* Add install path to install.sh for universal access

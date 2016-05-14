@@ -141,24 +141,22 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKGREEN + -- --=[Launching stealth scan: $TARGET $RESET"
 	echo -e "$OKGREEN $RESET"
 	echo -e "$OKGREEN################################### Running recon #################################$RESET"
+	echo -e "$OKGREEN+ -- --=[Running nslookup...$RESET"
 	nslookup $TARGET
+	echo -e "$OKGREEN+ -- --=[Running host lookup...$RESET"
 	host $TARGET
 	if [ $SCAN_TYPE == "DOMAIN" ];
 	then
 		dig -x $TARGET
 		whois $TARGET
-		theharvester -d $TARGET -l 200 -b all -v -t 2> /dev/null
-		dnsrecon -d $TARGET
-		dnsrecon -d $TARGET -t zonewalk
-		dnsrecon -d $TARGET -t axfr
-		dnsenum $TARGET -f BruteX/wordlists/namelist.txt
+		theharvester -d $TARGET -l 100 -b all 2> /dev/null
+		dnsenum $TARGET
 		mv -f *_ips.txt loot/ 2>/dev/null
 		python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
 	fi
 	echo ""
 	echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
 	unicornscan $TARGET:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 2> /dev/null
-	xprobe2 $TARGET
 	wafw00f http://$TARGET
 	whatweb http://$TARGET
 	xsstracer $TARGET 80
@@ -225,11 +223,8 @@ if [ "$MODE" = "airstrike" ]; then
 		then
 			dig -x $a
 			whois $a
-			theharvester -d $a -l 200 -b all -v -t 2> /dev/null
-			dnsrecon -d $a
-			dnsrecon -d $a -t zonewalk
-			dnsrecon -d $a -t axfr
-			dnsenum $a -f BruteX/wordlists/namelist.txt
+			theharvester -d $a -l 100 -b all 2> /dev/null
+			dnsenum $a
 			mv -f *_ips.txt loot/ 2>/dev/null
 			python Sublist3r/sublist3r.py -d $a -vvv 2>/dev/null
 		fi
@@ -299,11 +294,8 @@ if [ $SCAN_TYPE == "DOMAIN" ];
 then
 	dig -x $TARGET
 	whois $TARGET
-	theharvester -d $TARGET -l 200 -b all -v -t 2> /dev/null
-	dnsrecon -d $TARGET
-	dnsrecon -d $TARGET -t zonewalk
-	dnsrecon -d $TARGET -t axfr
-	dnsenum $TARGET -f BruteX/wordlists/namelist.txt
+	theharvester -d $TARGET -l 100 -b all 2> /dev/null
+	dnsenum $TARGET
 	mv -f *_ips.txt loot/ 2>/dev/null
 	python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
 fi
@@ -324,7 +316,7 @@ else
 	nmap -sU -T5 -p U:$OPT1 --open $TARGET
 fi
 
-service postgresql start 2> /dev/null
+service postgresql start
 
 echo ""
 echo -e "$OKGREEN################################### Running Intrusive Scans ########################$RESET"
