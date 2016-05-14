@@ -48,6 +48,7 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.7b - Fixed issue with airstrike mode not scanning correctly
 * v1.7b - Improved passive recon performance
 * v1.7a - Improved NMap http scan performance
 * v1.7a - Removed joomscan due to verbosity issues

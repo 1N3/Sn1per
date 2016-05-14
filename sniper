@@ -29,7 +29,7 @@
 # ./sniper <targets.txt> nuke <report>
 #
 # UNCOMMENT AND SET TARGET DIR FOR UNIVERSAL ACCESS (ie. sniper <target>)
-#cd /pentest/web/Sn1per/ 
+# cd /pentest/web/Sn1per/ 
 
 clear
 
@@ -141,9 +141,7 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKGREEN + -- --=[Launching stealth scan: $TARGET $RESET"
 	echo -e "$OKGREEN $RESET"
 	echo -e "$OKGREEN################################### Running recon #################################$RESET"
-	echo -e "$OKGREEN+ -- --=[Running nslookup...$RESET"
 	nslookup $TARGET
-	echo -e "$OKGREEN+ -- --=[Running host lookup...$RESET"
 	host $TARGET
 	if [ $SCAN_TYPE == "DOMAIN" ];
 	then
@@ -155,7 +153,7 @@ if [ "$MODE" = "stealth" ]; then
 		python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
 	fi
 	echo ""
-	echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
+	echo -e "$OKGREEN################################### Running active scans #########################$RESET"
 	unicornscan $TARGET:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 2> /dev/null
 	wafw00f http://$TARGET
 	whatweb http://$TARGET
@@ -163,7 +161,6 @@ if [ "$MODE" = "stealth" ]; then
 	sslscan --no-failed $TARGET
 	cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
 	echo -e "$OKGREEN################################### Done! #########################################$RESET"
-	clear
 	exit
 fi
 
@@ -229,7 +226,7 @@ if [ "$MODE" = "airstrike" ]; then
 			python Sublist3r/sublist3r.py -d $a -vvv 2>/dev/null
 		fi
 		echo ""
-		echo -e "$OKGREEN################################### Running passive scans #########################$RESET"
+		echo -e "$OKGREEN################################### Running active scans #########################$RESET"
 		unicornscan $a:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 2> /dev/null
 		xprobe2 $a
 		wafw00f http://$a
@@ -238,6 +235,21 @@ if [ "$MODE" = "airstrike" ]; then
 		sslscan --no-failed $a
 		cutycapt --url=http://$a --out=loot/$a-port80.jpg
 		echo -e "$OKGREEN################################### Done! #########################################$RESET"
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
 		clear
 	done;
 	exit
