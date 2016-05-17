@@ -27,6 +27,7 @@
 # ./sniper <target> nobrute <report>
 # ./sniper <targets.txt> airstrike <report>
 # ./sniper <targets.txt> nuke <report>
+# ./sniper loot
 #
 # UNCOMMENT AND SET TARGET DIR FOR UNIVERSAL ACCESS (ie. sniper <target>)
 # cd /pentest/web/Sn1per/ 
@@ -61,10 +62,10 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
 	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 	echo -e "$OKRED               /_/                 $RESET"
-	echo -e "$RESET"
-	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.7 by 1N3"
-	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>"
+	echo -e ""
+	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
+	echo -e "$OKORANGE + -- --=[sn1per v1.7 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>$RESET"
 	exit
 fi
 
@@ -79,6 +80,35 @@ clear
 
 if [ "$MODE" = "report" ]; then
 	./sniper $TARGET | tee ./loot/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
+	exit
+fi
+
+if [ "$TARGET" = "loot" ]; then
+	echo -e "$OKRED                ____               $RESET"
+	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+	echo -e "$OKRED               /_/                 $RESET"
+	echo -e ""
+	cd $PWD/loot/
+	echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
+	mkdir reports/ -p 2> /dev/null
+	echo -e "$OKORANGE + -- --=[Generating reports..."
+	for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
+	mv $PWD/report-* $PWD/reports/ 2> /dev/null
+	mkdir $PWD/screenshots/ -p 2> /dev/null
+	mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
+	mkdir $PWD/nmap -p 2> /dev/null
+	mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
+	mkdir $PWD/domains -p 2> /dev/null
+	mv $PWD/domains-* $PWD/domains/ 2> /dev/null
+	mkdir $PWD/output -p 2> /dev/null
+	mv $PWD/sniper-* $PWD/output 2> /dev/null
+	rm -f $PWD/.fuse_* 2> /dev/null
+	echo -e "$OKORANGE + -- --=[Opening loot directory..."
+	iceweasel $PWD 2&> /dev/null &
+	echo -e "$OKORANGE + -- --=[Done!"
 	exit
 fi
 
@@ -97,7 +127,7 @@ fi
 
 if [ "$MODE" = "stealth" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1 
 		exit
 	fi
 	echo -e "$OKRED                ____               $RESET"
@@ -138,7 +168,7 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKRED           '\.   ./"
 	echo -e "$OKRED              '\/"
 	echo -e "$RESET"
-	echo -e "$OKGREEN + -- --=[Launching stealth scan: $TARGET $RESET"
+	echo -e "$OKORANGE + -- --=[Launching stealth scan: $TARGET $RESET"
 	echo -e "$OKGREEN $RESET"
 	echo -e "$OKGREEN################################### Running recon #################################$RESET"
 	nslookup $TARGET
@@ -154,7 +184,7 @@ if [ "$MODE" = "stealth" ]; then
 	fi
 	echo ""
 	echo -e "$OKGREEN################################### Running active scans #########################$RESET"
-	unicornscan $TARGET:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 2> /dev/null
+	unicornscan $TARGET:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 2> /dev/null
 	wafw00f http://$TARGET
 	whatweb http://$TARGET
 	xsstracer $TARGET 80
@@ -178,33 +208,34 @@ if [ "$MODE" = "airstrike" ]; then
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
 	echo -e "$OKORANGE + -- --=[sn1per v1.7 by 1N3"
-	echo -e "$OKRED                                         |"
-	echo -e "$OKRED                  |                      |"
-	echo -e "$OKRED                  |                    -/_\-"
-	echo -e "$OKRED                -/_\-   ______________(/ . \)______________"
-	echo -e "$OKRED   ____________(/ . \)_____________    \___/     <>"
-	echo -e "$OKRED   <>           \___/      <>    <>"
-	echo -e "$OKRED "
-	echo -e "$OKRED      ||"
-	echo -e "$OKRED      <>"
-	echo -e "$OKRED                            ||"
-	echo -e "$OKRED                            <>"
-	echo -e "$OKRED                                       ||"
-	echo -e "$OKRED                                       ||            BIG"
-	echo -e "$OKRED        _____               __         <>      (^)))^ BOOM!"
-	echo -e "$OKRED  BOOM!/((  )\       BOOM!((  )))            (     ( )"
-	echo -e "$OKRED ---- (__()__))          (() ) ))           (  (  (   )"
-	echo -e "$OKRED     ||  |||____|------    \  (/   ___     (__\     /__)"
-	echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
-	echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
-	echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
-	echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
-	echo -e "$OKRED __________________________________________________________"
-	echo -e "$OKRED Bomb raid (contributed by Michael aka SNOOPY@DRYCAS.CLUB.CC.CMU.EDU)"
-	echo -e "$RESET"
+
 	for a in `cat $TARGET`;
-	do 
-		echo -e "$OKGREEN + -- --=[Launching airstrike: $a $RESET"
+	do
+		echo -e "$OKRED                                         |"
+		echo -e "$OKRED                  |                      |"
+		echo -e "$OKRED                  |                    -/_\-"
+		echo -e "$OKRED                -/_\-   ______________(/ . \)______________"
+		echo -e "$OKRED   ____________(/ . \)_____________    \___/     <>"
+		echo -e "$OKRED   <>           \___/      <>    <>"
+		echo -e "$OKRED "
+		echo -e "$OKRED      ||"
+		echo -e "$OKRED      <>"
+		echo -e "$OKRED                            ||"
+		echo -e "$OKRED                            <>"
+		echo -e "$OKRED                                       ||"
+		echo -e "$OKRED                                       ||            BIG"
+		echo -e "$OKRED        _____               __         <>      (^)))^ BOOM!"
+		echo -e "$OKRED  BOOM!/((  )\       BOOM!((  )))            (     ( )"
+		echo -e "$OKRED ---- (__()__))          (() ) ))           (  (  (   )"
+		echo -e "$OKRED     ||  |||____|------    \  (/   ___     (__\     /__)"
+		echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
+		echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
+		echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
+		echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
+		echo -e "$OKRED __________________________________________________________"
+		echo -e "$OKRED Bomb raid (contributed by Michael aka SNOOPY@DRYCAS.CLUB.CC.CMU.EDU)"
+		echo -e "$RESET" 
+		echo -e "$OKORANGE + -- --=[Launching airstrike: $a $RESET"
 		echo -e "$OKGREEN################################### Running recon #################################$RESET"
 		nslookup $a
 		host $a
@@ -227,7 +258,7 @@ if [ "$MODE" = "airstrike" ]; then
 		fi
 		echo ""
 		echo -e "$OKGREEN################################### Running active scans #########################$RESET"
-		unicornscan $a:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 2> /dev/null
+		unicornscan $a:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 2> /dev/null
 		xprobe2 $a
 		wafw00f http://$a
 		whatweb http://$a
@@ -250,7 +281,6 @@ if [ "$MODE" = "airstrike" ]; then
 		echo -e ""
 		echo -e ""
 		echo -e ""
-		clear
 	done;
 	exit
 fi
@@ -282,9 +312,23 @@ if [ "$MODE" = "nuke" ]; then
 		echo -e "$OKRED                          <|i::|i|\`."
 		echo -e "$OKRED                        (\` ^''\`-' ')"
 		echo -e "$OKRED --------------------------------------------------------- $RESET"
-		echo -e "$OKGREEN + -- --=[WARNING! Nuking ALL target! $RESET"
+		echo -e "$OKORANGE + -- --=[WARNING! Nuking ALL target! $RESET"
 		./sniper $a
-		clear
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
+		echo -e ""
 	done
 fi
 
@@ -317,7 +361,7 @@ ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN################################### Running TCP port scan ##########################$RESET"
 if [ -z "$OPT1" ]; then
-	nmap -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,10000,49152 $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	nmap -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 	echo -e "$OKGREEN################################### Running UDP port scan ##########################$RESET"
 	nmap -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 elif [ "$OPT1" == "web" ]; then
@@ -367,6 +411,7 @@ port_8009=`grep 'portid="8009"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_8080=`grep 'portid="8080"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_8888=`grep 'portid="8888"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_10000=`grep 'portid="10000"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 
@@ -900,6 +945,20 @@ else
 	nmap -p 8443 -T5 --script=*proxy* $TARGET
 fi
 
+if [ -z "$port_8888" ]
+then
+	echo -e "$OKRED+ -- --=[Port 8888 closed... skipping.$RESET"
+else
+	echo -e "$OKGREEN+ -- --=[Port 8888 opened... running tests...$RESET"
+	wafw00f http://$TARGET:8888
+	echo ""
+	whatweb http://$TARGET:8888
+	echo ""
+	xsstracer $TARGET 8888
+	nikto -h http://$TARGET:8888 
+	cutycapt --url=https://$TARGET:8888 --out=loot/$TARGET-port8888.jpg
+fi
+
 if [ -z "$port_10000" ]
 then
 	echo -e "$OKRED+ -- --=[Port 10000 closed... skipping.$RESET"
@@ -930,5 +989,6 @@ else
 	echo ""
 	rm -f scan.log
 fi
+./sniper loot
 echo -e "$OKGREEN################################### Done! ###########################################$RESET"
 exit 0
