@@ -24,18 +24,20 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 
 ## USAGE:
 ```
-# ./sniper <target> <report>
-# ./sniper <target> stealth <report>
-# ./sniper <target> port <portnum> 
-# ./sniper <target> web <report>
-# ./sniper <target> nobrute <report>
-# ./sniper <targets.txt> airstrike <report>
-# ./sniper <targets.txt> nuke <report>
+# sniper <target> <report>
+# sniper <target> stealth <report>
+# sniper <CIDR> discover
+# sniper <target> port <portnum> 
+# sniper <target> web <report>
+# sniper <target> nobrute <report>
+# sniper <targets.txt> airstrike <report>
+# sniper <targets.txt> nuke <report>
 ```
 
 ### MODES:
 * REPORT: Outputs all results to text in the loot directory for later reference. To enable reporting, append 'report' to any sniper mode or command.
 * STEALTH: Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking
+* DISCOVER: Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.
 * PORT: Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
 * WEB: Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.   
 * NOBRUTE: Launches a full scan against a target host/domain without brute forcing services.
@@ -48,6 +50,9 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.7d - Added sslyze
+* v1.7d - Added 'discover' mode for full subnet scans
+* v1.7d - Added verbosity to scan tasks to separate sub-tasks better
 * v1.7c - Added plain text reporting 
 * v1.7c - Improved loot directory structure and sorting
 * v1.7b - Fixed issue with airstrike mode not scanning correctly
@@ -117,3 +122,4 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ## FUTURE:
 * Add install.sh for Ubuntu based systems
 * Add install path to install.sh for universal access
+* Add scan config options to enabled/disable certain scan tasks (ie. brute force, osint, web scans, etc.)

