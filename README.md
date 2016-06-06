@@ -50,6 +50,10 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.7e - Fixed minor issues with discover mode
+* v1.7e - Added minor cosmetic improvements to reports
+* v1.7e - Disabled automatic brute forcing by default
+* v1.7e - Added automatic brute force setting in script vars
 * v1.7d - Added sslyze
 * v1.7d - Added 'discover' mode for full subnet scans
 * v1.7d - Added verbosity to scan tasks to separate sub-tasks better
