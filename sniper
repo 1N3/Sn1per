@@ -1081,6 +1081,7 @@ fi
 echo -e "$OKGREEN + -- ----------------------------=[Scanning For Common Vulnerabilities]=----- -- +$RESET"
 cd yasuo
 ruby yasuo.rb -r $TARGET -b all
+cd ..
 
 if [ "$AUTOBRUTE" = "0" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Skipping Brute Force]=-------------------- -- +$RESET"
