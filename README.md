@@ -50,6 +50,7 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.7e - Fixed minor issue with airstrike and nuke mode
 * v1.7e - Fixed minor issues with discover mode
 * v1.7e - Added minor cosmetic improvements to reports
 * v1.7e - Disabled automatic brute forcing by default

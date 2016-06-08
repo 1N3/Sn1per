@@ -346,6 +346,7 @@ if [ "$MODE" = "airstrike" ]; then
 		echo -e ""
 		echo -e ""
 	done;
+	exit
 fi
 
 if [ "$MODE" = "port" ]; then
@@ -393,6 +394,7 @@ if [ "$MODE" = "nuke" ]; then
 		echo -e ""
 		echo -e ""
 	done
+	exit
 fi
 
 echo -e "$OKRED                ____               $RESET"
