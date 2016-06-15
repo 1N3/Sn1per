@@ -24,7 +24,7 @@ echo -e "$OKGREEN + -- --=[This script will install or upgrade your Sn1per insta
 read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install sslyze joomscan uniscan xprobe2 cutycapt unicornscan waffit host whois arachni theharvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
+apt-get install zenmap sslyze joomscan uniscan xprobe2 cutycapt unicornscan waffit host whois arachni theharvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
@@ -47,9 +47,11 @@ git clone https://github.com/aboul3la/Sublist3r.git
 git clone https://github.com/nccgroup/shocker.git
 git clone https://github.com/joaomatosf/jexboss.git
 git clone https://github.com/byt3bl33d3r/CrackMapExec.git
+git clone https://github.com/drwetter/testssl.sh.git
 
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 mkdir loot 2> /dev/null
+cp -f $DIR/bin/clamav-exec.nse /usr/share/nmap/scripts/ 2> /dev/null
 chmod +x $DIR/sniper
 chmod +x $DIR/bin/dnsdict6
 chmod +x $DIR/Goohak/goohak
@@ -58,6 +60,7 @@ chmod +x $DIR/MassBleed/massbleed
 chmod +x $DIR/MassBleed/heartbleed.py
 chmod +x $DIR/MassBleed/openssl_ccs.pl
 chmod +x $DIR/SuperMicro-Password-Scanner/supermicro_scan.sh
+chmod +x $DIR/testssl.sh/testssl.sh
 rm -f /usr/bin/sniper
 rm -f /usr/bin/goohak
 rm -f /usr/bin/xsstracer
@@ -74,9 +77,7 @@ ln -s $DIR/Findsploit/copysploit /usr/bin/copysploit
 ln -s $DIR/Findsploit/compilesploit /usr/bin/compilesploit
 ln -s $DIR/MassBleed/massbleed /usr/bin/massbleed
 ln -s $DIR/BruteX/brutex /usr/bin/brutex
-
-# REMOVED BUT STILL AVAILABLE IF NEEDED
-# echo -e "$OKGREEN + -- --=[Be sure to install the following packages manually and update the sniper script references: dig dnsdict6 cmsmap samrdump inurlbr wafw00f showmount samrdump rpcinfo snmpwalk$RESET"
+ln -s $DIR/testssl.sh/testssl.sh /usr/bin/testssl
 
 echo -e "$OKORANGE + -- --=[For universal sniper access, be sure to edit sniper to include the full path for the SNIPER_DIR variable. $RESET"
 echo -e "$OKORANGE + -- --=[Done!$RESET"

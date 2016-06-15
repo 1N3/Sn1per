@@ -50,6 +50,8 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.7f - Added Zenmap XML auto-imports 
+* v1.7f - Added ClamAV RCE Nmap script
 * v1.7e - Fixed minor issue with airstrike and nuke mode
 * v1.7e - Fixed minor issues with discover mode
 * v1.7e - Added minor cosmetic improvements to reports
