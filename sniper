@@ -223,6 +223,8 @@ if [ "$MODE" = "stealth" ]; then
 		mv -f *_ips.txt loot/ 2>/dev/null
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
 		python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
+		echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
+		python SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
 	fi
 	echo ""
 	echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
@@ -311,7 +313,9 @@ if [ "$MODE" = "airstrike" ]; then
 			dnsenum $a
 			mv -f *_ips.txt loot/ 2>/dev/null
 			echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-			python Sublist3r/sublist3r.py -d $a -vvv 2>/dev/null								
+			python Sublist3r/sublist3r.py -d $a -vvv 2>/dev/null
+			echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
+			python SimpleEmailSpoofer/spoofcheck.py $a 2>/dev/null
 		fi
 		echo ""
 		echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
@@ -427,6 +431,8 @@ then
 	mv -f *_ips.txt loot/ 2>/dev/null
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
 	python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
+	echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
+	python SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
 fi
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Pinging host]=---------------------------- -- +$RESET"

@@ -25,6 +25,7 @@ read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
 apt-get install zenmap sslyze joomscan uniscan xprobe2 cutycapt unicornscan waffit host whois arachni theharvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
+pip install dnspython colorama tldextract
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
@@ -48,6 +49,7 @@ git clone https://github.com/nccgroup/shocker.git
 git clone https://github.com/joaomatosf/jexboss.git
 git clone https://github.com/byt3bl33d3r/CrackMapExec.git
 git clone https://github.com/drwetter/testssl.sh.git
+git clone https://github.com/lunarca/SimpleEmailSpoofer
 
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 mkdir loot 2> /dev/null
