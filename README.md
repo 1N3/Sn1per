@@ -9,6 +9,7 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 * Automatically launches Google hacking queries against a target domain
 * Automatically enumerates open ports
 * Automatically brute forces sub-domains and DNS info
+* Automatically checks for sub-domain hijacking
 * Automatically runs targeted NMap scripts against open ports
 * Automatically runs targeted Metasploit scan and exploit modules
 * Automatically scans all web applications for common vulnerabilities
@@ -50,6 +51,10 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.8 - Added sub-domain hijack scans for all sub-domains
+* v1.8 - Added auto explort of all sub-domains to /domains directory
+* v1.8 - Added additional stealth and airstrike checks for port 80 and 443
+* v1.8 - Fixed issue with theHarvester not working with google
 * v1.7g - Added email security/spoofing checks
 * v1.7f - Added Zenmap XML auto-imports 
 * v1.7f - Added ClamAV RCE Nmap script

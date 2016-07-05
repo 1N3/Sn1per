@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v1.7 by 1N3
+# + -- --=[Sn1per v1.8 by 1N3
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -9,6 +9,7 @@
 # - Automatically collects Google hacking recon info
 # - Automatically run port scans
 # - Automatically brute force sub-domains via DNS
+# - Automatically checks for sub-domain hijacking
 # - Automatically run targeted nmap scripts against open ports
 # - Automatically scans all web applications
 # - Automatically brute forces all open services
@@ -68,7 +69,7 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e ""
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sn1per v1.7 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[sn1per v1.8 by 1N3$RESET"
 	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>$RESET"
 	echo ""
 	exit
@@ -176,7 +177,7 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.7 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.8 by 1N3"
 	echo -e "$OKRED " 	
 	echo -e "$OKRED     ./\."
 	echo -e "$OKRED   ./    '\."
@@ -216,13 +217,16 @@ if [ "$MODE" = "stealth" ]; then
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
 		whois $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-		theharvester -d $TARGET -l 100 -b all 2> /dev/null
+		theharvester -d $TARGET -l 100 -b bing 2> /dev/null
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
 		dig -x $TARGET
 		dnsenum $TARGET
 		mv -f *_ips.txt loot/ 2>/dev/null
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-		python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
+		python Sublist3r/sublist3r.py -d $TARGET -vvv -o loot/domains/domains-$TARGET.txt 2>/dev/null
+		dos2unix loot/domains/domains-$TARGET.txt 2>/dev/null
+		echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
+		for a in `cat loot/domains/domains-$TARGET.txt`; do dig $a CNAME | egrep -i "heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr" 2>/dev/null; done;
 		echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
 		python SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
 	fi
@@ -233,9 +237,12 @@ if [ "$MODE" = "stealth" ]; then
 	nmap -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
 	wafw00f http://$TARGET
+	wafw00f https://$TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
 	whatweb http://$TARGET
+	whatweb https://$TARGET
 	xsstracer $TARGET 80
+	xsstracer $TARGET 443
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
 	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
 	sslscan --no-failed $TARGET
@@ -262,7 +269,7 @@ if [ "$MODE" = "airstrike" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.7 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.8 by 1N3"
 
 	for a in `cat $TARGET`;
 	do
@@ -307,13 +314,16 @@ if [ "$MODE" = "airstrike" ]; then
 			echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
 			whois $a
 			echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-			theharvester -d $a -l 100 -b all 2> /dev/null
+			theharvester -d $a -l 100 -b bing 2> /dev/null
 			echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
 			dig -x $a
 			dnsenum $a
 			mv -f *_ips.txt loot/ 2>/dev/null
 			echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-			python Sublist3r/sublist3r.py -d $a -vvv 2>/dev/null
+			python Sublist3r/sublist3r.py -d $a -vvv -o loot/domains/domains-$a.txt 2>/dev/null
+			dos2unix loot/domains/domains-$a.txt 2>/dev/null
+			echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
+			for b in `cat loot/domains/domains-$a.txt`; do dig $b CNAME | egrep -i 'heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr' 2>/dev/null; done;
 			echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
 			python SimpleEmailSpoofer/spoofcheck.py $a 2>/dev/null
 		fi
@@ -324,9 +334,12 @@ if [ "$MODE" = "airstrike" ]; then
 		nmap -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $a
 		echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
 		wafw00f http://$a
+		wafw00f https://$a
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
 		whatweb http://$a
+		whatweb https://$a
 		xsstracer $a 80
+		xsstracer $a 443
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
 		sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $a
 		sslscan --no-failed $a
@@ -412,7 +425,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v1.7 by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v1.8 by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
 nslookup $TARGET
@@ -424,13 +437,16 @@ then
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
 	whois $TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-	theharvester -d $TARGET -l 100 -b all 2> /dev/null
+	theharvester -d $TARGET -l 100 -b bing 2> /dev/null
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
 	dig -x $TARGET
 	dnsenum $TARGET
 	mv -f *_ips.txt loot/ 2>/dev/null
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-	python Sublist3r/sublist3r.py -d $TARGET -vvv 2>/dev/null
+	python Sublist3r/sublist3r.py -d $TARGET -vvv -o loot/domains/domains-$TARGET.txt 2>/dev/null
+	dos2unix loot/domains/domains-$TARGET.txt 2>/dev/null
+	echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
+	for a in `cat loot/domains/domains-$TARGET.txt`; do dig $a CNAME | egrep -i 'heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr' 2>/dev/null; done;
 	echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
 	python SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
 fi
