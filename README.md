@@ -51,6 +51,7 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.8a - Updated sub-domain hijack list of domains (CC: th3gundy)
 * v1.8 - Added sub-domain hijack scans for all sub-domains
 * v1.8 - Added auto explort of all sub-domains to /domains directory
 * v1.8 - Added additional stealth and airstrike checks for port 80 and 443
