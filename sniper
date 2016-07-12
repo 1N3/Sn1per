@@ -226,7 +226,7 @@ if [ "$MODE" = "stealth" ]; then
 		python Sublist3r/sublist3r.py -d $TARGET -vvv -o loot/domains/domains-$TARGET.txt 2>/dev/null
 		dos2unix loot/domains/domains-$TARGET.txt 2>/dev/null
 		echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-		for a in `cat loot/domains/domains-$TARGET.txt`; do dig $a CNAME | egrep -i "heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr" 2>/dev/null; done;
+		for a in `cat loot/domains/domains-$TARGET.txt`; do dig $a CNAME | egrep -i "heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot" 2>/dev/null; done;
 		echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
 		python SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
 	fi
@@ -323,7 +323,7 @@ if [ "$MODE" = "airstrike" ]; then
 			python Sublist3r/sublist3r.py -d $a -vvv -o loot/domains/domains-$a.txt 2>/dev/null
 			dos2unix loot/domains/domains-$a.txt 2>/dev/null
 			echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-			for b in `cat loot/domains/domains-$a.txt`; do dig $b CNAME | egrep -i 'heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr' 2>/dev/null; done;
+			for b in `cat loot/domains/domains-$a.txt`; do dig $b CNAME | egrep -i 'heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot' 2>/dev/null; done;
 			echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
 			python SimpleEmailSpoofer/spoofcheck.py $a 2>/dev/null
 		fi
@@ -446,7 +446,7 @@ then
 	python Sublist3r/sublist3r.py -d $TARGET -vvv -o loot/domains/domains-$TARGET.txt 2>/dev/null
 	dos2unix loot/domains/domains-$TARGET.txt 2>/dev/null
 	echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-	for a in `cat loot/domains/domains-$TARGET.txt`; do dig $a CNAME | egrep -i 'heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr' 2>/dev/null; done;
+	for a in `cat loot/domains/domains-$TARGET.txt`; do dig $a CNAME | egrep -i 'heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot' 2>/dev/null; done;
 	echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
 	python SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
 fi
