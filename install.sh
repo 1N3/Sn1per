@@ -25,7 +25,7 @@ read answer
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
 apt-get install dos2unix zenmap sslyze joomscan uniscan xprobe2 cutycapt unicornscan waffit host whois arachni theharvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
-pip install dnspython colorama tldextract
+pip install dnspython colorama tldextract urllib3 ipaddress
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
