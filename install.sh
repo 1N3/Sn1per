@@ -41,6 +41,7 @@ git clone https://github.com/1N3/Goohak.git
 git clone https://github.com/1N3/XSSTracer.git
 git clone https://github.com/1N3/MassBleed.git
 git clone https://github.com/1N3/SuperMicro-Password-Scanner
+git clone https://github.com/1N3/HTTPoxyScan.git
 git clone https://github.com/Dionach/CMSmap.git
 git clone https://github.com/0xsauby/yasuo.git
 git clone https://github.com/johndekroon/serializekiller.git
