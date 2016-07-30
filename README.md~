@@ -51,9 +51,6 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
-* v1.8b - Fixed bug with NMap UDP scan options
-* v1.8b - Fixed install.sh dependencies 
-* v1.8b - Fixed jexboss options
 * v1.8a - Updated sub-domain hijack list of domains (CC: th3gundy)
 * v1.8 - Added sub-domain hijack scans for all sub-domains
 * v1.8 - Added auto explort of all sub-domains to /domains directory

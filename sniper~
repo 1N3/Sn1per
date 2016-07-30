@@ -234,7 +234,7 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
 	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
-	nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
+	nmap -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
 	wafw00f http://$TARGET
 	wafw00f https://$TARGET
@@ -331,7 +331,7 @@ if [ "$MODE" = "airstrike" ]; then
 		echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
 		nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 $a -oX $LOOT_DIR/nmap-$a.xml
 		echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
-		nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $a
+		nmap -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $a
 		echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
 		wafw00f http://$a
 		wafw00f https://$a
@@ -458,7 +458,7 @@ echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=----
 if [ -z "$OPT1" ]; then
 	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
-	nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
+	nmap -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 elif [ "$OPT1" == "web" ]; then
 	nmap -sV -T5 -p 80,443 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
 else
@@ -555,7 +555,7 @@ then
 	echo -e "$OKRED + -- --=[Port 53 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 53 opened... running tests...$RESET"
-	nmap -sU -sV -T5 --script=dns* -p U:53,T:53 $TARGET	
+	nmap -sV -T5 --script=dns* -p U:53,T:53 $TARGET	
 fi
 
 if [ -z "$port_79" ];
