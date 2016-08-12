@@ -25,14 +25,15 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 
 ## USAGE:
 ```
-# sniper <target> <report>
-# sniper <target> stealth <report>
-# sniper <CIDR> discover
-# sniper <target> port <portnum> 
-# sniper <target> web <report>
-# sniper <target> nobrute <report>
-# sniper <targets.txt> airstrike <report>
-# sniper <targets.txt> nuke <report>
+sniper <target> <report>
+sniper <target> stealth <report>
+sniper <CIDR> discover
+sniper <target> port <portnum> 
+sniper <target> web <report>
+sniper <target> nobrute <report>
+sniper <targets.txt> airstrike <report>
+sniper <targets.txt> nuke <report>
+sniper loot
 ```
 
 ### MODES:
@@ -44,6 +45,7 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 * NOBRUTE: Launches a full scan against a target host/domain without brute forcing services.
 * AIRSTRIKE: Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IP's that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.
 * NUKE: Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke. 
+* LOOT: Automatically organizes and displays loot folder in your browser and opens Zenmap GUI with all port scan results. To run, type 'sniper loot'.
 
 ## SAMPLE REPORT:
 ```
@@ -51,6 +53,13 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ```
 
 ## CHANGELOG:
+* v1.8c - Added -A option to all NMap port scans
+* v1.8c - Fixed install.sh permission issue
+* v1.8c - Fixed install.sh cleanup options
+* v1.8c - Added ssh-audit
+* v1.8c - Added install directory (/usr/share/sniper/) to install script for universal access
+* v1.8c - Fixed issue with Metasploit SSH scans
+* v1.8c - Added auto-update to install.sh to automatically pull latest github release
 * v1.8b - Fixed bug with NMap UDP scan options
 * v1.8b - Fixed install.sh dependencies 
 * v1.8b - Fixed jexboss options
@@ -137,6 +146,4 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 * v1.4 - Removed debug output from goohak from displaying on console
 
 ## FUTURE:
-* Add install.sh for Ubuntu based systems
-* Add install path to install.sh for universal access
 * Add scan config options to enabled/disable certain scan tasks (ie. brute force, osint, web scans, etc.)
