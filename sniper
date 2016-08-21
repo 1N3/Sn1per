@@ -482,6 +482,7 @@ port_110=`grep 'portid="110"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_111=`grep 'portid="111"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_135=`grep 'portid="135"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_139=`grep 'portid="139"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_161=`grep 'portid="161"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_162=`grep 'portid="162"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_389=`grep 'portid="162"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_443=`grep 'portid="443"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
@@ -715,12 +716,21 @@ else
 	msfconsole -x "use auxiliary/scanner/smb/pipe_auditor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use auxiliary/scanner/smb/pipe_dcerpc_auditor; run; use auxiliary/scanner/smb/psexec_loggedin_users; run; use auxiliary/scanner/smb/smb2; run; use auxiliary/scanner/smb/smb_enum_gpp; run; use auxiliary/scanner/smb/smb_enumshares; run; use auxiliary/scanner/smb/smb_enumusers; run; use auxiliary/scanner/smb/smb_enumusers_domain; run; use auxiliary/scanner/smb/smb_login; run; use auxiliary/scanner/smb/smb_lookupsid; run; use auxiliary/scanner/smb/smb_uninit_cred; run; use auxiliary/scanner/smb/smb_version; run; use exploit/linux/samba/chain_reply; run; use windows/smb/ms08_067_netapi; run; exit;"
 fi
 
+if [ -z "$port_161" ];
+then
+	echo -e "$OKRED + -- --=[Port 161 closed... skipping.$RESET"
+else
+	echo -e "$OKORANGE + -- --=[Port 161 opened... running tests...$RESET"
+	for a in `cat BruteX/wordlists/snmp-strings.txt`; do snmpwalk $TARGET -c $a; done;
+	nmap -sU -p 161 --script=snmp* $TARGET
+fi
+
 if [ -z "$port_162" ];
 then
 	echo -e "$OKRED + -- --=[Port 162 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 162 opened... running tests...$RESET"
-	for a in `cat BruteX/wordlists/snmp-community-strings.txt`; do snmpwalk $TARGET -c $a; done;
+	for a in `cat BruteX/wordlists/snmp-strings.txt`; do snmpwalk $TARGET -c $a; done;
 	nmap -A -p 162 --script=snmp* $TARGET
 fi
 
