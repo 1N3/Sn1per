@@ -29,7 +29,7 @@ cp -Rf $PWD/* $INSTALL_DIR
 cd $INSTALL_DIR
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install dos2unix zenmap sslyze joomscan uniscan xprobe2 cutycapt unicornscan waffit host whois arachni theharvester dnsenum dirb dnsrecon curl nmap php5 php5-curl wapiti hydra iceweasel wpscan sqlmap arachni w3af golismero nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb python nbtscan sslscan amap
+apt-get install ruby rubygems python dos2unix zenmap sslyze uniscan xprobe2 cutycapt unicornscan waffit host whois dirb dnsrecon curl nmap php5 php5-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap
 pip install dnspython colorama tldextract urllib3 ipaddress
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
@@ -37,7 +37,7 @@ gem install rake
 gem install ruby-nmap net-http-persistent mechanize text-table
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
-rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/ jexboss/ CrackMapExec/ serializekiller/
+rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/ jexboss/ serializekiller/
 
 echo -e "$OKORANGE + -- --=[Downloading extensions...$RESET"
 git clone https://github.com/1N3/Findsploit.git
