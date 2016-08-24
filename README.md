@@ -1,6 +1,5 @@
 <img src="Sn1per-logo.png" alt="" /># Sn1per - Automated Pentest Recon Scanner
 ![alt tag](https://github.com/1N3/Sn1per/blob/master/Sn1per-logo.png)
-![alt tag](https://www.helpnetsecurity.com/images/posts/Sn1per2.jpg)
 
 ## ABOUT:
 Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. 
