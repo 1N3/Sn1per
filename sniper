@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v1.8 by 1N3
+# + -- --=[Sn1per v1.9 by 1N3
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -69,7 +69,7 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e ""
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sn1per v1.8 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[sn1per v1.9 by 1N3$RESET"
 	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>$RESET"
 	echo ""
 	exit
@@ -160,6 +160,21 @@ fi
 if [ "$MODE" = "web" ]; then
 	if [ "$OPT1" = "report" ]; then
 		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		cd $PWD/loot/
+		echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
+		mkdir reports/ -p 2> /dev/null
+		echo -e "$OKORANGE + -- --=[Generating reports..."
+		for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
+		mv $PWD/report-* $PWD/reports/ 2> /dev/null
+		mkdir $PWD/screenshots/ -p 2> /dev/null
+		mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
+		mkdir $PWD/nmap -p 2> /dev/null
+		mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
+		mkdir $PWD/domains -p 2> /dev/null
+		mv $PWD/domains-* $PWD/domains/ 2> /dev/null
+		mkdir $PWD/output -p 2> /dev/null
+		mv $PWD/sniper-* $PWD/output 2> /dev/null
+		rm -f $PWD/.fuse_* 2> /dev/null
 		exit
 	fi
 fi
@@ -177,7 +192,7 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.8 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.9 by 1N3"
 	echo -e "$OKRED " 	
 	echo -e "$OKRED     ./\."
 	echo -e "$OKRED   ./    '\."
@@ -253,6 +268,21 @@ if [ "$MODE" = "stealth" ]; then
 	cutycapt --url=https://$TARGET --out=loot/$TARGET-port443.jpg
 	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port443.jpg"
 	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
+	cd $PWD/loot/
+	echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
+	mkdir reports/ -p 2> /dev/null
+	echo -e "$OKORANGE + -- --=[Generating reports..."
+	for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
+	mv $PWD/report-* $PWD/reports/ 2> /dev/null
+	mkdir $PWD/screenshots/ -p 2> /dev/null
+	mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
+	mkdir $PWD/nmap -p 2> /dev/null
+	mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
+	mkdir $PWD/domains -p 2> /dev/null
+	mv $PWD/domains-* $PWD/domains/ 2> /dev/null
+	mkdir $PWD/output -p 2> /dev/null
+	mv $PWD/sniper-* $PWD/output 2> /dev/null
+	rm -f $PWD/.fuse_* 2> /dev/null
 	exit
 fi
 
@@ -269,7 +299,7 @@ if [ "$MODE" = "airstrike" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.8 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v1.9 by 1N3"
 
 	for a in `cat $TARGET`;
 	do
@@ -350,6 +380,21 @@ if [ "$MODE" = "airstrike" ]; then
 		cutycapt --url=https://$a --out=loot/$a-port443.jpg
 		echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$a-port443.jpg"
 		echo -e "$OKGREEN + -- ----------------------------=[Done!]=----------------------------------- -- +$RESET"
+		cd $PWD/loot/
+		echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
+		mkdir reports/ -p 2> /dev/null
+		echo -e "$OKORANGE + -- --=[Generating reports..."
+		for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
+		mv $PWD/report-* $PWD/reports/ 2> /dev/null
+		mkdir $PWD/screenshots/ -p 2> /dev/null
+		mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
+		mkdir $PWD/nmap -p 2> /dev/null
+		mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
+		mkdir $PWD/domains -p 2> /dev/null
+		mv $PWD/domains-* $PWD/domains/ 2> /dev/null
+		mkdir $PWD/output -p 2> /dev/null
+		mv $PWD/sniper-* $PWD/output 2> /dev/null
+		rm -f $PWD/.fuse_* 2> /dev/null
 		echo -e ""
 		echo -e ""
 		echo -e ""
@@ -425,7 +470,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v1.8 by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v1.9 by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
 nslookup $TARGET
@@ -491,6 +536,7 @@ port_512=`grep 'portid="512"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_513=`grep 'portid="513"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_514=`grep 'portid="514"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_1099=`grep 'portid="1099"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_1433=`grep 'portid="1099"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_1524=`grep 'portid="1524"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_2049=`grep 'portid="2049"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
 port_2121=`grep 'portid="2121"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
@@ -892,6 +938,14 @@ else
 	amap $TARGET 514 -A
 fi
 
+if [ -z "$port_1433" ];
+then
+	echo -e "$OKRED + -- --=[Port 1433 closed... skipping.$RESET"
+else
+	echo -e "$OKORANGE + -- --=[Port 1433 opened... running tests...$RESET"
+	nmap -A -sV -T5 --script=mssql* -p 1433 $TARGET
+fi
+
 if [ -z "$port_2049" ];
 then
 	echo -e "$OKRED + -- --=[Port 2049 closed... skipping.$RESET"
@@ -1152,6 +1206,20 @@ else
 	echo ""
 	rm -f scan.log
 fi
-./sniper loot
+cd $PWD/loot/
+echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
+mkdir reports/ -p 2> /dev/null
+echo -e "$OKORANGE + -- --=[Generating reports..."
+for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
+mv $PWD/report-* $PWD/reports/ 2> /dev/null
+mkdir $PWD/screenshots/ -p 2> /dev/null
+mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
+mkdir $PWD/nmap -p 2> /dev/null
+mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
+mkdir $PWD/domains -p 2> /dev/null
+mv $PWD/domains-* $PWD/domains/ 2> /dev/null
+mkdir $PWD/output -p 2> /dev/null
+mv $PWD/sniper-* $PWD/output 2> /dev/null
+rm -f $PWD/.fuse_* 2> /dev/null
 echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
 exit 0

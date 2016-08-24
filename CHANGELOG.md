@@ -1,7 +1,10 @@
 ## CHANGELOG:
-* v1.8d - Added Ubuntu docker image for Sn1per (@menzow)
-* v1.8d - Added SNMP port 162/tcp checks (@hexageek)
-* v1.8d - Fixed install.sh dependency duplicates
+* v1.9 - Added Ubuntu docker image for Sn1per (@menzow)
+* v1.9 - Added automatic loot directory sorting for all modes
+* v1.9 - Added MSSQL port 1433/tcp checks
+* v1.9 - Added SNMP port 162/tcp checks (@hexageek)
+* v1.9 - Added nslookup to install.sh
+* v1.9 - Fixed install.sh dependency duplicates
 * v1.8c - Added -A option to all NMap port scans
 * v1.8c - Fixed install.sh permission issue
 * v1.8c - Fixed install.sh cleanup options
