@@ -261,7 +261,7 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
 	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
 	sslscan --no-failed $TARGET
-	testssl $TARGET
+	# testssl $TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 	cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
 	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port80.jpg"
@@ -373,7 +373,7 @@ if [ "$MODE" = "airstrike" ]; then
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
 		sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $a
 		sslscan --no-failed $a
-		testssl $a
+		# testssl $a
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 		cutycapt --url=http://$a --out=loot/$a-port80.jpg
 		echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$a-port80.jpg"

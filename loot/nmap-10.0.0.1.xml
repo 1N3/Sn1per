@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.25BETA1 scan initiated Wed Aug 24 16:37:52 2016 as: nmap -T4 -&#45;open -p21,22,23,25,53,80,110,139,162,389,443,445,512,513,514,993,1433,1521,3306,3389,5432,5900,5901,8000,8080,6667 -oX loot/nmap-10.0.0.1.xml 10.0.0.1 -->
+<nmaprun scanner="nmap" args="nmap -T4 -&#45;open -p21,22,23,25,53,80,110,139,162,389,443,445,512,513,514,993,1433,1521,3306,3389,5432,5900,5901,8000,8080,6667 -oX loot/nmap-10.0.0.1.xml 10.0.0.1" start="1472071072" startstr="Wed Aug 24 16:37:52 2016" version="7.25BETA1" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="26" services="21-23,25,53,80,110,139,162,389,443,445,512-514,993,1433,1521,3306,3389,5432,5900-5901,6667,8000,8080"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1472071072" endtime="1472071073"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="10.0.0.1" addrtype="ipv4"/>
+<address addr="2C:30:33:9E:3D:42" addrtype="mac" vendor="Netgear"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="22">
+<extrareasons reason="resets" count="22"/>
+</extraports>
+<extraports state="filtered" count="1">
+<extrareasons reason="no-response" count="1"/>
+</extraports>
+<port protocol="tcp" portid="53"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="domain" method="table" conf="3"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" method="table" conf="3"/></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="https" method="table" conf="3"/></port>
+</ports>
+<times srtt="8303" rttvar="1686" to="100000"/>
+</host>
+<runstats><finished time="1472071073" timestr="Wed Aug 24 16:37:53 2016" elapsed="1.39" summary="Nmap done at Wed Aug 24 16:37:53 2016; 1 IP address (1 host up) scanned in 1.39 seconds" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>
