@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v1.9b - Fixed MSSQL port 1433/tcp port scan check (@hacktrack)
 * v1.9a - Removed testssl script from stealth mode scans
 * v1.9 - Added Ubuntu docker image for Sn1per (@menzow)
 * v1.9 - Added automatic loot directory sorting for all modes
