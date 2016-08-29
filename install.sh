@@ -78,7 +78,6 @@ rm -f /usr/bin/findsploit
 rm -f /usr/bin/copysploit
 rm -f /usr/bin/compilesploit
 rm -f /usr/bin/massbleed
-rm -f /usr/bin/brutex
 rm -f /usr/bin/testssl
 ln -s $INSTALL_DIR/sniper /usr/bin/sniper
 ln -s $INSTALL_DIR/Goohak/goohak /usr/bin/goohak
