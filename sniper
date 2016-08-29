@@ -57,8 +57,8 @@ REGEX='^[0-9]+$'
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # ENABLE/DISABLE AUTOMATIC BRUTE FORCE
-# DEFAULT IS "0" (DISABLED)
-AUTOBRUTE="0"
+# DEFAULT IS "1" (ENABLED)
+AUTOBRUTE="1"
 
 if [ -z $TARGET ]; then
 	echo -e "$OKRED                ____               $RESET"

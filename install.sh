@@ -37,7 +37,7 @@ gem install rake
 gem install ruby-nmap net-http-persistent mechanize text-table
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
-rm -Rf Findsploit/ Brutex/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/ jexboss/ serializekiller/
+rm -Rf Findsploit/ BruteX/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/ jexboss/ serializekiller/ testssl.sh/ SimpleEmailSpoofer/ ssh-audit/
 
 echo -e "$OKORANGE + -- --=[Downloading extensions...$RESET"
 git clone https://github.com/1N3/Findsploit.git
@@ -55,8 +55,10 @@ git clone https://github.com/joaomatosf/jexboss.git
 git clone https://github.com/drwetter/testssl.sh.git
 git clone https://github.com/lunarca/SimpleEmailSpoofer
 git clone https://github.com/arthepsy/ssh-audit
-
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
+cd $INSTALL_DIR/BruteX/
+bash install.sh
+cd .. 
 mkdir loot 2> /dev/null
 cp -f $INSTALL_DIR/bin/clamav-exec.nse /usr/share/nmap/scripts/ 2> /dev/null
 chmod +x $INSTALL_DIR/sniper
@@ -85,7 +87,6 @@ ln -s $INSTALL_DIR/Findsploit/findsploit /usr/bin/findsploit
 ln -s $INSTALL_DIR/Findsploit/copysploit /usr/bin/copysploit
 ln -s $INSTALL_DIR/Findsploit/compilesploit /usr/bin/compilesploit
 ln -s $INSTALL_DIR/MassBleed/massbleed /usr/bin/massbleed
-ln -s $INSTALL_DIR/BruteX/brutex /usr/bin/brutex
 ln -s $INSTALL_DIR/testssl.sh/testssl.sh /usr/bin/testssl
 echo -e "$OKORANGE + -- --=[Done!$RESET"
 echo -e "$OKORANGE + -- --=[To run, type 'sniper'! $RESET"
