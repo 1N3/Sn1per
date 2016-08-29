@@ -1198,7 +1198,7 @@ if [ "$AUTOBRUTE" = "0" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Skipping Brute Force]=-------------------- -- +$RESET"
 else
 	echo -e "$OKGREEN + -- ----------------------------=[Running Brute Force]=--------------------- -- +$RESET"
-	cd ../BruteX
+	cd /usr/share/sniper/BruteX
 	./brutex $TARGET
 	rm -f hydra.restore
 	mv loot/* ../loot/
