@@ -22,7 +22,7 @@ echo ""
 INSTALL_DIR=/usr/share/sniper
 
 echo -e "$OKGREEN + -- --=[This script will install sniper under $INSTALL_DIR. Are you sure you want to continue?$RESET"
-read answer
+read answer 
 
 mkdir -p $INSTALL_DIR 2> /dev/null
 cp -Rf $PWD/* $INSTALL_DIR 
