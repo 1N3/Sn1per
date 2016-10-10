@@ -1,4 +1,9 @@
 ## CHANGELOG:
+* v2.0 - Updated sub-domain takeover list
+* v2.0 - Improved scan performance for stealth, airstrike and discover modes
+* v2.0 - Removed jexboss due to clear screen issue with output
+* v2.0 - Auto loot directory sorting for all tools
+* v2.0 - Updated install.sh package list
 * v1.9c - Enabled BruteX automated brute force attacks
 * v1.9b - Fixed MSSQL port 1433/tcp port scan check (@hacktrack)
 * v1.9a - Removed testssl script from stealth mode scans

