@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v2.0a - Fixed issue with ssh-audit
+* v2.0a - Fixed issue with 'discover' mode
 * v2.0 - Updated sub-domain takeover list
 * v2.0 - Improved scan performance for stealth, airstrike and discover modes
 * v2.0 - Removed jexboss due to clear screen issue with output
