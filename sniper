@@ -59,21 +59,6 @@ cd $INSTALL_DIR
 # DEFAULT IS "1" (ENABLED)
 AUTOBRUTE="1"
 
-if [ -z $TARGET ]; then
-	echo -e "$OKRED                ____               $RESET"
-	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
-	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
-	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
-	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
-	echo -e "$OKRED               /_/                 $RESET"
-	echo -e ""
-	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3$RESET"
-	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>$RESET"
-	echo ""
-	exit
-fi
-
 function loot {
 	echo -e "$OKRED                ____               $RESET"
 	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
@@ -97,6 +82,63 @@ function loot {
 	zenmap -f $LOOT_DIR/nmap/ &> /dev/null &
 	echo -e "$OKORANGE + -- --=[Done!"
 }
+
+function help {
+	echo -e "$OKRED                ____               $RESET"
+	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+	echo -e "$OKRED               /_/                 $RESET"
+	echo ""
+	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
+	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[Usage:"
+	echo ""
+	echo ' [*] sniper <target> <report>'
+	echo ' [*] sniper <target> stealth <report>'
+	echo ' [*] sniper <CIDR> discover'
+	echo ' [*] sniper <target> port <portnum> '
+	echo ' [*] sniper <target> web <report>'
+	echo ' [*] sniper <target> nobrute <report>'
+	echo ' [*] sniper <targets.txt> airstrike <report>'
+	echo ' [*] sniper <targets.txt> nuke <report>'
+	echo ' [*] sniper loot'
+	echo ""
+	echo ' + -- --=[Modes:'
+	echo ''
+   echo ' + -- --=[REPORT: Outputs all results to text in the loot directory for later reference. To enable reporting, append report to any sniper mode or command.'
+   echo ' + -- --=[STEALTH: Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking'
+   echo ' + -- --=[DISCOVER: Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.'
+   echo ' + -- --=[PORT: Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.'
+   echo ' + -- --=[WEB: Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.'
+   echo ' + -- --=[NOBRUTE: Launches a full scan against a target host/domain without brute forcing services.'
+   echo ' + -- --=[AIRSTRIKE: Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IPs that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.'
+   echo ' + -- --=[NUKE: Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke.'
+   echo -e " + -- --=[LOOT: Automatically organizes and displays loot folder in your browser and opens Zenmap GUI with all port scan results. To run, type sniper loot.$RESET"
+   echo ""
+   echo ""
+}
+
+if [ -z $TARGET ]; then
+	echo -e "$OKRED                ____               $RESET"
+	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+	echo -e "$OKRED               /_/                 $RESET"
+	echo -e ""
+	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
+	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>$RESET"
+	echo ""
+	exit
+fi
+
+if [[ $TARGET = "--help" ]]; then
+	help
+	exit
+fi
 
 if [[ ${TARGET:0:1} =~ $REGEX ]]; 
 	then 

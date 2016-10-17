@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v2.0b - Added help option --help
 * v2.0a - Fixed issue with ssh-audit
 * v2.0a - Fixed issue with 'discover' mode
 * v2.0 - Updated sub-domain takeover list
