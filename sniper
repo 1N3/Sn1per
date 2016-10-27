@@ -53,11 +53,15 @@ OKORANGE='\033[93m'
 RESET='\e[0m'
 REGEX='^[0-9]+$'
 
-cd $INSTALL_DIR
-
 # ENABLE/DISABLE AUTOMATIC BRUTE FORCE
 # DEFAULT IS "1" (ENABLED)
 AUTOBRUTE="1"
+
+# ENABLE/DISABLE FULL DETAILED NMAP SCAN
+# DEFAULT IS "1" (ENABLED)
+FULLNMAPSCAN="1"
+
+cd $INSTALL_DIR
 
 function loot {
 	echo -e "$OKRED                ____               $RESET"
@@ -178,7 +182,7 @@ if [ "$MODE" = "discover" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Checking ARP Cache]=---------------------- -- +$RESET"
 	arp -a -n
 	echo -e "$OKGREEN + -- ----------------------------=[Running Port Discovery Scan]=------------- -- +$RESET"
-	unicornscan $TARGET -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 2>/dev/null | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-ips.txt
+	unicornscan $TARGET -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152 2>/dev/null | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Current Targets]=------------------------- -- +$RESET"
 	cat $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Sn1per Scans]=------------------ -- +$RESET"
@@ -271,7 +275,7 @@ if [ "$MODE" = "stealth" ]; then
 	fi
 	echo ""
 	echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
-	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
 	nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 	
@@ -405,7 +409,7 @@ if [ "$MODE" = "airstrike" ]; then
 		fi
 		echo ""
 		echo -e "$OKGREEN + -- ----------------------------=[Running port scan]=------------------- -- +$RESET"
-		nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $a -oX $LOOT_DIR/nmap/nmap-$a.xml
+		nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $a -oX $LOOT_DIR/nmap/nmap-$a.xml
 		
 		port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
 		port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
@@ -551,7 +555,7 @@ ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
 if [ -z "$OPT1" ]; then
-	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
 	nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 elif [ "$OPT1" == "web" ]; then
@@ -595,6 +599,7 @@ port_3306=`grep 'portid="3306"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_3310=`grep 'portid="3310"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_3389=`grep 'portid="3389"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_3632=`grep 'portid="3632"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_4443=`grep 'portid="4443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_5432=`grep 'portid="5432"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_5800=`grep 'portid="5800"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_5900=`grep 'portid="5900"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -695,6 +700,9 @@ else
 	echo -e "$OKBLUE+ -- --=[Checking if TRACE method is enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I -X TRACE http://$TARGET | grep TRACE | tail -n 10
 	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for META tags on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure http://$TARGET | egrep -i meta --color=auto | tail -n 10
+	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for open proxy on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -x http://$TARGET:80 -L http://crowdshield.com/.testing/openproxy.txt | tail -n 10
 	echo ""
@@ -750,8 +758,16 @@ else
 		echo ""
 		python $CMSMAP -t http://$TARGET/wordpress/
 		echo ""
-		echo -e "$OKGREEN + -- ----------------------------=[Running Uniscan Web Vulnerability Scan]=-- -- +$RESET"
-		uniscan -u http://$TARGET -qweds
+		#echo -e "$OKGREEN + -- ----------------------------=[Running Uniscan Web Vulnerability Scan]=-- -- +$RESET"
+		#uniscan -u http://$TARGET -qweds
+		echo -e "$OKGREEN + -- ----------------------------=[Running Arachni Web Application Scan]=---- -- +$RESET"
+		mkdir -p $INSTALL_DIR/loot/web/$TARGET/ 2> /dev/null
+		arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET/ --output-only-positives http://$TARGET
+		cd $INSTALL_DIR/loot/web/$TARGET/
+		arachni_reporter $INSTALL_DIR/loot/web/$TARGET/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET/arachni.zip
+		unzip $INSTALL_DIR/loot/web/$TARGET/arachni.zip
+		$ARACHNI="1"
+		cd $INSTALL_DIR
 		echo -e "$OKGREEN + -- ----------------------------=[Running SQLMap SQL Injection Scan]=------- -- +$RESET"
 		sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		echo -e "$OKGREEN + -- ----------------------------=[Running PHPMyAdmin Metasploit Exploit]=--- -- +$RESET"
@@ -873,6 +889,9 @@ else
 	echo -e "$OKBLUE+ -- --=[Checking if TRACE method is enabled on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I -X TRACE https://$TARGET | grep TRACE
 	echo ""
+	echo -e "$OKBLUE+ -- --=[Checking for META tags on $TARGET...$RESET $OKORANGE"
+	curl -s --insecure https://$TARGET | egrep -i meta --color=auto | tail -n 10
+	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for open proxy on $TARGET...$RESET $OKORANGE"
 	curl -x https://$TARGET:443 -L https://crowdshield.com/.testing/openproxy.txt -s --insecure | tail -n 10
 	echo ""
@@ -926,8 +945,20 @@ else
 		echo ""
 		python $CMSMAP -t https://$TARGET/wordpress/
 		echo ""
-		echo -e "$OKGREEN + -- ----------------------------=[Running Uniscan Web Vulnerability Scan]=-- -- +$RESET"
-		uniscan -u https://$TARGET -qweds
+		#echo -e "$OKGREEN + -- ----------------------------=[Running Uniscan Web Vulnerability Scan]=-- -- +$RESET"
+		#uniscan -u https://$TARGET -qweds
+		if [ $ARACHNI == "1" ];
+		then
+			echo -e "$OKGREEN + -- ----------------------------=[Skipping Arachni Scan]=------------------- -- +$RESET"
+		else
+			echo -e "$OKGREEN + -- ----------------------------=[Running Arachni Web Application Scan]=---- -- +$RESET"
+			mkdir -p $INSTALL_DIR/loot/web/$TARGET/ 2> /dev/null
+			arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET/ --output-only-positives https://$TARGET
+			cd $INSTALL_DIR/loot/web/$TARGET/
+			arachni_reporter $INSTALL_DIR/loot/web/$TARGET/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET/arachni.zip
+			unzip $INSTALL_DIR/loot/web/$TARGET/arachni.zip
+			cd $INSTALL_DIR
+		fi
 		echo -e "$OKGREEN + -- ----------------------------=[Running SQLMap SQL Injection Scan]=------- -- +$RESET"
 		sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
 		echo -e "$OKGREEN + -- ----------------------------=[Running PHPMyAdmin Metasploit Exploit]=--- -- +$RESET"
@@ -1057,6 +1088,26 @@ else
 	echo -e "$OKORANGE + -- --=[Port 3632 opened... running tests...$RESET"
 	nmap -A -sV -T5 --script=distcc-* -p 3632 $TARGET
 	msfconsole -x "setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; use unix/misc/distcc_exec; run; exit;"
+fi
+
+if [ -z "$port_8443" ];
+then
+	echo -e "$OKRED + -- --=[Port 4443 closed... skipping.$RESET"
+else
+	echo -e "$OKORANGE + -- --=[Port 4443 opened... running tests...$RESET"
+	wafw00f http://$TARGET:4443
+	echo ""
+	whatweb http://$TARGET:4443
+	echo ""
+	xsstracer $TARGET 4443
+	sslscan --no-failed $TARGET:4443
+	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET:4443
+	cd $PLUGINS_DIR/MassBleed
+	./massbleed $TARGET port 4443
+	cd $INSTALL_DIR
+	nikto -h https://$TARGET:4443 
+	cutycapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg
+	nmap -A -p 4443 -T5 --script=*proxy* $TARGET
 fi
 
 if [ -z "$port_5432" ];
@@ -1234,6 +1285,13 @@ echo -e "$OKGREEN + -- ----------------------------=[Scanning For Common Vulnera
 cd $PLUGINS_DIR/yasuo
 ruby yasuo.rb -r $TARGET -b all
 cd $SNIPER_DIR
+
+if [ "$FULLNMAPSCAN" = "0" ]; then
+	echo -e "$OKGREEN + -- ----------------------------=[Skipping Full NMap Port Scan]=------------ -- +$RESET"
+else
+	echo -e "$OKGREEN + -- ----------------------------=[Performing Full NMap Port Scan]=---------- -- +$RESET"
+	nmap -T5 -sV -sU -sT -A -O -p 1-65355 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+fi
 
 if [ "$AUTOBRUTE" = "0" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Skipping Brute Force]=-------------------- -- +$RESET"

@@ -1,4 +1,10 @@
 ## CHANGELOG:
+* v2.1 - Added Arachni with auto HTML web reporting (web mode only)
+* v2.1 - Added full NMap detailed port scans
+* v2.1 - Added port 4443/tcp checks
+* v2.1 - Added META tag scans for web apps
+* v2.1 - Removed Uniscan from web mode
+* v2.1 - Removed SQLMap from web mode
 * v2.0b - Added help option --help
 * v2.0a - Fixed issue with ssh-audit
 * v2.0a - Fixed issue with 'discover' mode
