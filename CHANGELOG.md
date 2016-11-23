@@ -1,4 +1,9 @@
 ## CHANGELOG:
+* v2.1c - Fixed issue with install.sh install directories
+* v2.1b - Added automatic Metasploit NMap xml imports for loot directory
+* v2.1b - Removed Zenmap
+* v2.1a - Separated Arachni reports for port 80/443/tcp
+* v2.1a - Fixed NMap full port scan options
 * v2.1 - Added Arachni with auto HTML web reporting (web mode only)
 * v2.1 - Added full NMap detailed port scans
 * v2.1 - Added port 4443/tcp checks

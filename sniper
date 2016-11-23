@@ -83,7 +83,10 @@ function loot {
 	rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Opening loot directory..."
 	iceweasel $LOOT_DIR &> /dev/null &
-	zenmap -f $LOOT_DIR/nmap/ &> /dev/null &
+	/etc/init.d/metasploit start
+	msfconsole -x 'db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;'
+	# zenmap -f $LOOT_DIR/nmap/ &> /dev/null &
+	/etc/init.d/metasploit stop
 	echo -e "$OKORANGE + -- --=[Done!"
 }
 
@@ -758,15 +761,12 @@ else
 		echo ""
 		python $CMSMAP -t http://$TARGET/wordpress/
 		echo ""
-		#echo -e "$OKGREEN + -- ----------------------------=[Running Uniscan Web Vulnerability Scan]=-- -- +$RESET"
-		#uniscan -u http://$TARGET -qweds
 		echo -e "$OKGREEN + -- ----------------------------=[Running Arachni Web Application Scan]=---- -- +$RESET"
-		mkdir -p $INSTALL_DIR/loot/web/$TARGET/ 2> /dev/null
-		arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET/ --output-only-positives http://$TARGET
-		cd $INSTALL_DIR/loot/web/$TARGET/
-		arachni_reporter $INSTALL_DIR/loot/web/$TARGET/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET/arachni.zip
-		unzip $INSTALL_DIR/loot/web/$TARGET/arachni.zip
-		$ARACHNI="1"
+		mkdir -p $INSTALL_DIR/loot/web/$TARGET-http/ 2> /dev/null
+		arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET-http/ --output-only-positives http://$TARGET
+		cd $INSTALL_DIR/loot/web/$TARGET-http/
+		arachni_reporter $INSTALL_DIR/loot/web/$TARGET-http/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET-http/arachni.zip
+		unzip $INSTALL_DIR/loot/web/$TARGET-http/arachni.zip
 		cd $INSTALL_DIR
 		echo -e "$OKGREEN + -- ----------------------------=[Running SQLMap SQL Injection Scan]=------- -- +$RESET"
 		sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
@@ -945,18 +945,16 @@ else
 		echo ""
 		python $CMSMAP -t https://$TARGET/wordpress/
 		echo ""
-		#echo -e "$OKGREEN + -- ----------------------------=[Running Uniscan Web Vulnerability Scan]=-- -- +$RESET"
-		#uniscan -u https://$TARGET -qweds
 		if [ $ARACHNI == "1" ];
 		then
 			echo -e "$OKGREEN + -- ----------------------------=[Skipping Arachni Scan]=------------------- -- +$RESET"
 		else
 			echo -e "$OKGREEN + -- ----------------------------=[Running Arachni Web Application Scan]=---- -- +$RESET"
-			mkdir -p $INSTALL_DIR/loot/web/$TARGET/ 2> /dev/null
-			arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET/ --output-only-positives https://$TARGET
-			cd $INSTALL_DIR/loot/web/$TARGET/
-			arachni_reporter $INSTALL_DIR/loot/web/$TARGET/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET/arachni.zip
-			unzip $INSTALL_DIR/loot/web/$TARGET/arachni.zip
+			mkdir -p $INSTALL_DIR/loot/web/$TARGET-https/ 2> /dev/null
+			arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET-https/ --output-only-positives https://$TARGET
+			cd $INSTALL_DIR/loot/web/$TARGET-https/
+			arachni_reporter $INSTALL_DIR/loot/web/$TARGET-https/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET-https/arachni.zip
+			unzip $INSTALL_DIR/loot/web/$TARGET-https/arachni.zip
 			cd $INSTALL_DIR
 		fi
 		echo -e "$OKGREEN + -- ----------------------------=[Running SQLMap SQL Injection Scan]=------- -- +$RESET"
@@ -1290,7 +1288,7 @@ if [ "$FULLNMAPSCAN" = "0" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Skipping Full NMap Port Scan]=------------ -- +$RESET"
 else
 	echo -e "$OKGREEN + -- ----------------------------=[Performing Full NMap Port Scan]=---------- -- +$RESET"
-	nmap -T5 -sV -sU -sT -A -O -p 1-65355 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -T4 -sV -O -v -p 1-65355 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 fi
 
 if [ "$AUTOBRUTE" = "0" ]; then
