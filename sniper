@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v2.0 by 1N3 
+# + -- --=[Sn1per v2.2 by 1N3 
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -20,15 +20,15 @@
 # ./install.sh - Installs all dependencies. Best run from Kali Linux. 
 #
 # USAGE:
-# ./sniper <target>
-# ./sniper <target> <report>
-# ./sniper <CIDR> discover <report>
-# ./sniper <target> stealth <report>
-# ./sniper <target> port <portnum>
-# ./sniper <target> web <report>
-# ./sniper <targets.txt> airstrike <report>
-# ./sniper <targets.txt> nuke <report>
-# ./sniper loot
+# sniper <target>
+# sniper <target> <report>
+# sniper <CIDR> discover <report>
+# sniper <target> stealth <report>
+# sniper <target> port <portnum>
+# sniper <target> web <report>
+# sniper <targets.txt> airstrike <report>
+# sniper <targets.txt> nuke <report>
+# sniper loot
 #
 
 TARGET="$1"
@@ -71,8 +71,12 @@ function loot {
 	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 	echo -e "$OKRED               /_/                 $RESET"
 	echo ""
+	echo -e "$OKORANGE + -- --=[Current workspaces..."
 	cd $LOOT_DIR
-	echo -e "$OKORANGE + -- --=[Sorting loot directory ($LOOT_DIR)"
+	ls -lh $LOOT_DIR/workspace/
+	echo -e "$OKORANGE + -- --=[Enter a name for the workspace:"
+	read WORKSPACE
+	mkdir -p $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Generating reports..."
 	for a in `ls sniper-*.txt 2>/dev/null`; 
 	do 
@@ -80,13 +84,44 @@ function loot {
 		sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a >> $LOOT_DIR/reports/$a
 		mv $a $LOOT_DIR/output/
 	done
+	echo -e "$OKORANGE + -- --=[Removing blank web screenshots..."
+	find /usr/share/sniper/loot/screenshots/ -size -10k -exec rm -f {} \; 2> /dev/null
 	rm -f $LOOT_DIR/.fuse_* 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Opening loot directory..."
-	iceweasel $LOOT_DIR &> /dev/null &
-	/etc/init.d/metasploit start
-	msfconsole -x 'db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;'
-	# zenmap -f $LOOT_DIR/nmap/ &> /dev/null &
-	/etc/init.d/metasploit stop
+	echo -e "$OKORANGE + -- --=[Starting Metasploit service..."
+	/etc/init.d/metasploit start 2> /dev/null
+	echo -e "$OKORANGE + -- --=[Importing NMap XML files into Metasploit..."
+	msfconsole -x "workspace -a $WORKSPACE; workspace $WORKSPACE; db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;"
+	echo -e "$OKORANGE + -- --=[Copying loot to workspace: $WORKSPACE..."
+	cp -Rf $LOOT_DIR/screenshots/ $LOOT_DIR/workspace/$WORKSPACE/screenshots/ 2> /dev/null
+	cp -Rf $LOOT_DIR/nmap/ $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null
+	cp -Rf $LOOT_DIR/domains/ $LOOT_DIR/workspace/$WORKSPACE/domains/ 2> /dev/null
+	cp -Rf $LOOT_DIR/output/ $LOOT_DIR/workspace/$WORKSPACE/output/ 2> /dev/null
+	cp -Rf $LOOT_DIR/reports/ $LOOT_DIR/workspace/$WORKSPACE/reports/ 2> /dev/null
+	cp -Rf $LOOT_DIR/imports/ $LOOT_DIR/workspace/$WORKSPACE/imports/ 2> /dev/null
+	cp -Rf $LOOT_DIR/notes/ $LOOT_DIR/workspace/$WORKSPACE/notes/ 2> /dev/null
+	cp -Rf $LOOT_DIR/web/ $LOOT_DIR/workspace/$WORKSPACE/web/ 2> /dev/null
+	rm -Rf $LOOT_DIR/screenshots/ 2> /dev/null
+	rm -Rf $LOOT_DIR/nmap/ 2> /dev/null
+	rm -Rf $LOOT_DIR/domains/ 2> /dev/null
+	rm -Rf $LOOT_DIR/output/ 2> /dev/null
+	rm -Rf $LOOT_DIR/reports/ 2> /dev/null
+	rm -Rf $LOOT_DIR/imports/ 2> /dev/null
+	rm -Rf $LOOT_DIR/notes/ 2> /dev/null
+	rm -Rf $LOOT_DIR/web/ 2> /dev/null
+	mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
+	mkdir $LOOT_DIR/nmap -p 2> /dev/null
+	mkdir $LOOT_DIR/domains -p 2> /dev/null
+	mkdir $LOOT_DIR/output -p 2> /dev/null
+	mkdir $LOOT_DIR/reports -p 2> /dev/null
+	mkdir $LOOT_DIR/imports -p 2> /dev/null
+	mkdir $LOOT_DIR/notes -p 2> /dev/null
+	mkdir $LOOT_DIR/web -p 2> /dev/null
+	echo -e "$OKORANGE + -- --=[Opening workspace directory..."
+	iceweasel $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null &
+	echo -e "$OKORANGE + -- --=[Launching Metasploit Pro Web UI..."
+	iceweasel http://localhost:3001/login 2> /dev/null &
+	echo -e "$OKORANGE + -- --=[Launching Zenmap..."
+	zenmap -f $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null &
 	echo -e "$OKORANGE + -- --=[Done!"
 }
 
@@ -99,7 +134,7 @@ function help {
 	echo -e "$OKRED               /_/                 $RESET"
 	echo ""
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3$RESET"
 	echo -e "$OKORANGE + -- --=[Usage:"
 	echo ""
 	echo ' [*] sniper <target> <report>'
@@ -136,8 +171,8 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e ""
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3$RESET"
-	echo -e "$OKORANGE + -- --=[Usage: sn1per <target>$RESET"
+	echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[Usage: sniper <target>$RESET"
 	echo ""
 	exit
 fi
@@ -223,7 +258,7 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3"
 	echo -e "$OKRED " 	
 	echo -e "$OKRED     ./\."
 	echo -e "$OKRED   ./    '\."
@@ -271,6 +306,19 @@ if [ "$MODE" = "stealth" ]; then
 		echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
 		python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
 		dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+		echo ""
+		echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
+		echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
+		echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
+		echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
+		echo -e "$OKBLUE"
+		curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
+		echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-crt.txt"
+		cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null	
+		cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null	
+		sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
+		rm -f /tmp/curl.out 2> /dev/null	
+		echo -e "$RESET"
 		echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
 		for a in `cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot" 2>/dev/null; done;
 		echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
@@ -352,7 +400,7 @@ if [ "$MODE" = "airstrike" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3"
+	echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3"
 
 	for a in `cat $TARGET`;
 	do
@@ -405,6 +453,19 @@ if [ "$MODE" = "airstrike" ]; then
 			echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
 			python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $a -vvv -o $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
 			dos2unix $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
+			echo ""
+			echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
+			echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
+			echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
+			echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
+			echo -e "$OKBLUE"
+			curl -s https://crt.sh/?q=%25.$a > /tmp/curl.out && cat /tmp/curl.out | grep $a | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$a-crt.txt && cat $LOOT_DIR/domains/domains-$a-crt.txt
+			echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-crt.txt"
+			cat $LOOT_DIR/domains/domains-$a-crt.txt > /tmp/curl.out 2> /dev/null	
+			cat $LOOT_DIR/domains/domains-$a.txt >> /tmp/curl.out 2> /dev/null	
+			sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$a-full.txt
+			rm -f /tmp/curl.out 2> /dev/null	
+			echo -e "$RESET"
 			echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
 			for b in `cat $LOOT_DIR/domains/domains-$a.txt 2> /dev/null`; do dig $b CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot' 2>/dev/null; done;
 			echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
@@ -527,7 +588,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v2.0 by 1N3"
+echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
 nslookup $TARGET
@@ -547,6 +608,19 @@ then
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
 	python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
 	dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+	echo ""
+	echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
+	echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
+	echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
+	echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
+	echo -e "$OKBLUE"
+	curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
+	echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-crt.txt"
+	cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null	
+	cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null	
+	sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
+	rm -f /tmp/curl.out 2> /dev/null	
+	echo -e "$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
 	for a in `cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null`; do dig $a CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot' 2>/dev/null; done;
 	echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
@@ -1302,15 +1376,6 @@ else
 	echo ""
 fi
 
-cd $LOOT_DIR
-echo -e "$OKORANGE + -- --=[Sorting loot directory ($LOOT_DIR)"
-echo -e "$OKORANGE + -- --=[Generating reports..."
-for a in `ls sniper-*.txt 2>/dev/null`; 
-do 
-	echo "$a" > $LOOT_DIR/reports/$a
-	sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a >> $LOOT_DIR/reports/$a
-	mv $a $LOOT_DIR/output/
-done
 rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 
 echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"

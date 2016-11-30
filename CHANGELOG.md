@@ -1,4 +1,8 @@
 ## CHANGELOG:
+* v2.2 - Added auto Metasploit Pro & Zenmap GUI integration
+* v2.2 - Added Sn1per workspaces to loot directory
+* v2.1d - Added crt.sh sub-domain check
+* v2.1d - Removed blank screenshots from loot directory
 * v2.1c - Fixed issue with install.sh install directories
 * v2.1b - Added automatic Metasploit NMap xml imports for loot directory
 * v2.1b - Removed Zenmap
