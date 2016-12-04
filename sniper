@@ -71,27 +71,27 @@ function loot {
 	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 	echo -e "$OKRED               /_/                 $RESET"
 	echo ""
-	echo -e "$OKORANGE + -- --=[Current workspaces..."
+	echo -e "$OKORANGE + -- --=[Current workspaces...$RESET"
 	cd $LOOT_DIR
 	ls -lh $LOOT_DIR/workspace/
-	echo -e "$OKORANGE + -- --=[Enter a name for the workspace:"
+	echo -e "$OKORANGE + -- --=[Enter a name for the workspace:$RESET"
 	read WORKSPACE
 	mkdir -p $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Generating reports..."
+	echo -e "$OKORANGE + -- --=[Generating reports...$RESET"
 	for a in `ls sniper-*.txt 2>/dev/null`; 
 	do 
 		echo "$a" > $LOOT_DIR/reports/$a
 		sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a >> $LOOT_DIR/reports/$a
 		mv $a $LOOT_DIR/output/
 	done
-	echo -e "$OKORANGE + -- --=[Removing blank web screenshots..."
+	echo -e "$OKORANGE + -- --=[Removing blank web screenshots...$RESET"
 	find /usr/share/sniper/loot/screenshots/ -size -10k -exec rm -f {} \; 2> /dev/null
 	rm -f $LOOT_DIR/.fuse_* 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Starting Metasploit service..."
+	echo -e "$OKORANGE + -- --=[Starting Metasploit service...$RESET"
 	/etc/init.d/metasploit start 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Importing NMap XML files into Metasploit..."
+	echo -e "$OKORANGE + -- --=[Importing NMap XML files into Metasploit...$RESET"
 	msfconsole -x "workspace -a $WORKSPACE; workspace $WORKSPACE; db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;"
-	echo -e "$OKORANGE + -- --=[Copying loot to workspace: $WORKSPACE..."
+	echo -e "$OKORANGE + -- --=[Copying loot to workspace: $WORKSPACE...$RESET"
 	cp -Rf $LOOT_DIR/screenshots/ $LOOT_DIR/workspace/$WORKSPACE/screenshots/ 2> /dev/null
 	cp -Rf $LOOT_DIR/nmap/ $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null
 	cp -Rf $LOOT_DIR/domains/ $LOOT_DIR/workspace/$WORKSPACE/domains/ 2> /dev/null
@@ -116,13 +116,13 @@ function loot {
 	mkdir $LOOT_DIR/imports -p 2> /dev/null
 	mkdir $LOOT_DIR/notes -p 2> /dev/null
 	mkdir $LOOT_DIR/web -p 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Opening workspace directory..."
+	echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
 	iceweasel $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null &
-	echo -e "$OKORANGE + -- --=[Launching Metasploit Pro Web UI..."
-	iceweasel http://localhost:3001/login 2> /dev/null &
-	echo -e "$OKORANGE + -- --=[Launching Zenmap..."
+	echo -e "$OKORANGE + -- --=[Launching Metasploit Pro Web UI...$RESET"
+	iceweasel http://localhost:3001/login 2> /dev/null 
+	echo -e "$OKORANGE + -- --=[Launching Zenmap...$RESET"
 	zenmap -f $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null &
-	echo -e "$OKORANGE + -- --=[Done!"
+	echo -e "$OKORANGE + -- --=[Done!$RESET"
 }
 
 function help {
@@ -313,7 +313,7 @@ if [ "$MODE" = "stealth" ]; then
 		echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
 		echo -e "$OKBLUE"
 		curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
-		echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-crt.txt"
+		echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
 		cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null	
 		cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null	
 		sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
@@ -364,7 +364,7 @@ if [ "$MODE" = "stealth" ]; then
 		sslscan --no-failed $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 		cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
-		echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/$a-port443.jpg"
+		echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/$TARGET-port443.jpg"
 	fi
 	
 	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
@@ -460,7 +460,7 @@ if [ "$MODE" = "airstrike" ]; then
 			echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
 			echo -e "$OKBLUE"
 			curl -s https://crt.sh/?q=%25.$a > /tmp/curl.out && cat /tmp/curl.out | grep $a | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$a-crt.txt && cat $LOOT_DIR/domains/domains-$a-crt.txt
-			echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-crt.txt"
+			echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$a-full.txt"
 			cat $LOOT_DIR/domains/domains-$a-crt.txt > /tmp/curl.out 2> /dev/null	
 			cat $LOOT_DIR/domains/domains-$a.txt >> /tmp/curl.out 2> /dev/null	
 			sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$a-full.txt
@@ -615,7 +615,7 @@ then
 	echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
 	echo -e "$OKBLUE"
 	curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
-	echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-crt.txt"
+	echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
 	cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null	
 	cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null	
 	sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
@@ -815,7 +815,7 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
 	nikto -h http://$TARGET 
 	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-	echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
+	echo -e "$OKRED[+]$RESET ;/Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
 	cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
 	
 	if [ "$MODE" = "web" ];
