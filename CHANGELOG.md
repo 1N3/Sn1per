@@ -1,4 +1,7 @@
 ## CHANGELOG:
+* v2.2b - Added fullportonly mode to do exclusive full port scans
+* v2.2b - Fixed minor issue with Metasploit Pro not starting
+* v2.2b - Fixed minor issue with sniper loot command
 * v2.2a - Fixed minor issue with loot function
 * v2.2 - Added auto Metasploit Pro & Zenmap GUI integration
 * v2.2 - Added Sn1per workspaces to loot directory
@@ -125,4 +128,4 @@
 * v1.4 - Removed debug output from goohak from displaying on console
 
 ## FUTURE:
-* Add scan config options to enabled/disable certain scan tasks (ie. brute force, osint, web scans, etc.)
+* Add auto logging and reporting to all scans

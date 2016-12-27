@@ -4,7 +4,7 @@
 #
 # Sn1per - Automated Pentest Recon Tool
 #
-# FEATURED:
+# FEATURES:
 # - Automatically collect recon info (ie. whois, ping, DNS, etc.)
 # - Automatically collects Google hacking recon info
 # - Automatically run port scans
@@ -25,6 +25,7 @@
 # sniper <CIDR> discover <report>
 # sniper <target> stealth <report>
 # sniper <target> port <portnum>
+# sniper <target fullportonly <portnum>
 # sniper <target> web <report>
 # sniper <targets.txt> airstrike <report>
 # sniper <targets.txt> nuke <report>
@@ -76,6 +77,9 @@ function loot {
 	ls -lh $LOOT_DIR/workspace/
 	echo -e "$OKORANGE + -- --=[Enter a name for the workspace:$RESET"
 	read WORKSPACE
+	if [ -z $WORKSPACE ]; then
+		WORKSPACE="default"
+	fi
 	mkdir -p $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Generating reports...$RESET"
 	for a in `ls sniper-*.txt 2>/dev/null`; 
@@ -89,17 +93,18 @@ function loot {
 	rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Starting Metasploit service...$RESET"
 	/etc/init.d/metasploit start 2> /dev/null
+	/etc/init.d/postgresql start 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Importing NMap XML files into Metasploit...$RESET"
 	msfconsole -x "workspace -a $WORKSPACE; workspace $WORKSPACE; db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;"
 	echo -e "$OKORANGE + -- --=[Copying loot to workspace: $WORKSPACE...$RESET"
-	cp -Rf $LOOT_DIR/screenshots/ $LOOT_DIR/workspace/$WORKSPACE/screenshots/ 2> /dev/null
-	cp -Rf $LOOT_DIR/nmap/ $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null
-	cp -Rf $LOOT_DIR/domains/ $LOOT_DIR/workspace/$WORKSPACE/domains/ 2> /dev/null
-	cp -Rf $LOOT_DIR/output/ $LOOT_DIR/workspace/$WORKSPACE/output/ 2> /dev/null
-	cp -Rf $LOOT_DIR/reports/ $LOOT_DIR/workspace/$WORKSPACE/reports/ 2> /dev/null
-	cp -Rf $LOOT_DIR/imports/ $LOOT_DIR/workspace/$WORKSPACE/imports/ 2> /dev/null
-	cp -Rf $LOOT_DIR/notes/ $LOOT_DIR/workspace/$WORKSPACE/notes/ 2> /dev/null
-	cp -Rf $LOOT_DIR/web/ $LOOT_DIR/workspace/$WORKSPACE/web/ 2> /dev/null
+	cp -Rf $LOOT_DIR/screenshots/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+	cp -Rf $LOOT_DIR/nmap/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+	cp -Rf $LOOT_DIR/domains/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+	cp -Rf $LOOT_DIR/output/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+	cp -Rf $LOOT_DIR/reports/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+	cp -Rf $LOOT_DIR/imports/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+	cp -Rf $LOOT_DIR/notes/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+	cp -Rf $LOOT_DIR/web/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
 	rm -Rf $LOOT_DIR/screenshots/ 2> /dev/null
 	rm -Rf $LOOT_DIR/nmap/ 2> /dev/null
 	rm -Rf $LOOT_DIR/domains/ 2> /dev/null
@@ -117,9 +122,12 @@ function loot {
 	mkdir $LOOT_DIR/notes -p 2> /dev/null
 	mkdir $LOOT_DIR/web -p 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
+	iceweasel 2> /dev/null &
+	sleep 2
 	iceweasel $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null &
+	sleep 2
 	echo -e "$OKORANGE + -- --=[Launching Metasploit Pro Web UI...$RESET"
-	iceweasel http://localhost:3001/login 2> /dev/null 
+	iceweasel http://localhost:3001/login 2> /dev/null &
 	echo -e "$OKORANGE + -- --=[Launching Zenmap...$RESET"
 	zenmap -f $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null &
 	echo -e "$OKORANGE + -- --=[Done!$RESET"
@@ -140,7 +148,8 @@ function help {
 	echo ' [*] sniper <target> <report>'
 	echo ' [*] sniper <target> stealth <report>'
 	echo ' [*] sniper <CIDR> discover'
-	echo ' [*] sniper <target> port <portnum> '
+	echo ' [*] sniper <target> port <portnum>'
+	echo ' [*] sniper <target> fullportonly <portnum>'
 	echo ' [*] sniper <target> web <report>'
 	echo ' [*] sniper <target> nobrute <report>'
 	echo ' [*] sniper <targets.txt> airstrike <report>'
@@ -529,6 +538,23 @@ if [ "$MODE" = "airstrike" ]; then
 		echo -e ""
 		echo -e ""
 	done;
+	exit
+fi
+
+if [ "$MODE" = "fullportonly" ]; then
+	echo -e "$OKRED    ___     ____              __            __    $RESET"
+	echo -e "$OKRED   / _/_ __/ / /__  ___  ____/ /____  ___  / /_ __$RESET"
+	echo -e "$OKRED  / _/ // / / / _ \/ _ \/ __/ __/ _ \/ _ \/ / // /$RESET"
+	echo -e "$OKRED /_/ \_,_/_/_/ .__/\___/_/  \__/\___/_//_/_/\_, / $RESET"
+	echo -e "$OKRED            /_/                            /___/  $RESET"
+	echo -e "$RESET"
+	echo -e "$OKGREEN + -- ----------------------------=[Performing Port Scan]=------------------- -- +$RESET"
+	if [ -z "$OPT1" ]; then
+		nmap -T4 -sV -O -v -p 1-65535 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	else 
+		nmap -T4 -sV -O -v -p $OPT1 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	fi
+	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
 	exit
 fi
 
