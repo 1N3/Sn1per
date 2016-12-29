@@ -59,6 +59,14 @@ cd $INSTALL_DIR
 # DEFAULT IS "1" (ENABLED)
 AUTOBRUTE="1"
 
+# CREATE LOOT DIR SUBDIRS
+mkdir $LOOT_DIR 2> /dev/null
+mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
+mkdir $LOOT_DIR/nmap -p 2> /dev/null
+mkdir $LOOT_DIR/domains -p 2> /dev/null
+mkdir $LOOT_DIR/output -p 2> /dev/null
+mkdir $LOOT_DIR/reports -p 2> /dev/null
+
 function loot {
 	echo -e "$OKRED                ____               $RESET"
 	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
@@ -289,8 +297,8 @@ if [ "$MODE" = "stealth" ]; then
 		whatweb http://$TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
 		xsstracer $TARGET 80
-		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-		cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+		#echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+		#cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
 	fi
 	
 	if [ -z "$port_443" ];
@@ -562,7 +570,7 @@ else
 	nmap -sU -T5 -p U:$OPT1 --open $TARGET
 fi
 
-service postgresql start
+# service postgresql start
 
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running Intrusive Scans]=----------------- -- +$RESET"
