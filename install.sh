@@ -19,18 +19,25 @@ echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
 echo ""
 
 INSTALL_DIR=/usr/share/sniper
+LOOT_DIR=/usr/share/sniper/loot
 PLUGINS_DIR=/usr/share/sniper/plugins
 
 echo -e "$OKGREEN + -- --=[This script will install sniper under $INSTALL_DIR. Are you sure you want to continue?$RESET"
 read answer 
 
 mkdir -p $INSTALL_DIR 2> /dev/null
+mkdir -p $LOOT_DIR 2> /dev/null
+mkdir $LOOT_DIR/domains 2> /dev/null
+mkdir $LOOT_DIR/screenshots 2> /dev/null
+mkdir $LOOT_DIR/nmap 2> /dev/null
+mkdir $LOOT_DIR/reports 2> /dev/null
+mkdir $LOOT_DIR/output 2> /dev/null
 cp -Rf $PWD/* $INSTALL_DIR 
 cd $INSTALL_DIR
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
 apt-get install ruby rubygems python dos2unix zenmap sslyze uniscan xprobe2 cutycapt unicornscan waffit host whois dirb dnsrecon curl nmap php php-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap
-pip install dnspython colorama tldextract urllib3 ipaddress
+pip install dnspython colorama tldextract urllib3 ipaddress arachni
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
@@ -38,7 +45,7 @@ gem install ruby-nmap net-http-persistent mechanize text-table
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
 rm -Rf Findsploit/ BruteX/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/ jexboss/ serializekiller/ testssl.sh/ SimpleEmailSpoofer/ ssh-audit/ plugins/ 2> /dev/null
-mkdir /usr/share/sniper/plugins/
+mkdir $PLUGINS_DIR
 cd $PLUGINS_DIR
 
 echo -e "$OKORANGE + -- --=[Downloading extensions...$RESET"

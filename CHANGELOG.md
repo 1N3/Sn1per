@@ -1,4 +1,23 @@
 ## CHANGELOG:
+* v2.2b - Added fullportonly mode to do exclusive full port scans
+* v2.2b - Fixed minor issue with Metasploit Pro not starting
+* v2.2b - Fixed minor issue with sniper loot command
+* v2.2a - Fixed minor issue with loot function
+* v2.2 - Added auto Metasploit Pro & Zenmap GUI integration
+* v2.2 - Added Sn1per workspaces to loot directory
+* v2.1d - Added crt.sh sub-domain check
+* v2.1d - Removed blank screenshots from loot directory
+* v2.1c - Fixed issue with install.sh install directories
+* v2.1b - Added automatic Metasploit NMap xml imports for loot directory
+* v2.1b - Removed Zenmap
+* v2.1a - Separated Arachni reports for port 80/443/tcp
+* v2.1a - Fixed NMap full port scan options
+* v2.1 - Added Arachni with auto HTML web reporting (web mode only)
+* v2.1 - Added full NMap detailed port scans
+* v2.1 - Added port 4443/tcp checks
+* v2.1 - Added META tag scans for web apps
+* v2.1 - Removed Uniscan from web mode
+* v2.1 - Removed SQLMap from web mode
 * v2.0b - Added help option --help
 * v2.0a - Fixed issue with ssh-audit
 * v2.0a - Fixed issue with 'discover' mode
@@ -109,4 +128,4 @@
 * v1.4 - Removed debug output from goohak from displaying on console
 
 ## FUTURE:
-* Add scan config options to enabled/disable certain scan tasks (ie. brute force, osint, web scans, etc.)
+* Add auto logging and reporting to all scans
