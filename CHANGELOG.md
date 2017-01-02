@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v2.2c - Added CouchDB checks
+* v2.2c - Updated Sub-domain takeover list
 * v2.2b - Added fullportonly mode to do exclusive full port scans
 * v2.2b - Fixed minor issue with Metasploit Pro not starting
 * v2.2b - Fixed minor issue with sniper loot command
