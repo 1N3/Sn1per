@@ -46,7 +46,6 @@ USER_FILE="/usr/share/brutex/wordlists/simple-users.txt"
 PASS_FILE="/usr/share/brutex/wordlists/password.lst"
 DNS_FILE="/usr/share/brutex/wordlists/namelist.txt"
 SUPER_MICRO_SCAN="/usr/share/sniper/plugins/SuperMicro-Password-Scanner/supermicro_scan.sh"
-DEFAULT_PORTS="21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049"
 THREADS="30"
 OKBLUE='\033[94m'
 OKRED='\033[91m'
@@ -230,7 +229,7 @@ if [ "$MODE" = "discover" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Checking ARP Cache]=---------------------- -- +$RESET"
 	arp -a -n
 	echo -e "$OKGREEN + -- ----------------------------=[Running Port Discovery Scan]=------------- -- +$RESET"
-	unicornscan $TARGET -p $DEFAULT_PORTS 2>/dev/null | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-ips.txt
+	unicornscan $TARGET -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,49152 2>/dev/null | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Current Targets]=------------------------- -- +$RESET"
 	cat $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Sn1per Scans]=------------------ -- +$RESET"
@@ -336,7 +335,9 @@ if [ "$MODE" = "stealth" ]; then
 	fi
 	echo ""
 	echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
-	nmap -sS -T5 --open -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
+	nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 	
 	port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 	port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -481,7 +482,7 @@ if [ "$MODE" = "airstrike" ]; then
 		fi
 		echo ""
 		echo -e "$OKGREEN + -- ----------------------------=[Running port scan]=------------------- -- +$RESET"
-		nmap -sS -T5 --open -p $DEFAULT_PORTS $a -oX $LOOT_DIR/nmap/nmap-$a.xml
+		nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $a -oX $LOOT_DIR/nmap/nmap-$a.xml
 		
 		port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
 		port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
@@ -657,7 +658,9 @@ ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
 if [ -z "$OPT1" ]; then
-	nmap -sS -T5 --open -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sS -T5 --open -p 21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
+	nmap -sU -T5 --open -p U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049 $TARGET
 elif [ "$OPT1" == "web" ]; then
 	nmap -sV -T5 -p 80,443 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 else
@@ -712,10 +715,6 @@ port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8888=`grep 'portid="8888"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_10000=`grep 'portid="10000"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-port_27017=`grep 'portid="27017"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-port_27018=`grep 'portid="27018"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-port_27019=`grep 'portid="27019"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-port_28017=`grep 'portid="28017"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 
 if [ -z "$port_21" ];
@@ -1380,38 +1379,6 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Scanning For Common Vulnerabilities]=----- -- +$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Webmin File Disclosure Exploit]= -- +$RESET"
 	msfconsole -x "use auxiliary/admin/webmin/file_disclosure; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;"
-fi
-
-if [ -z "$port_27017" ];
-then
-	echo -e "$OKRED + -- --=[Port 27017 closed... skipping.$RESET"
-else
-	echo -e "$OKORANGE + -- --=[Port 27017 opened... running tests...$RESET"
-	nmap -p 27017 -T5 --script=mongodb* $TARGET
-fi
-
-if [ -z "$port_27018" ];
-then
-	echo -e "$OKRED + -- --=[Port 27018 closed... skipping.$RESET"
-else
-	echo -e "$OKORANGE + -- --=[Port 27018 opened... running tests...$RESET"
-	nmap -p 27018 -T5 --script=mongodb* $TARGET
-fi
-
-if [ -z "$port_27019" ];
-then
-	echo -e "$OKRED + -- --=[Port 27019 closed... skipping.$RESET"
-else
-	echo -e "$OKORANGE + -- --=[Port 27019 opened... running tests...$RESET"
-	nmap -p 27019 -T5 --script=mongodb* $TARGET
-fi
-
-if [ -z "$port_28017" ];
-then
-	echo -e "$OKRED + -- --=[Port 28017 closed... skipping.$RESET"
-else
-	echo -e "$OKORANGE + -- --=[Port 28017 opened... running tests...$RESET"
-	nmap -p 28017 -T5 --script=mongodb* $TARGET
 fi
 
 if [ -z "$port_49152" ];
