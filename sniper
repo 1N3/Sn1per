@@ -666,7 +666,7 @@ else
 	nmap -sU -T5 -p U:$OPT1 --open $TARGET
 fi
 
-service postgresql start
+# service postgresql start
 
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running Intrusive Scans]=----------------- -- +$RESET"
