@@ -35,6 +35,7 @@
 TARGET="$1"
 MODE="$2"
 OPT1="$3"
+DISABLE_POSTGRESQL="true" # disabling postgresql startup, assuming it's running already
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="/usr/share/sniper/loot"
 PLUGINS_DIR="/usr/share/sniper/plugins"
@@ -94,7 +95,7 @@ function loot {
 	rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Starting Metasploit service...$RESET"
 	/etc/init.d/metasploit start 2> /dev/null
-	/etc/init.d/postgresql start 2> /dev/null
+	if [ -z $DISABLE_POSTGRESQL ]; then /etc/init.d/postgresql start 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Importing NMap XML files into Metasploit...$RESET"
 	msfconsole -x "workspace -a $WORKSPACE; workspace $WORKSPACE; db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;"
 	echo -e "$OKORANGE + -- --=[Copying loot to workspace: $WORKSPACE...$RESET"
@@ -666,7 +667,7 @@ else
 	nmap -sU -T5 -p U:$OPT1 --open $TARGET
 fi
 
-service postgresql start
+if [ -z $DISABLE_POSTGRESQL ]; then service postgresql start
 
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running Intrusive Scans]=----------------- -- +$RESET"
