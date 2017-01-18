@@ -95,7 +95,7 @@ function loot {
 	rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Starting Metasploit service...$RESET"
 	/etc/init.d/metasploit start 2> /dev/null
-	if [ -z $DISABLE_POSTGRESQL ]; then /etc/init.d/postgresql start 2> /dev/null
+	if [ -z $DISABLE_POSTGRESQL ]; then /etc/init.d/postgresql start 2> /dev/null; fi
 	echo -e "$OKORANGE + -- --=[Importing NMap XML files into Metasploit...$RESET"
 	msfconsole -x "workspace -a $WORKSPACE; workspace $WORKSPACE; db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;"
 	echo -e "$OKORANGE + -- --=[Copying loot to workspace: $WORKSPACE...$RESET"
@@ -667,7 +667,7 @@ else
 	nmap -sU -T5 -p U:$OPT1 --open $TARGET
 fi
 
-if [ -z $DISABLE_POSTGRESQL ]; then service postgresql start
+if [ -z $DISABLE_POSTGRESQL ]; then service postgresql start; fi
 
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running Intrusive Scans]=----------------- -- +$RESET"
