@@ -107,22 +107,8 @@ function loot {
 	cp -Rf $LOOT_DIR/imports/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
 	cp -Rf $LOOT_DIR/notes/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
 	cp -Rf $LOOT_DIR/web/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	rm -Rf $LOOT_DIR/screenshots/ 2> /dev/null
-	rm -Rf $LOOT_DIR/nmap/ 2> /dev/null
-	rm -Rf $LOOT_DIR/domains/ 2> /dev/null
-	rm -Rf $LOOT_DIR/output/ 2> /dev/null
-	rm -Rf $LOOT_DIR/reports/ 2> /dev/null
-	rm -Rf $LOOT_DIR/imports/ 2> /dev/null
-	rm -Rf $LOOT_DIR/notes/ 2> /dev/null
-	rm -Rf $LOOT_DIR/web/ 2> /dev/null
-	mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
-	mkdir $LOOT_DIR/nmap -p 2> /dev/null
-	mkdir $LOOT_DIR/domains -p 2> /dev/null
-	mkdir $LOOT_DIR/output -p 2> /dev/null
-	mkdir $LOOT_DIR/reports -p 2> /dev/null
-	mkdir $LOOT_DIR/imports -p 2> /dev/null
-	mkdir $LOOT_DIR/notes -p 2> /dev/null
-	mkdir $LOOT_DIR/web -p 2> /dev/null
+	rm -Rf $LOOT_DIR/{screenshots,nmap,domains,outputs,reports,imports,notes,web}/ 2> /dev/null
+	mkdir $LOOT_DIR/{screenshots,nmap,domains,outputs,reports,imports,notes,web}/ -p 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
 	iceweasel 2> /dev/null &
 	sleep 2
