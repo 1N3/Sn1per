@@ -64,8 +64,8 @@ git clone https://github.com/drwetter/testssl.sh.git
 git clone https://github.com/lunarca/SimpleEmailSpoofer 
 git clone https://github.com/arthepsy/ssh-audit 
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
-cd $PLUGINS_DIR/Findsploit/ && sh install.sh
-cd $PLUGINS_DIR/BruteX/ && sh install.sh
+cd $PLUGINS_DIR/Findsploit/ && bash install.sh
+cd $PLUGINS_DIR/BruteX/ && bash install.sh
 cd $INSTALL_DIR 
 mkdir $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
