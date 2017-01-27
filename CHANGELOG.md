@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v2.2e - Changed NMap scan options (removed -P0 flag)
 * v2.2d - Added MongoDB checks
 * v2.2d - Improved NMap scanning options
 * v2.2c - Added CouchDB checks
