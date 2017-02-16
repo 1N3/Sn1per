@@ -1112,7 +1112,7 @@ then
 	echo -e "$OKRED + -- --=[Port 1433 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 1433 opened... running tests...$RESET"
-	nmap -A -sV -T5 --script=mssql* -p 1433 $TARGET
+	nmap -A -sV -T5 --script=ms-sql* -p 1433 $TARGET
 fi
 
 if [ -z "$port_2049" ];
