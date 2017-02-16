@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v2.3 - Fixed minor issues with missing $TARGET definitions for NMap (CC. @helo86)
+* v2.2f - Added various optimizations and minor code fixes
 * v2.2e - Changed NMap scan options (removed -P0 flag)
 * v2.2d - Added MongoDB checks
 * v2.2d - Improved NMap scanning options

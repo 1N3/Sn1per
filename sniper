@@ -1,5 +1,5 @@
 #!/bin/bash
-# + -- --=[Sn1per v2.2 by 1N3 
+# + -- --=[Sn1per by 1N3 
 # + -- --=[http://crowdshield.com
 #
 # Sn1per - Automated Pentest Recon Tool
@@ -32,6 +32,7 @@
 # sniper loot
 #
 
+VER="2.3"
 TARGET="$1"
 MODE="$2"
 OPT1="$3"
@@ -130,7 +131,7 @@ function help {
 	echo -e "$OKRED               /_/                 $RESET"
 	echo ""
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3$RESET"
 	echo -e "$OKORANGE + -- --=[Usage:"
 	echo ""
 	echo ' [*] sniper <target> <report>'
@@ -168,7 +169,7 @@ if [ -z $TARGET ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e ""
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3$RESET"
+	echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3$RESET"
 	echo -e "$OKORANGE + -- --=[Usage: sniper <target>$RESET"
 	echo ""
 	exit
@@ -255,7 +256,7 @@ if [ "$MODE" = "stealth" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3"
+	echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
 	echo -e "$OKRED " 	
 	echo -e "$OKRED     ./\."
 	echo -e "$OKRED   ./    '\."
@@ -395,7 +396,7 @@ if [ "$MODE" = "airstrike" ]; then
 	echo -e "$OKRED               /_/                 $RESET"
 	echo -e "$RESET"
 	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3"
+	echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
 
 	for a in `cat $TARGET`;
 	do
@@ -600,7 +601,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-echo -e "$OKORANGE + -- --=[sn1per v2.2 by 1N3"
+echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
 echo -e "$RESET"
 echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
 nslookup $TARGET
@@ -837,7 +838,7 @@ else
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 		echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
-		nmap -A -sV -T5 -p 80 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal
+		nmap -A -sV -T5 -p 80 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
 		dirb http://$TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
@@ -1022,7 +1023,7 @@ else
 	if [ "$MODE" = "web" ];
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
-		nmap -A -sV -T5 -p 443 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal
+		nmap -A -sV -T5 -p 443 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
 		dirb https://$TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
