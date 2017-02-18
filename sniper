@@ -218,7 +218,7 @@ if [ "$MODE" = "discover" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Checking ARP Cache]=---------------------- -- +$RESET"
 	arp -a -n
 	echo -e "$OKGREEN + -- ----------------------------=[Running Port Discovery Scan]=------------- -- +$RESET"
-	unicornscan $TARGET -p $DEFAULT_PORTS 2>/dev/null | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-ips.txt
+	unicornscan $TARGET 2>/dev/null | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Current Targets]=------------------------- -- +$RESET"
 	cat $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Sn1per Scans]=------------------ -- +$RESET"
