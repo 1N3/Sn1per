@@ -1,4 +1,7 @@
 ## CHANGELOG:
+* v2.3c - Added Apache Struts 2 RCE NMap script
+* v2.3c - Added Apache Struts 2 RCE NMap exploit
+* v2.3b - Changed NMap scan options to exclude ping sweeps (-P0)
 * v2.3a - Fixed minor issue with MSSQL NMap script command (CC. @helo86)
 * v2.3 - Fixed minor issues with missing $TARGET definitions for NMap (CC. @helo86)
 * v2.2f - Added various optimizations and minor code fixes

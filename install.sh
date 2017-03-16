@@ -47,6 +47,7 @@ echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
 rm -Rf Findsploit/ BruteX/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/ jexboss/ serializekiller/ testssl.sh/ SimpleEmailSpoofer/ ssh-audit/ plugins/ 2> /dev/null
 mkdir $PLUGINS_DIR
 cd $PLUGINS_DIR
+mkdir -p $PLUGINS_DIR/nmap_scripts/ 2> /dev/null
 
 echo -e "$OKORANGE + -- --=[Downloading extensions...$RESET"
 git clone https://github.com/1N3/Findsploit.git 
@@ -63,6 +64,7 @@ git clone https://github.com/nccgroup/shocker.git
 git clone https://github.com/drwetter/testssl.sh.git 
 git clone https://github.com/lunarca/SimpleEmailSpoofer 
 git clone https://github.com/arthepsy/ssh-audit 
+wget https://svn.nmap.org/nmap/scripts/http-vuln-cve2017-5638.nse -O /usr/share/nmap/scripts/http-vuln-cve2017-5638.nse
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh
 cd $PLUGINS_DIR/BruteX/ && bash install.sh
