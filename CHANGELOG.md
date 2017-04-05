@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v2.3d - Fixed issue with loot command
 * v2.3c - Added Apache Struts 2 RCE NMap script
 * v2.3c - Added Apache Struts 2 RCE NMap exploit
 * v2.3b - Changed NMap scan options to exclude ping sweeps (-P0)

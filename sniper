@@ -108,8 +108,8 @@ function loot {
 	cp -Rf $LOOT_DIR/imports/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
 	cp -Rf $LOOT_DIR/notes/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
 	cp -Rf $LOOT_DIR/web/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	rm -Rf $LOOT_DIR/{screenshots,nmap,domains,outputs,reports,imports,notes,web}/ 2> /dev/null
-	mkdir $LOOT_DIR/{screenshots,nmap,domains,outputs,reports,imports,notes,web}/ -p 2> /dev/null
+	rm -Rf $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ 2> /dev/null
+	mkdir $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ -p 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
 	iceweasel 2> /dev/null &
 	sleep 2
@@ -645,13 +645,13 @@ ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
 if [ -z "$OPT1" ]; then
-	nmap -sS -T5 --open -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sS -T5 --open -P0 -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 elif [ "$OPT1" == "web" ]; then
-	nmap -sV -T5 -p 80,443  --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sV -T5 -P0 -p 80,443  --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 else
-	nmap -sS -T5 -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sS -T5 -P0 -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
-	nmap -sU -T5 -p U:$OPT1 --open $TARGET
+	nmap -sU -T5 -P0 -p U:$OPT1 --open $TARGET
 fi
 
 if [ -z $DISABLE_POSTGRESQL ]; then service postgresql start; fi
@@ -831,7 +831,7 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
 	nikto -h http://$TARGET 
 	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-	echo -e "$OKRED[+]$RESET ;/Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
+	echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
 	cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
 	
 	if [ "$MODE" = "web" ];
