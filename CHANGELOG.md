@@ -1,4 +1,7 @@
 ## CHANGELOG:
+* v2.4 - Added detection for open X11 servers
+* v2.4 - Added IIS6 Win2k3 RCE NMap script
+* v2.4 - Added option to disable Google Hacking queries via Firefox
 * v2.3d - Fixed issue with loot command
 * v2.3c - Added Apache Struts 2 RCE NMap script
 * v2.3c - Added Apache Struts 2 RCE NMap exploit
@@ -141,3 +144,7 @@
 
 ## FUTURE:
 * Add auto logging and reporting to all scans
+* Add HTML reporting for scans
+* Add automated Wireless attacks to Sn1per
+* Add automated MITM attacks to Sn1per
+* Add web mode port option for customized web scans

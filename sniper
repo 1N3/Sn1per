@@ -32,7 +32,7 @@
 # sniper loot
 #
 
-VER="2.3"
+VER="2.4"
 TARGET="$1"
 MODE="$2"
 OPT1="$3"
@@ -64,6 +64,10 @@ AUTOBRUTE="1"
 # ENABLE/DISABLE FULL DETAILED NMAP SCAN
 # DEFAULT IS "1" (ENABLED)
 FULLNMAPSCAN="1"
+
+# ENABLE/DISABLE AUTOMATIC GOOGLE HACKING QUERIES
+# DEFAULT IS "1" (ENABLED)
+GOOHAK="1"
 
 cd $INSTALL_DIR
 
@@ -838,7 +842,7 @@ else
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 		echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
-		nmap -A -sV  --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -T5 -p 80 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
+		nmap -A -sV --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse -T5 -p 80 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
 		dirb http://$TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
@@ -870,8 +874,12 @@ else
 	
 	if [ $SCAN_TYPE == "DOMAIN" ];
 	then
-		echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------- -- +$RESET"
-		goohak $TARGET > /dev/null
+		if [ "$GOOHAK" = "0" ]; then
+			echo -e "$OKGREEN + -- ----------------------------=[Skipping Google Hacking Queries]=-------------------- -- +$RESET"
+		else
+			echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------------------- -- +$RESET"
+			goohak $TARGET > /dev/null
+		fi		
 		echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=---------- -- +$RESET"
 		php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
 		rm -Rf output/ cookie.txt exploits.conf
@@ -1025,7 +1033,7 @@ else
 	if [ "$MODE" = "web" ];
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
-		nmap -A -sV  --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -T5 -p 443 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
+		nmap -A -sV  --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse -T5 -p 443 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
 		dirb https://$TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
@@ -1063,8 +1071,12 @@ else
 	then
 		if [ -z $GHDB ];
 		then
-			echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=---------- -- +$RESET"
-			goohak $TARGET > /dev/null
+			if [ "$GOOHAK" = "0" ]; then
+				echo -e "$OKGREEN + -- ----------------------------=[Skipping Google Hacking Queries]=-------------------- -- +$RESET"
+			else
+				echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------------------- -- +$RESET"
+				goohak $TARGET > /dev/null
+			fi		
 			echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=----------- -- +$RESET"
 			php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
 			rm -Rf output/ cookie.txt exploits.conf
@@ -1241,6 +1253,7 @@ then
 else
 	echo -e "$OKORANGE + -- --=[Port 6000 opened... running tests...$RESET"
 	nmap -A -sV  -T5 --script=x11* -p 6000 $TARGET
+	msfconsole -x "use auxiliary/scanner/x11/open_x11; set RHOSTS "$TARGET"; exploit;"
 fi
 
 if [ -z "$port_6667" ];
