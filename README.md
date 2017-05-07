@@ -9,17 +9,26 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 ## FEATURES:
 * Automatically collects basic recon (ie. whois, ping, DNS, etc.)
 * Automatically launches Google hacking queries against a target domain
-* Automatically enumerates open ports
-* Automatically brute forces sub-domains and DNS info
+* Automatically enumerates open ports via NMap port scanning
+* Automatically brute forces sub-domains, gathers DNS info and checks for zone transfers
 * Automatically checks for sub-domain hijacking
 * Automatically runs targeted NMap scripts against open ports
 * Automatically runs targeted Metasploit scan and exploit modules
 * Automatically scans all web applications for common vulnerabilities
-* Automatically brute forces all open services
-* Automatically exploit remote hosts to gain remote shell access
-* Performs high level enumeration of multiple hosts
+* Automatically brute forces ALL open services
+* Automatically test for anonymous FTP access
+* Automatically runs WPScan, Arachni and Nikto for all web services
+* Automatically enumerates NFS shares
+* Automatically test for anonymous LDAP access
+* Automatically enumerate SSL/TLS ciphers, protocols and vulnerabilities
+* Automatically enumerate SNMP community strings, services and users
+* Automatically list SMB users and shares, check for NULL sessions and exploit MS08-067
+* Automatically exploit vulnerable JBoss, Java RMI and Tomcat servers
+* Automatically tests for open X11 servers
 * Auto-pwn added for Metasploitable, ShellShock, MS08-067, Default Tomcat Creds
+* Performs high level enumeration of multiple hosts and subnets
 * Automatically integrates with Metasploit Pro, MSFConsole and Zenmap for reporting
+* Automatically gathers screenshots of all web sites
 * Create individual workspaces to store all scan output
 
 ## KALI LINUX INSTALL:

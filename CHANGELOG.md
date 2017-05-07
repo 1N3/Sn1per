@@ -1,4 +1,8 @@
 ## CHANGELOG:
+* v2.4a - Added all NMap script checks via 'fullportonly' mode
+* v2.4a - Added JBoss JMX Console Beanshell Deployer WAR Upload and Deployment Metasploit exploit
+* v2.4a - Added Java RMI RCE NMap/Metasploit detection
+* v2.4a - Added INTEL-SA-00075 (Intel AMT) vulnerability NMap script
 * v2.4 - Added detection for open X11 servers
 * v2.4 - Added IIS6 Win2k3 RCE NMap script
 * v2.4 - Added option to disable Google Hacking queries via Firefox
