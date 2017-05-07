@@ -1191,8 +1191,8 @@ else
 	echo -e "$OKORANGE + -- --=[Port 1099 opened... running tests...$RESET"
 	amap $TARGET 1099 -A
 	nmap -A -sV -T5 -p 1099 --script=rmi-* $TARGET
-	msfconsole -x "use gather/java_rmi_registry; set RHOST $TARGET; run;"
-	msfconsole -x "use scanner/misc/java_rmi_server; set RHOST $TARGET; run;"
+	msfconsole -x "use gather/java_rmi_registry; set RHOST "$TARGET"; run;"
+	msfconsole -x "use scanner/misc/java_rmi_server; set RHOST "$TARGET"; run;"
 fi
 
 if [ -z "$port_1433" ];
