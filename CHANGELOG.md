@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v2.4b - Fixed issue with discovery scan output file (CC. @ifly53e)
+* v2.4b - Fixed issue with Intel AMT RCE port list
 * v2.4a - Added all NMap script checks via 'fullportonly' mode
 * v2.4a - Added JBoss JMX Console Beanshell Deployer WAR Upload and Deployment Metasploit exploit
 * v2.4a - Added Java RMI RCE NMap/Metasploit detection
