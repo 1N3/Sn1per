@@ -120,6 +120,16 @@ GOOHAK="1"
 
 cd $INSTALL_DIR
 
+function init {
+	mkdir -p $LOOT_DIR 2> /dev/null
+	mkdir $LOOT_DIR/domains 2> /dev/null
+	mkdir $LOOT_DIR/screenshots 2> /dev/null
+	mkdir $LOOT_DIR/nmap 2> /dev/null
+	mkdir $LOOT_DIR/reports 2> /dev/null
+	mkdir $LOOT_DIR/output 2> /dev/null
+	TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
+}
+
 function loot {
 	echo -e "$OKRED                ____               $RESET"
 	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
@@ -239,6 +249,9 @@ if [[ ${TARGET:0:1} =~ $REGEX ]];
 else 
 	SCAN_TYPE="DOMAIN"
 fi
+
+# INITILIZE()
+init
 
 if [ "$MODE" = "report" ]; then
 	sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1

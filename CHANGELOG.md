@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v2.4c - Added loot and $TARGET sanity checks (CC. @menzow)
 * v2.4b - Fixed issue with discovery scan output file (CC. @ifly53e)
 * v2.4b - Fixed issue with Intel AMT RCE port list
 * v2.4a - Added all NMap script checks via 'fullportonly' mode
