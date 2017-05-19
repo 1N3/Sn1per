@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v2.4d - Fixed issue with rpcinfo install script
+* v2.4d - Fixed issue with Arachni install script
 * v2.4c - Added loot and $TARGET sanity checks (CC. @menzow)
 * v2.4b - Fixed issue with discovery scan output file (CC. @ifly53e)
 * v2.4b - Fixed issue with Intel AMT RCE port list

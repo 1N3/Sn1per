@@ -36,8 +36,8 @@ cp -Rf $PWD/* $INSTALL_DIR
 cd $INSTALL_DIR
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install ruby rubygems python dos2unix zenmap sslyze uniscan xprobe2 cutycapt unicornscan waffit host whois dirb dnsrecon curl nmap php php-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap
-pip install dnspython colorama tldextract urllib3 ipaddress arachni
+apt-get install ruby rubygems python dos2unix zenmap sslyze arachni rpcbind uniscan xprobe2 cutycapt unicornscan waffit host whois dirb dnsrecon curl nmap php php-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap
+pip install dnspython colorama tldextract urllib3 ipaddress 
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
