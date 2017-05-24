@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v2.4f - Fixed issue with upper NMap port range(CC. DaveW)
 * v2.4e - Added NMap no ping switch to all scans
 * v2.4d - Fixed issue with rpcinfo install script
 * v2.4d - Fixed issue with Arachni install script
