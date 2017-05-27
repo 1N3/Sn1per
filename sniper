@@ -81,7 +81,7 @@
 ## SAMPLE REPORT:
 # https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
-VER="2.4"
+VER="2.5"
 TARGET="$1"
 MODE="$2"
 OPT1="$3"
