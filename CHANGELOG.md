@@ -1,4 +1,8 @@
 ## CHANGELOG:
+* v2.5 - Added HTML report generation via sniper 'loot' command
+* v2.5 - Added automatic NMap searchsploit integration to find exploits
+* v2.5 - Added various improvements to Sn1per discovery scan mode
+* v2.5 - Fixed issue with IIS BoF NMap script (CC. ifly53e)
 * v2.4f - Fixed issue with upper NMap port range(CC. DaveW)
 * v2.4e - Added NMap no ping switch to all scans
 * v2.4d - Fixed issue with rpcinfo install script

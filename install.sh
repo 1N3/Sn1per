@@ -37,7 +37,7 @@ cd $INSTALL_DIR
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
 apt-get install ruby rubygems python dos2unix zenmap sslyze arachni rpcbind uniscan xprobe2 cutycapt unicornscan waffit host whois dirb dnsrecon curl nmap php php-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap
-pip install dnspython colorama tldextract urllib3 ipaddress 
+pip install dnspython colorama tldextract urllib3 ipaddress aha
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install rake
@@ -66,7 +66,7 @@ git clone https://github.com/lunarca/SimpleEmailSpoofer
 git clone https://github.com/arthepsy/ssh-audit 
 wget https://svn.nmap.org/nmap/scripts/http-vuln-cve2017-5638.nse -O /usr/share/nmap/scripts/http-vuln-cve2017-5638.nse
 wget https://raw.githubusercontent.com/xorrbit/nmap/865142904566e416944ebd6870d496c730934965/scripts/http-vuln-INTEL-SA-00075.nse -O /usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse
-cp $PWD/bin/iis-buffer-overflow.nse /usr/share/nmap/scripts/iis-buffer-overflow.nse
+cp $INSTALL_DIR/bin/iis-buffer-overflow.nse /usr/share/nmap/scripts/iis-buffer-overflow.nse
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh
 cd $PLUGINS_DIR/BruteX/ && bash install.sh
