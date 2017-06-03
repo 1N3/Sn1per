@@ -128,7 +128,7 @@ cd $INSTALL_DIR
 
 function check_update {
 	if [ "$ENABLE_AUTO_UPDATES" = "1" ]; then
-		echo -e "$OKBLUE + -- --=[Checking for updates...$RESET"
+		# echo -e "$OKBLUE + -- --=[Checking for updates...$RESET"
 		LATEST_VER="$(curl -s https://crowdshield.com/.injectx/sniper_ver.txt)"
 		if [ "$LATEST_VER" != "$VER" ]; then
 			echo -e "$OKRED + -- --=[Sn1per $LATEST_VER is available to download... Do you want to update? (y or n)$RESET"
