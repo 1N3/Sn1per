@@ -81,7 +81,7 @@
 ## SAMPLE REPORT:
 # https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
-VER="2.5"
+VER="2.5a"
 TARGET="$1"
 MODE="$2"
 OPT1="$3"
@@ -120,7 +120,29 @@ FULLNMAPSCAN="1"
 # DEFAULT IS "1" (ENABLED)
 GOOHAK="1"
 
+# ENABLE AUTO UPDATES
+# DEFAULT IS "1" (ENABLED)
+ENABLE_AUTO_UPDATES="1"
+
 cd $INSTALL_DIR
+
+function check_update {
+	if [ "$ENABLE_AUTO_UPDATES" = "1" ]; then
+		echo -e "$OKBLUE + -- --=[Checking for updates...$RESET"
+		LATEST_VER="$(curl -s https://crowdshield.com/.injectx/sniper_ver.txt)"
+		if [ "$LATEST_VER" != "$VER" ]; then
+			echo -e "$OKRED + -- --=[Sn1per $LATEST_VER is available to download... Do you want to update? (y or n)$RESET"
+			read ans
+			if [ "$ans" = "y" ]; then
+				rm -Rf /tmp/Sn1per/ 2>/dev/null
+				git clone https://github.com/1N3/Sn1per /tmp/Sn1per/
+				bash /tmp/Sn1per/install.sh 	
+				rm -Rf /tmp/Sn1per/ 2>/dev/null
+				exit	
+			fi	
+		fi	
+	fi
+}
 
 function init {
 	mkdir -p $LOOT_DIR 2> /dev/null
@@ -259,6 +281,9 @@ fi
 
 # INITILIZE()
 init
+
+# CHECK FOR UPDATES
+check_update
 
 if [ "$MODE" = "report" ]; then
 	sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1

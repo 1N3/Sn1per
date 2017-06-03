@@ -1,4 +1,7 @@
 ## CHANGELOG:
+* v2.5a - Added auto-updates to check and download new versions
+* v2.5a - Fixed issue with install.sh to resolve pip aha error
+* v2.5a - Added libxml2-utils to install.sh to meet dependencies
 * v2.5 - Added HTML report generation via sniper 'loot' command
 * v2.5 - Added automatic NMap searchsploit integration to find exploits
 * v2.5 - Added various improvements to Sn1per discovery scan mode
