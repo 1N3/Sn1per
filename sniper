@@ -641,11 +641,11 @@ if [ "$MODE" = "fullportonly" ]; then
 	echo -e "$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Performing Port Scan]=------------------- -- +$RESET"
 	if [ -z "$OPT1" ]; then
-		nmap -T4 -sV -O -v -p 1-65355 --script=* -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+		nmap -T4 -sV -O -v -p 1-65355 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 		echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
 		searchsploit --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
 	else 
-		nmap -T4 -sV -O -v -p $OPT1 --script=* -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+		nmap -T4 -sV -O -v -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 		echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
 		searchsploit --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
 	fi
