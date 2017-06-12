@@ -662,10 +662,10 @@ fi
 
 if [ "$MODE" = "nuke" ]; then
 	if [ "$OPT1" = "report" ]; then
-		sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+                sniper $(realpath $TARGET) $MODE | tee $LOOT_DIR/sniper-$(basename $TARGET)-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
 		exit
 	fi
-	for a in `cat $TARGET`; do
+        for a in `cat $(realpath $TARGET)`; do
 		echo -e "$OKRED "
 		echo -e "$OKRED                              ____"
 		echo -e "$OKRED                      __,-~~/~    \`---."
