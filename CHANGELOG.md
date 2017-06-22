@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v2.5c - Added various improvements to 'discover' mode scans
 * v2.5b - Removed NMap script checks for 'fullportonly' mode
 * v2.5a - Added auto-updates to check and download new versions
 * v2.5a - Fixed issue with install.sh to resolve pip aha error
