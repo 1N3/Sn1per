@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v2.5e - Fixed issue with port 3128/tcp checks (CC. @ifly53e)
+* v2.5d - Added searchsploit option for (-v) to search all terms (CC. @ifly53e)
 * v2.5c - Added various improvements to 'discover' mode scans
 * v2.5b - Removed NMap script checks for 'fullportonly' mode
 * v2.5a - Added auto-updates to check and download new versions

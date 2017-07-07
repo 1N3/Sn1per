@@ -97,8 +97,8 @@ USER_FILE="/usr/share/brutex/wordlists/simple-users.txt"
 PASS_FILE="/usr/share/brutex/wordlists/password.lst"
 DNS_FILE="/usr/share/brutex/wordlists/namelist.txt"
 SUPER_MICRO_SCAN="/usr/share/sniper/plugins/SuperMicro-Password-Scanner/supermicro_scan.sh"
-DEFAULT_PORTS="21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,623,624,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,16992,27017,27018,27019,28017,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049"
-DEFAULT_TCP_PORTS="21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,623,624,1099,1433,1524,2049,2121,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,16992,27017,27018,27019,28017,49152"
+DEFAULT_PORTS="21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,623,624,1099,1433,1524,2049,2121,3128,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,16992,27017,27018,27019,28017,49152,U:53,U:67,U:68,U:88,U:161,U:162,U:137,U:138,U:139,U:389,U:520,U:2049"
+DEFAULT_TCP_PORTS="21,22,23,25,53,79,80,110,111,135,139,162,389,443,445,512,513,514,623,624,1099,1433,1524,2049,2121,3128,3306,3310,3389,3632,4443,5432,5800,5900,5984,6667,8000,8009,8080,8180,8443,8888,10000,16992,27017,27018,27019,28017,49152"
 DEFAULT_UDP_PORTS="53,67,68,88,161,162,137,138,139,389,520,2049"
 THREADS="30"
 OKBLUE='\033[94m'
@@ -160,6 +160,8 @@ function init {
 	mkdir $LOOT_DIR/reports 2> /dev/null
 	mkdir $LOOT_DIR/output 2> /dev/null
 	TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
+	/etc/init.d/postgresql start 2>/dev/null
+	/etc/init.d/metasploit start 2>/dev/null
 }
 
 function loot {
@@ -260,7 +262,7 @@ function help {
     echo ""
     echo ""
     check_update
-}
+} 
 
 if [ -z $TARGET ]; then
 	echo -e "$OKRED                ____               $RESET"
@@ -654,11 +656,11 @@ if [ "$MODE" = "fullportonly" ]; then
 	if [ -z "$OPT1" ]; then
 		nmap -T4 -sV -O -v -p 1-65355 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 		echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
-		searchsploit --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
+		searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
 	else 
 		nmap -T4 -sV -O -v -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 		echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
-		searchsploit --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
+		searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
 	fi
 	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
 	exit
@@ -1597,7 +1599,7 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Performing Full NMap Port Scan]=---------- -- +$RESET"
 	nmap -Pn -T4 -sV  -O -v -p 1-65355 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 	echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits via Searchsploit]=--- -- +$RESET"
-	searchsploit --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
+	searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
 fi
 
 if [ "$AUTOBRUTE" = "0" ]; then
