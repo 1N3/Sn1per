@@ -1344,7 +1344,7 @@ else
 	msfconsole -x "setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; use unix/misc/distcc_exec; run; exit;"
 fi
 
-if [ -z "$port_8443" ];
+if [ -z "$port_4443" ];
 then
 	echo -e "$OKRED + -- --=[Port 4443 closed... skipping.$RESET"
 else
