@@ -161,15 +161,15 @@ Original exploit by Zhiniang Peng and Chen Wu.
 
   if status == '200' then
     -- Buffer overflow is successfully executed on the server.
-    vuln.state = vulns.STATE.EXPLOIT,
+    vuln.state = vulns.STATE.EXPLOIT
     vuln.exploit_results = response
   elseif status == '400' then
     -- Bad request error is occured because webdav is not installed.
-    vuln.state = vulns.STATE.LIKELY_VULN,
+    vuln.state = vulns.STATE.LIKELY_VULN
     vuln.exploit_results = "Server returned 400: Install webdav and try again."
   elseif status == '502' then
     -- Likely to have an error in the Server Name
-    vuln.state = vulns.STATE.LIKELY_VULN,
+    vuln.state = vulns.STATE.LIKELY_VULN
     vuln.exploit_results = "Server returned 502: Please try to change ServerName and run the exploit again"
   elseif status ~= nil then
     vuln.exploit_results = response
