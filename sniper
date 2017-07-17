@@ -160,8 +160,8 @@ function init {
 	mkdir $LOOT_DIR/reports 2> /dev/null
 	mkdir $LOOT_DIR/output 2> /dev/null
 	TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
-	/etc/init.d/postgresql start 2>/dev/null
-	/etc/init.d/metasploit start 2>/dev/null
+	service postgresql start 2>/dev/null
+	service metasploit start 2>/dev/null
 }
 
 function loot {
