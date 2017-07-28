@@ -62,6 +62,7 @@ sniper <target> nobrute <report>
 sniper <targets.txt> airstrike <report>
 sniper <targets.txt> nuke <report>
 sniper loot
+sniper update
 ```
 
 ### MODES:
@@ -75,6 +76,7 @@ sniper loot
 * **AIRSTRIKE:** Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IP's that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.
 * **NUKE:** Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke. 
 * **LOOT:** Automatically organizes and displays loot folder in your browser and opens Metasploit Pro and Zenmap GUI with all port scan results. To run, type 'sniper loot'.
+* **UPDATE:** Checks for updates and upgrades all components used by sniper.
 
 ## SAMPLE REPORT:
 https://gist.github.com/1N3/8214ec2da2c91691bcbc

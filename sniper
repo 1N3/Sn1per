@@ -64,6 +64,7 @@
 #sniper <targets.txt> airstrike <report>
 #sniper <targets.txt> nuke <report>
 #sniper loot
+#sniper update
 #```
 
 ### MODES:

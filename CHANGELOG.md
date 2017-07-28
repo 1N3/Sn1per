@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v2.5g - Updated README with update command
 * v2.5f - Fixes for various bugs reported and fixed by @ifly53e (https://github.com/1N3/Sn1per/pull/89)
 * v2.5e - Fixed issue with port 3128/tcp checks (CC. @ifly53e)
 * v2.5d - Added searchsploit option for (-v) to search all terms (CC. @ifly53e)
