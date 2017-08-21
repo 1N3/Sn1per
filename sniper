@@ -109,6 +109,11 @@ OKORANGE='\033[93m'
 RESET='\e[0m'
 REGEX='^[0-9]+$'
 
+# CHECK IF DISTRO IS BLACKARCH
+if grep -q BlackArch "/etc/issue"; then
+  DISTRO='blackarch'
+fi
+
 # ENABLE/DISABLE AUTOMATIC BRUTE FORCE
 # DEFAULT IS "1" (ENABLED)
 AUTOBRUTE="1"
@@ -460,7 +465,11 @@ if [ "$MODE" = "stealth" ]; then
 		echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
 		xsstracer $TARGET 80
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-		cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+    if [ ${DISTRO} == "blackarch"  ]; then
+      /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+    else
+		  cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+    fi
 	fi
 	
 	if [ -z "$port_443" ];
@@ -846,8 +855,12 @@ then
 	echo -e "$OKRED + -- --=[Port 22 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 22 opened... running tests...$RESET"
-	cd $PLUGINS_DIR/ssh-audit
-	python ssh-audit.py $TARGET:22
+  if [ $DISTRO == "blackarc" ]; then
+    /bin/ssh-audit $TARGET:22
+  else
+	  cd $PLUGINS_DIR/ssh-audit
+	  python ssh-audit.py $TARGET:22
+  fi
 	cd $INSTALL_DIR
 	nmap -A -sV -Pn -sC -T5 -p 22 --script=ssh-* $TARGET
 	msfconsole -x "use scanner/ssh/ssh_enumusers; setg USER_FILE "$USER_FILE"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use scanner/ssh/ssh_identify_pubkeys; run; use scanner/ssh/ssh_version; run; exit;"
