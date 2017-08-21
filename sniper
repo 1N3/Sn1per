@@ -33,6 +33,10 @@
 #* Automatically gathers screenshots of all web sites
 #* Create individual workspaces to store all scan output
 
+
+## FOR BLACKARCH
+#  no need to install, just pacman -S sniper
+#
 ## KALI LINUX INSTALL:
 #```
 #./install.sh
@@ -110,8 +114,9 @@ RESET='\e[0m'
 REGEX='^[0-9]+$'
 
 # CHECK IF DISTRO IS BLACKARCH
-if grep -q BlackArch "/etc/issue"; then
+if grep -q BlackArch /etc/issue; then
   DISTRO='blackarch'
+  alias iceweasel='firefox'
 fi
 
 # ENABLE/DISABLE AUTOMATIC BRUTE FORCE
@@ -855,7 +860,7 @@ then
 	echo -e "$OKRED + -- --=[Port 22 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 22 opened... running tests...$RESET"
-  if [ $DISTRO == "blackarc" ]; then
+  if [ $DISTRO == "blackarch" ]; then
     /bin/ssh-audit $TARGET:22
   else
 	  cd $PLUGINS_DIR/ssh-audit
@@ -1105,8 +1110,12 @@ else
 	sslscan --no-failed $TARGET 
 	testssl $TARGET
 	echo ""
-	cd $PLUGINS_DIR/MassBleed
-	./massbleed $TARGET port 443
+  if [ $DISTRO == "blackarch" ]; then
+    massbleed $TARGET port 443
+  else
+	  cd $PLUGINS_DIR/MassBleed
+	  ./massbleed $TARGET port 443
+  fi
 	cd $INSTALL_DIR
 	echo -e "$OKGREEN + -- ----------------------------=[Checking HTTP Headers]=------------------- -- +$RESET"
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
