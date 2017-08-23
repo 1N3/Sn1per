@@ -116,7 +116,13 @@ REGEX='^[0-9]+$'
 # CHECK IF DISTRO IS BLACKARCH
 if grep -q BlackArch /etc/issue; then
   DISTRO='blackarch'
+  echo "Detected BlackArch GNU/Linux"
   alias iceweasel='firefox'
+  alias cutycapt='/bin/CutyCapt'
+  echo "setup aliases for compability with BlackArch"
+  HOMEPATH=$(pwd)
+  echo "setting current path to $HOMEPATH"
+  #alias sniper="${HOMEPATH}/sniper"
 fi
 
 # ENABLE/DISABLE AUTOMATIC BRUTE FORCE
@@ -311,7 +317,7 @@ init
 check_update
 
 if [ "$MODE" = "report" ]; then
-	sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
+	$HOMEPATH/sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
 	exit
 fi
 
