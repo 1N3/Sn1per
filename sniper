@@ -226,7 +226,7 @@ function loot {
 	rm -Rf $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ 2> /dev/null
 	mkdir $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ -p 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
-  if [ ${DISTRO} == "Blackarch" ]; then
+  if [ ${DISTRO} == "blackarch" ]; then
     firefox 2> /dev/null &
   else
     iceweasel 2> /dev/null &
@@ -1667,8 +1667,8 @@ else
 fi
 
 echo -e "$OKGREEN + -- ----------------------------=[Scanning For Common Vulnerabilities]=----- -- +$RESET"
-if [ ${DISTRO} == "Blackarch" ]; then
-  /usr/bin/yasuo -r $TARGET -b all
+if [ ${DISTRO} == "blackarch" ]; then
+  /bin/yasuo -r $TARGET -b all
 else
   cd $PLUGINS_DIR/yasuo
   ruby yasuo.rb -r $TARGET -b all
