@@ -33,6 +33,10 @@
 #* Automatically gathers screenshots of all web sites
 #* Create individual workspaces to store all scan output
 
+
+## FOR BLACKARCH
+#  no need to install, just pacman -S sniper
+#
 ## KALI LINUX INSTALL:
 #```
 #./install.sh
@@ -108,6 +112,14 @@ OKGREEN='\033[92m'
 OKORANGE='\033[93m'
 RESET='\e[0m'
 REGEX='^[0-9]+$'
+
+# CHECK IF DISTRO IS BLACKARCH
+if grep -q BlackArch /etc/issue; then
+  DISTRO='blackarch'
+  echo "Detected BlackArch GNU/Linux"
+  HOMEPATH=$(pwd)
+  echo "setting current path to $HOMEPATH"
+fi
 
 # ENABLE/DISABLE AUTOMATIC BRUTE FORCE
 # DEFAULT IS "1" (ENABLED)
@@ -214,12 +226,16 @@ function loot {
 	rm -Rf $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ 2> /dev/null
 	mkdir $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ -p 2> /dev/null
 	echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
-	iceweasel 2> /dev/null &
+  if [ ${DISTRO} == "blackarch" ]; then
+    firefox 2> /dev/null &
+  else
+    iceweasel 2> /dev/null &
+  fi
 	sleep 2
-	iceweasel $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null &
+	xdg-open $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null &
 	sleep 2
 	echo -e "$OKORANGE + -- --=[Launching Metasploit Pro Web UI...$RESET"
-	iceweasel http://localhost:3001/login 2> /dev/null &
+	xdg-open http://localhost:3001/login 2> /dev/null &
 	echo -e "$OKORANGE + -- --=[Launching Zenmap...$RESET"
 	zenmap -f $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null &
 	echo -e "$OKORANGE + -- --=[Done!$RESET"
@@ -301,7 +317,7 @@ init
 check_update
 
 if [ "$MODE" = "report" ]; then
-	sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
+	$HOMEPATH/sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
 	exit
 fi
 
@@ -460,7 +476,11 @@ if [ "$MODE" = "stealth" ]; then
 		echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
 		xsstracer $TARGET 80
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-		cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+    if [ ${DISTRO} == "blackarch"  ]; then
+      /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+    else
+		  cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+    fi
 	fi
 	
 	if [ -z "$port_443" ];
@@ -478,8 +498,12 @@ if [ "$MODE" = "stealth" ]; then
 		sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
 		sslscan --no-failed $TARGET
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-		cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
-		echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/$TARGET-port443.jpg"
+    if [ ${DISTRO} == "blackarch"  ]; then
+      /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
+    else
+      cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
+    fi
+    echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/$TARGET-port443.jpg"
 	fi
 	
 	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
@@ -605,7 +629,11 @@ if [ "$MODE" = "airstrike" ]; then
 			echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
 			xsstracer $a 80
 			echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-			cutycapt --url=http://$a --out=$LOOT_DIR/screenshots/$a-port80.jpg
+			if [ ${DISTRO} == "blackarch"  ]; then
+        /bin/CutyCapt --url=http://$a --out=$LOOT_DIR/screenshots/$a-port80.jpg
+      else
+        cutycapt --url=http://$a --out=$LOOT_DIR/screenshots/$a-port80.jpg
+      fi
 		fi
 		
 		if [ -z "$port_443" ];
@@ -623,8 +651,12 @@ if [ "$MODE" = "airstrike" ]; then
 			sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $a
 			sslscan --no-failed $a
 			echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-			cutycapt --url=https://$a --out=$LOOT_DIR/screenshots/$a-port443.jpg
-			echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$a-port443.jpg"
+			if [ ${DISTRO} == "blackarch"  ]; then
+        /bin/CutyCapt --url=https://$a --out=$LOOT_DIR/screenshots/$a-port443.jpg
+      else
+        cutycapt --url=https://$a --out=$LOOT_DIR/screenshots/$a-port443.jpg
+      fi
+      echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$a-port443.jpg"
 		fi
 		
 		echo -e "$OKGREEN + -- ----------------------------=[Done!]=----------------------------------- -- +$RESET"
@@ -846,8 +878,12 @@ then
 	echo -e "$OKRED + -- --=[Port 22 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 22 opened... running tests...$RESET"
-	cd $PLUGINS_DIR/ssh-audit
-	python ssh-audit.py $TARGET:22
+  if [ $DISTRO == "blackarch" ]; then
+    /bin/ssh-audit $TARGET:22
+  else
+	  cd $PLUGINS_DIR/ssh-audit
+	  python ssh-audit.py $TARGET:22
+  fi
 	cd $INSTALL_DIR
 	nmap -A -sV -Pn -sC -T5 -p 22 --script=ssh-* $TARGET
 	msfconsole -x "use scanner/ssh/ssh_enumusers; setg USER_FILE "$USER_FILE"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use scanner/ssh/ssh_identify_pubkeys; run; use scanner/ssh/ssh_version; run; exit;"
@@ -958,8 +994,11 @@ else
 	nikto -h http://$TARGET 
 	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 	echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
-	cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
-	
+	if [ ${DISTRO} == "blackarch"  ]; then
+    /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+  else
+    cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+  fi
 	if [ "$MODE" = "web" ];
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
@@ -1092,8 +1131,12 @@ else
 	sslscan --no-failed $TARGET 
 	testssl $TARGET
 	echo ""
-	cd $PLUGINS_DIR/MassBleed
-	./massbleed $TARGET port 443
+  if [ $DISTRO == "blackarch" ]; then
+    massbleed $TARGET port 443
+  else
+	  cd $PLUGINS_DIR/MassBleed
+	  ./massbleed $TARGET port 443
+  fi
 	cd $INSTALL_DIR
 	echo -e "$OKGREEN + -- ----------------------------=[Checking HTTP Headers]=------------------- -- +$RESET"
 	echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
@@ -1149,8 +1192,12 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
 	nikto -h https://$TARGET 
 	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-	cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
-	echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
+	if [ ${DISTRO} == "blackarch"  ]; then
+    /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
+  else
+    cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
+  fi
+  echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
 	
 	if [ "$MODE" = "web" ];
 	then
@@ -1361,8 +1408,12 @@ else
 	./massbleed $TARGET port 4443
 	cd $INSTALL_DIR
 	nikto -h https://$TARGET:4443 
-	cutycapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg
-	nmap -sV -Pn -A -p 4443 -T5 --script=*proxy* $TARGET
+	if [ ${DISTRO} == "blackarch"  ]; then
+    /bin/CutyCapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg
+  else
+    cutycapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg
+  fi
+  nmap -sV -Pn -A -p 4443 -T5 --script=*proxy* $TARGET
 fi
 
 if [ -z "$port_5432" ];
@@ -1428,8 +1479,12 @@ else
 	xsstracer $TARGET 8000
 	cd ..
 	nikto -h http://$TARGET:8000 
-	cutycapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg
-	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8000 -T5 $TARGET
+  if [ ${DISTRO} == "blackarch"  ]; then
+    /bin/CutyCapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg
+  else
+    cutycapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg
+  fi
+  nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8000 -T5 $TARGET
 fi
 
 if [ -z "$port_8100" ];
@@ -1447,8 +1502,12 @@ else
 	./massbleed $TARGET port 8100
 	cd $INSTALL_DIR
 	nikto -h http://$TARGET:8100 
-	cutycapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg
-	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8100 -T5 $TARGET
+	if [ ${DISTRO} == "blackarch"  ]; then
+    /bin/CutyCapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg
+  else
+    cutycapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg
+  fi
+  nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8100 -T5 $TARGET
 fi
 
 if [ -z "$port_8080" ];
@@ -1466,8 +1525,12 @@ else
 	./massbleed $TARGET port 8080
 	cd $INSTALL_DIR
 	nikto -h http://$TARGET:8080 
-	cutycapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg
-	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8080 -T5 --script=*proxy* $TARGET
+	if [ ${DISTRO} == "blackarch"  ]; then
+    /bin/CutyCapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg
+  else
+    cutycapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg
+  fi
+  nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8080 -T5 --script=*proxy* $TARGET
 	msfconsole -x "use admin/http/jboss_bshdeployer; setg RHOST "$TARGET"; run; use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8080; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 	# EXPERIMENTAL - APACHE STRUTS RCE EXPLOIT
 	# msfconsole -x "use exploit/linux/http/apache_struts_rce_2016-3081; setg RHOSTS "$TARGET"; set PAYLOAD linux/x86/read_file; set PATH /etc/passwd; run;"
@@ -1489,8 +1552,12 @@ else
 	./massbleed $TARGET port 8180
 	cd $INSTALL_DIR
 	nikto -h http://$TARGET:8180 
-	cutycapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg
-	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -p 8180 -T5 --script=*proxy* $TARGET
+  if [ ${DISTRO} == "blackarch"  ]; then
+    /bin/CutyCapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg
+  else  
+    cutycapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg
+  fi
+  nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -p 8180 -T5 --script=*proxy* $TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Webmin File Disclosure Exploit]= -- +$RESET"
 	msfconsole -x "use auxiliary/admin/webmin/file_disclosure; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;"
 	echo -e "$OKGREEN + -- ----------------------------=[Launching Tomcat Exploits]=--------------- -- +$RESET"
@@ -1513,8 +1580,12 @@ else
 	./massbleed $TARGET port 8443
 	cd $INSTALL_DIR
 	nikto -h https://$TARGET:8443 
-	cutycapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg
-	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8443 -T5 --script=*proxy* $TARGET
+	if [ ${DISTRO} == "blackarch"  ]; then
+    /bin/CutyCapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg
+  else
+    cutycapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg
+  fi
+  nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -A -p 8443 -T5 --script=*proxy* $TARGET
 fi
 
 if [ -z "$port_8888" ];
@@ -1528,8 +1599,12 @@ else
 	echo ""
 	xsstracer $TARGET 8888
 	nikto -h http://$TARGET:8888 
-	cutycapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg
-	nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse  -A -p 8888 -T5 $TARGET
+	if [ ${DISTRO} == "blackarch"  ]; then
+    /bin/CutyCapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg
+  else
+    cutycapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg
+  fi
+  nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse  -A -p 8888 -T5 $TARGET
 fi
 
 if [ -z "$port_10000" ];
@@ -1592,8 +1667,12 @@ else
 fi
 
 echo -e "$OKGREEN + -- ----------------------------=[Scanning For Common Vulnerabilities]=----- -- +$RESET"
-cd $PLUGINS_DIR/yasuo
-ruby yasuo.rb -r $TARGET -b all
+if [ ${DISTRO} == "blackarch" ]; then
+  /bin/yasuo -r $TARGET -b all
+else
+  cd $PLUGINS_DIR/yasuo
+  ruby yasuo.rb -r $TARGET -b all
+fi
 cd $SNIPER_DIR
 
 if [ "$FULLNMAPSCAN" = "0" ]; then
