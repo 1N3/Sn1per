@@ -61,7 +61,7 @@ git clone https://github.com/0xsauby/yasuo.git
 git clone https://github.com/johndekroon/serializekiller.git 
 git clone https://github.com/aboul3la/Sublist3r.git 
 git clone https://github.com/nccgroup/shocker.git 
-git clone https://github.com/drwetter/testssl.sh.git 
+git clone --depth 1 https://github.com/drwetter/testssl.sh.git 
 git clone https://github.com/lunarca/SimpleEmailSpoofer 
 git clone https://github.com/arthepsy/ssh-audit 
 wget https://svn.nmap.org/nmap/scripts/http-vuln-cve2017-5638.nse -O /usr/share/nmap/scripts/http-vuln-cve2017-5638.nse
