@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v2.6 - Added Blackarch Linux support 
+* v2.6 - Added $BROWSER variable to set default browser
 * v2.5g - Updated README with update command
 * v2.5f - Fixes for various bugs reported and fixed by @ifly53e (https://github.com/1N3/Sn1per/pull/89)
 * v2.5e - Fixed issue with port 3128/tcp checks (CC. @ifly53e)

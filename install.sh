@@ -106,5 +106,3 @@ ln -s $PLUGINS_DIR/MassBleed/massbleed /usr/bin/massbleed
 ln -s $PLUGINS_DIR/testssl.sh/testssl.sh /usr/bin/testssl
 echo -e "$OKORANGE + -- --=[Done!$RESET"
 echo -e "$OKORANGE + -- --=[To run, type 'sniper'! $RESET"
-
-

