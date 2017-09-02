@@ -130,7 +130,10 @@ GOOHAK="1"
 # DEFAULT IS "1" (ENABLED)
 ENABLE_AUTO_UPDATES="1"
 
-# CHECK IF DISTRO IS BLACKARCH
+# CHECK DISTRO TYPE
+DISTRO=$(cat /etc/*-release | grep DISTRIB_ID= | cut -d'=' -f2)
+
+# CHECK FOR BLACKARCH LINUX
 if grep -q BlackArch /etc/issue; then
   DISTRO='blackarch'
   echo "Detected BlackArch GNU/Linux"
