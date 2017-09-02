@@ -64,10 +64,12 @@ git clone https://github.com/nccgroup/shocker.git
 git clone --depth 1 https://github.com/drwetter/testssl.sh.git 
 git clone https://github.com/lunarca/SimpleEmailSpoofer 
 git clone https://github.com/arthepsy/ssh-audit 
+git clone https://github.com/m0rtem/CloudFail.git
 wget https://svn.nmap.org/nmap/scripts/http-vuln-cve2017-5638.nse -O /usr/share/nmap/scripts/http-vuln-cve2017-5638.nse
 wget https://raw.githubusercontent.com/xorrbit/nmap/865142904566e416944ebd6870d496c730934965/scripts/http-vuln-INTEL-SA-00075.nse -O /usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse
 cp $INSTALL_DIR/bin/iis-buffer-overflow.nse /usr/share/nmap/scripts/iis-buffer-overflow.nse
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
+cd $PLUGINS_DIR/CloudFail/ && apt-get install python3-pip && pip3 install -r requirements.txt
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh
 cd $PLUGINS_DIR/BruteX/ && bash install.sh
 cd $INSTALL_DIR 

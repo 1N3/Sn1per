@@ -494,6 +494,8 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
     echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
     wafw00f https://$TARGET
+    echo -e "$OKGREEN + -- ----------------------------=[Checking for Cloudflare]=----------------- -- +$RESET"
+    python3 $PLUGINS_DIR/CloudFail/cloudfail.py --target $TARGET
     echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
     whatweb https://$TARGET
     echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
@@ -647,6 +649,8 @@ if [ "$MODE" = "airstrike" ]; then
       echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
       echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
       wafw00f https://$a
+      echo -e "$OKGREEN + -- ----------------------------=[Checking for Cloudflare]=----------------- -- +$RESET"
+      python3 $PLUGINS_DIR/CloudFail/cloudfail.py --target $TARGET
       echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
       whatweb https://$a
       echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
@@ -1127,6 +1131,8 @@ else
 	echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
 	wafw00f https://$TARGET
 	echo ""
+  echo -e "$OKGREEN + -- ----------------------------=[Checking for Cloudflare]=----------------- -- +$RESET"
+  python3 $PLUGINS_DIR/CloudFail/cloudfail.py --target $TARGET
 	echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
 	whatweb https://$TARGET
 	echo ""

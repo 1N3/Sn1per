@@ -1,5 +1,6 @@
 ## CHANGELOG:
-* v2.5a - Fixed issue with [: ==: unary operator expected errors
+* v2.6b - Added CloudFail 
+* v2.6a - Fixed issue with [: ==: unary operator expected errors
 * v2.6 - Added Blackarch Linux support 
 * v2.6 - Added $BROWSER variable to set default browser
 * v2.5g - Updated README with update command
