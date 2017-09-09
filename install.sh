@@ -32,7 +32,7 @@ mkdir $LOOT_DIR/screenshots 2> /dev/null
 mkdir $LOOT_DIR/nmap 2> /dev/null
 mkdir $LOOT_DIR/reports 2> /dev/null
 mkdir $LOOT_DIR/output 2> /dev/null
-cp -Rf $PWD/* $INSTALL_DIR 
+cp -Rf $PWD/* $INSTALL_DIR 2> /dev/null
 cd $INSTALL_DIR
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
@@ -45,7 +45,7 @@ gem install ruby-nmap net-http-persistent mechanize text-table
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
 rm -Rf Findsploit/ BruteX/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/ jexboss/ serializekiller/ testssl.sh/ SimpleEmailSpoofer/ ssh-audit/ plugins/ 2> /dev/null
-mkdir $PLUGINS_DIR
+mkdir $PLUGINS_DIR 2> /dev/null
 cd $PLUGINS_DIR
 mkdir -p $PLUGINS_DIR/nmap_scripts/ 2> /dev/null
 
@@ -67,7 +67,7 @@ git clone https://github.com/arthepsy/ssh-audit
 git clone https://github.com/m0rtem/CloudFail.git
 wget https://svn.nmap.org/nmap/scripts/http-vuln-cve2017-5638.nse -O /usr/share/nmap/scripts/http-vuln-cve2017-5638.nse
 wget https://raw.githubusercontent.com/xorrbit/nmap/865142904566e416944ebd6870d496c730934965/scripts/http-vuln-INTEL-SA-00075.nse -O /usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse
-cp $INSTALL_DIR/bin/iis-buffer-overflow.nse /usr/share/nmap/scripts/iis-buffer-overflow.nse
+cp $INSTALL_DIR/bin/iis-buffer-overflow.nse /usr/share/nmap/scripts/iis-buffer-overflow.nse 2> /dev/null
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 cd $PLUGINS_DIR/CloudFail/ && apt-get install python3-pip && pip3 install -r requirements.txt
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh

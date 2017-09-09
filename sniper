@@ -169,6 +169,11 @@ function update {
   fi
 }
 
+if [ "$TARGET" = "update" ]; then
+  update
+  exit
+fi
+
 function init {
   mkdir -p $LOOT_DIR 2> /dev/null
   mkdir $LOOT_DIR/domains 2> /dev/null
