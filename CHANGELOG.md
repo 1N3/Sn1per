@@ -1,8 +1,9 @@
 ## CHANGELOG:
-* v2.6c - Fixed errors with GooHak
-* v2.6c - Fixed syntax errors in sniper conditional statements 
-* v2.6b - Added CloudFail 
-* v2.6a - Fixed issue with [: ==: unary operator expected errors
+* v2.7 - Fixed issue with sniper update command and install.sh not running
+* v2.7 - Fixed errors with GooHak
+* v2.7 - Fixed syntax errors in sniper conditional statements 
+* v2.7 - Added CloudFail 
+* v2.7 - Fixed issue with [: ==: unary operator expected errors
 * v2.6 - Added Blackarch Linux support 
 * v2.6 - Added $BROWSER variable to set default browser
 * v2.5g - Updated README with update command
