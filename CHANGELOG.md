@@ -1,4 +1,10 @@
 ## CHANGELOG:
+* v2.8 - Improved discovery mode scan performance and output
+* v2.8 - Improved fullportonly scan performance
+* v2.8 - Improved startup performance options
+* v2.8 - Added Cansina web/file brute force tool
+* v2.8 - Added webporthttp and webporthttps modes
+* v2.8 - Added custerd software enumeration tool
 * v2.7 - Fixed issue with sniper update command and install.sh not running
 * v2.7 - Fixed errors with GooHak
 * v2.7 - Fixed syntax errors in sniper conditional statements 
@@ -176,6 +182,3 @@
 ## FUTURE:
 * Add auto logging and reporting to all scans
 * Add HTML reporting for scans
-* Add automated Wireless attacks to Sn1per
-* Add automated MITM attacks to Sn1per
-* Add web mode port option for customized web scans
