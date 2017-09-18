@@ -58,6 +58,8 @@ sniper <CIDR> discover
 sniper <target> port <portnum> 
 sniper <target> fullportonly <portnum>
 sniper <target> web <report>
+sniper <target> webporthttp <port>
+sniper <target> webporthttps <port>
 sniper <target> nobrute <report>
 sniper <targets.txt> airstrike <report>
 sniper <targets.txt> nuke <report>
@@ -72,6 +74,8 @@ sniper update
 * **PORT:** Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
 * **FULLPORTONLY:** Performs a full detailed port scan and saves results to XML.
 * **WEB:** Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.   
+* **WEBPORTHTTP:** Launches a full HTTP web application scan against a specific host and port.
+* **WEBPORTHTTPS:** Launches a full HTTPS web application scan against a specific host and port.
 * **NOBRUTE:** Launches a full scan against a target host/domain without brute forcing services.
 * **AIRSTRIKE:** Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IP's that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.
 * **NUKE:** Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke. 
