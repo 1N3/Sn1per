@@ -1,4 +1,8 @@
 ## CHANGELOG:
+* v2.9 - Added curl timeout in update command to fix lag
+* v2.9 - Fixed minor NMap UDP scan flag issue
+* v2.9 - Added Metagoofil
+* v2.9 - Updated theharvester scan options to include more results
 * v2.8 - Improved discovery mode scan performance and output
 * v2.8 - Improved fullportonly scan performance
 * v2.8 - Improved startup performance options

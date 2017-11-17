@@ -32,11 +32,12 @@ mkdir $LOOT_DIR/screenshots 2> /dev/null
 mkdir $LOOT_DIR/nmap 2> /dev/null
 mkdir $LOOT_DIR/reports 2> /dev/null
 mkdir $LOOT_DIR/output 2> /dev/null
+mkdir $LOOT_DIR/osint 2> /dev/null
 cp -Rf $PWD/* $INSTALL_DIR 2> /dev/null
 cd $INSTALL_DIR
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install clusterd ruby rubygems python dos2unix zenmap sslyze arachni aha libxml2-utils rpcbind uniscan xprobe2 cutycapt unicornscan waffit host whois dirb dnsrecon curl nmap php php-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap
+apt-get install xdg-utils metagoofil clusterd ruby rubygems python dos2unix zenmap sslyze arachni aha libxml2-utils rpcbind uniscan xprobe2 cutycapt unicornscan waffit host whois dirb dnsrecon curl nmap php php-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap
 pip install dnspython colorama tldextract urllib3 ipaddress requests
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"

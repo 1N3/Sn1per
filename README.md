@@ -1,4 +1,4 @@
-![alt tag](https://github.com/1N3/Sn1per/blob/master/Sn1per-logo.jpg)
+![alt tag](https://github.com/1N3/Sn1per/blob/master/sn1per-logo.png)
 
 ## ABOUT:
 Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. 

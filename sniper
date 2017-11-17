@@ -3,13 +3,13 @@
 # + -- --=[http://crowdshield.com
 #
 
-VER="2.8"
+VER="2.9"
 TARGET="$1"
 MODE="$2"
 OPT1="$3"
 OPT2="$4"
 DISABLE_POSTGRESQL="true"
-BROWSER="iceweasel" # SET DEFAULT BROWSER FOR OPENING LOOT DIR. CAN ALSO SET TO xdg-open... 
+BROWSER="xdg-open" # SET DEFAULT BROWSER 
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="/usr/share/sniper/loot"
 PLUGINS_DIR="/usr/share/sniper/plugins"
@@ -128,10 +128,6 @@ function loot {
     # HTML OUTPUT
     echo "$a" | aha --black > $LOOT_DIR/reports/$a.html
     cat "$a" | aha --black >> $LOOT_DIR/reports/$a.html
-    # TEXT OUTPUT DISABLED
-    #echo "$a" | aha --black > $LOOT_DIR/reports/$a
-    #sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $a >> $LOOT_DIR/reports/$a
-    # CONSOLE OUTPUT
     mv $a $LOOT_DIR/output/
   done
   echo -e "$OKORANGE + -- --=[Removing blank web screenshots...$RESET"
@@ -151,6 +147,7 @@ function loot {
   cp -Rf $LOOT_DIR/imports/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
   cp -Rf $LOOT_DIR/notes/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
   cp -Rf $LOOT_DIR/web/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  cp -Rf $LOOT_DIR/osint/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
   rm -Rf $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ 2> /dev/null
   mkdir $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ -p 2> /dev/null
   echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
@@ -164,8 +161,6 @@ function loot {
   sleep 2
   echo -e "$OKORANGE + -- --=[Launching Metasploit Pro Web UI...$RESET"
   $BROWSER http://localhost:3001/login 2> /dev/null &
-  #echo -e "$OKORANGE + -- --=[Launching Zenmap...$RESET"
-  #zenmap -f $LOOT_DIR/workspace/$WORKSPACE/nmap/ 2> /dev/null &
   echo -e "$OKORANGE + -- --=[Done!$RESET"
 }
 
@@ -691,7 +686,7 @@ if [ "$MODE" = "stealth" ]; then
   echo -e "$RESET"
   echo -e "$OKORANGE + -- --=[http://crowdshield.com"
   echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
-  echo -e "$OKRED "
+  echo -e "$OKRED "   
   echo -e "$OKRED     ./\."
   echo -e "$OKRED   ./    '\."
   echo -e "$OKRED   \.       '\."
@@ -704,7 +699,7 @@ if [ "$MODE" = "stealth" ]; then
   echo -e "$OKRED       \-------\            '>   '\."
   echo -e "$OKRED         '\=====>        ___<       '\."
   echo -e "$OKRED        ./-----/             __________'\."
-  echo -e "$OKRED       \.------\       _____   ___(_)(_\."\'
+  echo -e "$OKRED "'       \.------\       _____   ___(_)(_\."\'
   echo -e "$OKRED          '\=====>          <            ./'"
   echo -e "$OKRED         ./-----/            '>        ./"
   echo -e "$OKRED         \.               ___<       ./"
@@ -730,7 +725,8 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
     whois $TARGET
     echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-    theharvester -d $TARGET -l 100 -b bing 2> /dev/null
+    theharvester -d $TARGET -l 200 -b all 2> /dev/null
+    metagoofil -d $TARGET -t doc,pdf,xls,csv,txt -l 200 -n 50 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html
     echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
     dig -x $TARGET
     dnsenum $TARGET
@@ -888,7 +884,8 @@ if [ "$MODE" = "airstrike" ]; then
       echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
       whois $a
       echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-      theharvester -d $a -l 100 -b bing 2> /dev/null
+      theharvester -d $a -l 200 -b all 2> /dev/null
+      metagoofil -d $a -t doc,pdf,xls,csv,txt -l 200 -n 50 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$a.html
       echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
       dig -x $a
       dnsenum $a
@@ -997,15 +994,15 @@ if [ "$MODE" = "fullportonly" ]; then
   echo -e "$RESET"
   echo -e "$OKGREEN + -- ----------------------------=[Performing TCP Port Scan]=---------------- -- +$RESET"
   if [ -z "$OPT1" ]; then
-    nmap -sV -T5 -PP -PE -PM -PI -PA20,53,80,113,443,5060,10043 --host-timeout=300m -O --open --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 --min-rate=500 -PU45146 -PS$DEFAULT_TCP_PORTS -p$DEFAULT_TCP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+    nmap -Pn -sV -T5 -PP -PE -PM -PI -PA20,53,80,113,443,5060,10043 --host-timeout=300m -O --open --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 --min-rate=500 -PU45146 -PS$DEFAULT_TCP_PORTS -p$DEFAULT_TCP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
     echo -e "$OKGREEN + -- ----------------------------=[Performing UDP Port Scan]=---------------- -- +$RESET"
-    nmap -sU sV -T5 -PP -PE -PM -PI -PA20,53,80,113,443,5060,10043 --host-timeout=300m -O --open --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 --min-rate=500 -PU45146 -PS$DEFAULT_UDP_PORTS -p$DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET-udp.xml 
+    nmap -Pn -sU sV -T5 -PP -PE -PM -PI -PA20,53,80,113,443,5060,10043 --host-timeout=300m -O --open --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 --min-rate=500 -PU45146 -PS$DEFAULT_UDP_PORTS -p$DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET-udp.xml 
     echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
     searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
     searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET-udp.xml
   else
-    nmap -sV -T5 -PP -PE -PM -PI --host-timeout=300m -O --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 -PS $OPT1 --min-rate=500 -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
-    nmap -sV -T5 -PP -PE -PM -PI --host-timeout=300m -O --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 -PS $OPT1 --min-rate=500 -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+    nmap -Pn -sV -T5 -PP -PE -PM -PI --host-timeout=300m -O --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 -PS $OPT1 --min-rate=500 -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+    nmap -Pn -sV -T5 -PP -PE -PM -PI --host-timeout=300m -O --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 -PS $OPT1 --min-rate=500 -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
     echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
     searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
   fi
@@ -1085,7 +1082,8 @@ then
   echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
   whois $TARGET
   echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-  theharvester -d $TARGET -l 100 -b bing 2> /dev/null
+  theharvester -d $TARGET -l 200 -b all 2> /dev/null
+  metagoofil -d $TARGET -t doc,pdf,xls,csv,txt -l 200 -n 50 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html
   echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
   dig -x $TARGET
   dnsenum $TARGET
