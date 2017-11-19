@@ -9,7 +9,7 @@ MODE="$2"
 OPT1="$3"
 OPT2="$4"
 DISABLE_POSTGRESQL="true"
-BROWSER="xdg-open" # SET DEFAULT BROWSER 
+BROWSER="firefox" # SET DEFAULT BROWSER 
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="/usr/share/sniper/loot"
 PLUGINS_DIR="/usr/share/sniper/plugins"
@@ -51,38 +51,64 @@ ENABLE_AUTO_UPDATES="1"
 # CHECK DISTRO TYPE
 DISTRO=$(cat /etc/*-release | grep DISTRIB_ID= | cut -d'=' -f2)
 
-# CHECK FOR BLACKARCH LINUX
-if grep -q BlackArch /etc/issue; then
-  DISTRO='blackarch'
-  echo "Detected BlackArch GNU/Linux"
-  INSTALL_DIR=$(pwd)
-  echo "Setting current path to $INSTALL_DIR"
-fi
+function logo {
+  echo -e "$OKRED                ____               $RESET"
+  echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
+  echo -e "$OKRED   / ___/ __ \ / // __ \/ _ \/ ___/$RESET"
+  echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
+  echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
+  echo -e "$OKRED               /_/                 $RESET"
+  echo ""
+  echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
+  echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3$RESET"
+  echo ""
+}
 
 cd $INSTALL_DIR
 
+function check_online {
+  ONLINE=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
+  if [ "$ONLINE" == "" ]; then
+    ONLINE="0"
+    echo -e "$OKBLUE[*] Checking for active internet connection [$RESET${OKRED}FAIL${RESET}$OKBLUE]"
+    echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper is running in offline mode.$RESET"
+  else
+    ONLINE="1"
+    echo -e "$OKBLUE[*] Checking for active internet connection [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+  fi
+}
+
 function check_update {
-  if [ "$ENABLE_AUTO_UPDATES" = "1" ]; then
-    # echo -e "$OKBLUE + -- --=[Checking for updates...$RESET"
-    LATEST_VER=$(curl -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
+  if [ -z "$ONLINE" ]; then
+    check_online
+  fi
+
+  if [ "$ENABLE_AUTO_UPDATES" == "1" ] && [ "$ONLINE" == "1" ]; then
+    LATEST_VER=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [ "$LATEST_VER" != "$VER" ]; then
-      echo -e "$OKRED + -- --=[Sn1per v$LATEST_VER is available to download... To update, type \"sniper update\" $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper v$LATEST_VER is available to download... To update, type$OKRED \"sniper update\" $RESET"
     fi
   fi
 }
 
 function update {
-  echo -e "$OKBLUE + -- --=[Checking for updates...$RESET"
-  LATEST_VER=$(curl -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
-  if [ "$LATEST_VER" != "$VER" ]; then
-    echo -e "$OKRED + -- --=[Sn1per $LATEST_VER is available to download...Do you want to update? (y or n)$RESET"
-    read ans
-    if [ "$ans" = "y" ]; then
-      rm -Rf /tmp/Sn1per/ 2>/dev/null
-      git clone https://github.com/1N3/Sn1per /tmp/Sn1per/
-      bash /tmp/Sn1per/install.sh
-      rm -Rf /tmp/Sn1per/ 2>/dev/null
-      exit
+  logo
+  echo -e "$OKBLUE[*] Checking for updates...[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+  check_online
+  if [ "$ONLINE" == "0" ]; then
+    echo "You will need to download the latest release manually at https://github.com/1N3/Sn1per/"
+  else
+    LATEST_VER=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
+    if [ "$LATEST_VER" != "$VER" ]; then
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] Sn1per $LATEST_VER is available to download...Do you want to update? (y or n)$RESET"
+      read ans
+      if [ "$ans" = "y" ]; then
+        rm -Rf /tmp/Sn1per/ 2>/dev/null
+        git clone https://github.com/1N3/Sn1per /tmp/Sn1per/
+        bash /tmp/Sn1per/install.sh
+        rm -Rf /tmp/Sn1per/ 2>/dev/null
+        exit
+      fi
     fi
   fi
 }
@@ -174,7 +200,6 @@ function help {
   echo ""
   echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
   echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3$RESET"
-  echo -e "$OKORANGE + -- --=[Usage:"
   echo ""
   echo ' [*] sniper <target> <report>'
   echo ' [*] sniper <target> stealth <report>'
@@ -185,28 +210,12 @@ function help {
   echo ' [*] sniper <target> webporthttp <port>'
   echo ' [*] sniper <target> webporthttps <port>'
   echo ' [*] sniper <target> nobrute <report>'
-  echo ' [*] sniper <targets.txt> airstrike <report>'
-  echo ' [*] sniper <targets.txt> nuke <report>'
+  echo ' [*] sniper /full/path/to/targets.txt airstrike <report>'
+  echo ' [*] sniper /full/path/to/targets.txt nuke <report>'
   echo ' [*] sniper loot'
   echo ' [*] sniper update'
   echo ""
-  echo ' + -- --=[Modes:'
-  echo ''
-  echo ' + -- --=[REPORT: Outputs all results to text in the loot directory for later reference. To enable reporting, append report to any sniper mode or command.'
-  echo ' + -- --=[STEALTH: Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking'
-  echo ' + -- --=[DISCOVER: Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.'
-  echo ' + -- --=[PORT: Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.'
-  echo ' + -- --=[FULLPORTONLY:  Performs a full detailed port scan and saves results to XML.'
-  echo ' + -- --=[WEB: Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.'
-  echo ' + -- --=[WEBPORTHTTP: Runs a full HTTP web application scan on the specified port.'
-  echo ' + -- --=[WEBPORTHTTPS: Runs a full HTTPS web application scan on the specified port.'
-  echo ' + -- --=[NOBRUTE: Launches a full scan against a target host/domain without brute forcing services.'
-  echo ' + -- --=[AIRSTRIKE: Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IPs that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.'
-  echo ' + -- --=[NUKE: Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke.'
-  echo -e " + -- --=[LOOT: Automatically organizes and displays loot folder in your browser and opens Zenmap GUI with all port scan results. To run, type sniper loot.$RESET"
   echo ""
-  echo ""
-  check_update
 }
 
 if [ -z $TARGET ]; then
@@ -221,7 +230,6 @@ if [ -z $TARGET ]; then
   echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3$RESET"
   echo -e "$OKORANGE + -- --=[Usage: sniper <target>$RESET"
   echo ""
-  check_update
   exit
 fi
 
@@ -237,11 +245,22 @@ else
   SCAN_TYPE="DOMAIN"
 fi
 
-# INITILIZE()
+# INITILIZE
 init
+
+# CHECK CONNECTION STATUS
+check_online
 
 # CHECK FOR UPDATES
 check_update
+
+# CHECK FOR BLACKARCH LINUX
+if grep -q BlackArch /etc/issue; then
+  DISTRO='blackarch'
+  echo "Detected BlackArch GNU/Linux"
+  INSTALL_DIR=$(pwd)
+  echo "Setting current path to $INSTALL_DIR"
+fi
 
 if [ "$MODE" = "report" ]; then
   $INSTALL_DIR/sniper $TARGET | tee $LOOT_DIR/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
@@ -986,28 +1005,35 @@ if [ "$MODE" = "airstrike" ]; then
 fi
 
 if [ "$MODE" = "fullportonly" ]; then
-  echo -e "$OKRED    ___     ____              __            __    $RESET"
-  echo -e "$OKRED   / _/_ __/ / /__  ___  ____/ /____  ___  / /_ __$RESET"
-  echo -e "$OKRED  / _/ // / / / _ \/ _ \/ __/ __/ _ \/ _ \/ / // /$RESET"
-  echo -e "$OKRED /_/ \_,_/_/_/ .__/\___/_/  \__/\___/_//_/_/\_, / $RESET"
-  echo -e "$OKRED            /_/                            /___/  $RESET"
-  echo -e "$RESET"
-  echo -e "$OKGREEN + -- ----------------------------=[Performing TCP Port Scan]=---------------- -- +$RESET"
+  logo
   if [ -z "$OPT1" ]; then
-    nmap -Pn -sV -T5 -PP -PE -PM -PI -PA20,53,80,113,443,5060,10043 --host-timeout=300m -O --open --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 --min-rate=500 -PU45146 -PS$DEFAULT_TCP_PORTS -p$DEFAULT_TCP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
-    echo -e "$OKGREEN + -- ----------------------------=[Performing UDP Port Scan]=---------------- -- +$RESET"
-    nmap -Pn -sU sV -T5 -PP -PE -PM -PI -PA20,53,80,113,443,5060,10043 --host-timeout=300m -O --open --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 --min-rate=500 -PU45146 -PS$DEFAULT_UDP_PORTS -p$DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET-udp.xml 
-    echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
+    nmap -Pn -A -v -T4 -p$DEFAULT_TCP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    nmap -Pn -sU -A -T4 -v -p$DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET-udp.xml 
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED SEARCHING FOR EXPLOITS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
     searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET-udp.xml
   else
-    nmap -Pn -sV -T5 -PP -PE -PM -PI --host-timeout=300m -O --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 -PS $OPT1 --min-rate=500 -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
-    nmap -Pn -sV -T5 -PP -PE -PM -PI --host-timeout=300m -O --max-rtt-timeout=3000ms --initial-rtt-timeout=1000ms --min-rtt-timeout=1000ms --max-retries=2 --stats-every 10s --traceroute --min-hostgroup=64 -PS $OPT1 --min-rate=500 -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
-    echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits]=------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED PERFORMING TCP PORT SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    nmap -Pn -A -v -T4 -p $OPT1 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    nmap -Pn -A -v -T4 -sU -p $OPT1 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED SEARCHING FOR EXPLOITS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
   fi
-  echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
-  loot
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED DONE $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   exit
 fi
 
@@ -2024,5 +2050,4 @@ fi
 rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 
 echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
-loot
 exit 0

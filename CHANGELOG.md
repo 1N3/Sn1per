@@ -1,4 +1,9 @@
 ## CHANGELOG:
+* v2.9 - New improved fullportonly scan mode
+* v2.9 - Added online check to see if there's an active internet connection
+* v2.9 - Changed default browser to firefox to clear up errors in loot commmand
+* v2.9 - Created uninstall.sh script to uninstall sniper
+* v2.9 - Removed automatic workspace creation per scan
 * v2.9 - Added curl timeout in update command to fix lag
 * v2.9 - Fixed minor NMap UDP scan flag issue
 * v2.9 - Added Metagoofil
