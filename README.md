@@ -7,29 +7,29 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 [![Sn1per Demo](https://img.youtube.com/vi/nA_V_u3QZA4/0.jpg)](https://www.youtube.com/watch?v=nA_V_u3QZA4)
 
 ## FEATURES:
-* Automatically collects basic recon (ie. whois, ping, DNS, etc.)
-* Automatically launches Google hacking queries against a target domain
-* Automatically enumerates open ports via NMap port scanning
-* Automatically brute forces sub-domains, gathers DNS info and checks for zone transfers
-* Automatically checks for sub-domain hijacking
-* Automatically runs targeted NMap scripts against open ports
-* Automatically runs targeted Metasploit scan and exploit modules
-* Automatically scans all web applications for common vulnerabilities
-* Automatically brute forces ALL open services
-* Automatically test for anonymous FTP access
-* Automatically runs WPScan, Arachni and Nikto for all web services
-* Automatically enumerates NFS shares
-* Automatically test for anonymous LDAP access
-* Automatically enumerate SSL/TLS ciphers, protocols and vulnerabilities
-* Automatically enumerate SNMP community strings, services and users
-* Automatically list SMB users and shares, check for NULL sessions and exploit MS08-067
-* Automatically exploit vulnerable JBoss, Java RMI and Tomcat servers
-* Automatically tests for open X11 servers
-* Auto-pwn added for Metasploitable, ShellShock, MS08-067, Default Tomcat Creds
-* Performs high level enumeration of multiple hosts and subnets
-* Automatically integrates with Metasploit Pro, MSFConsole and Zenmap for reporting
-* Automatically gathers screenshots of all web sites
-* Create individual workspaces to store all scan output
+- [x] Automatically collects basic recon (ie. whois, ping, DNS, etc.)
+- [x] Automatically launches Google hacking queries against a target domain
+- [x] Automatically enumerates open ports via NMap port scanning
+- [x] Automatically brute forces sub-domains, gathers DNS info and checks for zone transfers
+- [x] Automatically checks for sub-domain hijacking
+- [x] Automatically runs targeted NMap scripts against open ports
+- [x] Automatically runs targeted Metasploit scan and exploit modules
+- [x] Automatically scans all web applications for common vulnerabilities
+- [x] Automatically brute forces ALL open services
+- [x] Automatically test for anonymous FTP access
+- [x] Automatically runs WPScan, Arachni and Nikto for all web services
+- [x] Automatically enumerates NFS shares
+- [x] Automatically test for anonymous LDAP access
+- [x] Automatically enumerate SSL/TLS ciphers, protocols and vulnerabilities
+- [x] Automatically enumerate SNMP community strings, services and users
+- [x] Automatically list SMB users and shares, check for NULL sessions and exploit MS08-067
+- [x] Automatically exploit vulnerable JBoss, Java RMI and Tomcat servers
+- [x] Automatically tests for open X11 servers
+- [x] Auto-pwn added for Metasploitable, ShellShock, MS08-067, Default Tomcat Creds
+- [x] Performs high level enumeration of multiple hosts and subnets
+- [x] Automatically integrates with Metasploit Pro, MSFConsole and Zenmap for reporting
+- [x] Automatically gathers screenshots of all web sites
+- [x] Create individual workspaces to store all scan output
 
 ## KALI LINUX INSTALL:
 ```
