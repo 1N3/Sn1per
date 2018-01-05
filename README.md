@@ -38,6 +38,8 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 
 ## DOCKER INSTALL:
 
+Credits: @menzow
+
 Docker Install:
 https://github.com/menzow/sn1per-docker
 
@@ -87,6 +89,9 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
 ## LICENSE:
 This software is free to distribute, modify and use with the condition that credit is provided to the creator (1N3@CrowdShield) and is not for commercial use.
+
+## LOGO:
+Credit to Sponge Nutter for the original sniper penguin logo.
 
 ## DONATIONS:
 Donations are welcome. This will help fascilitate improved features, frequent updates and better overall support for sniper.
