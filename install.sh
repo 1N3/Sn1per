@@ -41,6 +41,7 @@ apt-get install xdg-utils metagoofil clusterd ruby rubygems python dos2unix zenm
 pip install dnspython colorama tldextract urllib3 ipaddress requests
 
 echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
+gem install aquatone
 gem install rake
 gem install ruby-nmap net-http-persistent mechanize text-table
 
@@ -67,6 +68,10 @@ git clone https://github.com/lunarca/SimpleEmailSpoofer
 git clone https://github.com/arthepsy/ssh-audit 
 git clone https://github.com/m0rtem/CloudFail.git
 git clone https://github.com/deibit/cansina
+wget https://github.com/bbb31/slurp/releases/download/1.3/slurp.zip
+unzip slurp.zip
+rm -f slurp.zip
+wget https://github.com/michenriksen/aquatone/blob/master/subdomains.lst -O /usr/share/sniper/plugins/Sublist3r/subdomains.lst
 wget https://raw.githubusercontent.com/1N3/IntruderPayloads/master/FuzzLists/dirbuster-quick.txt -O /usr/share/sniper/plugins/cansina/dirbuster-quick.txt
 wget https://svn.nmap.org/nmap/scripts/http-vuln-cve2017-5638.nse -O /usr/share/nmap/scripts/http-vuln-cve2017-5638.nse
 wget https://raw.githubusercontent.com/xorrbit/nmap/865142904566e416944ebd6870d496c730934965/scripts/http-vuln-INTEL-SA-00075.nse -O /usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse

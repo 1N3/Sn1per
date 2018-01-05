@@ -91,6 +91,7 @@ This software is free to distribute, modify and use with the condition that cred
 ## DONATIONS:
 Donations are welcome. This will help fascilitate improved features, frequent updates and better overall support for sniper.
 - [x] BTC 1Fav36btfmdrYpCAR65XjKHhxuJJwFyKum
-- [x] DASH XoWYdMDGb7UZmzuLviQYtUGb5MNXSkqvXG
 - [x] ETH 0x20bB09273702eaBDFbEE9809473Fd04b969a794d
 - [x] LTC LQ6mPewec3xeLBYMdRP4yzeta6b9urqs2f
+- [x] XMR 4JUdGzvrMFDWrUUwY3toJATSeNwjn54LkCnKBPRzDuhzi5vSepHfUckJNxRL2gjkNrSqtCoRUrEDAgRwsQvVCjZbS3EN24xprAQ1Z5Sy5s
+- [x] ZCASH t1fsizsk2cqqJAjRoUmXJSyoVa9utYucXt7

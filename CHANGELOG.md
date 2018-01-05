@@ -1,4 +1,10 @@
 ## CHANGELOG:
+* v3.0 - Improved performance of various sniper modes
+* v3.0 - Added Aquatone domain flyover tool
+* v3.0 - Added slurp S3 public AWS scanner
+* v3.0 - Updated Sub-domain hijacking site list
+* v3.0 - Changed look and feel of console output to help readability
+* v3.0 - Added online/offline check to implement changes to scans when in online vs. offline mode
 * v2.9 - New improved fullportonly scan mode
 * v2.9 - Added online check to see if there's an active internet connection
 * v2.9 - Changed default browser to firefox to clear up errors in loot commmand
@@ -187,7 +193,3 @@
 * v1.4 - Added Breach-Miner for detection of breached accounts
 * v1.4 - Fixed minor errors with nmap
 * v1.4 - Removed debug output from goohak from displaying on console
-
-## FUTURE:
-* Add auto logging and reporting to all scans
-* Add HTML reporting for scans

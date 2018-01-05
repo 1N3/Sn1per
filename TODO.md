@@ -1,5 +1,7 @@
 ###TODO:
 
+* Implement a module system for running specific commands/modules
+* Add checks to make sure all commands exist at startup. If not, refer to installer. 
 * Add command line parsing of options/modes
 
 sniper --target crowdshield.com --workspace crowdshield.com --report --bruteforce --web --recon --portscan
@@ -11,3 +13,7 @@ sniper --target crowdshield.com --kalionly --offline --webportonly 443
 * Add proxy support for all scans
 * Create uninstall.sh script
 * Add AWS security checks
+* Look into adding aquatone
+* Look into adding gobuster
+* Update subdomain list with aquatone list
+* Increase thread count for file/dir brute force
