@@ -216,10 +216,6 @@ case $key in
     REPORT="0"
     shift # past argument
     ;;
-    -nl|--noloot)
-    NOLOOT="1"
-    shift # past argument
-    ;;
     -w|--workspace)
     WORKSPACE="$2"
     WORKSPACE_DIR="$INSTALL_DIR/loot/workspace/$WORKSPACE"
@@ -1319,14 +1315,14 @@ if [ "$REPORT" = "1" ]; then
   if [ "$OSINT" = "1" ]; then
     args="$args -o"
   fi
+  if [ "$RECON" = "1" ]; then
+    args="$args -re"
+  fi
   if [ "$AUTOBRUTE" = "1" ]; then
     args="$args -b"
   fi
   if [ "$FULLNMAPSCAN" = "1" ]; then
-    args="$args -f"
-  fi
-  if [ "$RECON" = "1" ]; then
-    args="$args -re"
+    args="$args -fp"
   fi
   if [ "MODE" = "port" ]; then
     args="$args -m port"
@@ -1337,9 +1333,7 @@ if [ "$REPORT" = "1" ]; then
   if [ ! -z "$WORKSPACE" ]; then
     args="$args -w $WORKSPACE"
   fi
-  if [ "$LOOT" = "1" ]; then
-    args="$args -l"
-  fi
+
   args="$args --noreport"
   sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
   exit
@@ -2450,10 +2444,10 @@ echo -e "${OKGREEN}=============================================================
 echo -e "$OKRED SCANNING FOR COMMON VULNERABILITIES $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}"
 if [ ${DISTRO} == "blackarch" ]; then
-  /bin/yasuo -r $TARGET -b all
+  /bin/yasuo -f $LOOT_DIR/nmap/nmap-$TARGET.xml -b all
 else
   cd $PLUGINS_DIR/yasuo
-  ruby yasuo.rb -r $TARGET -b all
+  ruby yasuo.rb -f $LOOT_DIR/nmap/nmap-$TARGET.xml -b all
 fi
 
 cd $SNIPER_DIR
