@@ -4,7 +4,7 @@
 Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. 
 
 ## DEMO VIDEO:
-[![demo](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm.png)](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm?autoplay=1) 
+[![Demo](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm.png)](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm)
 
 ## FEATURES:
 - [x] Automatically collects basic recon (ie. whois, ping, DNS, etc.)
