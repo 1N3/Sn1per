@@ -216,6 +216,10 @@ case $key in
     REPORT="0"
     shift # past argument
     ;;
+    -nl|--noloot)
+    NOLOOT="1"
+    shift # past argument
+    ;;
     -w|--workspace)
     WORKSPACE="$2"
     WORKSPACE_DIR="$INSTALL_DIR/loot/workspace/$WORKSPACE"
@@ -306,14 +310,14 @@ function loot {
   echo -e "$OKORANGE + -- --=[Generating HTML Report...$RESET"
   echo "<html><head><style>table, th, td {    border: 1px solid black; max-width: 1000px; align: center; } pre {    white-space: pre-wrap;       /* Since CSS 2.1 */    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */    white-space: -pre-wrap;      /* Opera 4-6 */    white-space: -o-pre-wrap;    /* Opera 7 */    word-wrap: break-word;       /* Internet Explorer 5.5+ */ }</style></head>
     <body><center><img src="$INSTALL_DIR/sn1per-logo.png"></img><br>--= [ by 1N3@CrowdShield - <a href="https://crowdshield.com" target="_new">https://crowdshield.com</a> ] =--<p></p>
-    <a href="$LOOT_DIR/aquatone" target="_new">aquatone</a> 
-    <a href="$LOOT_DIR/burpsuite" target="_new">burpsuite</a> 
-    <a href="$LOOT_DIR/domains" target="_new">domains</a> 
-    <a href="$LOOT_DIR/nmap" target="_new">nmap</a> 
-    <a href="$LOOT_DIR/notes" target="_new">notes</a> 
-    <a href="$LOOT_DIR/output" target="_new">output</a> 
-    <a href="$LOOT_DIR/reports" target="_new">reports</a> 
-    <a href="$LOOT_DIR/screenshots" target="_new">screenshots</a> 
+    <a href="$LOOT_DIR/aquatone" target="_new">aquatone</a>
+    <a href="$LOOT_DIR/burpsuite" target="_new">burpsuite</a>
+    <a href="$LOOT_DIR/domains" target="_new">domains</a>
+    <a href="$LOOT_DIR/nmap" target="_new">nmap</a>
+    <a href="$LOOT_DIR/notes" target="_new">notes</a>
+    <a href="$LOOT_DIR/output" target="_new">output</a>
+    <a href="$LOOT_DIR/reports" target="_new">reports</a>
+    <a href="$LOOT_DIR/screenshots" target="_new">screenshots</a>
     <a href="$LOOT_DIR/web" target="_new">web</a> <p></p>
     <h3>Last Report</h3>
     <iframe/src=\"`ls -lhtr $LOOT_DIR/reports/*.html | tail -n 1 | awk '{print $9}'`\" width=\"1500\" height=\"1000\"></iframe><p></p>
@@ -325,8 +329,8 @@ function loot {
     </center>
     <table align=\"center\">" > $LOOT_DIR/sniper-report.html
 
-  for a in `ls $LOOT_DIR/screenshots/`; do 
-    TARGET=`echo $a | cut -d- -f1` 
+  for a in `ls $LOOT_DIR/screenshots/`; do
+    TARGET=`echo $a | cut -d- -f1`
     echo "<tr><td width=\"500\"><br><h2 align=\"center\">$a</h2><br><a href=\"$LOOT_DIR/screenshots/$a\" target=\"_new\"><img src=\"$LOOT_DIR/screenshots/$a\" align=\"center\" height=\"425\" width=\"500\"></img></a></td>" >> $LOOT_DIR/sniper-report.html
     echo "<td width=\"1000\"><pre>" >> $LOOT_DIR/sniper-report.html
     cat $LOOT_DIR/web/headers-http*-$TARGET.txt >> $LOOT_DIR/sniper-report.html
@@ -502,7 +506,7 @@ if [ "$MODE" = "webporthttp" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED CHECKING HTTP HEADERS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    curl --connect-timeout 1 -I -s -R http://$TARGET >> $LOOT_DIR/web/headers-http-$TARGET.txt 
+    curl --connect-timeout 1 -I -s -R http://$TARGET >> $LOOT_DIR/web/headers-http-$TARGET.txt
     echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
     curl -s --insecure -I http://$TARGET:$PORT | egrep -i 'X-Content' | tail -n 10
     echo ""
@@ -727,7 +731,7 @@ if [ "$MODE" = "webporthttps" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED CHECKING HTTP HEADERS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    curl --connect-timeout 1 -I -s -R https://$TARGET >> $LOOT_DIR/web/headers-https-$TARGET.txt 
+    curl --connect-timeout 1 -I -s -R https://$TARGET >> $LOOT_DIR/web/headers-https-$TARGET.txt
     echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
     curl -s --insecure -I https://$TARGET:$PORT | egrep -i 'X-Content' | tail -n 10
     echo ""
@@ -891,9 +895,6 @@ if [ "$MODE" = "stealth" ]; then
     fi
     if [ "$RECON" = "1" ]; then
       args="$args -re"
-    fi
-    if [ "$LOOT" = "1" ]; then
-      args="$args -l"
     fi
     if [ ! -z "$WORKSPACE" ]; then
       args="$args -w $WORKSPACE"
@@ -1060,7 +1061,7 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    curl --connect-timeout 1 -I -s -R http://$TARGET >> $LOOT_DIR/web/headers-http-$TARGET.txt 
+    curl --connect-timeout 1 -I -s -R http://$TARGET >> $LOOT_DIR/web/headers-http-$TARGET.txt
     xsstracer $TARGET 80
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
@@ -1088,7 +1089,7 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    curl --connect-timeout 1 -I -s -R https://$TARGET >> $LOOT_DIR/web/headers-https-$TARGET.txt 
+    curl --connect-timeout 1 -I -s -R https://$TARGET >> $LOOT_DIR/web/headers-https-$TARGET.txt
     xsstracer $TARGET 443
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
@@ -1151,9 +1152,6 @@ if [ "$MODE" = "airstrike" ]; then
       fi
       if [ "$RECON" = "1" ]; then
         args="$args -re -m stealth"
-      fi
-      if [ "$LOOT" = "1" ]; then
-        args="$args -l"
       fi
       if [ ! -z "$WORKSPACE" ]; then
         args="$args -w $WORKSPACE"
@@ -1257,7 +1255,7 @@ if [ "$MODE" = "nuke" ]; then
       exit
   fi
   if [ "$REPORT" = "1" ]; then
-    args="$args --noreport -m nuke -fp -b -o -r -re -l"
+    args="$args --noreport -m nuke -fp -b -o -re"
     if [ ! -z "$WORKSPACE" ]; then
       args="$args -w $WORKSPACE"
       LOOT_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
@@ -1271,7 +1269,7 @@ if [ "$MODE" = "nuke" ]; then
       mkdir $LOOT_DIR/reports 2> /dev/null
       mkdir $LOOT_DIR/output 2> /dev/null
     fi
-    sniper -f $(realpath $TARGET) $args | tee $LOOT_DIR/output/sniper-$(basename $TARGET)-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+    sniper -f $(realpath $FILE) $args | tee $LOOT_DIR/output/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
     exit
   fi
   for a in `cat $(realpath $FILE)`; do
@@ -1315,14 +1313,14 @@ if [ "$REPORT" = "1" ]; then
   if [ "$OSINT" = "1" ]; then
     args="$args -o"
   fi
-  if [ "$RECON" = "1" ]; then
-    args="$args -re"
-  fi
   if [ "$AUTOBRUTE" = "1" ]; then
     args="$args -b"
   fi
   if [ "$FULLNMAPSCAN" = "1" ]; then
-    args="$args -fp"
+    args="$args -f"
+  fi
+  if [ "$RECON" = "1" ]; then
+    args="$args -re"
   fi
   if [ "MODE" = "port" ]; then
     args="$args -m port"
@@ -1333,7 +1331,6 @@ if [ "$REPORT" = "1" ]; then
   if [ ! -z "$WORKSPACE" ]; then
     args="$args -w $WORKSPACE"
   fi
-
   args="$args --noreport"
   sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
   exit
@@ -1450,9 +1447,9 @@ fi
   echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
 if [ -z "$PORT" ]; then
-  nmap -sU -T5 --open -Pn -p $DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml 
+  nmap -sU -T5 --open -Pn -p $DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
 else
-  nmap -sU -T5 --open -Pn -p $PORT $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml 
+  nmap -sU -T5 --open -Pn -p $PORT $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
 fi
 
 echo ""
@@ -1620,7 +1617,7 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED CHECKING HTTP HEADERS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
-  curl --connect-timeout 1 -I -s -R http://$TARGET >> $LOOT_DIR/web/headers-http-$TARGET.txt 
+  curl --connect-timeout 1 -I -s -R http://$TARGET >> $LOOT_DIR/web/headers-http-$TARGET.txt
   echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
   curl -s --insecure -I http://$TARGET | egrep -i 'X-Content' | tail -n 10
   echo ""
@@ -1862,7 +1859,7 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED CHECKING HTTP HEADERS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
-  curl --connect-timeout 1 -I -s -R https://$TARGET >> $LOOT_DIR/web/headers-https-$TARGET.txt 
+  curl --connect-timeout 1 -I -s -R https://$TARGET >> $LOOT_DIR/web/headers-https-$TARGET.txt
   echo -e "$OKBLUE+ -- --=[Checking if X-Content options are enabled on $TARGET...$RESET $OKORANGE"
   curl -s --insecure -I https://$TARGET | egrep -i 'X-Content' | tail -n 10
   echo ""
@@ -2444,10 +2441,10 @@ echo -e "${OKGREEN}=============================================================
 echo -e "$OKRED SCANNING FOR COMMON VULNERABILITIES $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}"
 if [ ${DISTRO} == "blackarch" ]; then
-  /bin/yasuo -f $LOOT_DIR/nmap/nmap-$TARGET.xml -b all
+  /bin/yasuo -r $TARGET -b all
 else
   cd $PLUGINS_DIR/yasuo
-  ruby yasuo.rb -f $LOOT_DIR/nmap/nmap-$TARGET.xml -b all
+  ruby yasuo.rb -r $TARGET -b all
 fi
 
 cd $SNIPER_DIR
@@ -2493,3 +2490,4 @@ if [ "$LOOT" = "1" ] && [ -z "$NOLOOT" ]; then
 fi
 
 exit 0
+

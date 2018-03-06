@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v4.1 - Fixed issue with sniper nuke command not working
 * v4.0 - Added new command switch options for all sniper scans (see --help for details)
 * v4.0 - Added HTML formatted report for all workspaces to display screenshots, headers, reports and open ports
 * v4.0 - Added optional scan options such as --recon, --osint, --fullportonly --bruteforce, etc. to selectively enable scan modules. (see --help for details) 
