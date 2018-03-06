@@ -1,4 +1,12 @@
 ## CHANGELOG:
+* v4.0 - Added new command switch options for all sniper scans (see --help for details)
+* v4.0 - Added HTML formatted report for all workspaces to display screenshots, headers, reports and open ports
+* v4.0 - Added optional scan options such as --recon, --osint, --fullportonly --bruteforce, etc. to selectively enable scan modules. (see --help for details) 
+* v4.0 - Improved Yasou scan options to include existing NMap XML files
+* v4.0 - Added automatic HTML/TXT/PDF reporting for all scans by default
+* v4.0 - Updated default workspace directory to store all loot files by $TARGET name or $WORKSPACE alias
+* v4.0 - Added screenshot and header retrieval to loot storage
+* v4.0 - Updated NMAP SMB enum script
 * v3.0 - Improved performance of various sniper modes
 * v3.0 - Added Aquatone domain flyover tool
 * v3.0 - Added slurp S3 public AWS scanner
