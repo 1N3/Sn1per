@@ -3,7 +3,7 @@
 # + -- --=[http://crowdshield.com
 #
 
-VER="4.0"
+VER="4.1"
 BROWSER="firefox" # SET DEFAULT BROWSER
 INSTALL_DIR="/usr/share/sniper"
 PLUGINS_DIR="/usr/share/sniper/plugins"
@@ -216,6 +216,10 @@ case $key in
     REPORT="0"
     shift # past argument
     ;;
+    -nl|--noloot)
+    LOOT="0"
+    shift # past argument
+    ;;
     -w|--workspace)
     WORKSPACE="$2"
     WORKSPACE_DIR="$INSTALL_DIR/loot/workspace/$WORKSPACE"
@@ -230,7 +234,7 @@ case $key in
     ;;
     *)    # unknown option
     POSITIONAL+=("$1") # save it in an array for later
-    echo "Unknown scan option...refer to the help menu for usage details."
+    echo "Unknown scan option $POSITIONAL...refer to the help menu for usage details."
     exit
     shift # past argument
     ;;
@@ -892,9 +896,6 @@ if [ "$MODE" = "stealth" ]; then
     if [ "$RECON" = "1" ]; then
       args="$args -re"
     fi
-    if [ "$LOOT" = "1" ]; then
-      args="$args -l"
-    fi
     if [ ! -z "$WORKSPACE" ]; then
       args="$args -w $WORKSPACE"
       LOOT_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
@@ -1151,9 +1152,6 @@ if [ "$MODE" = "airstrike" ]; then
       fi
       if [ "$RECON" = "1" ]; then
         args="$args -re -m stealth"
-      fi
-      if [ "$LOOT" = "1" ]; then
-        args="$args -l"
       fi
       if [ ! -z "$WORKSPACE" ]; then
         args="$args -w $WORKSPACE"

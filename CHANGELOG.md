@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v4.1 - Fixed a few bugs with various command line switches for airstrike and nuke modes.
+* v4.1 - Fixed issue with path relative file inclusion via the -f flag. You can now include just the local filename (sniper -f targets.txt).
 * v4.0 - Added new command switch options for all sniper scans (see --help for details)
 * v4.0 - Added HTML formatted report for all workspaces to display screenshots, headers, reports and open ports
 * v4.0 - Added optional scan options such as --recon, --osint, --fullportonly --bruteforce, etc. to selectively enable scan modules. (see --help for details) 
