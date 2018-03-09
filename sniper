@@ -217,11 +217,8 @@ case $key in
     shift # past argument
     ;;
     -nl|--noloot)
-<<<<<<< HEAD
     LOOT="0"
-=======
     NOLOOT="1"
->>>>>>> b13866c8026af59a392a05f3b2254c4a1f049c81
     shift # past argument
     ;;
     -w|--workspace)

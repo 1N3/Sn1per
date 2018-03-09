@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v4.2 - Fixed bad merge in 4.1 causing sniper to break.
 * v4.1 - Fixed a few bugs with various command line switches for airstrike and nuke modes.
 * v4.1 - Fixed issue with path relative file inclusion via the -f flag. You can now include just the local filename (sniper -f targets.txt).
 * v4.0 - Added new command switch options for all sniper scans (see --help for details)
