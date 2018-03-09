@@ -3,7 +3,7 @@
 # + -- --=[http://crowdshield.com
 #
 
-VER="4.1"
+VER="4.2"
 BROWSER="firefox" # SET DEFAULT BROWSER
 INSTALL_DIR="/usr/share/sniper"
 PLUGINS_DIR="/usr/share/sniper/plugins"
