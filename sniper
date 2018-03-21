@@ -3,7 +3,7 @@
 # + -- --=[http://crowdshield.com
 #
 
-VER="4.3"
+VER="4.4"
 BROWSER="firefox" # SET DEFAULT BROWSER
 INSTALL_DIR="/usr/share/sniper"
 PLUGINS_DIR="/usr/share/sniper/plugins"
@@ -429,9 +429,31 @@ fi
 
 if [ "$MODE" = "web" ]; then
   if [ "$REPORT" = "1" ]; then
-    sniper -t $TARGET -m $MODE --noreport | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+    if [ ! -z "$WORKSPACE" ]; then
+      args="$args -w $WORKSPACE"
+      LOOT_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
+      echo -e "$OKBLUE[*] Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+      mkdir -p $LOOT_DIR 2> /dev/null
+      mkdir $LOOT_DIR/domains 2> /dev/null
+      mkdir $LOOT_DIR/screenshots 2> /dev/null
+      mkdir $LOOT_DIR/nmap 2> /dev/null
+      mkdir $LOOT_DIR/notes 2> /dev/null
+      mkdir $LOOT_DIR/burpsuite 2> /dev/null
+      mkdir $LOOT_DIR/reports 2> /dev/null
+      mkdir $LOOT_DIR/output 2> /dev/null
+    fi
+    sniper -t $TARGET -m $MODE --noreport $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
     exit
   fi
+
+
+
+
+
+
+
+
+
 fi
 
 # WEBPORTHTTP MODE
@@ -1318,7 +1340,7 @@ if [ "$REPORT" = "1" ]; then
     args="$args -b"
   fi
   if [ "$FULLNMAPSCAN" = "1" ]; then
-    args="$args -f"
+    args="$args -fp"
   fi
   if [ "$RECON" = "1" ]; then
     args="$args -re"
@@ -1448,9 +1470,9 @@ fi
   echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
 if [ -z "$PORT" ]; then
-  nmap -sU -T5 --open -Pn -p $DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
+  nmap -Pn -sU -T4 -p$DEFAULT_UDP_PORTS --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
 else
-  nmap -sU -T5 --open -Pn -p $PORT $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
+  nmap -Pn -sU -T4 -p$PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
 fi
 
 echo ""
@@ -1462,17 +1484,12 @@ port_22=`grep 'portid="22"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_23=`grep 'portid="23"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_25=`grep 'portid="25"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_53=`grep 'portid="53"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-#port_67=`grep 'portid="67"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
-#port_68=`grep 'portid="68"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
-#port_69=`grep 'portid="69"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
 port_79=`grep 'portid="79"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_110=`grep 'portid="110"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_111=`grep 'portid="111"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-#port_123=`grep 'portid="123"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
 port_135=`grep 'portid="135"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_139=`grep 'portid="139"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-#port_161=`grep 'portid="161"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
 port_162=`grep 'portid="162"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_389=`grep 'portid="162"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -1511,6 +1528,14 @@ port_27018=`grep 'portid="27018"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_27019=`grep 'portid="27019"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_28017=`grep 'portid="28017"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+
+if [ "$FULLNMAPSCAN" = "1" ]; then
+  port_67=`grep 'portid="67"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
+  port_68=`grep 'portid="68"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
+  port_69=`grep 'portid="69"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
+  port_123=`grep 'portid="123"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
+  port_161=`grep 'portid="161"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
+fi
 
 if [ -z "$port_21" ];
 then
@@ -1818,8 +1843,8 @@ then
   echo -e "$OKRED + -- --=[Port 161 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 161 opened... running tests...$RESET"
-  for a in `cat /usr/share/brutex/wordlists/snmp-strings.txt`; do snmpwalk $TARGET -c $a; done;
-  nmap -sU -p 161 --script=--script=snmp-brute,snmp-hh3c-logins,snmp-info,snmp-interfaces,snmp-ios-config,snmp-netstat,snmp-processes,snmp-sysdescr,snmp-win32-services,snmp-win32-shares,snmp-win32-software,snmp-win32-users $TARGET
+  nmap --script=/usr/share/nmap/scripts/snmp-brute.nse,/usr/share/nmap/scripts/snmp-hh3c-logins.nse,/usr/share/nmap/scripts/snmp-interfaces.nse,/usr/share/nmap/scripts/snmp-ios-config.nse,/usr/share/nmap/scripts/snmp-netstat.nse,/usr/share/nmap/scripts/snmp-processes.nse,/usr/share/nmap/scripts/snmp-sysdescr.nse,/usr/share/nmap/scripts/snmp-win32-services.nse,/usr/share/nmap/scripts/snmp-win32-shares.nse,/usr/share/nmap/scripts/snmp-win32-software.nse,/usr/share/nmap/scripts/snmp-win32-users.nse -sV -A -p 161 -sU -sT $TARGET
+  msfconsole -x "use scanner/snmp/snmp_enum; setg RHOSTS "$TARGET"; run; exit;"
 fi
 
 if [ -z "$port_162" ];
@@ -1827,8 +1852,8 @@ then
   echo -e "$OKRED + -- --=[Port 162 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 162 opened... running tests...$RESET"
-  for a in `cat /usr/share/brutex/wordlists/snmp-strings.txt`; do snmpwalk $TARGET -c $a; done;
-  nmap -A -p 162 -Pn --script=--script=snmp-brute,snmp-hh3c-logins,snmp-info,snmp-interfaces,snmp-ios-config,snmp-netstat,snmp-processes,snmp-sysdescr,snmp-win32-services,snmp-win32-shares,snmp-win32-software,snmp-win32-users $TARGET
+  nmap --script=/usr/share/nmap/scripts/snmp-brute.nse,/usr/share/nmap/scripts/snmp-hh3c-logins.nse,/usr/share/nmap/scripts/snmp-interfaces.nse,/usr/share/nmap/scripts/snmp-ios-config.nse,/usr/share/nmap/scripts/snmp-netstat.nse,/usr/share/nmap/scripts/snmp-processes.nse,/usr/share/nmap/scripts/snmp-sysdescr.nse,/usr/share/nmap/scripts/snmp-win32-services.nse,/usr/share/nmap/scripts/snmp-win32-shares.nse,/usr/share/nmap/scripts/snmp-win32-software.nse,/usr/share/nmap/scripts/snmp-win32-users.nse -sV -A -p 162 -sU -sT $TARGET
+  msfconsole -x "use scanner/snmp/snmp_enum; setg RHOSTS "$TARGET"; run; exit;"
 fi
 
 if [ -z "$port_389" ];

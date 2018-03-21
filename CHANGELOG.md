@@ -1,4 +1,9 @@
 ## CHANGELOG:
+* v4.4 - Fixed issue with sniper nuke and airstrike modes not running.
+* v4.4 - Added improved SNMP checks via NMap/Metasploit.
+* v4.4 - Resolved dependency issue for nfs-common package.
+* v4.4 - Fixed bug in sniper -fp command switch.
+* v4.3 - Fixed bug in version info.
 * v4.2 - Fixed bad merge in 4.1 causing sniper to break.
 * v4.1 - Fixed a few bugs with various command line switches for airstrike and nuke modes.
 * v4.1 - Fixed issue with path relative file inclusion via the -f flag. You can now include just the local filename (sniper -f targets.txt).
