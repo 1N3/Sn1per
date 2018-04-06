@@ -310,7 +310,7 @@ function loot {
 
   echo -e "$OKORANGE + -- --=[Generating HTML Report...$RESET"
   echo "<html><head><style>table, th, td {    border: 1px solid black; max-width: 1000px; align: center; } pre {    white-space: pre-wrap;       /* Since CSS 2.1 */    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */    white-space: -pre-wrap;      /* Opera 4-6 */    white-space: -o-pre-wrap;    /* Opera 7 */    word-wrap: break-word;       /* Internet Explorer 5.5+ */ }</style></head>
-    <body><center><img src="$INSTALL_DIR/sn1per-logo.png"></img><br>--= [ by 1N3@CrowdShield - <a href="https://crowdshield.com" target="_new">https://crowdshield.com</a> ] =--<p></p>
+    <body><center><img src="$INSTALL_DIR/Sn1per.jpg"></img><br>--= [ by 1N3@CrowdShield - <a href="https://crowdshield.com" target="_new">https://crowdshield.com</a> ] =--<p></p>
     <a href="$LOOT_DIR/aquatone" target="_new">aquatone</a>
     <a href="$LOOT_DIR/burpsuite" target="_new">burpsuite</a>
     <a href="$LOOT_DIR/domains" target="_new">domains</a>
