@@ -1612,7 +1612,7 @@ then
   echo -e "$OKRED + -- --=[Port 69 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 69 opened... running tests...$RESET"
-  nmap -A -sU -sV -Pn -T5 --script=tftp* -p 68 $TARGET
+  nmap -A -sU -sV -Pn -T5 --script=tftp* -p 69 $TARGET
 fi
 
 if [ -z "$port_79" ];
