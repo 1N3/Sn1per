@@ -1,4 +1,11 @@
-![alt tag](https://github.com/1N3/Sn1per/blob/master/Sn1per.jpg)
+![alt tag](https://github.com/1N3/Sn1per/blob/master/Sn1per.gif)
+
+[![GitHub release](https://img.shields.io/github/release/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/releases) 
+[![Github Stars](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://github.com/1N3/Sn1per/) 
+[![GitHub issues](https://img.shields.io/github/issues/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/issues) 
+[![GitHub Followers](https://img.shields.io/github/followers/espadrine.svg?style=social&label=Follow)](https://github.com/1N3/Sn1per/)]
+![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)] 
+[![Follow on Twitter](https://img.shields.io/twitter/follow/crowdshield.svg?style=social&label=Follow)](https://twitter.com/crowdshield)
 
 ## ABOUT:
 Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. 
@@ -30,6 +37,22 @@ Sn1per is an automated scanner that can be used during a penetration test to enu
 - [x] Automatically integrates with Metasploit Pro, MSFConsole and Zenmap for reporting
 - [x] Automatically gathers screenshots of all web sites
 - [x] Create individual workspaces to store all scan output
+
+## AUTO-PWN:
+- [x] Drupal Drupalgedon2 RCE CVE-2018-7600
+- [x] GPON Router RCE CVE-2018-10561
+- [x] Apache Struts 2 RCE CVE-2017-5638
+- [x] Apache Struts 2 RCE CVE-2017-9805
+- [x] Apache Jakarta RCE CVE-2017-5638
+- [x] Shellshock GNU Bash RCE CVE-2014-6271
+- [x] HeartBleed OpenSSL Detection CVE-2014-0160
+- [x] Default Apache Tomcat Creds CVE-2009-3843
+- [x] MS Windows SMB RCE MS08-067
+- [x] Webmin File Disclosure CVE-2006-3392
+- [x] Anonymous FTP Access
+- [x] PHPMyAdmin Backdoor RCE
+- [x] PHPMyAdmin Auth Bypass
+- [x] JBoss Java De-Serialization RCE's
 
 ## KALI LINUX INSTALL:
 ```
@@ -122,9 +145,6 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
 ## LICENSE:
 This software is free to distribute, modify and use with the condition that credit is provided to the creator (1N3@CrowdShield) and is not for commercial use.
-
-## LOGO:
-Credit to Sponge Nutter for the original sniper penguin logo.
 
 ## DONATIONS:
 Donations are welcome. This will help fascilitate improved features, frequent updates and better overall support for sniper.
