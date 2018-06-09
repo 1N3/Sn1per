@@ -3,8 +3,8 @@
 [![GitHub release](https://img.shields.io/github/release/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/releases) 
 [![Github Stars](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://github.com/1N3/Sn1per/) 
 [![GitHub issues](https://img.shields.io/github/issues/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/issues) 
-[![GitHub Followers](https://img.shields.io/github/followers/espadrine.svg?style=social&label=Follow)](https://github.com/1N3/Sn1per/)]
-![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)] 
+[![GitHub Followers](https://img.shields.io/github/followers/espadrine.svg?style=social&label=Follow)](https://github.com/1N3/Sn1per/)
+![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/crowdshield.svg?style=social&label=Follow)](https://twitter.com/crowdshield)
 
 ## ABOUT:
