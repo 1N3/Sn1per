@@ -3,9 +3,9 @@
 [![GitHub release](https://img.shields.io/github/release/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/releases) 
 [![GitHub issues](https://img.shields.io/github/issues/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/issues) 
 [![Github Stars](https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Stars)](https://github.com/1N3/Sn1per/) 
-[![GitHub Followers](https://img.shields.io/github/followers/espadrine.svg?style=social&label=Follow)](https://github.com/1N3/Sn1per/)
-![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)
-[![Follow on Twitter](https://img.shields.io/twitter/follow/crowdshield.svg?style=social&label=Follow)](https://twitter.com/crowdshield)
+[![GitHub Followers](https://img.shields.io/github/followers/1N3.svg?style=social&label=Follow)](https://github.com/1N3/Sn1per/)
+![Tweet](https://img.shields.io/twitter/url/http/crowdshield.svg?style=social)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/crowdshield.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=crowdshield)
 
 ## ABOUT:
 Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. 
