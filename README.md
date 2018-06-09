@@ -1,4 +1,4 @@
-![alt tag](https://github.com/1N3/Sn1per/blob/master/Sn1per.gif)
+![alt tag](https://github.com/1N3/Sn1per/blob/master/Sn1per.jpg)
 
 [![GitHub release](https://img.shields.io/github/release/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/releases) 
 [![Github Stars](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://github.com/1N3/Sn1per/) 
