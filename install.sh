@@ -33,7 +33,7 @@ mkdir $LOOT_DIR/nmap 2> /dev/null
 mkdir $LOOT_DIR/reports 2> /dev/null
 mkdir $LOOT_DIR/output 2> /dev/null
 mkdir $LOOT_DIR/osint 2> /dev/null
-cp -Rf $PWD/* $INSTALL_DIR 2> /dev/null
+cp -Rf * $INSTALL_DIR 2> /dev/null
 cd $INSTALL_DIR
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
@@ -48,7 +48,7 @@ gem install rake
 gem install ruby-nmap net-http-persistent mechanize text-table
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
-rm -Rf Findsploit/ BruteX/ Goohak/ XSSTracer/ MassBleed/ SuperMicro-Password-Scanner/ CMSmap/ yasuo/ Sublist3r/ shocker/ jexboss/ serializekiller/ testssl.sh/ SimpleEmailSpoofer/ ssh-audit/ plugins/ 2> /dev/null
+rm -Rf $PLUGINS_DIR 2> /dev/null
 mkdir $PLUGINS_DIR 2> /dev/null
 cd $PLUGINS_DIR
 mkdir -p $PLUGINS_DIR/nmap_scripts/ 2> /dev/null
@@ -66,23 +66,27 @@ git clone https://github.com/johndekroon/serializekiller.git
 git clone https://github.com/aboul3la/Sublist3r.git 
 git clone https://github.com/nccgroup/shocker.git 
 git clone --depth 1 https://github.com/drwetter/testssl.sh.git 
-git clone https://github.com/lunarca/SimpleEmailSpoofer 
+git clone https://github.com/BishopFox/spoofcheck.git
 git clone https://github.com/arthepsy/ssh-audit 
 git clone https://github.com/m0rtem/CloudFail.git
 git clone https://github.com/deibit/cansina
 git clone https://github.com/1N3/jexboss.git
-wget https://github.com/bbb31/slurp/releases/download/1.3/slurp.zip
+git clone https://github.com/maurosoria/dirsearch.git
+git clone https://github.com/jekyc/wig.git
+mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
 rm -f slurp.zip
 wget https://github.com/michenriksen/aquatone/blob/master/subdomains.lst -O /usr/share/sniper/plugins/Sublist3r/subdomains.lst
 wget https://raw.githubusercontent.com/1N3/IntruderPayloads/master/FuzzLists/dirbuster-quick.txt -O /usr/share/sniper/plugins/cansina/dirbuster-quick.txt
 wget https://svn.nmap.org/nmap/scripts/http-vuln-cve2017-5638.nse -O /usr/share/nmap/scripts/http-vuln-cve2017-5638.nse
 wget https://raw.githubusercontent.com/xorrbit/nmap/865142904566e416944ebd6870d496c730934965/scripts/http-vuln-INTEL-SA-00075.nse -O /usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse
+wget https://raw.githubusercontent.com/f3d0x0/GPON/master/gpon_rce.py -O /usr/share/sniper/bin/gpon_rce.py
 cp $INSTALL_DIR/bin/iis-buffer-overflow.nse /usr/share/nmap/scripts/iis-buffer-overflow.nse 2> /dev/null
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 cd $PLUGINS_DIR/CloudFail/ && apt-get install python3-pip && pip3 install -r requirements.txt
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh
 cd $PLUGINS_DIR/BruteX/ && bash install.sh
+cd $PLUGINS_DIR/spoofcheck/ && pip install -r requirements.txt 
 cd $INSTALL_DIR 
 mkdir $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
@@ -117,6 +121,7 @@ ln -s $PLUGINS_DIR/Findsploit/copysploit /usr/bin/copysploit
 ln -s $PLUGINS_DIR/Findsploit/compilesploit /usr/bin/compilesploit
 ln -s $PLUGINS_DIR/MassBleed/massbleed /usr/bin/massbleed
 ln -s $PLUGINS_DIR/testssl.sh/testssl.sh /usr/bin/testssl
+ln -s $PLUGINS_DIR/dirsearch/dirsearch.py /usr/bin/dirsearch
 msfdb init 
 msfdb start
 echo -e "$OKORANGE + -- --=[Done!$RESET"
