@@ -27,4 +27,3 @@ rm -Rf /usr/share/sniper/
 rm -f /usr/bin/sniper
 
 echo -e "$OKORANGE + -- --=[Done!$RESET"
-echo -e "$OKORANGE + -- --=[To run, type 'sniper'! $RESET"
