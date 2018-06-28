@@ -8,12 +8,29 @@
 [![Follow on Twitter](https://img.shields.io/twitter/follow/crowdshield.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=crowdshield)
 
 ## ABOUT:
-Sn1per is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. 
+Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes.
 
 ## DEMO VIDEO:
 [![Demo](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm.png)](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm)
 
-## FEATURES:
+## SN1PER PROFESSIONAL FEATURES:
+- [x] Professional reporting interface
+![alt tag](https://xerosecurity.com/images/sn1per-pro1.png)
+- [x] Slideshow for all gathered screenshots
+![alt tag](https://xerosecurity.com/images/sn1per-pro4.png)
+- [x] Searchable and sortable DNS, IP and open port database
+![alt tag](https://xerosecurity.com/images/Sn1per-pro11.png)
+- [x] Categorized host reports
+![alt tag](https://xerosecurity.com/images/Sn1per-pro8.png)
+- [x] Quick links to online recon tools and Google hacking queries
+![alt tag](https://xerosecurity.com/images/sn1per-pro5.png)
+- [x] Personalized notes field for each host
+![alt tag](https://xerosecurity.com/images/sn1per-pro13.png)
+
+## ORDER SN1PER PROFESSIONAL:
+To obtain a Sn1per Professional license, go to https://xerosecurity.com. 
+
+## SN1PER COMMUNITY FEATURES:
 - [x] Automatically collects basic recon (ie. whois, ping, DNS, etc.)
 - [x] Automatically launches Google hacking queries against a target domain
 - [x] Automatically enumerates open ports via NMap port scanning
@@ -139,6 +156,7 @@ sniper -u|--update
 * **WEBPORTHTTPS:** Launches a full HTTPS web application scan against a specific host and port.
 * **UPDATE:** Checks for updates and upgrades all components used by sniper.
 * **REIMPORT:** Reimport all workspace files into Metasploit and reproduce all reports.
+* **RELOAD:** Reload the master workspace report.
 
 ## SAMPLE REPORT:
 https://gist.github.com/1N3/8214ec2da2c91691bcbc

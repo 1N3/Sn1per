@@ -1,4 +1,20 @@
 ## CHANGELOG:
+* v5.0 - Added Sn1per Pro reporting interface (see https://xerosecurity.com for more details)
+* v5.0 - Added GPON Router RCE auto exploit 
+* v5.0 - Added Cloudapp.net Azure subdomain takeover check
+* v5.0 - Added Cisco ASA Directory Traversal auto exploit (CVE-2018-0296)
+* v5.0 - Added Wig Web Information Gatherer
+* v5.0 - Added Dirsearch with custom dirsearch wordlists (quick, normal, full)
+* v5.0 - Fixed bug in installer/upgrade which copied the local dir contents to the install dir
+* v5.0 - Improved scan performance while taking web screenshots 
+* v5.0 - Fixed repo issue with Slurp (Shoutz to @ifly53e)
+* v5.0 - Fixed issues with wrong ports listed in port scans (Shoutz to @ifly53e)
+* v5.0 - Minor code fixes and typos corrected (Shoutz to @ifly53e)
+* v5.0 - Updated "discover" mode scans for improved performance
+* v4.5 - Added Apache Struts 2 CVE-2017-9805 and CVE-2017-5638 detection
+* v4.5 - Added dirsearch web/file brute forcing
+* v4.5 - Added smart file/directory brute forcing to all scan modes.
+* v4.5 - Added subdomain brute force scan option to Sublist3r scan.
 * v4.4 - Fixed issue with sniper nuke and airstrike modes not running.
 * v4.4 - Added improved SNMP checks via NMap/Metasploit.
 * v4.4 - Resolved dependency issue for nfs-common package.
