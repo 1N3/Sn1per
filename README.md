@@ -8,23 +8,23 @@
 [![Follow on Twitter](https://img.shields.io/twitter/follow/crowdshield.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=crowdshield)
 
 ## ABOUT:
-Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes.
+Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes. For more information regarding Sn1per Professional, go to https://xerosecurity.com. 
 
 ## DEMO VIDEO:
 [![Demo](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm.png)](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm)
 
 ## SN1PER PROFESSIONAL FEATURES:
-- [x] Professional reporting interface
+### Professional reporting interface
 ![alt tag](https://xerosecurity.com/images/sn1per-pro1.png)
-- [x] Slideshow for all gathered screenshots
+### Slideshow for all gathered screenshots
 ![alt tag](https://xerosecurity.com/images/sn1per-pro4.png)
-- [x] Searchable and sortable DNS, IP and open port database
+### Searchable and sortable DNS, IP and open port database
 ![alt tag](https://xerosecurity.com/images/Sn1per-pro11.png)
-- [x] Categorized host reports
+### Categorized host reports
 ![alt tag](https://xerosecurity.com/images/Sn1per-pro8.png)
-- [x] Quick links to online recon tools and Google hacking queries
+### Quick links to online recon tools and Google hacking queries
 ![alt tag](https://xerosecurity.com/images/sn1per-pro5.png)
-- [x] Personalized notes field for each host
+### Personalized notes field for each host
 ![alt tag](https://xerosecurity.com/images/sn1per-pro13.png)
 
 ## ORDER SN1PER PROFESSIONAL:
