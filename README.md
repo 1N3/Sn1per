@@ -10,9 +10,6 @@
 ## ABOUT:
 Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes. For more information regarding Sn1per Professional, go to https://xerosecurity.com. 
 
-## DEMO VIDEO:
-[![Demo](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm.png)](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm)
-
 ## SN1PER PROFESSIONAL FEATURES:
 ### Professional reporting interface
 ![alt tag](https://xerosecurity.com/images/sn1per-pro1.png)
@@ -29,6 +26,10 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 
 ## ORDER SN1PER PROFESSIONAL:
 To obtain a Sn1per Professional license, go to https://xerosecurity.com. 
+
+## DEMO VIDEO:
+[![Demo #1](https://img.youtube.com/vi/nA_V_u3QZA4/0.jpg)](https://www.youtube.com/watch?v=nA_V_u3QZA4)
+[![Demo #2](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm.png)](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm)
 
 ## SN1PER COMMUNITY FEATURES:
 - [x] Automatically collects basic recon (ie. whois, ping, DNS, etc.)
