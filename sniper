@@ -10,6 +10,9 @@ PLUGINS_DIR="$INSTALL_DIR/plugins"
 WEB_BRUTE_QUICK="$INSTALL_DIR/wordlists/toplist-quick-sorted.txt"
 WEB_BRUTE_TOPLIST="$INSTALL_DIR/wordlists/toplist-sorted.txt"
 WEB_BRUTE_FULL="$INSTALL_DIR/wordlists/toplist-full-sorted.txt"
+WEB_BRUTE_INSANE="$INSTALL_DIR/wordlists/toplist-insane-sorted.txt"
+DOMAINS_DEFAULT="$INSTALL_DIR/wordlists/domains-all.txt"
+DOMAINS_FULL="$INSTALL_DIR/wordlists/domains-insane.txt"
 CMSMAP="/usr/share/sniper/plugins/CMSmap/cmsmap.py"
 SAMRDUMP="$INSTALL_DIR/bin/samrdump.py"
 DNSDICT6="$INSTALL_DIR/bin/dnsdict6"
@@ -334,13 +337,14 @@ function loot {
   if [ -f $SNIPER_PRO ]; then
     echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
     source $INSTALL_DIR/pro.sh
+    echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
+    $BROWSER $LOOT_DIR/sniper-report.html 2> /dev/null > /dev/null &
   else
     echo -e "$OKRED + -- --=[Sn1per Professional is not installed. To download Sn1per Professional, go to https://xerosecurity.com. $RESET"
     $BROWSER https://xerosecurity.com 2> /dev/null > /dev/null &
   fi
 
-  echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
-  $BROWSER $LOOT_DIR/sniper-report.html 2> /dev/null > /dev/null &
+
   echo -e "$OKORANGE + -- --=[Done!$RESET"
 }
 
@@ -568,7 +572,7 @@ if [ "$MODE" = "webporthttp" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET:$PORT -w $WEB_BRUTE_FULL -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm -r -f
+    python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET:$PORT -w $WEB_BRUTE_INSANE -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
     cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
     cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
     wget http://$TARGET:$PORT/robots.txt -O $LOOT_DIR/web/robots-$TARGET:$PORT-http.txt 2> /dev/null
@@ -778,7 +782,7 @@ if [ "$MODE" = "webporthttps" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_FULL -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm -r -f
+    python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_INSANE -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
     cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
     cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
     wget https://$TARGET:$PORT/robots.txt -O $LOOT_DIR/web/robots-$TARGET:$PORT-https.txt 2> /dev/null
@@ -984,7 +988,7 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      python /pentest/recon/dnscan/dnscan.py -d $TARGET -w /pentest/recon/dnscan/subdomains-10000.txt -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
+      python /pentest/recon/dnscan/dnscan.py -d $TARGET -w $DOMAINS_FULL -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
       cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt | grep $TARGET| awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
       dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
       echo ""
@@ -1440,7 +1444,7 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    python /pentest/recon/dnscan/dnscan.py -d $TARGET -w /pentest/recon/dnscan/subdomains-10000.txt -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-$TARGET-ips.txt
+    python /pentest/recon/dnscan/dnscan.py -d $TARGET -w $DOMAINS_FULL -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-$TARGET-ips.txt
     cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt | grep $TARGET | awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
     dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
     echo ""
@@ -1716,7 +1720,7 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_FULL -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm -r -f
+    python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_TOPLIST -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
     cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
     cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
     wget http://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-http.txt 2> /dev/null
