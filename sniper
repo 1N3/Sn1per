@@ -986,9 +986,9 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS $RESET"
+      echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS (THIS CAN TAKE A WHILE...) $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      python $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_FULL -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
+      python $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_DEFAULT -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
       cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt | grep $TARGET| awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
       dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
       echo ""
@@ -1441,9 +1441,9 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS $RESET"
+    echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS (THIS CAN TAKE A WHILE...) $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_FULL -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-$TARGET-ips.txt
+    python $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_DEFAULT -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-$TARGET-ips.txt
     cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt | grep $TARGET | awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
     dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
     echo ""
