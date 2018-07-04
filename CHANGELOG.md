@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v5.1 - Fixed minor bugs with CloudHunter and SubOver tools not working
 * v5.0 - Added Sn1per Pro reporting interface (see https://xerosecurity.com for more details)
 * v5.0 - Added GPON Router RCE auto exploit 
 * v5.0 - Added Cloudapp.net Azure subdomain takeover check

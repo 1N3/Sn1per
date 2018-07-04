@@ -1028,7 +1028,7 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       dig $TARGET CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null
       for a in `cat $LOOT_DIR/domains/domains-$TARGET-full.txt`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$a.txt 2>/dev/null; done;
-      cd $PLUGINS_DIR/SubOver/ && go subover.go -l $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/takeovers-$TARGET-subover.txt 2>/dev/null
+      #cd $PLUGINS_DIR/SubOver/ && go subover.go -l $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/takeovers-$TARGET-subover.txt 2>/dev/null
       cd $INSTALL_DIR
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED STARTING PUBLIC S3 BUCKET SCAN $RESET"
@@ -1469,13 +1469,13 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     dig $TARGET CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null
     for a in `cat $LOOT_DIR/domains/domains-$TARGET-full.txt`; do dig $a CNAME | egrep -i 'wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp' | tee $LOOT_DIR/nmap/takeovers-$a.txt 2>/dev/null; done;
-    cd $PLUGINS_DIR/SubOver/ && go subover.go -l $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/takeovers-$TARGET-subover.txt 2>/dev/null
+    #cd $PLUGINS_DIR/SubOver/ && go subover.go -l $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/takeovers-$TARGET-subover.txt 2>/dev/null
     cd $INSTALL_DIR
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED CHECKING FOR S3 PUBLIC BUCKETS $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    cloudhunter -d $a | tee $LOOT_DIR/nmap/takeovers-$TARGET-aws.txt 2>/dev/null
-    cloudhunter -w $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/takeovers-$TARGET-aws-all.txt 2>/dev/null
+    #echo -e "${OKGREEN}====================================================================================${RESET}"
+    #echo -e "$OKRED CHECKING FOR S3 PUBLIC BUCKETS $RESET"
+    #echo -e "${OKGREEN}====================================================================================${RESET}"
+    #cloudhunter -d $a | tee $LOOT_DIR/nmap/takeovers-$TARGET-aws.txt 2>/dev/null
+    #cloudhunter -w $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/takeovers-$TARGET-aws-all.txt 2>/dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED CHECKING EMAIL SECURITY $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
