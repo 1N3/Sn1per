@@ -73,6 +73,8 @@ git clone https://github.com/deibit/cansina
 git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
+git clone https://github.com/rbsec/dnscan.git
+pip install -r $PLUGINS_DIR/dnscan/requirements.txt 
 mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
 rm -f slurp.zip
