@@ -1,4 +1,36 @@
 ## CHANGELOG:
+* v5.2 - Added SubOver subdomain takeover scanner
+* v5.2 - Added Subfinder subdomain enumeration tool
+* v5.2 - Added Amass subdomain enumeration tool
+* v5.2 - Added configurable modules/plugins to sniper script
+* v5.2 - Added MS17-010 SMB Etternal Blue MSF Exploit
+* v5.2 - Added MSF Postgresql login scanner
+* v5.2 - Added passive web spider
+* v5.2 - Added WebDav metasploit aux modules
+* v5.2 - Added NetBIOS NMap/MSF enumeration
+* v5.2 - Added SMB MSF enumeration
+* v5.2 - Added NSF MSF enumeration
+* v5.2 - Added SSH MSF enumeration
+* v5.2 - Added BadBlue Passthru MSF exploit
+* v5.2 - Added SMB GPP MSF aux module
+* v5.2 - Added Intel AMT MSF scanner
+* v5.2 - Added MySQL MSF scanner
+* v5.2 - Added MS03-026 DCOM RCE MSF exploit
+* v5.2 - Added VNC no auth MSF scanner
+* v5.2 - Added FTP MSF version scanner
+* v5.2 - Added FTP anonymous access MSF scanner
+* v5.2 - Added MS12-020 RDP MSF scanner
+* v5.2 - Added MS10-061 Spoolss MSF exploit
+* v5.2 - Added MS15-034 Sys Memory Dump MSF exploit
+* v5.2 - Added MS06-040 Netapi MSF exploit
+* v5.2 - Added MS05-039 PNP MSF exploit
+* v5.2 - Added MS12-020 Max Channels RDP scanner
+* v5.2 - Added JBoss status MSF scanner
+* v5.2 - Added Apache Struts 2 REST Plugin XStream RCE check
+* v5.2 - Added Apache Tomcat UTF8 Traversal MSF exploit
+* v5.2 - Added Apache OPTIONS Bleed MSF exploit
+* v5.2 - Added HP ILO Auth Bypass MSF exploit
+* v5.2 - Added Jooma Comfields SQL injection MSF exploit
 * v5.1 - Added dnscan to install.sh and updated sniper references which were broken
 * v5.1 - Changed default brute force list for dnscan to improve performance of scans
 * v5.1 - Removed CloudHunter and SubOver references (CC. 爱上平顶山)

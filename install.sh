@@ -15,7 +15,7 @@ echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
 echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
-echo -e "$OKORANGE + -- --=[http://crowdshield.com$RESET"
+echo -e "$OKORANGE + -- --=[http://xerosecurity.com$RESET"
 echo ""
 
 INSTALL_DIR=/usr/share/sniper
@@ -37,7 +37,7 @@ cp -Rf * $INSTALL_DIR 2> /dev/null
 cd $INSTALL_DIR
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil clusterd ruby rubygems python dos2unix zenmap sslyze arachni aha libxml2-utils rpcbind uniscan xprobe2 cutycapt host whois dirb dnsrecon curl nmap php php-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap
+apt-get install nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil clusterd ruby rubygems python dos2unix zenmap sslyze arachni aha libxml2-utils rpcbind uniscan xprobe2 cutycapt host whois dirb dnsrecon curl nmap php php-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq
 apt-get install waffit 2> /dev/null
 pip install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
@@ -78,6 +78,10 @@ pip install -r $PLUGINS_DIR/dnscan/requirements.txt
 mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
 rm -f slurp.zip
+cd ~/go/bin/;go get github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
+cd ~/go/bin;go get -u github.com/caffix/amass;mv amass /usr/local/bin/
+cd ~/go/bin;go get github.com/subfinder/subfinder; mv subfinder /usr/local/bin/subfinder
+cd $PLUGINS_DIR
 wget https://github.com/michenriksen/aquatone/blob/master/subdomains.lst -O /usr/share/sniper/plugins/Sublist3r/subdomains.lst
 wget https://raw.githubusercontent.com/1N3/IntruderPayloads/master/FuzzLists/dirbuster-quick.txt -O /usr/share/sniper/plugins/cansina/dirbuster-quick.txt
 wget https://svn.nmap.org/nmap/scripts/http-vuln-cve2017-5638.nse -O /usr/share/nmap/scripts/http-vuln-cve2017-5638.nse
