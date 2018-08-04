@@ -23,7 +23,7 @@ LOOT_DIR=/usr/share/sniper/loot
 PLUGINS_DIR=/usr/share/sniper/plugins
 
 echo -e "$OKGREEN + -- --=[This script will install sniper under $INSTALL_DIR. Are you sure you want to continue?$RESET"
-read answer 
+read answer
 
 mkdir -p $INSTALL_DIR 2> /dev/null
 mkdir -p $LOOT_DIR 2> /dev/null
@@ -74,7 +74,7 @@ git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
 git clone https://github.com/rbsec/dnscan.git
-pip install -r $PLUGINS_DIR/dnscan/requirements.txt 
+pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
 mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
 rm -f slurp.zip

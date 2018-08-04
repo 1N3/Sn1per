@@ -1190,7 +1190,7 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
       if [ "$DNSCAN" = "1" ]; then
-        python /pentest/recon/dnscan/dnscan.py -d $TARGET -w $DOMAINS_FULL -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
+        python3 $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_FULL -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
         cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt | grep $TARGET| awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
         dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
       fi
