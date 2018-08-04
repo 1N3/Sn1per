@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v5.3 - Fixed issue with subfinder missing brute force list
+* v5.3 - Fixed issue with invalid dnsscan reference
 * v5.2 - Added SubOver subdomain takeover scanner
 * v5.2 - Added Subfinder subdomain enumeration tool
 * v5.2 - Added Amass subdomain enumeration tool
