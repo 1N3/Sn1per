@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v5.3 - Updated AMass repo in install.sh
+* v5.3 - Removed CloudFail
 * v5.3 - Fixed issue with subfinder missing brute force list
 * v5.3 - Fixed issue with invalid dnsscan reference
 * v5.2 - Added SubOver subdomain takeover scanner

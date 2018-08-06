@@ -68,7 +68,6 @@ git clone https://github.com/nccgroup/shocker.git
 git clone --depth 1 https://github.com/drwetter/testssl.sh.git 
 git clone https://github.com/BishopFox/spoofcheck.git
 git clone https://github.com/arthepsy/ssh-audit 
-git clone https://github.com/m0rtem/CloudFail.git
 git clone https://github.com/deibit/cansina
 git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
@@ -79,7 +78,7 @@ mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
 rm -f slurp.zip
 cd ~/go/bin/;go get github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
-cd ~/go/bin;go get -u github.com/caffix/amass;mv amass /usr/local/bin/
+cd ~/go/bin;go get -u github.com/OWASP/Amass;mv amass /usr/local/bin/
 cd ~/go/bin;go get github.com/subfinder/subfinder; mv subfinder /usr/local/bin/subfinder
 cd $PLUGINS_DIR
 wget https://github.com/michenriksen/aquatone/blob/master/subdomains.lst -O /usr/share/sniper/plugins/Sublist3r/subdomains.lst
@@ -89,7 +88,6 @@ wget https://raw.githubusercontent.com/xorrbit/nmap/865142904566e416944ebd6870d4
 wget https://raw.githubusercontent.com/f3d0x0/GPON/master/gpon_rce.py -O /usr/share/sniper/bin/gpon_rce.py
 cp $INSTALL_DIR/bin/iis-buffer-overflow.nse /usr/share/nmap/scripts/iis-buffer-overflow.nse 2> /dev/null
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
-cd $PLUGINS_DIR/CloudFail/ && apt-get install python3-pip && pip3 install -r requirements.txt
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh
 cd $PLUGINS_DIR/BruteX/ && bash install.sh
 cd $PLUGINS_DIR/spoofcheck/ && pip install -r requirements.txt 
