@@ -1,6 +1,4 @@
 
-uddiexplorer
-+CSCOE+/logon.html
 _
 __
 .
@@ -6464,6 +6462,7 @@ blank
 blank.aspx
 blank.php
 blank.phtml
+blank-struts2/login.action
 blast
 blasts
 blazer
@@ -11183,6 +11182,7 @@ csadmin.php
 csadmin.phtml
 _cs_apps
 csc
++CSCOE+/logon.html
 cs_CZ.php
 csd
 cse
@@ -19475,6 +19475,7 @@ index3
 index3.php
 index.7z
 index_access
+index.action
 index_adm
 indexadmin
 index_admin
@@ -19505,6 +19506,7 @@ index.cs
 index_def.php
 index.dhtml
 indexdirectory
+index.do
 index_download.php
 index_editor.php
 index_enc_ion.php
@@ -20185,6 +20187,7 @@ ipod
 ipos
 ipoteka
 ipp
+IPRelayApp/servlet/IPRelay?page=forgotPassword
 ipro
 ips
 ips_kernel
@@ -22455,6 +22458,7 @@ Login/sign.php
 login/sm_login_screen.php?error=\"><script>alert('Vulnerable')</script>
 login/sm_login_screen.php?uid=\"><script>alert('Vulnerable')</script>
 login.srf
+login_struts2.jsp
 logins.txt
 loginstyle.php
 loginsupe.php
@@ -26860,6 +26864,7 @@ pageimg
 page_includes
 pageindex
 page_info.php
+page/login_struts2.jsp
 pagemodules
 pagenavigation.php
 pageNavigation.php
@@ -34752,6 +34757,10 @@ structures
 structure.sql
 strut
 struts
+struts2-blank/example/HelloWorld.action
+struts2-showcase
+struts3-showcase
+struts-showcase
 strutture
 sts
 stsadmin
@@ -39807,6 +39816,13 @@ wlp.php
 wls
 wlserver
 wls-wsat/CoordinatorPortType
+wls-wsat/CoordinatorPortType11
+wls-wsat/ParticipantPortType
+wls-wsat/ParticipantPortType11
+wls-wsat/RegistrationPortTypeRPC
+wls-wsat/RegistrationPortTypeRPC11
+wls-wsat/RegistrationRequesterPortType
+wls-wsat/RegistrationRequesterPortType11
 wm
 wma
 wmail

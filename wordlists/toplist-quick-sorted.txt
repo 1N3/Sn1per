@@ -1,7 +1,5 @@
 
-uddiexplorer
 a2e2gp2r2x.jsp
-+CSCOE+/logon.html
 .access
 access_log
 account
@@ -19,21 +17,17 @@ Addons-Modules.txt
 .addressbook
 adm
 ~adm
-loginuser.php
 adm_auth.php
 adm-bin
 adm.html
 admin
 ~admin
 _admin
-admin
 admin$
 Admin
 ADMIN
 admin2
 admin2.php
-admin
-admin.html
 adminarea
 admin_area
 admin.asmx
@@ -98,7 +92,6 @@ admin-serv
 admins.php
 AdminThreads
 AdminVersion
-loginuser.php
 adm.php
 admpw
 affiliate.php
@@ -141,6 +134,7 @@ bea_wls_internal
 bin
 ~bin
 BizTalkServer
+blank-struts2/login.action
 Blocks.txt
 blog
 Bootstrap
@@ -200,6 +194,7 @@ cp.php
 Credits.txt
 cron.php
 cron.sh
++CSCOE+/logon.html
 culeadora.txt
 CVSEntries
 CVSRoot
@@ -214,7 +209,6 @@ data.txt
 DateServlet
 dav
 DAV
-db
 db
 DB
 dbadmin
@@ -295,7 +289,6 @@ get.php
 globals.inc
 ~gopher
 GponForm/diag_Form?images
-GponForm/diag_Form?images
 grabbed.html
 graphics
 gruntfile.coffee
@@ -348,11 +341,13 @@ iisadmin
 images
 includes
 index
+index.action
 index.asp
 index.aspx
 index-bak
 index.bak
 index.cgi
+index.do
 index.htm
 index.html
 index.jsp
@@ -378,6 +373,7 @@ Install.txt
 INSTALL.txt
 internal
 invoker
+IPRelayApp/servlet/IPRelay?page=forgotPassword
 isadmin
 jbossws
 Jenkinsfile
@@ -414,11 +410,12 @@ login.jsp
 Login.jsp
 login.php
 Login.portal
+login_struts2.jsp
 logins.txt
+loginuser.php
 logo.gif
 logon.php
 logs
-logsaccess.log
 logsaccess.log
 logserror_log
 logserror.log
@@ -458,7 +455,6 @@ mrtg.cfg
 muieblackcat
 myaccount
 myadmin
-myadmin
 myadmin2/index.php
 myadmin/index.php
 myadmin/scripts/setup.php
@@ -467,10 +463,8 @@ mybackup
 mydomain
 myservlet
 mysql
-mysql
 mysqladmin
 mysql-admin
-mysqladmin
 MySQLadmin
 MySQLAdmin
 mysql-admin/index.php
@@ -502,6 +496,7 @@ pac
 .pac
 package.json
 page
+page/login_struts2.jsp
 pages
 panel-administracion
 pass.dat
@@ -536,17 +531,15 @@ php.ini.sample
 phpma/index.php
 phpmanager
 phpmyadmin
-php-my-admin
 php-myadmin
+php-my-admin
 phpmy-admin
-phpmyadmin
-phpMyAdmin
 phpMyAdmin
 phpmyadmin0/index.php
 phpmyadmin1/index.php
 phpmyadmin2
-phpMyAdmin-2
 phpMyAdmin2
+phpMyAdmin-2
 phpMyAdmin-2.2.3
 phpMyAdmin-2.2.6
 phpMyAdmin-2.5.1
@@ -627,8 +620,8 @@ physicanlogin.do
 plugin
 PLUGIN
 plugins
-p/m/a
 pma
+p/m/a
 PMA
 pma2005
 PMA2005
@@ -751,6 +744,10 @@ stats
 status
 STATUS.txt
 StockServlet
+struts2-blank/example/HelloWorld.action
+struts2-showcase
+struts3-showcase
+struts-showcase
 Support.txt
 survey
 .svn
@@ -829,7 +826,6 @@ _vti_aut
 _vti_bin
 _vti_cnf
 _vti_inf.html
-_vti_inf.html
 vti_inf.html
 _vti_log
 _vti_pvt
@@ -841,7 +837,6 @@ wcx_ftp.ini
 web
 ~web
 .web
-webadmin
 webadmin
 webadmin.aspx
 webadmin.html
@@ -875,6 +870,13 @@ wl_management_internal1
 wl_management_internal2
 wlserver
 wls-wsat/CoordinatorPortType
+wls-wsat/CoordinatorPortType11
+wls-wsat/ParticipantPortType
+wls-wsat/ParticipantPortType11
+wls-wsat/RegistrationPortTypeRPC
+wls-wsat/RegistrationPortTypeRPC11
+wls-wsat/RegistrationRequesterPortType
+wls-wsat/RegistrationRequesterPortType11
 wordpress
 wp
 wp-admin

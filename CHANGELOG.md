@@ -1,4 +1,14 @@
 ## CHANGELOG:
+* v5.5 - Added new multi-threaded high speed "flyover" mode added
+* v5.5 - Added new scan status mode via (sniper --status) command
+* v5.5 - Apache Struts CVE-2018-11776 RCE exploit
+* v5.5 - Added Android Insecure ADB RCE auto exploit
+* v5.5 - Added Apache Tomcat CVE-2017-12617 RCE exploit
+* v5.5 - Added Oracle WebLogic WLS-WSAT Component Deserialisation RCE CVE-2017-10271 MSF exploit
+* v5.5 - Added BlackWidow web application scanner with INJECTX fuzzer
+* v5.5 - Added CVE-2018-15473 SSH user enumeration script
+* v5.5 - Minor wordlist updates for web file brute forcing
+* v5.4 - Updated Golang in install.sh
 * v5.3 - Updated AMass repo in install.sh
 * v5.3 - Removed CloudFail
 * v5.3 - Fixed issue with subfinder missing brute force list
@@ -7,7 +17,7 @@
 * v5.2 - Added Subfinder subdomain enumeration tool
 * v5.2 - Added Amass subdomain enumeration tool
 * v5.2 - Added configurable modules/plugins to sniper script
-* v5.2 - Added MS17-010 SMB Etternal Blue MSF Exploit
+* v5.2 - Added MS17-010 SMB Etternal Blue MSF exploit
 * v5.2 - Added MSF Postgresql login scanner
 * v5.2 - Added passive web spider
 * v5.2 - Added WebDav metasploit aux modules

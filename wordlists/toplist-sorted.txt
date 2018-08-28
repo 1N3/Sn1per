@@ -1,7 +1,5 @@
 
-uddiexplorer
 _
-+CSCOE+/logon.html
 @
 0
 00
@@ -1159,6 +1157,7 @@ crtr
 crypt
 crypto
 cs
++CSCOE+/logon.html
 cse
 csproj
 css
