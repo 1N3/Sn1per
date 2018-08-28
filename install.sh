@@ -63,9 +63,9 @@ git clone https://github.com/1N3/XSSTracer.git
 git clone https://github.com/1N3/MassBleed.git 
 git clone https://github.com/1N3/SuperMicro-Password-Scanner 
 git clone https://github.com/1N3/BlackWidow
-cp $PLUGIN_DIR/BlackWidow/blackwidow /usr/bin/blackwidow 
-cp $PLUGIN_DIR/BlackWidow/injectx.py /usr/bin/injectx.py
-pip install -r $PLUGIN_DIR/BlackWidow/requirements.txt
+cp /usr/share/sniper/plugins/BlackWidow/blackwidow /usr/bin/blackwidow 
+cp /usr/share/sniper/plugins/BlackWidow/injectx.py /usr/bin/injectx.py
+pip install -r /usr/share/sniper/plugins/BlackWidow/requirements.txt
 git clone https://github.com/Dionach/CMSmap.git 
 git clone https://github.com/0xsauby/yasuo.git 
 git clone https://github.com/johndekroon/serializekiller.git 
