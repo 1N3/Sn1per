@@ -3,7 +3,7 @@
 # + -- --=[http://xerosecurity.com
 #
 
-VER="5.5"
+VER="5.6"
 BROWSER="firefox" # SET DEFAULT BROWSER
 INSTALL_DIR="/usr/share/sniper"
 PLUGINS_DIR="$INSTALL_DIR/plugins"
