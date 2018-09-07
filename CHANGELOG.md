@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v5.6 - Changed automatic report generation to "ON" for Sn1per Pro users
 * v5.5 - Added new multi-threaded high speed "flyover" mode added
 * v5.5 - Added new scan status mode via (sniper --status) command
 * v5.5 - Apache Struts CVE-2018-11776 RCE exploit
