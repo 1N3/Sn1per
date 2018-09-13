@@ -100,14 +100,23 @@ $ docker run --rm -ti menzo/sn1per-docker sniper menzo.io
 [*] NORMAL MODE
 sniper -t|--target <TARGET>
 
-[*] NORMAL MODE + OSINT + RECON
-sniper -t|--target <TARGET> -o|--osint -re|--recon
+[*] NORMAL MODE + OSINT + RECON + FULL PORT SCAN + BRUTE FORCE
+sniper -t|--target <TARGET> -o|--osint -re|--recon -fp|--fullportonly -b|--bruteforce
 
 [*] STEALTH MODE + OSINT + RECON
 sniper -t|--target <TARGET> -m|--mode stealth -o|--osint -re|--recon
 
 [*] DISCOVER MODE
 sniper -t|--target <CIDR> -m|--mode discover -w|--workspace <WORSPACE_ALIAS>
+
+[*] FLYOVER MODE
+sniper -t|--target <TARGET> -m|--mode flyover -w|--workspace <WORKSPACE_ALIAS>
+
+[*] AIRSTRIKE MODE
+sniper -f|--file /full/path/to/targets.txt -m|--mode airstrike
+
+[*] NUKE MODE WITH TARGET LIST, BRUTEFORCE ENABLED, FULLPORTSCAN ENABLED, OSINT ENABLED, RECON ENABLED, WORKSPACE & LOOT ENABLED
+sniper -f--file /full/path/to/targets.txt -m|--mode nuke -w|--workspace <WORKSPACE_ALIAS>
 
 [*] SCAN ONLY SPECIFIC PORT
 sniper -t|--target <TARGET> -m port -p|--port <portnum>
@@ -121,20 +130,14 @@ sniper -t|--target <TARGET> -m|--mode port -p|--port <PORT_NUM>
 [*] WEB MODE - PORT 80 + 443 ONLY!
 sniper -t|--target <TARGET> -m|--mode web
 
-[*] HTTP WEB PORT MODE
+[*] HTTP WEB PORT HTTP MODE
 sniper -t|--target <TARGET> -m|--mode webporthttp -p|--port <port>
 
-[*] HTTPS WEB PORT MODE
+[*] HTTPS WEB PORT HTTPS MODE
 sniper -t|--target <TARGET> -m|--mode webporthttps -p|--port <port>
 
 [*] ENABLE BRUTEFORCE
 sniper -t|--target <TARGET> -b|--bruteforce
-
-[*] AIRSTRIKE MODE
-sniper -f|--file /full/path/to/targets.txt -m|--mode airstrike
-
-[*] NUKE MODE WITH TARGET LIST, BRUTEFORCE ENABLED, FULLPORTSCAN ENABLED, OSINT ENABLED, RECON ENABLED, WORKSPACE & LOOT ENABLED
-sniper -f--file /full/path/to/targets.txt -m|--mode nuke -w|--workspace <WORKSPACE_ALIAS>
 
 [*] ENABLE LOOT IMPORTING INTO METASPLOIT
 sniper -t|--target <TARGET>
@@ -152,6 +155,7 @@ sniper -u|--update
 ### MODES:
 * **NORMAL:** Performs basic scan of targets and open ports using both active and passive checks for optimal performance.
 * **STEALTH:** Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking.
+* **FLYOVER:** Fast multi-threaded high level scans of multiple targets (useful for collecting high level data on many hosts quickly).
 * **AIRSTRIKE:** Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IPs that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.
 * **NUKE:** Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke. 
 * **DISCOVER:** Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.
