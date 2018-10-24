@@ -14,13 +14,14 @@ if [ "$MODE" = "discover" ]; then
       mkdir $LOOT_DIR/output 2> /dev/null
       mkdir $LOOT_DIR/scans 2> /dev/null
     fi
-    echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
+    OUT_FILE=$(echo "$TARGET" | tr / -)
+    echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$OUTFILE-$MODE.txt 2> /dev/null
     sniper -t $TARGET -m $MODE --noreport $args | tee $LOOT_DIR/output/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
     exit
   fi
   echo -e "$OKRED                                                              ____ /\\"
   echo -e "$OKRED   Sn1per by 1N3 @CrowdShield                                      \ \\"
-  echo -e "$OKRED   https://xerosecurity.com                                          \ \\"
+  echo -e "$OKRED   https://xerosecurity.com                                         \ \\"
   echo -e "$OKRED                                                                ___ /  \\"
   echo -e "$OKRED                                                                    \   \\"
   echo -e "$OKRED                                                                 === > [ \\"
@@ -52,9 +53,10 @@ if [ "$MODE" = "discover" ]; then
   cat $LOOT_DIR/domains/sniper-$OUT_FILE-ips.txt
   echo ""
   echo -e "$OKRED[+]$RESET Target list saved to $LOOT_DIR/domains/sniper-$OUT_FILE-ips.txt "
-  echo -e "$OKRED[i] To scan all IP's, use sniper -f $LOOT_DIR/domains/sniper-$OUT_FILE-ips.txt -m airstrike or nuke modes. $RESET"
+  echo -e "$OKRED[i] To scan all IP's, use sniper -f $LOOT_DIR/domains/sniper-$OUT_FILE-ips.txt -m flyover, airstrike or nuke modes. $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
+  loot
   exit
 fi

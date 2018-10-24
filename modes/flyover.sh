@@ -52,6 +52,9 @@ if [ "$MODE" = "flyover" ]; then
   i=1
   for HOST in `sort -u $FILE`; do
     TARGET="$HOST"
+
+    touch $LOOT_DIR/scans/$TARGET-$MODE.txt 2> /dev/null
+
     echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
     echo -e "$OKRED=====================================================================================$RESET"
     echo -e "${OKBLUE}HOST:$RESET $TARGET"
@@ -59,15 +62,15 @@ if [ "$MODE" = "flyover" ]; then
     dig all +short $TARGET 2> /dev/null > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null & 
     dig all +short -x $TARGET 2> /dev/null >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null & 
 
-    wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' > $LOOT_DIR/web/title-https-$TARGET.txt & 2> /dev/null
-    wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' > $LOOT_DIR/web/title-https-$TARGET.txt & 2> /dev/null
+    wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' 2> /dev/null > $LOOT_DIR/web/title-https-$TARGET.txt & 2> /dev/null
+    wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' 2> /dev/null > $LOOT_DIR/web/title-https-$TARGET.txt & 2> /dev/null
 
-    curl --connect-timeout 3 -I -s -R http://$TARGET > $LOOT_DIR/web/headers-http-$TARGET.txt & 2> /dev/null
-    curl --connect-timeout 3 -I -s -R https://$TARGET > $LOOT_DIR/web/headers-https-$TARGET.txt & 2> /dev/null
+    curl --connect-timeout 3 -I -s -R http://$TARGET 2> /dev/null > $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null & 
+    curl --connect-timeout 3 -I -s -R https://$TARGET 2> /dev/null > $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null &
 
     nmap -sS -T5 --open -Pn -p $QUICK_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null & 
 
-    cat $LOOT_DIR/nmap/dns-$TARGET.txt | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" 2>/dev/null | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null & 2> /dev/null
+    cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" 2>/dev/null | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null & 2> /dev/null
 
     if [ ${DISTRO} == "blackarch"  ]; then
       /bin/CutyCapt --url=http://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=1000 2> /dev/null &
@@ -92,6 +95,7 @@ if [ "$MODE" = "flyover" ]; then
 
   if [ "$LOOT" = "1" ]; then
     loot
+    exit
   else
     for HOST in `sort -u $LOOT_DIR/domains/domains-all-sorted.txt $LOOT_DIR/domains/targets-all-sorted.txt`; do
       TARGET="$HOST"
@@ -110,6 +114,5 @@ if [ "$MODE" = "flyover" ]; then
       echo ""
     done
   fi
-
   exit
 fi

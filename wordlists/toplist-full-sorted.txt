@@ -1,4 +1,10 @@
-
+status_.cgi
+/Data/
+/Data/Log/
+/GreenCMS-beta/
+/GreenCMS-beta/Data/Log
+status_.cgi
+Telerik.Web.UI.DialogHandler.aspx
 _
 __
 .

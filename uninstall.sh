@@ -1,6 +1,6 @@
 #!/bin/bash
-# Uninstall script for sn1per
-#
+# Uninstall script for Sn1per
+# Created by @xer0dayz - https://xerosecurity.com
 # VARS
 OKBLUE='\033[94m'
 OKRED='\033[91m'
@@ -15,7 +15,7 @@ echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
 echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
-echo -e "$OKORANGE + -- --=[http://xerosecurity.com$RESET"
+echo -e "$OKORANGE + -- --=[https://xerosecurity.com$RESET"
 echo ""
 
 INSTALL_DIR=/usr/share/sniper

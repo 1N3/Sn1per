@@ -1,4 +1,10 @@
 ## CHANGELOG:
+* v5.7 - Added libSSH auth bypass scanner CVE-2018-10933
+* v5.7 - Added HTTP PUT method RCE MSF exploit
+* v5.7 - Added sniper.conf scan configuration file to customize sniper environments by user
+* v5.7 - Added modular scan mode source files
+* v5.7 - Updated wordlists for improved performance and results
+* v5.7 - Fixed issue with DNScan using an invalid path
 * v5.6 - Changed automatic report generation to "ON" for Sn1per Pro users
 * v5.5 - Added new multi-threaded high speed "flyover" mode added
 * v5.5 - Added new scan status mode via (sniper --status) command
