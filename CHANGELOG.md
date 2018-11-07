@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v5.8 - Fixed missing osint directory/file paths
 * v5.7 - Added libSSH auth bypass scanner CVE-2018-10933
 * v5.7 - Added HTTP PUT method RCE MSF exploit
 * v5.7 - Added sniper.conf scan configuration file to customize sniper environments by user

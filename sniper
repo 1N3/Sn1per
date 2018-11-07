@@ -277,6 +277,7 @@ function init {
   mkdir $LOOT_DIR/reports 2> /dev/null
   mkdir $LOOT_DIR/output 2> /dev/null
   mkdir $LOOT_DIR/credentials 2> /dev/null
+  mkdir $LOOT_DIR/osint 2> /dev/null
   mkdir $LOOT_DIR/vulnerabilities 2> /dev/null
   mkdir $LOOT_DIR/exploits 2> /dev/null
   mkdir $LOOT_DIR/web 2> /dev/null
