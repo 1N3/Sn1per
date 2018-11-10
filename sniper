@@ -3,7 +3,7 @@
 # + -- --=[https://xerosecurity.com
 # 
 
-VER="5.8"
+VER="5.9"
 INSTALL_DIR="/usr/share/sniper"
 
 # LOAD SNIPER CONFIGURATION FILE

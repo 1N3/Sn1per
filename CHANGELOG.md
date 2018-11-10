@@ -1,5 +1,5 @@
 ## CHANGELOG:
-* v5.8 - Fixed issue with auto updates not notifying users of updates
+* v5.9 - Fixed issue with auto updates not notifying users of updates
 * v5.8 - Fixed issue with subfinder not working due to lack of wordlist switch
 * v5.8 - Fixed missing osint directory/file paths
 * v5.7 - Added libSSH auth bypass scanner CVE-2018-10933
