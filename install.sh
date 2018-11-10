@@ -38,7 +38,7 @@ cp -Rf * $INSTALL_DIR 2> /dev/null
 cd $INSTALL_DIR
 
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
-apt-get install nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil clusterd ruby rubygems python dos2unix zenmap sslyze arachni aha libxml2-utils rpcbind uniscan xprobe2 cutycapt host whois dirb dnsrecon curl nmap php php-curl hydra iceweasel wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq golang adb xsltproc
+apt-get install nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil clusterd ruby rubygems python dos2unix zenmap sslyze arachni aha libxml2-utils rpcbind uniscan xprobe2 cutycapt host whois dirb dnsrecon curl nmap php php-curl hydra wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq golang adb xsltproc
 apt-get install waffit 2> /dev/null
 pip install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
