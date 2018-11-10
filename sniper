@@ -3,7 +3,7 @@
 # + -- --=[https://xerosecurity.com
 # 
 
-VER="5.10"
+VER="6.0"
 INSTALL_DIR="/usr/share/sniper"
 
 # LOAD SNIPER CONFIGURATION FILE
@@ -123,7 +123,7 @@ function check_update {
   if [ "$ENABLE_AUTO_UPDATES" == "1" ] && [ "$ONLINE" == "1" ]; then
     LATEST_VER=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [ "$LATEST_VER" != "$VER" ]; then
-      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper v$LATEST_VER is available to download... To update, type$OKRED \"sniper update\" $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper v$LATEST_VER is available to download... To update, type$OKRED \"sniper -u\" $RESET"
     fi
   fi
 }

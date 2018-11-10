@@ -1,5 +1,5 @@
 ## CHANGELOG:
-* v5.10 - Removed iceweasel from install.sh to fix apt error
+* v6.0 - Removed iceweasel from install.sh to fix apt error
 * v5.9 - Fixed issue with auto updates not notifying users of updates
 * v5.8 - Fixed issue with subfinder not working due to lack of wordlist switch
 * v5.8 - Fixed missing osint directory/file paths
