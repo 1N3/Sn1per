@@ -270,14 +270,14 @@ function init {
     LOOT_DIR=$WORKSPACE_DIR
   fi
   echo -e "$OKBLUE[*] Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
-  mkdir -p $LOOT_DIR 2> /dev/null
+  mkdir -p $LOOT_DIR 2> /dev/nul
   mkdir $LOOT_DIR/domains 2> /dev/null
+  mkdir $LOOT_DIR/ips 2> /dev/null
   mkdir $LOOT_DIR/screenshots 2> /dev/null
   mkdir $LOOT_DIR/nmap 2> /dev/null
   mkdir $LOOT_DIR/reports 2> /dev/null
   mkdir $LOOT_DIR/output 2> /dev/null
   mkdir $LOOT_DIR/credentials 2> /dev/null
-  mkdir $LOOT_DIR/osint 2> /dev/null
   mkdir $LOOT_DIR/vulnerabilities 2> /dev/null
   mkdir $LOOT_DIR/exploits 2> /dev/null
   mkdir $LOOT_DIR/web 2> /dev/null
