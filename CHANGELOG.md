@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v6.0 - Improved scan options for discover mode scans
 * v6.0 - Fixed issue with pip3 dependency package missing
 * v6.0 - Removed iceweasel from install.sh to fix apt error
 * v5.9 - Fixed issue with auto updates not notifying users of updates

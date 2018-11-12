@@ -355,7 +355,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING INURLBR OSINT QUERIES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt | tee $LOOT_DIR/osint/inurlbr-$TARGET.txt
+    php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET | tee $LOOT_DIR/osint/inurlbr-$TARGET
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/osint/inurlbr-$TARGET > $LOOT_DIR/osint/inurlbr-$TARGET.txt 2> /dev/null
+    rm -f $LOOT_DIR/osint/inurlbr-$TARGET
     rm -Rf output/ cookie.txt exploits.conf
     GHDB="1"
   fi
@@ -1203,40 +1205,9 @@ else
   ruby yasuo.rb -r $TARGET -b all | tee $LOOT_DIR/vulnerabilities/yasuo-$TARGET.txt 2> /dev/null
 fi
 
-cd $SNIPER_DIR
-
-if [ "$FULLNMAPSCAN" = "0" ]; then
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  echo -e "$OKRED SKIPPING FULL NMAP PORT SCAN $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-else
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  echo -e "$OKRED RUNNING FULL PORT SCAN $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  nmap -Pn -A -v -T4 -p$DEFAULT_TCP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
-  xsltproc $INSTALL_DIR/bin/nmap-bootstrap.xsl $LOOT_DIR/nmap/nmap-$TARGET.xml -o $LOOT_DIR/nmap/nmapreport-$TARGET.html 2> /dev/null
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  nmap -Pn -sU -A -T4 -v -p$DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET-udp.xml
-fi
-
-if [ "$AUTOBRUTE" = "0" ]; then
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  echo -e "$OKRED SKIPPING BRUTE FORCE $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-else
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  echo -e "$OKRED RUNNING BRUTE FORCE $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  brutex $TARGET | tee $LOOT_DIR/credentials/brutex-$TARGET 2> /dev/null
-  sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/credentials/brutex-$TARGET > $LOOT_DIR/credentials/brutex-$TARGET.txt 2> /dev/null
-  rm -f $LOOT_DIR/credentials/brutex-$TARGET
-  cd $INSTALL_DIR
-  rm -f hydra.restore
-  rm -f scan.log
-  echo ""
-fi
+cd $INSTALL_DIR
+source modes/fullportscan.sh
+source modes/bruteforce.sh
 
 rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 

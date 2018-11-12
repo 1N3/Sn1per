@@ -87,17 +87,17 @@ if [ "$MODE" = "flyover" ]; then
     fi
   done
 
-  sort -u $LOOT_DIR/domains/targets.txt >> $LOOT_DIR/domains/domains-all-sorted.txt
+  sort -u $LOOT_DIR/domains/targets.txt 2>/dev/null >> $LOOT_DIR/domains/domains-all-sorted.txt
 
   sleep 20
-  rm -f $INSTALL_DIR/wget-log*
+  rm -f $INSTALL_DIR/wget-log* 2> /dev/null
   echo -e "$OKRED=====================================================================================$RESET"
 
   if [ "$LOOT" = "1" ]; then
     loot
     exit
   else
-    for HOST in `sort -u $LOOT_DIR/domains/domains-all-sorted.txt $LOOT_DIR/domains/targets-all-sorted.txt`; do
+    for HOST in `sort -u $LOOT_DIR/domains/domains-all-sorted.txt $LOOT_DIR/domains/targets-all-sorted.txt 2> /dev/null`; do
       TARGET="$HOST"
       echo -e "$OKRED=====================================================================================$RESET"
       echo -e "${OKBLUE}HOST:$RESET $TARGET"

@@ -21,7 +21,7 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBFINDER $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    subfinder -o $LOOT_DIR/domains/domains-$TARGET-subfinder.txt -b -w $DOMAINS_DEFAULT -d $TARGET 2>/dev/null
+    subfinder -o $LOOT_DIR/domains/domains-$TARGET-subfinder.txt -b -d $TARGET 2>/dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS VIA DNSCAN (THIS COULD TAKE A WHILE...) $RESET"

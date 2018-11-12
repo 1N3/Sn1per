@@ -57,7 +57,6 @@ if [ "$MODE" = "airstrike" ]; then
       echo -e "$OKRED      |__|||  |     |---|---|||___|   |___-----|||||"
       echo -e "$OKRED  |  ||.  |   |       |     |||                |||||"
       echo -e "$OKRED __________________________________________________________"
-      echo -e "$OKRED Bomb raid (contributed by Michael aka SNOOPY@DRYCAS.CLUB.CC.CMU.EDU)"
       echo -e "$RESET"
       if [ ! -z "$WORKSPACE_DIR" ]; then
         echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
