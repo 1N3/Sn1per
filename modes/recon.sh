@@ -13,15 +13,15 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA AMASS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    amass -whois -ip -brute -o $LOOT_DIR/domains/domains-$TARGET-amass.txt -min-for-recursive 3 -d $TARGET 2>/dev/null
-    cut -d, -f1 $LOOT_DIR/domains/domains-$TARGET-amass.txt | grep $TARGET > $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt
-    cut -d, -f2 $LOOT_DIR/domains/domains-$TARGET-amass.txt > $LOOT_DIR/domains/domains-$TARGET-amass-ips-sorted.txt
+    amass -ip -brute -active -o $LOOT_DIR/domains/domains-$TARGET-amass.txt -min-for-recursive 3 -d $TARGET 2>/dev/null
+    cut -d, -f1 $LOOT_DIR/domains/domains-$TARGET-amass.txt 2>/dev/null | grep $TARGET > $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt
+    cut -d, -f2 $LOOT_DIR/domains/domains-$TARGET-amass.txt 2>/dev/null > $LOOT_DIR/domains/domains-$TARGET-amass-ips-sorted.txt
   fi
   if [ "$SUBFINDER" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBFINDER $RESET"
+    echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBFINDER (THIS COULD TAKE A WHILE...) $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    subfinder -o $LOOT_DIR/domains/domains-$TARGET-subfinder.txt -b -d $TARGET 2>/dev/null
+    subfinder -o $LOOT_DIR/domains/domains-$TARGET-subfinder.txt -b -d $TARGET -w $DOMAINS_DEFAULT -t 100 2>/dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS VIA DNSCAN (THIS COULD TAKE A WHILE...) $RESET"
@@ -44,12 +44,12 @@ if [ "$RECON" = "1" ]; then
     echo ""
     echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
   fi
-  cat $LOOT_DIR/domains/domains-$TARGET-crt.txt > /tmp/curl.out 2> /dev/null
-  cat $LOOT_DIR/domains/domains-$TARGET.txt >> /tmp/curl.out 2> /dev/null
-  cat $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt >> /tmp/curl.out 2> /dev/null
-  cat $LOOT_DIR/domains/domains-$TARGET-subfinder.txt >> /tmp/curl.out 2> /dev/null
-  cat $LOOT_DIR/domains/targets.txt >> /tmp/curl.out 2> /dev/null
-  sort -u /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-full.txt
+  cat $LOOT_DIR/domains/domains-$TARGET-crt.txt 2> /dev/null > /tmp/curl.out 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET-subfinder.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
+  cat $LOOT_DIR/domains/targets.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
+  sort -u /tmp/curl.out 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-full.txt
   rm -f /tmp/curl.out 2> /dev/null
   echo -e "$RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
