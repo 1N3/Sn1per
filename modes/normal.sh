@@ -532,7 +532,7 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
-  sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET | tee $LOOT_DIR/web/sslyze-$TARGET.txt 2> /dev/null
+  sslyze --regular $TARGET | tee $LOOT_DIR/web/sslyze-$TARGET.txt 2> /dev/null
   sslscan --no-failed $TARGET | tee $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null
   sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/sslscan-$TARGET.raw > $LOOT_DIR/web/sslscan-$TARGET.txt 2> /dev/null
   echo ""
@@ -804,7 +804,7 @@ else
   whatweb -a 3 http://$TARGET:4443
   echo ""
   sslscan --no-failed $TARGET:4443
-  sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET:4443
+  sslyze --regular $TARGET:4443
   if [ "$NIKTO" = "1" ]; then
     nikto -h https://$TARGET:4443 -output $LOOT_DIR/web/nikto-$TARGET-https-4443.txt
   fi
@@ -1041,7 +1041,7 @@ else
   whatweb -a 3 http://$TARGET:8180
   echo ""
   sslscan --no-failed $TARGET:8180
-  sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET:8180
+  sslyze --regular $TARGET:8180
   if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg --insecure --max-wait=1000 2> /dev/null
   else
@@ -1077,7 +1077,7 @@ else
   whatweb -a 3 http://$TARGET:8443
   echo ""
   sslscan --no-failed $TARGET:8443
-  sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET:8443
+  sslyze --regular $TARGET:8443
   if [ ${DISTRO} == "blackarch"  ]; then
     /bin/CutyCapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg --insecure --max-wait=1000 2> /dev/null
   else

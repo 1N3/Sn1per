@@ -216,7 +216,7 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      sslyze --resum --certinfo=basic --compression --reneg --sslv2 --sslv3 --hide_rejected_ciphers $TARGET | tee $LOOT_DIR/web/sslyze-$TARGET.txt 2> /dev/null
+      sslyze --regular $TARGET | tee $LOOT_DIR/web/sslyze-$TARGET.txt 2> /dev/null
       sslscan --no-failed $TARGET | tee $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/sslscan-$TARGET.raw > $LOOT_DIR/web/sslscan-$TARGET.txt 2> /dev/null
     fi

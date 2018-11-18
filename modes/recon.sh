@@ -28,7 +28,7 @@ if [ "$RECON" = "1" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}"
   if [ "$DNSCAN" = "1" ]; then
     python $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_DEFAULT -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
-    cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt | grep $TARGET| awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
+    cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt 2>/dev/null | grep $TARGET| awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
     dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
   fi
   echo ""
