@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v6.1 - Fixed timeout setting in cutycapt
 * v6.1 - Improved SSLyze scan options
 * v6.1 - Fixed issue with Amass not running due to invalid command line options in latest release
 * v6.0 - Improved scan options for discover mode scans
