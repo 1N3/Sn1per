@@ -334,9 +334,9 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
   if [ ${DISTRO} == "blackarch"  ]; then
-    /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=1000 2> /dev/null
+    /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=10000 2> /dev/null
   else
-    cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=1000 2> /dev/null
+    cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=10000 2> /dev/null
   fi
   
   source $INSTALL_DIR/modes/normal_webporthttp.sh
@@ -540,9 +540,9 @@ else
   echo -e "$OKRED SAVING SCREENSHOTS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
   if [ ${DISTRO} == "blackarch"  ]; then
-    /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=1000 2> /dev/null
+    /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=10000 2> /dev/null
   else
-    cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=1000 2> /dev/null
+    cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=10000 2> /dev/null
   fi
   echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
 
@@ -809,9 +809,9 @@ else
     nikto -h https://$TARGET:4443 -output $LOOT_DIR/web/nikto-$TARGET-https-4443.txt
   fi
   if [ ${DISTRO} == "blackarch"  ]; then
-    /bin/CutyCapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg --insecure --max-wait=1000 2> /dev/null
+    /bin/CutyCapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg --insecure --max-wait=10000 2> /dev/null
   else
-    cutycapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg --insecure --max-wait=1000 2> /dev/null
+    cutycapt --url=https://$TARGET:4443 --out=$LOOT_DIR/screenshots/$TARGET-port4443.jpg --insecure --max-wait=10000 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
@@ -943,9 +943,9 @@ else
   whatweb -a 3 http://$TARGET:8000
   echo ""
   if [ ${DISTRO} == "blackarch"  ]; then
-    /bin/CutyCapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg --insecure --max-wait=1000 2> /dev/null
+    /bin/CutyCapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg --insecure --max-wait=10000 2> /dev/null
   else
-    cutycapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg --insecure --max-wait=1000 2> /dev/null
+    cutycapt --url=http://$TARGET:8000 --out=$LOOT_DIR/screenshots/$TARGET-port8000.jpg --insecure --max-wait=10000 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
@@ -970,9 +970,9 @@ else
   echo ""
   sslscan --no-failed $TARGET:8100
   if [ ${DISTRO} == "blackarch"  ]; then
-    /bin/CutyCapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg --insecure --max-wait=1000 2> /dev/null
+    /bin/CutyCapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg --insecure --max-wait=10000 2> /dev/null
   else
-    cutycapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg --insecure --max-wait=1000 2> /dev/null
+    cutycapt --url=http://$TARGET:8100 --out=$LOOT_DIR/screenshots/$TARGET-port8100.jpg --insecure --max-wait=10000 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
@@ -997,9 +997,9 @@ else
   echo ""
   sslscan --no-failed $TARGET:8080
   if [ ${DISTRO} == "blackarch"  ]; then
-    /bin/CutyCapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg --insecure --max-wait=1000 2> /dev/null
+    /bin/CutyCapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg --insecure --max-wait=10000 2> /dev/null
   else
-    cutycapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg --insecure --max-wait=1000 2> /dev/null
+    cutycapt --url=http://$TARGET:8080 --out=$LOOT_DIR/screenshots/$TARGET-port8080.jpg --insecure --max-wait=10000 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING APACHE STRUTS CVE-2017-5638 VULN SCAN $RESET"
@@ -1043,9 +1043,9 @@ else
   sslscan --no-failed $TARGET:8180
   sslyze --regular $TARGET:8180
   if [ ${DISTRO} == "blackarch"  ]; then
-    /bin/CutyCapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg --insecure --max-wait=1000 2> /dev/null
+    /bin/CutyCapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg --insecure --max-wait=10000 2> /dev/null
   else
-    cutycapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg --insecure --max-wait=1000 2> /dev/null
+    cutycapt --url=http://$TARGET:8180 --out=$LOOT_DIR/screenshots/$TARGET-port8180.jpg --insecure --max-wait=10000 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING CVE-2017-5638 EXPLOIT $RESET"
@@ -1079,9 +1079,9 @@ else
   sslscan --no-failed $TARGET:8443
   sslyze --regular $TARGET:8443
   if [ ${DISTRO} == "blackarch"  ]; then
-    /bin/CutyCapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg --insecure --max-wait=1000 2> /dev/null
+    /bin/CutyCapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg --insecure --max-wait=10000 2> /dev/null
   else
-    cutycapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg --insecure --max-wait=1000 2> /dev/null
+    cutycapt --url=https://$TARGET:8443 --out=$LOOT_DIR/screenshots/$TARGET-port8443.jpg --insecure --max-wait=10000 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING CVE-2017-5638 EXPLOIT $RESET"
@@ -1105,9 +1105,9 @@ else
   whatweb -a 3 http://$TARGET:8888
   echo ""
   if [ ${DISTRO} == "blackarch"  ]; then
-    /bin/CutyCapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg --insecure --max-wait=1000 2> /dev/null
+    /bin/CutyCapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg --insecure --max-wait=10000 2> /dev/null
   else
-    cutycapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg --insecure --max-wait=1000 2> /dev/null
+    cutycapt --url=https://$TARGET:8888 --out=$LOOT_DIR/screenshots/$TARGET-port8888.jpg --insecure --max-wait=10000 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING CVE-2017-5638 EXPLOIT $RESET"
