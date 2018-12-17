@@ -12,16 +12,21 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 
 ## SN1PER PROFESSIONAL FEATURES:
 ### Professional reporting interface
+![](https://xerosecurity.com/images/Sn1per-v6_dashboard1.PNG)
 ### Slideshow for all gathered screenshots
-![](https://xerosecurity.com/images/sn1per-pro4.png)
+![](https://xerosecurity.com/images/Sn1per-v6_screenshot6c.png)
 ### Searchable and sortable DNS, IP and open port database
-![](https://xerosecurity.com/images/Sn1per-pro11.png)
+![](https://xerosecurity.com/images/Sn1per-v6_screenshot31.PNG)
 ### Categorized host reports
 ![](https://xerosecurity.com/images/Sn1per-pro8.png)
+### NMap HTML host reports
+![](https://xerosecurity.com/images/Sn1per-v6_screenshot9.png)
 ### Quick links to online recon tools and Google hacking queries
 ![](https://xerosecurity.com/images/sn1per-pro5.png)
+### Takeovers and Email Security
+![](https://xerosecurity.com/images/Sn1per-v6_screenshot16.png)
 ### Personalized notes field for each host
-![](https://xerosecurity.com/images/sn1per-pro13.png)
+![](https://xerosecurity.com/images/Sn1per-v6_screenshot15.png)
 
 ## ORDER SN1PER PROFESSIONAL:
 To obtain a Sn1per Professional license, go to https://xerosecurity.com. 
