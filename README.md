@@ -17,7 +17,7 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot6c.png)
 ### Searchable and sortable DNS, IP and open port database
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot31.PNG)
-### Categorized host reports
+### Detailed host reports
 ![](https://xerosecurity.com/images/Sn1per-pro8.png)
 ### NMap HTML host reports
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot9.png)
@@ -25,7 +25,7 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 ![](https://xerosecurity.com/images/sn1per-pro5.png)
 ### Takeovers and Email Security
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot16.png)
-### Personalized notes field for each host
+### HTML5 Notepad
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot15.png)
 
 ## ORDER SN1PER PROFESSIONAL:
