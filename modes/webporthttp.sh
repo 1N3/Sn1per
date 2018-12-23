@@ -141,9 +141,9 @@ if [ "$MODE" = "webporthttp" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING CMSMAP $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $CMSMAP -t http://$TARGET:$PORT
+    cmsmap http://$TARGET:$PORT
     echo ""
-    python $CMSMAP -t http://$TARGET/wordpress/
+    cmsmap http://$TARGET:$PORT/wordpress/
     echo ""
     if [ "$NIKTO" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"

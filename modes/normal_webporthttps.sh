@@ -38,9 +38,9 @@ if [ "$MODE" = "web" ];
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING CMSMAP $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $CMSMAP -t https://$TARGET
+    cmsmap https://$TARGET
     echo ""
-    python $CMSMAP -t https://$TARGET/wordpress/
+    cmsmap https://$TARGET/wordpress/
     echo ""
     if [ "$NIKTO" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"

@@ -40,6 +40,7 @@ cd $INSTALL_DIR
 echo -e "$OKORANGE + -- --=[Installing package dependencies...$RESET"
 apt-get install python3-uritools python3-paramiko nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil clusterd ruby rubygems python dos2unix zenmap sslyze arachni aha libxml2-utils rpcbind uniscan xprobe2 cutycapt host whois dirb dnsrecon curl nmap php php-curl hydra wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq golang adb xsltproc
 apt-get install waffit 2> /dev/null
+apt-get install libssl-dev 2> /dev/null
 apt-get remove python3-pip
 apt-get install python3-pip
 pip install dnspython colorama tldextract urllib3 ipaddress requests
@@ -49,9 +50,9 @@ echo -e "$OKORANGE + -- --=[Installing gem dependencies...$RESET"
 gem install aquatone
 gem install rake
 gem install ruby-nmap net-http-persistent mechanize text-table
+gem install public_suffix
 
-echo -e "$OKORANGE + -- --=[Setting ruby...$RESET"
-
+echo -e "$OKORANGE + -- --=[Setting up Ruby...$RESET"
 dpkg-reconfigure ruby
 
 echo -e "$OKORANGE + -- --=[Cleaning up old extensions...$RESET"
@@ -59,7 +60,7 @@ rm -Rf $PLUGINS_DIR 2> /dev/null
 mkdir $PLUGINS_DIR 2> /dev/null
 cd $PLUGINS_DIR
 mkdir -p $PLUGINS_DIR/nmap_scripts/ 2> /dev/null
-mkdir -p $GO_DIR
+mkdir -p $GO_DIR 2> /dev/null
 
 echo -e "$OKORANGE + -- --=[Downloading extensions...$RESET"
 git clone https://github.com/1N3/Findsploit.git 
@@ -74,19 +75,18 @@ cp /usr/share/sniper/plugins/BlackWidow/injectx.py /usr/bin/injectx.py
 pip install -r /usr/share/sniper/plugins/BlackWidow/requirements.txt
 git clone https://github.com/Dionach/CMSmap.git 
 git clone https://github.com/0xsauby/yasuo.git 
-git clone https://github.com/johndekroon/serializekiller.git 
 git clone https://github.com/aboul3la/Sublist3r.git 
 git clone https://github.com/nccgroup/shocker.git 
 git clone --depth 1 https://github.com/drwetter/testssl.sh.git 
 git clone https://github.com/BishopFox/spoofcheck.git
 git clone https://github.com/arthepsy/ssh-audit 
-git clone https://github.com/deibit/cansina
 git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
 git clone https://github.com/rbsec/dnscan.git
+git clone https://github.com/nmap/nmap.git
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
-git clone https://github.com/Rhynorater/CVE-2018-15473-Exploit.git ssh-enum
+git clone https://github.com/1N3/CVE-2018-15473-Exploit.git ssh-enum
 git clone https://github.com/leapsecurity/libssh-scanner.git
 pip install -r $PLUGINS_DIR/libssh-scanner/requirements.txt
 mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
@@ -97,8 +97,6 @@ cd ~/go/bin;go get -u github.com/OWASP/Amass/cmd/amass; mv amass /usr/local/bin/
 cd ~/go/bin;go get -u github.com/subfinder/subfinder; mv subfinder /usr/local/bin/subfinder
 cd $PLUGINS_DIR
 wget https://github.com/michenriksen/aquatone/blob/master/subdomains.lst -O /usr/share/sniper/plugins/Sublist3r/subdomains.lst
-wget https://raw.githubusercontent.com/1N3/IntruderPayloads/master/FuzzLists/dirbuster-quick.txt -O /usr/share/sniper/plugins/cansina/dirbuster-quick.txt
-wget https://svn.nmap.org/nmap/scripts/http-vuln-cve2017-5638.nse -O /usr/share/nmap/scripts/http-vuln-cve2017-5638.nse
 wget https://raw.githubusercontent.com/xorrbit/nmap/865142904566e416944ebd6870d496c730934965/scripts/http-vuln-INTEL-SA-00075.nse -O /usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse
 wget https://raw.githubusercontent.com/f3d0x0/GPON/master/gpon_rce.py -O /usr/share/sniper/bin/gpon_rce.py
 cp $INSTALL_DIR/bin/iis-buffer-overflow.nse /usr/share/nmap/scripts/iis-buffer-overflow.nse 2> /dev/null
@@ -106,6 +104,8 @@ echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh
 cd $PLUGINS_DIR/BruteX/ && bash install.sh
 cd $PLUGINS_DIR/spoofcheck/ && pip install -r requirements.txt 
+cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
+cd $PLUGINS_DIR/nmap/ && ./configure && make && make install
 cd $INSTALL_DIR 
 mkdir $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
