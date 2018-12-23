@@ -11,9 +11,11 @@
 * v6.1 - Fixed timeout setting in cutycapt
 * v6.1 - Fixed script errors with CVE-2018-15473 sshUsernameEnumExploit.py
 * v6.1 - Improved SSLyze scan options
+* v6.1 - Updated domain list used by Aquatone
 * v6.1 - Removed http-vuln-cve2017-5638.nse script due to outdated NMap libs
 * v6.1 - Removed serializekiller plugin from install.sh
 * v6.1 - Removed cansina plugin from install.sh
+* v6.1 - Removed testssll.sh plugin from install.sh
 * v6.1 - Fixed issue with Amass not running due to invalid command line options in latest release
 * v6.0 - Improved scan options for discover mode scans
 * v6.0 - Fixed issue with pip3 dependency package missing

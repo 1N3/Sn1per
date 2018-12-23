@@ -77,7 +77,6 @@ git clone https://github.com/Dionach/CMSmap.git
 git clone https://github.com/0xsauby/yasuo.git 
 git clone https://github.com/aboul3la/Sublist3r.git 
 git clone https://github.com/nccgroup/shocker.git 
-git clone --depth 1 https://github.com/drwetter/testssl.sh.git 
 git clone https://github.com/BishopFox/spoofcheck.git
 git clone https://github.com/arthepsy/ssh-audit 
 git clone https://github.com/1N3/jexboss.git
@@ -96,7 +95,6 @@ cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/
 cd ~/go/bin;go get -u github.com/OWASP/Amass/cmd/amass; mv amass /usr/local/bin/
 cd ~/go/bin;go get -u github.com/subfinder/subfinder; mv subfinder /usr/local/bin/subfinder
 cd $PLUGINS_DIR
-wget https://github.com/michenriksen/aquatone/blob/master/subdomains.lst -O /usr/share/sniper/plugins/Sublist3r/subdomains.lst
 wget https://raw.githubusercontent.com/xorrbit/nmap/865142904566e416944ebd6870d496c730934965/scripts/http-vuln-INTEL-SA-00075.nse -O /usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse
 wget https://raw.githubusercontent.com/f3d0x0/GPON/master/gpon_rce.py -O /usr/share/sniper/bin/gpon_rce.py
 cp $INSTALL_DIR/bin/iis-buffer-overflow.nse /usr/share/nmap/scripts/iis-buffer-overflow.nse 2> /dev/null
@@ -131,7 +129,7 @@ rm -f /usr/bin/findsploit
 rm -f /usr/bin/copysploit
 rm -f /usr/bin/compilesploit
 rm -f /usr/bin/massbleed
-rm -f /usr/bin/testssl
+rm -f /usr/bin/dirsearch
 ln -s $INSTALL_DIR/sniper /usr/bin/sniper
 ln -s $PLUGINS_DIR/Goohak/goohak /usr/bin/goohak
 ln -s $PLUGINS_DIR/XSSTracer/xsstracer.py /usr/bin/xsstracer

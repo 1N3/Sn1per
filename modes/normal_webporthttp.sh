@@ -32,9 +32,9 @@ if [ "$MODE" = "web" ];
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    wpscan --url http://$TARGET --batch --disable-tls-checks
+    wpscan --url http://$TARGET --disable-tls-checks
     echo ""
-    wpscan --url http://$TARGET/wordpress/ --batch --disable-tls-checks
+    wpscan --url http://$TARGET/wordpress/ --disable-tls-checks
     echo ""
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING CMSMAP $RESET"

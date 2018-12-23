@@ -144,9 +144,9 @@ if [ "$MODE" = "webporthttps" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    wpscan --url https://$TARGET:$PORT --batch --disable-tls-checks
+    wpscan --url https://$TARGET:$PORT --disable-tls-checks
     echo ""
-    wpscan --url https://$TARGET:$PORT/wordpress/ --batch --disable-tls-checks
+    wpscan --url https://$TARGET:$PORT/wordpress/ --disable-tls-checks
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING CMSMAP $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
