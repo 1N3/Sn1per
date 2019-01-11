@@ -60,7 +60,7 @@ if [ "$RECON" = "1" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED STARTING DOMAIN FLYOVER $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
-  aquatone-discover -d $TARGET -t 100 --wordlist $INSTALL_DIR/wordlists/domains-all.txt | tee $LOOT_DIR/nmap/aquatone-$TARGET-discover 2>/dev/null
+  aquatone-discover -d $TARGET -t 100 | tee $LOOT_DIR/nmap/aquatone-$TARGET-discover 2>/dev/null
   sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/nmap/aquatone-$TARGET-discover > $LOOT_DIR/nmap/aquatone-$TARGET-discover.txt 2> /dev/null
   rm -f $LOOT_DIR/nmap/aquatone-$TARGET-discover 2> /dev/null
   aquatone-takeover -d $TARGET -t 100 | tee $LOOT_DIR/nmap/aquatone-$TARGET-takeovers 2>/dev/null
