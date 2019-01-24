@@ -73,13 +73,15 @@ if [ "$MODE" = "flyover" ]; then
     cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" 2>/dev/null | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null & 2> /dev/null
 
     if [ ${DISTRO} == "blackarch"  ]; then
-      /bin/CutyCapt --url=http://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=10000 2> /dev/null &
-      /bin/CutyCapt --url=https://$TARGET:443 --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=10000 2> /dev/null &
+      /bin/CutyCapt --url=http://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null &
+      /bin/CutyCapt --url=https://$TARGET:443 --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null &
     else
-      cutycapt --url=http://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=10000 2> /dev/null &
-      cutycapt --url=https://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=10000 2> /dev/null &
+      cutycapt --url=http://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null &
+      cutycapt --url=https://$TARGET:443 --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null &
     fi
 
+    echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
+    
     i=$((i+1))
     if [ "$i" -gt "20" ]; then
       i=0
@@ -112,6 +114,7 @@ if [ "$MODE" = "flyover" ]; then
         echo -n "$PORT "
       done
       echo ""
+      echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
     done
   fi
   exit

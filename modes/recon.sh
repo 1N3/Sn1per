@@ -1,9 +1,5 @@
 if [ "$RECON" = "1" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}"
-  echo -e "$OKRED GATHERING WHOIS INFO $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  whois $TARGET
-  echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBLIST3R $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
   if [ "$SUBLIST3R" = "1" ]; then
@@ -27,7 +23,7 @@ if [ "$RECON" = "1" ]; then
   echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS VIA DNSCAN (THIS COULD TAKE A WHILE...) $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
   if [ "$DNSCAN" = "1" ]; then
-    python $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_DEFAULT -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
+    python $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_QUICK -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
     cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt 2>/dev/null | grep $TARGET| awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
     dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
   fi
@@ -52,44 +48,29 @@ if [ "$RECON" = "1" ]; then
   sort -u /tmp/curl.out 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-full.txt
   rm -f /tmp/curl.out 2> /dev/null
   echo -e "$RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  echo -e "$OKRED CHECKING FOR EMAIL SECURITY $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  python $PLUGINS_DIR/spoofcheck/spoofcheck.py $TARGET | tee $LOOT_DIR/nmap/email-$TARGET.txt 2>/dev/null
-  echo ""
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  echo -e "$OKRED STARTING DOMAIN FLYOVER $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  aquatone-discover -d $TARGET -t 100 | tee $LOOT_DIR/nmap/aquatone-$TARGET-discover 2>/dev/null
-  sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/nmap/aquatone-$TARGET-discover > $LOOT_DIR/nmap/aquatone-$TARGET-discover.txt 2> /dev/null
-  rm -f $LOOT_DIR/nmap/aquatone-$TARGET-discover 2> /dev/null
-  aquatone-takeover -d $TARGET -t 100 | tee $LOOT_DIR/nmap/aquatone-$TARGET-takeovers 2>/dev/null
-  sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/nmap/aquatone-$TARGET-takeovers > $LOOT_DIR/nmap/aquatone-$TARGET-takeovers.txt 2> /dev/null
-  rm -f $LOOT_DIR/nmap/aquatone-$TARGET-takeovers 2> /dev/null
-  aquatone-scan -d $TARGET -t 100 -p80,443 | tee $LOOT_DIR/nmap/aquatone-$TARGET-ports 2>/dev/null
-  sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/nmap/aquatone-$TARGET-ports > $LOOT_DIR/nmap/aquatone-$TARGET-ports.txt 2> /dev/null
-  rm -f $LOOT_DIR/nmap/aquatone-$TARGET-ports 2> /dev/null
-  aquatone-gather -d $TARGET -t 100 | tee $LOOT_DIR/nmap/aquatone-$TARGET-gather.txt 2>/dev/null
-  sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/nmap/aquatone-$TARGET-gather > $LOOT_DIR/nmap/aquatone-$TARGET-gather.txt 2> /dev/null
-  rm -f $LOOT_DIR/nmap/aquatone-$TARGET-gather 2> /dev/null
-  mkdir -p $LOOT_DIR/aquatone/ 2> /dev/null
-  cp -Rf ~/aquatone/$TARGET $LOOT_DIR/aquatone/
-  echo ""
+  if [ "$SPOOF_CHECK" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED CHECKING FOR EMAIL SECURITY $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    python $PLUGINS_DIR/spoofcheck/spoofcheck.py $TARGET | tee $LOOT_DIR/nmap/email-$TARGET.txt 2>/dev/null
+    echo ""
+  fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED CHECKING FOR SUBDOMAIN HIJACKING $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
   dig $TARGET CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null
   for a in `cat $LOOT_DIR/domains/domains-$TARGET-full.txt`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$a.txt 2>/dev/null; done;
   if [ "$SUBOVER" = "1" ]; then
-    cd $PLUGINS_DIR/SubOver/
-    python subover.py -l $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/subover-$TARGET 2>/dev/null
+    subover -l $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/subover-$TARGET 2>/dev/null
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/nmap/subover-$TARGET > $LOOT_DIR/nmap/subover-$TARGET.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/takeovers-$TARGET-subover 2> /dev/null
     cd $INSTALL_DIR
   fi
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  echo -e "$OKRED STARTING PUBLIC S3 BUCKET SCAN $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}"
-  cd $PLUGINS_DIR/slurp/
-  ./slurp-linux-amd64 domain --domain $TARGET | tee $LOOT_DIR/nmap/takeovers-$TARGET-s3-buckets.txt 2>/dev/null
+  if [ "$SLURP" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED STARTING PUBLIC S3 BUCKET SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cd $PLUGINS_DIR/slurp/
+    ./slurp-linux-amd64 domain --domain $TARGET | tee $LOOT_DIR/nmap/takeovers-$TARGET-s3-buckets.txt 2>/dev/null
+  fi
 fi

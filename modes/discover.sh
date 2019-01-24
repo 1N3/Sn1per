@@ -7,7 +7,6 @@ if [ "$MODE" = "discover" ]; then
       echo -e "$OKBLUE[*] Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
       mkdir -p $LOOT_DIR 2> /dev/null
       mkdir $LOOT_DIR/ips 2> /dev/null
-      mkdir $LOOT_DIR/ips 2> /dev/null
       mkdir $LOOT_DIR/screenshots 2> /dev/null
       mkdir $LOOT_DIR/nmap 2> /dev/null
       mkdir $LOOT_DIR/notes 2> /dev/null

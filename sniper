@@ -1,23 +1,24 @@
 #!/bin/bash
-# + -- --=[Sn1per by @xer0dayz
+# + -- --=[Sn1per Community Edition by @xer0dayz
 # + -- --=[https://xerosecurity.com
 # 
 
-VER="6.0"
+VER="6.1"
 INSTALL_DIR="/usr/share/sniper"
+LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
+SNIPER_PRO=$INSTALL_DIR/pro.sh
 
 # LOAD SNIPER CONFIGURATION FILE
 if [ -f ~/.sniper.conf ]; then
   source ~/.sniper.conf
   echo -e "$OKBLUE[*] Loaded configuration file from ~/.sniper.conf [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
 else
-  source $INSTALL_DIR/sniper.conf
-  echo -e "$OKBLUE[*] Loaded configuration file from $INSTALL_DIR/sniper.conf [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+  cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
+  source ~/.sniper.conf
+  echo -e "$OKBLUE[*] Loaded configuration file from ~/.sniper.conf [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
 fi
 
 DISTRO=$(cat /etc/*-release | grep DISTRIB_ID= | cut -d'=' -f2)
-
-# REMOVE HOST FROM WORKSPACE sed -i "/www.test.com/d" domains/targets-all-sorted.txt domains/domains-all-sorted.txt domains/targets.txt
 
 function help {
   echo -e "$OKRED                ____               $RESET"
@@ -102,7 +103,7 @@ function logo {
 }
 
 function sniper_status {
-  watch -n 1 -c 'ps -ef | egrep "hydra|ruby|python|dirsearch|amass|nmap|metasploit|curl|wget" && echo "NETWORK CONNECTIONS..." && netstat -an | egrep "TIME_WAIT|EST"'
+  watch -n 1 -c 'ps -ef | egrep "hydra|ruby|python|dirsearch|amass|nmap|metasploit|curl|wget|nikto" && echo "NETWORK CONNECTIONS..." && netstat -an | egrep "TIME_WAIT|EST"'
 }
 
 function check_online {
@@ -121,7 +122,7 @@ function check_online {
 
 function check_update {
   if [ "$ENABLE_AUTO_UPDATES" == "1" ] && [ "$ONLINE" == "1" ]; then
-    LATEST_VER=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
+    LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [ "$LATEST_VER" != "$VER" ]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper v$LATEST_VER is available to download... To update, type$OKRED \"sniper -u\" $RESET"
     fi
@@ -131,10 +132,10 @@ function check_update {
 function update {
   logo
   echo -e "$OKBLUE[*] Checking for updates...[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
-  if [ "$ONLINE" = "0" ]; then
+  if [ "$ONLINE" == "0" ]; then
     echo "You will need to download the latest release manually at https://github.com/1N3/Sn1per/"
   else
-    LATEST_VER=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
+    LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [ "$LATEST_VER" != "$VER" ]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] Sn1per $LATEST_VER is available to download...Do you want to update? (y or n)$RESET"
       read ans
@@ -207,6 +208,10 @@ case $key in
     REIMPORT="1"
     shift # past argument
     ;;
+    -ria|--reimportall)
+    REIMPORT_ALL="1"
+    shift # past argument
+    ;;
     -rl|--reload)
     RELOAD="1"
     shift # past argument
@@ -231,6 +236,11 @@ case $key in
     ls -l $INSTALL_DIR/loot/workspace/
     echo ""
     echo "cd /usr/share/sniper/loot/workspace/"
+    SNIPER_PRO=$INSTALL_DIR/pro.sh    
+    if [ -f $SNIPER_PRO ]; then
+      echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
+      $BROWSER $INSTALL_DIR/loot/workspace/sniper-report.html 2> /dev/null > /dev/null &
+    fi
     exit
     shift
     ;;
@@ -261,8 +271,6 @@ if [ -z "$TARGET" ] && [ -z "$WORKSPACE" ]; then
   exit
 fi
 
-LOOT_DIR="/usr/share/sniper/loot/$TARGET"
-
 cd $INSTALL_DIR
 
 function init {
@@ -277,9 +285,8 @@ function init {
   mkdir $LOOT_DIR/nmap 2> /dev/null
   mkdir $LOOT_DIR/reports 2> /dev/null
   mkdir $LOOT_DIR/output 2> /dev/null
+  mkdir $LOOT_DIR/osint 2> /dev/null
   mkdir $LOOT_DIR/credentials 2> /dev/null
-  mkdir $LOOT_DIR/vulnerabilities 2> /dev/null
-  mkdir $LOOT_DIR/exploits 2> /dev/null
   mkdir $LOOT_DIR/web 2> /dev/null
   mkdir $LOOT_DIR/notes 2> /dev/null
   mkdir $LOOT_DIR/scans 2> /dev/null
@@ -302,9 +309,9 @@ function init {
   if [ "$RECON" == "1" ]; then
     touch $LOOT_DIR/scans/$TARGET-recon.txt 2> /dev/null 
   fi
-
 }
 
+# REMOVE HOST FROM WORKSPACE sed -i "/www.test.com/d" domains/targets-all-sorted.txt domains/domains-all-sorted.txt domains/targets.txt
 function loot {
   echo -e "$OKRED                ____               $RESET"
   echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
@@ -329,39 +336,58 @@ function loot {
     msfconsole -x "workspace -a $WORKSPACE; workspace $WORKSPACE; db_import $LOOT_DIR/nmap/nmap*.xml; hosts; services; exit;" | tee $LOOT_DIR/notes/msf-$WORKSPACE.txt
   fi
   
-  echo -e "$OKORANGE + -- --=[Current reports...$RESET"
-  ls -lh $LOOT_DIR/output/*.txt 2> /dev/null > /dev/null
   echo -e "$OKORANGE + -- --=[Generating reports...$RESET"
   cd ./output
+  echo -en "$OKGREEN[$OKBLUE"
   for a in `ls sniper-*.txt 2>/dev/null`;
+  #for a in `sort -u $LOOT_DIR/scans/updated.txt`;
   do
+    # TXT OUTPUT
+    #cat "$a" 2> /dev/null | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" 2> /dev/null > $LOOT_DIR/reports/$a.txt 2> /dev/null 
     # HTML OUTPUT
-    cat "$a" 2> /dev/null | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" 2> /dev/null > $LOOT_DIR/reports/$a.txt 2> /dev/null 
     echo "$a" 2> /dev/null | aha 2> /dev/null > $LOOT_DIR/reports/$a.html 2> /dev/null
     cat "$a" 2> /dev/null | aha 2> /dev/null >> $LOOT_DIR/reports/$a.html 2> /dev/null
+    # PDF OUTPUT
     #$INSTALL_DIR/bin/pyText2pdf.py -o $LOOT_DIR/reports/$a.pdf $LOOT_DIR/reports/$a.txt 2> /dev/null > /dev/null
+    echo -n '|'
   done
+  echo -en "$OKGREEN]$RESET"
+  echo ""
   cd ..
-
   echo -e "$OKORANGE + -- --=[Sorting all domains...$RESET"
   touch $LOOT_DIR/domains/domains-all-sorted.txt 2> /dev/null
   sort -u $LOOT_DIR/domains/*-full.txt > $LOOT_DIR/domains/domains-all-sorted.txt 2> /dev/null
   sort -u $LOOT_DIR/domains/targets.txt > $LOOT_DIR/domains/targets-all-sorted.txt 2> /dev/null
   diff $LOOT_DIR/domains/targets-all-sorted.txt $LOOT_DIR/domains/domains-all-sorted.txt | grep \> | awk '{print $2}' > $LOOT_DIR/domains/targets-all-unscanned.txt
 
-
   echo -e "$OKORANGE + -- --=[Removing blank screenshots...$RESET"
   cd $LOOT_DIR/screenshots/
   find $LOOT_DIR/screenshots/ -type f -size -9000c -exec rm -f {} \;
   cd $LOOT_DIR
 
-
-  SNIPER_PRO=$INSTALL_DIR/pro.sh    
   if [ -f $SNIPER_PRO ]; then
-    echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
-    source $INSTALL_DIR/pro.sh
-    echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
-    $BROWSER $LOOT_DIR/sniper-report.html 2> /dev/null > /dev/null &
+    echo -e "$OKORANGE + -- --=[Do you want to load Sn1per Professional (y or n)? $RESET"
+    read ANS
+    if [ "$ANS" == "y" ]; then
+      echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
+      source $INSTALL_DIR/pro.sh
+      $BROWSER $LOOT_DIR/sniper-report.html 2> /dev/null > /dev/null &
+      echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
+      # DISABLED FOR V7 ONLY!
+      #echo -e "$OKORANGE + -- --=[Do you want to load all updated host reports (y or n)? $RESET"
+      #cat $UPDATED_TARGETS 2> /dev/null
+      #read ANS2
+      #if [ "$ANS2" == "y" ]; then
+      #  
+      #  for a in `cat $UPDATED_TARGETS`; do
+      #    $BROWSER "$LOOT_DIR/reports/sniper-$a.html" 2> /dev/null > /dev/null &
+      #  done
+      #  rm -f $UPDATED_TARGETS 2> /dev/null
+      #  touch $UPDATED_TARGETS 2> /dev/null
+      #fi
+    else 
+      echo -e "$OKORANGE + -- --=[Skipping report generation. $RESET"
+    fi
   else
     echo -e "$OKRED + -- --=[Sn1per Professional is not installed. To download Sn1per Professional, go to https://xerosecurity.com. $RESET"
     $BROWSER https://xerosecurity.com 2> /dev/null > /dev/null &
@@ -371,6 +397,14 @@ function loot {
 
 if [ "$REIMPORT" = "1" ]; then
   if [ ! -z "$WORKSPACE_DIR" ]; then
+    loot
+    exit
+  fi
+fi
+
+if [ "$REIMPORT_ALL" = "1" ]; then
+  if [ ! -z "$WORKSPACE_DIR" ]; then
+    sort -u $WORKSPACE_DIR/domains/targets-all-sorted.txt $WORKSPACE_DIR/domains/domains-all-sorted.txt > $WORKSPACE_DIR/scans/updated.txt
     loot
     exit
   fi
@@ -386,6 +420,7 @@ fi
 if [[ ${TARGET:0:1} =~ $REGEX ]];
 then
   SCAN_TYPE="IP"
+  
 else
   SCAN_TYPE="DOMAIN"
 fi

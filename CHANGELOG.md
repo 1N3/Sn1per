@@ -1,22 +1,18 @@
 ## CHANGELOG:
 * v6.1 - Added automated web scanning via Burpsuite Pro 2.x API for all 'web' mode scans
 * v6.1 - Added Waybackmachine URL retrieval to all web scans
-* v6.1 - Added Elasticsearch Kibana Console LFI CVE-2018-17246 vuln check
-* v6.1 - Added 4 levels of brute forcing to all web mode scans
-* v6.1 - Added configurable options for ALL scan plugins and options in Sn1per
-* v6.1 - Added logging for ALL tools and exploits
-* v6.1 - Added NMap latest Github repo to install.sh to fix issue with LUA libs
+* v6.1 - Converted all exploits to Metasploit
+* v6.1 - Added configuration options to set LHOST/LPORT for all Metasploit exploits in sniper.conf
+* v6.1 - Added improved web brute forcing dictionaries for all scan modes
+* v6.1 - Added individual logging for all tools under the loot directory
+* v6.1 - Added new sniper.conf options to enabled/disable all plugins and change settings per user
 * v6.1 - Fixed issue with CMSMap install/usage
 * v6.1 - Fixed issue with WPScan gem dependency missing (public_suffix)
 * v6.1 - Fixed timeout setting in cutycapt
-* v6.1 - Fixed script errors with CVE-2018-15473 sshUsernameEnumExploit.py
-* v6.1 - Improved SSLyze scan options
-* v6.1 - Updated domain list used by Aquatone
-* v6.1 - Removed http-vuln-cve2017-5638.nse script due to outdated NMap libs
-* v6.1 - Removed serializekiller plugin from install.sh
-* v6.1 - Removed cansina plugin from install.sh
-* v6.1 - Removed testssll.sh plugin from install.sh
+* v6.1 - Fixed issue with theharvester not running correctly
 * v6.1 - Fixed issue with Amass not running due to invalid command line options in latest release
+* v6.1 - Fixed issue with Sn1per Professional notepad.html missing
+* v6.1 - Cleaned up plugins and install dependencies list
 * v6.0 - Improved scan options for discover mode scans
 * v6.0 - Fixed issue with pip3 dependency package missing
 * v6.0 - Removed iceweasel from install.sh to fix apt error

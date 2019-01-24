@@ -26,26 +26,35 @@ if [ "$MODE" = "fullportonly" ]; then
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
   if [ -z "$PORT" ]; then
     #nmap -Pn -A -v -T4 -p$DEFAULT_TCP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
-    nmap -vv -sT -O -A -T4 -oX $LOOT_DIR/nmap/nmap-$TARGET.xml $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+    nmap -vv -sT -sV -O -A -T4 -oX $LOOT_DIR/nmap/nmap-$TARGET.xml $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET
+    sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null
+    rm -f $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null
     xsltproc $INSTALL_DIR/bin/nmap-bootstrap.xsl $LOOT_DIR/nmap/nmap-$TARGET.xml -o $LOOT_DIR/nmap/nmapreport-$TARGET.html 2> /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -Pn -sU -A -T4 -v -p$DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET-udp.xml
+    nmap -Pn -sU -sV -A -T4 -v -p$DEFAULT_UDP_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET-udp.xml
+    sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET-udp.txt 2> /dev/null
+    rm -f $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null
   else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED PERFORMING TCP PORT SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -Pn -A -v -T4 -p $PORT $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+    nmap -Pn -A -v -sV -T4 -p $PORT $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET
+    sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null
+    rm -f $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null
     xsltproc $INSTALL_DIR/bin/nmap-bootstrap.xsl $LOOT_DIR/nmap/nmap-$TARGET.xml -o $LOOT_DIR/nmap/nmapreport-$TARGET.html 2> /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -Pn -A -v -T4 -sU -p $PORT -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml >> $LOOT_DIR/nmap/nmap-$TARGET.txt
+    nmap -Pn -A -v -sV -T4 -sU -p $PORT -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET-udp
+    sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET-udp.txt 2> /dev/null
+    rm -f $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED DONE $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
   loot
   exit
 fi

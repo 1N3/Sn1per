@@ -1,6 +1,7 @@
 #!/bin/bash
 # Uninstall script for Sn1per
 # Created by @xer0dayz - https://xerosecurity.com
+
 # VARS
 OKBLUE='\033[94m'
 OKRED='\033[91m'

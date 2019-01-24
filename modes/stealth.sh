@@ -11,9 +11,6 @@ if [ "$MODE" = "stealth" ]; then
     if [ "$FULLNMAPSCAN" = "1" ]; then
       args="$args -fp"
     fi
-    if [ "$GOOHAK" = "1" ]; then
-      args="$args -g"
-    fi
     if [ "$RECON" = "1" ]; then
       args="$args -re"
     fi
@@ -81,9 +78,14 @@ if [ "$MODE" = "stealth" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED GATHERING DNS INFO $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
+  if [ "$VERBOSE" == "1" ]; then
+    echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN dig all +short $TARGET > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null"
+    echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN dig all +short -x $TARGET >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null"
+    echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN dnsenum $TARGET 2> /dev/null | tee $LOOT_DIR/output/dnsenum-$TARGET.txt 2> /dev/null$RESET"
+  fi
   dig all +short $TARGET > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
   dig all +short -x $TARGET >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
-  dnsenum $TARGET 2> /dev/null
+  dnsenum $TARGET 2> /dev/null | tee $LOOT_DIR/output/dnsenum-$TARGET.txt 2> /dev/null
   mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
 
   if [ $SCAN_TYPE == "DOMAIN" ];
@@ -91,6 +93,9 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED CHECKING FOR SUBDOMAIN HIJACKING $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
+    if [ "$VERBOSE" == "1" ]; then
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i \"wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp\" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null$RESET"
+    fi
     cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null
 
     source modes/osint.sh
@@ -103,6 +108,9 @@ if [ "$MODE" = "stealth" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
+  if [ "$VERBOSE" == "1" ]; then
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt$RESET"
+  fi
   nmap -sS -T5 --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
  
   port_80=`grep 'portid="80"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -113,55 +121,102 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
   else
     echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED CHECKING FOR WAF $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    wafw00f http://$TARGET | tee $LOOT_DIR/web/waf-$TARGET-http 2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/waf-$TARGET-http > $LOOT_DIR/web/waf-$TARGET-http.txt 2> /dev/null
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED GATHERING HTTP INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    whatweb -a 3 http://$TARGET | tee $LOOT_DIR/web/whatweb-$TARGET-http 2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/whatweb-$TARGET-http > $LOOT_DIR/web/whatweb-$TARGET-http.txt 2> /dev/null
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED GATHERING SERVER INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python3 $PLUGINS_DIR/wig/wig.py -d -q -t 50 http://$TARGET | tee $LOOT_DIR/web/wig-$TARGET-http
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-http > $LOOT_DIR/web/wig-$TARGET-http.txt 2> /dev/null
+    if [ "$WAFWOOF" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CHECKING FOR WAF $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wafw00f http://$TARGET | tee $LOOT_DIR/web/waf-$TARGET-http 2> /dev/null$RESET"
+      fi
+      wafw00f http://$TARGET | tee $LOOT_DIR/web/waf-$TARGET-http.raw 2> /dev/null
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/waf-$TARGET-http.raw > $LOOT_DIR/web/waf-$TARGET-http.txt 2> /dev/null
+      rm -f tee $LOOT_DIR/web/waf-$TARGET-http.raw 2> /dev/null
+    fi
+    if [ "$WHATWEB" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING HTTP INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN whatweb -a 3 http://$TARGET | tee $LOOT_DIR/web/whatweb-$TARGET-http 2> /dev/null$RESET"
+      fi
+      whatweb -a 3 http://$TARGET | tee $LOOT_DIR/web/whatweb-$TARGET-http.raw 2> /dev/null
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/whatweb-$TARGET-http.raw > $LOOT_DIR/web/whatweb-$TARGET-http.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/whatweb-$TARGET-http.raw 2> /dev/null 
+    fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null
-    curl --connect-timeout 3 --max-time 3 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
-    if [ "$PASSIVE_SPIDER" = "1" ]; then
+    if [ "$VERBOSE" == "1" ]; then
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null$RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null$RESET"
+    fi
+    wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 5 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 -s -R -L http://$TARGET > $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | grep generator | cut -d\" -f4 2> /dev/null | tee $LOOT_DIR/web/webgenerator-http-$TARGET.txt 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED DISPLAYING COMMENTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | grep "<\!\-\-" 2> /dev/null | tee $LOOT_DIR/web/webcomments-http-$TARGET.txt 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | egrep "\"" | cut -d\" -f2 | grep  \/ | sort -u 2> /dev/null | tee $LOOT_DIR/web/weblinks-http-$TARGET.txt 2> /dev/null
+    if [ "$PASSIVE_SPIDER" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING PASSIVE WEB SPIDER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null$RESET"
+      fi
+      curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null
     fi
-    
+    if [ "$WAYBACKMACHINE" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED FETCHING WAYBACK MACHINE URLS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl -sX GET "http://web.archive.org/cdx/search/cdx?url=*.$TARGET/*&output=text&fl=original&collapse=urlkey" | tee $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null$RESET"
+      fi
+      curl -sX GET "http://web.archive.org/cdx/search/cdx?url=*.$TARGET/*&output=text&fl=original&collapse=urlkey" | tee $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null
+    fi
     if [ "$BLACKWIDOW" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      blackwidow -u http://$TARGET -l 1 
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN blackwidow -u http://$TARGET:80 -l 3 $RESET"
+      fi
+      blackwidow -u http://$TARGET:80 -l 3 -v n
       cat /usr/share/blackwidow/$TARGET*/* > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
     fi
-
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_FAST -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
-    cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
-    cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
-    wget http://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-http.txt 2> /dev/null
+    if [ "$WEB_BRUTE_STEALTHSCAN" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
+      fi
+      python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
+      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
+      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
+      wget http://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-http.txt 2> /dev/null
+    fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     if [ ${DISTRO} == "blackarch"  ]; then
-      /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=10000 2> /dev/null
+      /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
     else
-      cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=10000 2> /dev/null
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null$RESET"
+      fi
+      cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
     fi
   fi
  
@@ -170,30 +225,56 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
   else
     echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED CHECKING FOR WAF $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    wafw00f https://$TARGET | tee $LOOT_DIR/web/waf-$TARGET-https 2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/waf-$TARGET-https > $LOOT_DIR/web/waf-$TARGET-https.txt 2> /dev/null
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED GATHERING HTTP INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    whatweb -a 3 https://$TARGET | tee $LOOT_DIR/web/whatweb-$TARGET-https  2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/whatweb-$TARGET-https > $LOOT_DIR/web/whatweb-$TARGET-https.txt 2> /dev/null
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED GATHERING SERVER INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python3 $PLUGINS_DIR/wig/wig.py -d -q -t 50 https://$TARGET | tee $LOOT_DIR/web/wig-$TARGET-https
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-https > $LOOT_DIR/web/wig-$TARGET-https.txt 2> /dev/null
+    if [ $WAFWOOF == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED CHECKING FOR WAF $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wafw00f https://$TARGET | tee $LOOT_DIR/web/waf-$TARGET-https 2> /dev/null$RESET"
+      fi
+      wafw00f https://$TARGET | tee $LOOT_DIR/web/waf-$TARGET-https.raw 2> /dev/null
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/waf-$TARGET-https.raw > $LOOT_DIR/web/waf-$TARGET-https.txt 2> /dev/null
+      rm -f tee $LOOT_DIR/web/waf-$TARGET-https.raw 2> /dev/null
+    fi
+    if [ $WHATWEB == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING HTTP INFO $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN whatweb -a 3 https://$TARGET | tee $LOOT_DIR/web/whatweb-$TARGET-https  2> /dev/null$RESET"
+      fi
+      whatweb -a 3 https://$TARGET | tee $LOOT_DIR/web/whatweb-$TARGET-https  2> /dev/null
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/whatweb-$TARGET-https > $LOOT_DIR/web/whatweb-$TARGET-https.txt 2> /dev/null
+    fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
-    curl --connect-timeout 3 --max-time 3 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
+    if [ "$VERBOSE" == "1" ]; then
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null$RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null$RESET"
+    fi
+    wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 5 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 -s -R -L https://$TARGET > $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cat $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null | grep generator | cut -d\" -f4 2> /dev/null | tee $LOOT_DIR/web/webgenerator-https-$TARGET.txt 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED DISPLAYING COMMENTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cat $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null | grep "<\!\-\-" 2> /dev/null | tee $LOOT_DIR/web/webcomments-https-$TARGET.txt 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    cat $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null | egrep "\"" | cut -d\" -f2 | grep  \/ | sort -u 2> /dev/null | tee $LOOT_DIR/web/weblinks-https-$TARGET.txt 2> /dev/null
     if [ "$PASSIVE_SPIDER" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING PASSIVE WEB SPIDER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null$RESET"
+      fi
       curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null
     fi
 
@@ -201,32 +282,48 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      blackwidow -u http://$TARGET -l 1
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN blackwidow -u https://$TARGET:443 -l 3$RESET"
+      fi
+      blackwidow -u https://$TARGET:443 -l 3 -v n
       cat /usr/share/blackwidow/$TARGET*/* >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
     fi
-
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_FAST -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
-    cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
-    cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
-    wget https://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-https.txt 2> /dev/null
+    if [ "$WEB_BRUTE_STEALTHSCAN" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
+      fi
+      python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
+      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
+      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wget https://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-https.txt 2> /dev/null$RESET"
+      fi
+      wget https://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-https.txt 2> /dev/null
+    fi
     if [ "$SSL" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      sslyze --regular $TARGET | tee $LOOT_DIR/web/sslyze-$TARGET.txt 2> /dev/null
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN sslscan --no-failed $TARGET | tee $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null$RESET"
+      fi
       sslscan --no-failed $TARGET | tee $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/sslscan-$TARGET.raw > $LOOT_DIR/web/sslscan-$TARGET.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null
     fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     if [ ${DISTRO} == "blackarch"  ]; then
-      /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=10000 2> /dev/null
+      /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
     else
-      cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=10000 2> /dev/null
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null$RESET"
+      fi
+      cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
     fi
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
   fi
@@ -248,6 +345,7 @@ if [ "$MODE" = "stealth" ]; then
   echo -e ""
   echo -e ""
   echo -e ""
+  echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
   rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
   if [ "$LOOT" = "1" ]; then
     loot
