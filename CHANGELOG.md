@@ -1,4 +1,7 @@
 ## CHANGELOG:
+* v6.2 - Added config option to enable/disable subdomain hijacking checks in sniper.conf
+* v6.2 - Added Glassfish Admin traversal MSF exploit 
+* v6.2 - Added ElasticSearch Java Injection MSF RCE exploit
 * v6.1 - Added automated web scanning via Burpsuite Pro 2.x API for all 'web' mode scans
 * v6.1 - Added Waybackmachine URL retrieval to all web scans
 * v6.1 - Converted all exploits to Metasploit

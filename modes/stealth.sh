@@ -40,7 +40,7 @@ if [ "$MODE" = "stealth" ]; then
   echo -e "$OKRED               /_/                 $RESET"
   echo -e "$RESET"
   echo -e "$OKORANGE + -- --=[http://xerosecurity.com"
-  echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
+  echo -e "$OKORANGE + -- --=[Sn1per v$VER by 1N3"
   echo -e "$OKRED "   
   echo -e "$OKRED     ./\."
   echo -e "$OKRED   ./    '\."
@@ -195,7 +195,7 @@ if [ "$MODE" = "stealth" ]; then
       cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
     fi
-    if [ "$WEB_BRUTE_STEALTHSCAN" == "1" ]; then
+    if [ "$WEB_BRUTE" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -288,7 +288,7 @@ if [ "$MODE" = "stealth" ]; then
       blackwidow -u https://$TARGET:443 -l 3 -v n
       cat /usr/share/blackwidow/$TARGET*/* >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
     fi
-    if [ "$WEB_BRUTE_STEALTHSCAN" == "1" ]; then
+    if [ $WEB_BRUTE_STEALTHSCAN == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"

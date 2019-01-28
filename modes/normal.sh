@@ -36,7 +36,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[https://xerosecurity.com"
-echo -e "$OKORANGE + -- --=[sniper v$VER by @xer0dayz"
+echo -e "$OKORANGE + -- --=[Sn1per v$VER by @xer0dayz"
 echo -e "$RESET"
 
 if [ ! -z $WORKSPACE ]; then

