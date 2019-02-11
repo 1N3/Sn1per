@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v6.2 - Fixed issue with sniper --list not opening workspace directory
 * v6.2 - Added config option to enable/disable subdomain hijacking checks in sniper.conf
 * v6.2 - Added Glassfish Admin traversal MSF exploit 
 * v6.2 - Added ElasticSearch Java Injection MSF RCE exploit

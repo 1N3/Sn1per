@@ -239,7 +239,7 @@ case $key in
     SNIPER_PRO=$INSTALL_DIR/pro.sh    
     if [ -f $SNIPER_PRO ]; then
       echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
-      $BROWSER $INSTALL_DIR/loot/workspace/sniper-report.html 2> /dev/null > /dev/null &
+      $BROWSER $INSTALL_DIR/loot/workspace/ 2> /dev/null > /dev/null &
     fi
     exit
     shift
