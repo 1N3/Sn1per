@@ -84,6 +84,11 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 ./install.sh
 ```
 
+## DOCKER INSTALL:
+```
+docker build Dockerfile
+```
+
 ## USAGE:
 ```
 [*] NORMAL MODE
@@ -134,6 +139,12 @@ sniper -t|--target <TARGET>
 [*] LOOT REIMPORT FUNCTION
 sniper -w <WORKSPACE_ALIAS> --reimport
 
+[*] DELETE WORKSPACE
+sniper -w <WORKSPACE_ALIAS> -d
+
+[*] DELETE HOST FROM WORKSPACE
+sniper -w <WORKSPACE_ALIAS> -t <TARGET> -dh
+
 [*] SCAN STATUS
 sniper --status
 
@@ -158,7 +169,7 @@ sniper -u|--update
 https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
 ## LICENSE:
-This software is free to distribute, modify and use with the condition that credit is provided to the creator (xer0dayz@XeroSecurity) and is not for commercial use. Permission to distribute any part of the code for sale is strictly prohibited.
+This software is free to distribute, modify and use with the condition that credit is provided to the creator (@xer0dayz @XeroSecurity) and is not for commercial use. Permission to distribute any part of the code for sale is strictly prohibited.
 
 ## DONATIONS:
 Donations are welcome. This will help fascilitate improved features, frequent updates and better overall support for sniper.

@@ -85,6 +85,7 @@ if [ "$MODE" = "stealth" ]; then
   fi
   dig all +short $TARGET > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
   dig all +short -x $TARGET >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
+  dig A $TARGET 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
   dnsenum $TARGET 2> /dev/null | tee $LOOT_DIR/output/dnsenum-$TARGET.txt 2> /dev/null
   mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
 
@@ -153,6 +154,12 @@ if [ "$MODE" = "stealth" ]; then
     wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null
     curl --connect-timeout 5 --max-time 5 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
     curl --connect-timeout 5 -s -R -L http://$TARGET > $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
+    if [ "$WEBTECH" = "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      webtech -u http://$TARGET | grep \- | cut -d- -f2- | tee $LOOT_DIR/web/webtech-$TARGET-http.txt
+    fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -160,7 +167,9 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED DISPLAYING COMMENTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | grep "<\!\-\-" 2> /dev/null | tee $LOOT_DIR/web/webcomments-http-$TARGET.txt 2> /dev/null
+    cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | grep "<\!\-\-" 2> /dev/null | tee $LOOT_DIR/web/webcomments-http-$TARGET 2> /dev/null
+    sed -r "s/</\&lh\;/g" $LOOT_DIR/web/webcomments-http-$TARGET 2> /dev/null > $LOOT_DIR/web/webcomments-http-$TARGET.txt 2> /dev/null
+    rm -f $LOOT_DIR/web/webcomments-http-$TARGET 2> /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -188,9 +197,9 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
       if [ "$VERBOSE" == "1" ]; then
-        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN blackwidow -u http://$TARGET:80 -l 3 $RESET"
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN blackwidow -u http://$TARGET:80 -l 2 $RESET"
       fi
-      blackwidow -u http://$TARGET:80 -l 3 -v n
+      blackwidow -u http://$TARGET:80 -l 2 -v n
       cat /usr/share/blackwidow/$TARGET*/* > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
@@ -256,6 +265,12 @@ if [ "$MODE" = "stealth" ]; then
     wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
     curl --connect-timeout 5 --max-time 5 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
     curl --connect-timeout 5 -s -R -L https://$TARGET > $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
+    if [ "$WEBTECH" = "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      webtech -u https://$TARGET | grep \- | cut -d- -f2- | tee $LOOT_DIR/web/webtech-$TARGET-https.txt
+    fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -263,7 +278,9 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED DISPLAYING COMMENTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    cat $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null | grep "<\!\-\-" 2> /dev/null | tee $LOOT_DIR/web/webcomments-https-$TARGET.txt 2> /dev/null
+    cat $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null | grep "<\!\-\-" 2> /dev/null | tee $LOOT_DIR/web/webcomments-https-$TARGET 2> /dev/null
+    sed -r "s/</\&lh\;/g" $LOOT_DIR/web/webcomments-https-$TARGET 2> /dev/null > $LOOT_DIR/web/webcomments-https-$TARGET.txt 2> /dev/null
+    rm -f $LOOT_DIR/web/webcomments-https-$TARGET 2> /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -285,7 +302,7 @@ if [ "$MODE" = "stealth" ]; then
       if [ "$VERBOSE" == "1" ]; then
         echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN blackwidow -u https://$TARGET:443 -l 3$RESET"
       fi
-      blackwidow -u https://$TARGET:443 -l 3 -v n
+      blackwidow -u https://$TARGET:443 -l 2 -v n
       cat /usr/share/blackwidow/$TARGET*/* >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
     fi
     if [ $WEB_BRUTE_STEALTHSCAN == "1" ]; then
@@ -347,6 +364,7 @@ if [ "$MODE" = "stealth" ]; then
   echo -e ""
   echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
   rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
+  sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
   if [ "$LOOT" = "1" ]; then
     loot
   fi

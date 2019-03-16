@@ -40,10 +40,39 @@ if [ "$RECON" = "1" ]; then
     echo ""
     echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
   fi
+
+
+
+
+
+
+
+  if [ "$CENSYS_SUBDOMAINS" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING CENSYS SUBDOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    python $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | tee $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null 
+  fi
+
+
+
+
+
+
+
+
+  if [ "$PROJECT_SONAR" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING PROJECT SONAR SUBDOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    curl -fsSL "https://dns.bufferover.run/dns?q=.$TARGET" | sed 's/\"//g' | cut -f2 -d "," |sort -u | grep $TARGET | tee $LOOT_DIR/domains/domains-$TARGET-projectsonar.txt 2> /dev/null 
+  fi
   cat $LOOT_DIR/domains/domains-$TARGET-crt.txt 2> /dev/null > /tmp/curl.out 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-subfinder.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET-projectsonar.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
   cat $LOOT_DIR/domains/targets.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
   sort -u /tmp/curl.out 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-full.txt
   rm -f /tmp/curl.out 2> /dev/null

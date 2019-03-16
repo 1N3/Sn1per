@@ -1,8 +1,17 @@
 ## CHANGELOG:
-* v6.2 - Fixed issue with sniper --list not opening workspace directory
-* v6.2 - Added config option to enable/disable subdomain hijacking checks in sniper.conf
 * v6.2 - Added Glassfish Admin traversal MSF exploit 
 * v6.2 - Added ElasticSearch Java Injection MSF RCE exploit
+* v6.2 - Added WebTech web fingerprinting tool
+* v6.2 - Added censys subdomain retrieval and API key config
+* v6.2 - Added project sonar sub-domain retrieval
+* v6.2 - Added command switch to remove workspace (-d)
+* v6.2 - Added command switch to remove host (-dh)
+* v6.2 - Added DockerFile to run Sn1per in Docker (CC. Hariom Vashisth <hariom.devops@gmail.com>)
+* v6.2 - Changed option to automatically import all NMap XML's into Metasploit's DB
+* v6.2 - Changed option to automatically load Sn1per Professional's report when scans complete
+* v6.2 - Added config option to enable/disable subdomain hijacking checks in sniper.conf
+* v6.2 - Fixed issue with sniper --list command having invalid reference
+* v6.2 - Fixed issue with theharvester not running
 * v6.1 - Added automated web scanning via Burpsuite Pro 2.x API for all 'web' mode scans
 * v6.1 - Added Waybackmachine URL retrieval to all web scans
 * v6.1 - Converted all exploits to Metasploit

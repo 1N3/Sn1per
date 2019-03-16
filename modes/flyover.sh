@@ -61,12 +61,16 @@ if [ "$MODE" = "flyover" ]; then
 
     dig all +short $TARGET 2> /dev/null > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null & 
     dig all +short -x $TARGET 2> /dev/null >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null & 
+    dig A +short $TARGET 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null &
 
     wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' 2> /dev/null > $LOOT_DIR/web/title-https-$TARGET.txt & 2> /dev/null
     wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' 2> /dev/null > $LOOT_DIR/web/title-https-$TARGET.txt & 2> /dev/null
 
     curl --connect-timeout 3 -I -s -R http://$TARGET 2> /dev/null > $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null & 
     curl --connect-timeout 3 -I -s -R https://$TARGET 2> /dev/null > $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null &
+
+    webtech -u http://$TARGET 2> /dev/null | grep \- 2> /dev/null | cut -d- -f2- 2> /dev/null > $LOOT_DIR/web/webtech-$TARGET-http.txt 2> /dev/null &
+    webtech -u https://$TARGET 2> /dev/null | grep \- 2> /dev/null | cut -d- -f2- 2> /dev/null > $LOOT_DIR/web/webtech-$TARGET-https.txt 2> /dev/null &
 
     nmap -sS -T5 --open -Pn -p $QUICK_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null & 
 
@@ -76,8 +80,8 @@ if [ "$MODE" = "flyover" ]; then
       /bin/CutyCapt --url=http://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null &
       /bin/CutyCapt --url=https://$TARGET:443 --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null &
     else
-      cutycapt --url=http://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null &
-      cutycapt --url=https://$TARGET:443 --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null &
+      cutycapt --url=http://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null > /dev/null &
+      cutycapt --url=https://$TARGET:443 --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null > /dev/null &
     fi
 
     echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
@@ -90,7 +94,7 @@ if [ "$MODE" = "flyover" ]; then
   done
 
   sort -u $LOOT_DIR/domains/targets.txt 2>/dev/null >> $LOOT_DIR/domains/domains-all-sorted.txt
-
+  sort -u LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
   sleep 20
   rm -f $INSTALL_DIR/wget-log* 2> /dev/null
   echo -e "$OKRED=====================================================================================$RESET"
@@ -117,5 +121,7 @@ if [ "$MODE" = "flyover" ]; then
       echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
     done
   fi
+
+  sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
   exit
 fi

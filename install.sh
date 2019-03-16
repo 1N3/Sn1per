@@ -79,8 +79,10 @@ git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
 git clone https://github.com/rbsec/dnscan.git
-git clone https://github.com/nmap/nmap.git
+git clone https://github.com/christophetd/censys-subdomain-finder.git
+pip install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
+pip install webtech
 mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
 rm -f slurp.zip
@@ -94,7 +96,6 @@ cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
 cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/spoofcheck/ && pip install -r requirements.txt 2> /dev/null
 cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
-#cd $PLUGINS_DIR/nmap/ && ./configure && make && make install
 cd $INSTALL_DIR 
 mkdir $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null

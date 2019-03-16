@@ -3,7 +3,7 @@
 # + -- --=[https://xerosecurity.com
 # 
 
-VER="6.1"
+VER="6.2"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
@@ -72,6 +72,12 @@ function help {
   echo ""
   echo ' [*] LIST WORKSPACES'
   echo ' sniper --list'
+  echo ""
+  echo ' [*] DELETE WORKSPACE'
+  echo ' sniper -w <WORKSPACE_ALIAS> -d'
+  echo ""
+  echo ' [*] DELETE HOST FROM WORKSPACE'
+  echo ' sniper -w <WORKSPACE_ALIAS> -t <TARGET> -dh'
   echo ""
   echo ' [*] GET SNIPER SCAN STATUS'
   echo ' sniper --status'
@@ -231,14 +237,33 @@ case $key in
     shift # past argument
     shift # past argument
     ;;
+    -d|--delete)
+    echo "Do you want to remove the workspace? $WORKSPACE_DIR"
+    read ANS 
+    rm -Rf /usr/share/sniper/loot/workspace/$WORKSPACE/
+    exit
+    shift # past argument
+    ;;
+    -dh|--delete-host)
+    echo "Do you want to remove $TARGET from $WORKSPACE?"
+    read ANS 
+    sed -i "/$TARGET/d" $WORKSPACE_DIR/domains/targets-all-sorted.txt $WORKSPACE_DIR/domains/domains-all-sorted.txt $WORKSPACE_DIR/domains/targets.txt 2> /dev/null
+    rm -f $WORKSPACE_DIR/screenshots/$TARGET*.jpg 2> /dev/null
+    sniper --reimport -w $WORKSPACE 
+    exit
+    shift # past argument
+    ;;
     --list)
     logo
     ls -l $INSTALL_DIR/loot/workspace/
     echo ""
     echo "cd /usr/share/sniper/loot/workspace/"
-    SNIPER_PRO=$INSTALL_DIR/pro.sh    
-    if [ -f $SNIPER_PRO ]; then
+    WORKSPACE_REPORT=$LOOT_DIR/sniper-report.html
+    if [ -f $WORKSPACE_REPORT ]; then
       echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
+      $BROWSER $INSTALL_DIR/loot/workspace/sniper-report.html 2> /dev/null > /dev/null &
+    else
+      echo -e "$OKORANGE + -- --=[Loading workspaces...$RESET"
       $BROWSER $INSTALL_DIR/loot/workspace/ 2> /dev/null > /dev/null &
     fi
     exit
@@ -366,27 +391,20 @@ function loot {
   cd $LOOT_DIR
 
   if [ -f $SNIPER_PRO ]; then
-    echo -e "$OKORANGE + -- --=[Do you want to load Sn1per Professional (y or n)? $RESET"
-    read ANS
-    if [ "$ANS" == "y" ]; then
+    if [ "$SN1PER_AUTOLOAD" = "1" ]; then
       echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
       source $INSTALL_DIR/pro.sh
       $BROWSER $LOOT_DIR/sniper-report.html 2> /dev/null > /dev/null &
-      echo -e "$OKORANGE + -- --=[Opening workspace directory...$RESET"
-      # DISABLED FOR V7 ONLY!
-      #echo -e "$OKORANGE + -- --=[Do you want to load all updated host reports (y or n)? $RESET"
-      #cat $UPDATED_TARGETS 2> /dev/null
-      #read ANS2
-      #if [ "$ANS2" == "y" ]; then
-      #  
-      #  for a in `cat $UPDATED_TARGETS`; do
-      #    $BROWSER "$LOOT_DIR/reports/sniper-$a.html" 2> /dev/null > /dev/null &
-      #  done
-      #  rm -f $UPDATED_TARGETS 2> /dev/null
-      #  touch $UPDATED_TARGETS 2> /dev/null
-      #fi
-    else 
-      echo -e "$OKORANGE + -- --=[Skipping report generation. $RESET"
+    else
+      echo -e "$OKORANGE + -- --=[Do you want to load Sn1per Professional (y or n)? $RESET"
+      read ANS
+      if [ "$ANS" == "y" ]; then
+        echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
+        source $INSTALL_DIR/pro.sh
+        $BROWSER $LOOT_DIR/sniper-report.html 2> /dev/null > /dev/null &
+      else 
+        echo -e "$OKORANGE + -- --=[Skipping report generation. $RESET"
+      fi
     fi
   else
     echo -e "$OKRED + -- --=[Sn1per Professional is not installed. To download Sn1per Professional, go to https://xerosecurity.com. $RESET"

