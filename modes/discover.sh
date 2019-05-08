@@ -15,8 +15,12 @@ if [ "$MODE" = "discover" ]; then
       mkdir $LOOT_DIR/scans 2> /dev/null
     fi
     OUT_FILE=$(echo "$TARGET" | tr / -)
+    echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$OUTFILE-$MODE.txt 2> /dev/null
-    sniper -t $TARGET -m $MODE --noreport $args | tee $LOOT_DIR/output/sniper-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+    if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+      /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    fi
+    sniper -t $TARGET -m $MODE --noreport $args | tee $LOOT_DIR/output/sniper-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
     exit
   fi
   echo -e "$OKRED                                                              ____ /\\"
@@ -43,7 +47,6 @@ if [ "$MODE" = "discover" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
-  #nmap -T4 -v -sC -sA -sV -F $TARGET 2>/dev/null | tee $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt 2>/dev/null 
   nmap -T4 -v -p $QUICK_PORTS -sS $TARGET 2> /dev/null | tee $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt 2>/dev/null 
   cat $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt | grep open | grep on | awk '{print $6}' > $LOOT_DIR/ips/sniper-$OUT_FILE-tcpips.txt
   echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -58,7 +61,9 @@ if [ "$MODE" = "discover" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
-  #loot
+  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Scan completed: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+  fi
   sniper -f $LOOT_DIR/ips/discover-$OUT_FILE-sorted.txt -m flyover -w $WORKSPACE
   exit
 fi

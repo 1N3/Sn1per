@@ -4,8 +4,8 @@
 [![GitHub issues](https://img.shields.io/github/issues/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/issues) 
 [![Github Stars](https://img.shields.io/github/stars/1N3/Sn1per.svg?style=social&label=Stars)](https://github.com/1N3/Sn1per/) 
 [![GitHub Followers](https://img.shields.io/github/followers/1N3.svg?style=social&label=Follow)](https://github.com/1N3/Sn1per/)
-[![Tweet](https://img.shields.io/twitter/url/http/crowdshield.svg?style=social)](https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Fdeveloper.twitter.com%2Fen%2Fdocs%2Ftwitter-for-websites%2Ftweet-button%2Foverview&ref_src=twsrc%5Etfw&text=Sn1per%20-%20Automated%20Pentest%20Recon%20Scanner&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2F1N3%2FSn1per)
-[![Follow on Twitter](https://img.shields.io/twitter/follow/crowdshield.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=crowdshield)
+[![Tweet](https://img.shields.io/twitter/url/http/xer0dayz.svg?style=social)](https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Fdeveloper.twitter.com%2Fen%2Fdocs%2Ftwitter-for-websites%2Ftweet-button%2Foverview&ref_src=twsrc%5Etfw&text=Sn1per%20-%20Automated%20Pentest%20Recon%20Scanner&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2F1N3%2FSn1per)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/xer0dayz.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=xer0dayz)
 
 ## ABOUT:
 Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes. For more information regarding Sn1per Professional, go to https://xerosecurity.com. 
@@ -59,25 +59,84 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] Automatically gathers screenshots of all web sites
 - [x] Create individual workspaces to store all scan output
 
-## AUTO-PWN:
-- [x] Apache Struts CVE-2018-11776 RCE exploit
-- [x] Android Insecure ADB RCE auto exploit
-- [x] Apache Tomcat CVE-2017-12617 RCE exploit
-- [x] Oracle WebLogic WLS-WSAT Component Deserialisation RCE CVE-2017-10271 exploit
-- [x] Drupal Drupalgedon2 RCE CVE-2018-7600
-- [x] GPON Router RCE CVE-2018-10561
-- [x] Apache Struts 2 RCE CVE-2017-5638
-- [x] Apache Struts 2 RCE CVE-2017-9805
-- [x] Apache Jakarta RCE CVE-2017-5638
-- [x] Shellshock GNU Bash RCE CVE-2014-6271
+## EXPLOITS:
+- [x] Drupal RESTful Web Services unserialize() SA-CORE-2019-003
+- [x] Apache Struts: S2-057 (CVE-2018-11776): Security updates available for Apache Struts
+- [x] Drupal: CVE-2018-7600: Remote Code Execution - SA-CORE-2018-002 
+- [x] GPON Routers - Authentication Bypass / Command Injection CVE-2018-10561
+- [x] MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption
+- [x] Apache Tomcat: Remote Code Execution (CVE-2017-12617) 
+- [x] Oracle WebLogic wls-wsat Component Deserialization Remote Code Execution CVE-2017-10271
+- [x] Apache Struts Content-Type arbitrary command execution (CVE-2017-5638) 
+- [x] Apache Struts 2 Framework Checks - REST plugin with XStream handler (CVE-2017-9805) 
+- [x] Apache Struts Content-Type arbitrary command execution (CVE-2017-5638) 
+- [x] Microsoft IIS WebDav ScStoragePathFromUrl Overflow CVE-2017-7269
+- [x] ManageEngine Desktop Central 9 FileUploadServlet ConnectionId Vulnerability CVE-2015-8249
+- [x] Shellshock Bash Shell remote code execution CVE-2014-6271
 - [x] HeartBleed OpenSSL Detection CVE-2014-0160
-- [x] Default Apache Tomcat Creds CVE-2009-3843
-- [x] MS Windows SMB RCE MS08-067
+- [x] MS12-020: Vulnerabilities in Remote Desktop Could Allow Remote Code Execution (2671387) 
+- [x] Tomcat Application Manager Default Ovwebusr Password Vulnerability CVE-2009-3843
+- [x] MS08-067 Microsoft Server Service Relative Path Stack Corruption
 - [x] Webmin File Disclosure CVE-2006-3392
+- [x] VsFTPd 2.3.4 Backdoor
+- [x] ProFTPd 1.3.3C Backdoor
+- [x] MS03-026 Microsoft RPC DCOM Interface Overflow
+- [x] DistCC Daemon Command Execution
+- [x] JBoss Java De-Serialization
+- [x] HTTP Writable Path PUT/DELETE File Access
+- [x] Apache Tomcat User Enumeration
+- [x] Tomcat Application Manager Login Bruteforce
+- [x] Jenkins-CI Enumeration
+- [x] HTTP WebDAV Scanner
+- [x] Android Insecure ADB
 - [x] Anonymous FTP Access
-- [x] PHPMyAdmin Backdoor RCE
+- [x] PHPMyAdmin Backdoor
 - [x] PHPMyAdmin Auth Bypass
-- [x] JBoss Java De-Serialization RCE's
+- [x] OpenSSH User Enumeration
+- [x] LibSSH Auth Bypass
+- [x] SMTP User Enumeration
+- [x] Public NFS Mounts
+
+## CORE INTEGRATIONS
+- NMap
+- Nikto
+- Metasploit
+- Arachni
+- Burpsuite
+- Slack API
+- Censys API
+
+## PLUGINS:
+- BlackWidow
+- GooHak 
+- BruteX 
+- CMSMap 
+- WPScan 
+- Shocker 
+- Slurp 
+- Spoofcheck 
+- SSH-Audit 
+- Sublist3r 
+- Wig
+- Yasuo
+- Inurlbr
+- theHarvester
+- Dirsearch
+- Gobuster
+- Clusterd
+- Whatweb
+- Jexboss
+- Webtech
+- Wafw00f
+- Slurp
+- Subjack
+- crt.sh
+- Subfinder
+- Amass
+- Dnscan
+- Subover
+- Project Sonar
+- Subjack
 
 ## KALI LINUX INSTALL:
 ```
@@ -130,6 +189,9 @@ sniper -t|--target <TARGET> -m|--mode webporthttp -p|--port <port>
 [*] HTTPS WEB PORT HTTPS MODE
 sniper -t|--target <TARGET> -m|--mode webporthttps -p|--port <port>
 
+[*] WEBSCAN MODE
+sniper -t|--target <TARGET> -m|--mode webscan
+
 [*] ENABLE BRUTEFORCE
 sniper -t|--target <TARGET> -b|--bruteforce
 
@@ -138,6 +200,9 @@ sniper -t|--target <TARGET>
 
 [*] LOOT REIMPORT FUNCTION
 sniper -w <WORKSPACE_ALIAS> --reimport
+
+[*] LOOT REIMPORTALL FUNCTION
+sniper -w <WORKSPACE_ALIAS> --reimportall
 
 [*] DELETE WORKSPACE
 sniper -w <WORKSPACE_ALIAS> -d
@@ -161,20 +226,19 @@ sniper -u|--update
 * **DISCOVER:** Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.
 * **PORT:** Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
 * **FULLPORTONLY:** Performs a full detailed port scan and saves results to XML.
-* **WEB:** Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.   
+* **WEB:** Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.
 * **WEBPORTHTTP:** Launches a full HTTP web application scan against a specific host and port.
 * **WEBPORTHTTPS:** Launches a full HTTPS web application scan against a specific host and port.
+* **WEBSCAN:** Launches a full HTTP & HTTPS web application scan against via Burpsuite and Arachni.
 
 ## SAMPLE REPORT:
 https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
 ## LICENSE:
-This software is free to distribute, modify and use with the condition that credit is provided to the creator (@xer0dayz @XeroSecurity) and is not for commercial use. Permission to distribute any part of the code for sale is strictly prohibited.
+This software is free to distribute, modify and use with the condition that credit is provided to the creator (@xer0dayz @XeroSecurity) and is not for commercial use or resold and rebranded. Permission to distribute any part of the code for sale is strictly prohibited.
 
-## DONATIONS:
-Donations are welcome. This will help fascilitate improved features, frequent updates and better overall support for sniper.
-- [x] BTC 1Fav36btfmdrYpCAR65XjKHhxuJJwFyKum
-- [x] ETH 0x20bB09273702eaBDFbEE9809473Fd04b969a794d
-- [x] LTC LQ6mPewec3xeLBYMdRP4yzeta6b9urqs2f
-- [x] XMR 4JUdGzvrMFDWrUUwY3toJATSeNwjn54LkCnKBPRzDuhzi5vSepHfUckJNxRL2gjkNrSqtCoRUrEDAgRwsQvVCjZbS3EN24xprAQ1Z5Sy5s
-- [x] ZCASH t1fsizsk2cqqJAjRoUmXJSyoVa9utYucXt7
+## LEGAL DISCLAIMER:
+You may not rent or lease, distribute, modify, sell or transfer the software to a third party. Sn1per Community is free for distribution, and modification with the condition that credit is provided to the creator and not used for commercial use. You may not use software for illegal or nefarious purposes. No liability for consequential damages to the maximum extent permitted by all applicable laws. In no event shall XeroSecurity or any person be liable for any consequential, reliance, incidental, special, direct or indirect damages whatsoever (including without limitation, damages for loss of business profits, business interruption, loss of business information, personal injury, or any other loss) arising out of or in connection with the use or inability to use this product, even if XeroSecurity has been advised of the possibility of such damages. 
+
+## COPYRIGHT:
+The software code and logos are owned by XeroSecurity and protected by United States copyright and/or patent laws of international treaty provisions. All rights reserved.

@@ -3,7 +3,7 @@
 # + -- --=[https://xerosecurity.com
 # 
 
-VER="6.2"
+VER="7.0"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
@@ -61,6 +61,9 @@ function help {
   echo ' [*] HTTPS WEB PORT MODE'
   echo ' sniper -t|--target <TARGET> -m|--mode webporthttps -p|--port <port>'
   echo ""
+  echo ' [*] HTTP WEBSCAN MODE'
+  echo ' sniper -t|--target <TARGET> -m|--mode webscan '
+  echo ""
   echo ' [*] ENABLE BRUTEFORCE'
   echo ' sniper -t|--target <TARGET> -b|--bruteforce'
   echo ""
@@ -85,8 +88,14 @@ function help {
   echo ' [*] LOOT REIMPORT FUNCTION'
   echo ' sniper -w <WORKSPACE_ALIAS> --reimport'
   echo ""
+  echo ' [*] LOOT REIMPORTALL FUNCTION'
+  echo ' sniper -w <WORKSPACE_ALIAS> --reimportall'
+  echo ""
   echo ' [*] LOOT REIMPORT FUNCTION'
   echo ' sniper -w <WORKSPACE_ALIAS> --reload'
+  echo ""
+  echo ' [*] SCHEDULED SCANS'
+  echo ' sniper -w <WORKSPACE_ALIAS> -s daily|weekly|monthly'
   echo ""
   echo ' [*] UPDATE SNIPER'
   echo ' sniper -u|--update'
@@ -237,16 +246,35 @@ case $key in
     shift # past argument
     shift # past argument
     ;;
+    -s|--schedule)
+    if [ -z "$WORKSPACE" ]; then
+      echo "You need to set a workspace via the -w switch to schedule a scan task."
+      exit
+    fi
+    SCHEDULE_ARG="$2"
+    if [ "$SCHEDULE_ARG" = "daily" ] || [ "$SCHEDULE_ARG" = "weekly" ] || [ "$SCHEDULE_ARG" = "monthly" ]; then
+      SCHEDULE_TASK="$WORKSPACE_DIR/scans/scheduled/$SCHEDULE_ARG.sh"
+      vim $SCHEDULE_TASK
+      cat $WORKSPACE_DIR/scans/scheduled/*.sh 2> /dev/null
+      exit
+    else
+      echo "You need to specify either daily, weekly or monthly for the scheduled scan argument."
+      exit
+    fi
+    shift # past argument
+    shift # past argument
+    ;;
     -d|--delete)
-    echo "Do you want to remove the workspace? $WORKSPACE_DIR"
-    read ANS 
+    logo
+    echo "Are you sure you want to remove the following workspace? (Hit Ctrl+C to exit): /usr/share/sniper/loot/workspace/$WORKSPACE/"
+    read ANS
     rm -Rf /usr/share/sniper/loot/workspace/$WORKSPACE/
+    echo "Workspace /usr/share/sniper/loot/workspace/$WORKSPACE/ was removed."
     exit
     shift # past argument
     ;;
     -dh|--delete-host)
-    echo "Do you want to remove $TARGET from $WORKSPACE?"
-    read ANS 
+    echo "Removing $TARGET from $WORKSPACE"
     sed -i "/$TARGET/d" $WORKSPACE_DIR/domains/targets-all-sorted.txt $WORKSPACE_DIR/domains/domains-all-sorted.txt $WORKSPACE_DIR/domains/targets.txt 2> /dev/null
     rm -f $WORKSPACE_DIR/screenshots/$TARGET*.jpg 2> /dev/null
     sniper --reimport -w $WORKSPACE 
@@ -314,29 +342,35 @@ function init {
   mkdir $LOOT_DIR/credentials 2> /dev/null
   mkdir $LOOT_DIR/web 2> /dev/null
   mkdir $LOOT_DIR/notes 2> /dev/null
-  mkdir $LOOT_DIR/scans 2> /dev/null
+  mkdir -p $LOOT_DIR/scans/scheduled/ 2> /dev/null
+  touch $LOOT_DIR/scans/scheduled/daily.sh 2> /dev/null
+  touch $LOOT_DIR/scans/scheduled/weekly.sh 2> /dev/null
+  touch $LOOT_DIR/scans/scheduled/monthly.sh 2> /dev/null
   TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
   /etc/init.d/metasploit start 2> /dev/null > /dev/null 2>&1 &
   msfdb start 2> /dev/null > /dev/null
 
   if [ "$AUTOBRUTE" == "1" ]; then
+    echo "$TARGET autobrute `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt
     touch $LOOT_DIR/scans/$TARGET-autobrute.txt 2> /dev/null 
   fi
 
   if [ "$FULLNMAPSCAN" == "1" ]; then
+    echo "$TARGET fullnmapscan `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt
     touch $LOOT_DIR/scans/$TARGET-fullnmapscan.txt 2> /dev/null 
   fi
 
   if [ "$OSINT" == "1" ]; then
+    echo "$TARGET osint `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt
     touch $LOOT_DIR/scans/$TARGET-osint.txt 2> /dev/null 
   fi
 
   if [ "$RECON" == "1" ]; then
+    echo "$TARGET recon `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt
     touch $LOOT_DIR/scans/$TARGET-recon.txt 2> /dev/null 
   fi
 }
 
-# REMOVE HOST FROM WORKSPACE sed -i "/www.test.com/d" domains/targets-all-sorted.txt domains/domains-all-sorted.txt domains/targets.txt
 function loot {
   echo -e "$OKRED                ____               $RESET"
   echo -e "$OKRED    _________  /  _/___  ___  _____$RESET"
@@ -380,16 +414,19 @@ function loot {
   echo ""
   cd ..
   echo -e "$OKORANGE + -- --=[Sorting all domains...$RESET"
-  touch $LOOT_DIR/domains/domains-all-sorted.txt 2> /dev/null
-  sort -u $LOOT_DIR/domains/*-full.txt > $LOOT_DIR/domains/domains-all-sorted.txt 2> /dev/null
-  sort -u $LOOT_DIR/domains/targets.txt > $LOOT_DIR/domains/targets-all-sorted.txt 2> /dev/null
+  #touch $LOOT_DIR/domains/domains-all-sorted.txt 2> /dev/null
+  sort -u $LOOT_DIR/domains/*-full.txt > $LOOT_DIR/domains/domains-all-presorted.txt 2> /dev/null
+  sed -E "s/^\.//g" $LOOT_DIR/domains/domains-all-presorted.txt | sed -E "s/^\*\.//g" |  tr '[:upper:]' '[:lower:]' | sort -u > $LOOT_DIR/domains/domains-all-presorted2.txt 2> /dev/null
+  sort -u $LOOT_DIR/domains/targets.txt > $LOOT_DIR/domains/targets-all-presorted.txt 2> /dev/null
+  sed -E "s/^\.//g" $LOOT_DIR/domains/targets-all-presorted.txt | sed -E "s/^\*\.//g" |  tr '[:upper:]' '[:lower:]' | sort -u > $LOOT_DIR/domains/targets-all-sorted.txt 2> /dev/null
+  sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
+  sed -i -E 's/address//g' $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
+  sort -u $LOOT_DIR/domains/domains-all-presorted2.txt $LOOT_DIR/domains/targets-all-sorted.txt 2> /dev/null > $LOOT_DIR/domains/domains-all-sorted.txt 2> /dev/null
   diff $LOOT_DIR/domains/targets-all-sorted.txt $LOOT_DIR/domains/domains-all-sorted.txt | grep \> | awk '{print $2}' > $LOOT_DIR/domains/targets-all-unscanned.txt
-
   echo -e "$OKORANGE + -- --=[Removing blank screenshots...$RESET"
   cd $LOOT_DIR/screenshots/
   find $LOOT_DIR/screenshots/ -type f -size -9000c -exec rm -f {} \;
   cd $LOOT_DIR
-
   if [ -f $SNIPER_PRO ]; then
     if [ "$SN1PER_AUTOLOAD" = "1" ]; then
       echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
@@ -466,6 +503,7 @@ source modes/fullportonly.sh
 source modes/web.sh
 source modes/webporthttp.sh
 source modes/webporthttps.sh
+source modes/webscan.sh
 source modes/stealth.sh
 source modes/airstrike.sh
 source modes/nuke.sh

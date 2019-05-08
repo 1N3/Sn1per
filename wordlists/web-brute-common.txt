@@ -1,4 +1,11 @@
-
+.git/config
+.travis.yml
+Makefile
+Dockerfile
+package.json
+gulpfile.js
+composer.json
+web.config
 .bash_history
 .bashrc
 .cache
@@ -11,6 +18,10 @@
 .hta
 .htaccess
 .htpasswd
+.DS_Store
+readme.md
+readme.txt
+.gitignore
 .listing
 .listings
 .mysql_history

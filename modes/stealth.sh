@@ -28,8 +28,12 @@ if [ "$MODE" = "stealth" ]; then
       mkdir $LOOT_DIR/output 2> /dev/null
     fi
     args="$args --noreport -m stealth"
+    echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-    sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+    if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+      /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    fi
+    sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
     exit
   fi
   echo -e "$OKRED                ____               $RESET"
@@ -39,8 +43,8 @@ if [ "$MODE" = "stealth" ]; then
   echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
   echo -e "$OKRED               /_/                 $RESET"
   echo -e "$RESET"
-  echo -e "$OKORANGE + -- --=[http://xerosecurity.com"
-  echo -e "$OKORANGE + -- --=[Sn1per v$VER by 1N3"
+  echo -e "$OKORANGE + -- --=[https://xerosecurity.com"
+  echo -e "$OKORANGE + -- --=[Sn1per v$VER by @xer0dayz"
   echo -e "$OKRED "   
   echo -e "$OKRED     ./\."
   echo -e "$OKRED   ./    '\."
@@ -85,7 +89,7 @@ if [ "$MODE" = "stealth" ]; then
   fi
   dig all +short $TARGET > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
   dig all +short -x $TARGET >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
-  dig A $TARGET 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
+  host $TARGET 2> /dev/null | grep address 2> /dev/null | awk '{print $4}' 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
   dnsenum $TARGET 2> /dev/null | tee $LOOT_DIR/output/dnsenum-$TARGET.txt 2> /dev/null
   mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
 
@@ -154,6 +158,7 @@ if [ "$MODE" = "stealth" ]; then
     wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null
     curl --connect-timeout 5 --max-time 5 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
     curl --connect-timeout 5 -s -R -L http://$TARGET > $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 5 -I -s -R -X OPTIONS http://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port80.txt 2> /dev/null
     if [ "$WEBTECH" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
@@ -204,28 +209,40 @@ if [ "$MODE" = "stealth" ]; then
       cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
     fi
-    if [ "$WEB_BRUTE" == "1" ]; then
+    if [ "$WEB_BRUTE_STEALTHSCAN" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
       if [ "$VERBOSE" == "1" ]; then
         echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
       fi
-      python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
-      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
-      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
+      if [ "$DIRSEARCH" == "1" ]; then
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e * -t $THREADS --random-agents
+        cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
+        cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
+      fi
+      if [ "$GOBUSTER" == "1" ]; then
+        gobuster -u http://$TARGET -w $WEB_BRUTE_STEALTH -e | tee $LOOT_DIR/web/webbrute-$TARGET-http-stealth.txt
+        sort -u $LOOT_DIR/web/webbrute-$TARGET-*.txt 2> /dev/null > $LOOT_DIR/web/webbrute-$TARGET.txt 2> /dev/null
+      fi
       wget http://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-http.txt 2> /dev/null
     fi
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    if [ ${DISTRO} == "blackarch"  ]; then
-      /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
-    else
-      if [ "$VERBOSE" == "1" ]; then
-        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null$RESET"
+    if [ $CUTYCAPT = "1" ]; then
+      if [ ${DISTRO} == "blackarch"  ]; then
+        /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
+      else
+        if [ "$VERBOSE" == "1" ]; then
+          echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null$RESET"
+        fi
+        cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
       fi
-      cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
+    fi
+    if [ $WEBSCREENSHOT = "1" ]; then
+      cd $LOOT_DIR
+      python $INSTALL_DIR/bin/webscreenshot.py -t 5 http://$TARGET:80
     fi
   fi
  
@@ -265,6 +282,7 @@ if [ "$MODE" = "stealth" ]; then
     wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
     curl --connect-timeout 5 --max-time 5 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
     curl --connect-timeout 5 -s -R -L https://$TARGET > $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 5 -I -s -R -X OPTIONS https://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port443.txt 2> /dev/null
     if [ "$WEBTECH" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
@@ -292,9 +310,8 @@ if [ "$MODE" = "stealth" ]; then
       if [ "$VERBOSE" == "1" ]; then
         echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null$RESET"
       fi
-      curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null
+      curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null
     fi
-
     if [ "$BLACKWIDOW" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER $RESET"
@@ -303,7 +320,9 @@ if [ "$MODE" = "stealth" ]; then
         echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN blackwidow -u https://$TARGET:443 -l 3$RESET"
       fi
       blackwidow -u https://$TARGET:443 -l 2 -v n
-      cat /usr/share/blackwidow/$TARGET*/* >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat /usr/share/blackwidow/$TARGET*/* > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
     fi
     if [ $WEB_BRUTE_STEALTHSCAN == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -312,9 +331,15 @@ if [ "$MODE" = "stealth" ]; then
       if [ "$VERBOSE" == "1" ]; then
         echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
       fi
-      python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm 
-      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
-      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
+      if [ "$DIRSEARCH" == "1" ]; then
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e * -t $THREADS --random-agents
+        cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
+        cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
+      fi
+      if [ "$GOBUSTER" == "1" ]; then
+        gobuster -u https://$TARGET -w $WEB_BRUTE_STEALTH -e | tee $LOOT_DIR/web/webbrute-$TARGET-https-stealth.txt
+        sort -u $LOOT_DIR/web/webbrute-$TARGET-*.txt 2> /dev/null > $LOOT_DIR/web/webbrute-$TARGET.txt 2> /dev/null
+      fi
       if [ "$VERBOSE" == "1" ]; then
         echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wget https://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-https.txt 2> /dev/null$RESET"
       fi
@@ -334,13 +359,20 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    if [ ${DISTRO} == "blackarch"  ]; then
-      /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
-    else
-      if [ "$VERBOSE" == "1" ]; then
-        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null$RESET"
+    if [ $CUTYCAPT = "1" ]; then
+      if [ ${DISTRO} == "blackarch"  ]; then
+        /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
+      else
+        if [ "$VERBOSE" == "1" ]; then
+          echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null$RESET"
+        fi
+        cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
       fi
-      cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
+    fi
+
+    if [ $WEBSCREENSHOT = "1" ]; then
+      cd $LOOT_DIR
+      python $INSTALL_DIR/bin/webscreenshot.py -t 5 https://$TARGET:443
     fi
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
   fi
@@ -367,6 +399,9 @@ if [ "$MODE" = "stealth" ]; then
   sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
   if [ "$LOOT" = "1" ]; then
     loot
+  fi
+  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Scan completed: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
   fi
   exit
 fi

@@ -33,3 +33,15 @@ Admin
 data
 portal
 js
+.git/config
+.travis.yml
+Makefile
+Dockerfile
+package.json
+gulpfile.js
+composer.json
+web.config
+.DS_Store
+readme.md
+readme.txt
+.gitignore

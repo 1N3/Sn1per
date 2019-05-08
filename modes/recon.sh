@@ -1,4 +1,7 @@
 if [ "$RECON" = "1" ]; then
+  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Running recon scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+  fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBLIST3R $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -40,27 +43,12 @@ if [ "$RECON" = "1" ]; then
     echo ""
     echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
   fi
-
-
-
-
-
-
-
   if [ "$CENSYS_SUBDOMAINS" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED GATHERING CENSYS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     python $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | tee $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null 
   fi
-
-
-
-
-
-
-
-
   if [ "$PROJECT_SONAR" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED GATHERING PROJECT SONAR SUBDOMAINS $RESET"
@@ -92,10 +80,14 @@ if [ "$RECON" = "1" ]; then
     for a in `cat $LOOT_DIR/domains/domains-$TARGET-full.txt`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$a.txt 2>/dev/null; done;
   fi
   if [ "$SUBOVER" = "1" ]; then
+    cd ~/go/src/github.com/Ice3man543/SubOver
     subover -l $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/subover-$TARGET 2>/dev/null
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/nmap/subover-$TARGET > $LOOT_DIR/nmap/subover-$TARGET.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/takeovers-$TARGET-subover 2> /dev/null
     cd $INSTALL_DIR
+  fi
+  if [ "$SUBJACK" = "1" ]; then
+    ~/go/bin/subjack -w $LOOT_DIR/domains/domains-$TARGET-full.txt -t 10 -o $LOOT_DIR/nmap/subjack-$TARGET.txt -a -v 
   fi
   if [ "$SLURP" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -103,5 +95,14 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     cd $PLUGINS_DIR/slurp/
     ./slurp-linux-amd64 domain --domain $TARGET | tee $LOOT_DIR/nmap/takeovers-$TARGET-s3-buckets.txt 2>/dev/null
+  fi
+  if [ "$SUBNET_RETRIEVAL" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED STARTING SUBNET RETRIEVAL $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    curl -s -L --data "ip=$TARGET" https://2ip.me/en/services/information-service/provider-ip\?a\=act | grep -o -E '[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/[0-9]{1,2}' | tee $LOOT_DIR/nmap/subnets-$TARGET.txt
+  fi
+  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Finished recon scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
   fi
 fi

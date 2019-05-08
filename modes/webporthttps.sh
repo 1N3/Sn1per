@@ -14,8 +14,12 @@ if [ "$MODE" = "webporthttps" ]; then
       mkdir $LOOT_DIR/scans 2> /dev/null
       mkdir $LOOT_DIR/output 2> /dev/null
     fi
+    echo "$TARGET $MODE port$PORT `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE -p $PORT --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-    sniper -t $TARGET -m $MODE -p $PORT --noreport $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-$PORT-`date +%Y%m%d%H%M`.txt 2>&1
+    if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+      /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    fi
+    sniper -t $TARGET -m $MODE -p $PORT --noreport $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-$PORT-`date +"%Y%m%d%H%M"`.txt 2>&1
     exit
   fi
   echo -e "$OKRED                ____               $RESET"
@@ -102,6 +106,7 @@ if [ "$MODE" = "webporthttps" ]; then
     wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 https://$TARGET:$PORT |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET-$PORT.txt 2> /dev/null
     curl --connect-timeout 5 -I -s -R https://$TARGET:$PORT | tee $LOOT_DIR/web/headers-https-$TARGET-$PORT.txt 2> /dev/null
     curl --connect-timeout 5 -I -s -R -L https://$TARGET:$PORT | tee $LOOT_DIR/web/websource-https-$TARGET-$PORT.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 5 -I -s -R -X OPTIONS https://$TARGET:$PORT | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port$PORT.txt 2> /dev/null
     if [ "$WEBTECH" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
@@ -132,12 +137,17 @@ if [ "$MODE" = "webporthttps" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    if [ ${DISTRO} == "blackarch"  ]; then
-      /bin/CutyCapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=5000 2> /dev/null
-    else
-      cutycapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=5000 2> /dev/null
+    if [ $CUTYCAPT = "1" ]; then
+      if [ ${DISTRO} == "blackarch"  ]; then
+        /bin/CutyCapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=5000 2> /dev/null
+      else
+        cutycapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=5000 2> /dev/null
+      fi
     fi
-    echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port$PORT.jpg"
+    if [ $WEBSCREENSHOT = "1" ]; then
+      cd $LOOT_DIR
+      python $INSTALL_DIR/bin/webscreenshot.py -t 5 https://$TARGET:$PORT
+    fi
     if [ "$BURP_SCAN" == "1" ]; then
         echo -e "${OKGREEN}====================================================================================${RESET}"
         echo -e "$OKRED RUNNING BURPSUITE SCAN $RESET"
@@ -173,7 +183,7 @@ if [ "$MODE" = "webporthttps" ]; then
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER & APPLICATION SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
       blackwidow -u https://$TARGET:$PORT -l 3 -s y -v n 2> /dev/null
-      cat /usr/share/blackwidow/$TARGET*/* 2> /dev/null > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat /usr/share/blackwidow/$TARGET*/$TARGET*.txt 2> /dev/null > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
     fi
@@ -181,22 +191,43 @@ if [ "$MODE" = "webporthttps" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING COMMON FILE/DIRECTORY BRUTE FORCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_COMMON -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,jsp,pl,cgi,js,css,txt,html,htm
+      if [ "$DIRSEARCH" == "1" ]; then
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET:$PORT -w $WEB_BRUTE_STEALTH -x 400,403,404,405,406,429,502,503,504 -F -e $WEB_BRUTE_EXTENSIONS -f -r -t $THREADS --random-agents
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET:$PORT -w $WEB_BRUTE_COMMON -x 400,403,404,405,406,429,502,503,504 -F -e * -t $THREADS --random-agents
+      fi
+      if [ "$GOBUSTER" == "1" ]; then
+          gobuster -u https://$TARGET:$PORT -w $WEB_BRUTE_COMMON -e -a "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36" -t $THREADS -o $LOOT_DIR/web/webbrute-$TARGET-https-port$PORT-common.txt -fw -r
+      fi
     fi
     if [ "$WEB_BRUTE_FULLSCAN" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING FULL FILE/DIRECTORY BRUTE FORCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_FULL -x 400,403,404,405,406,429,502,503,504 -F -e php,asp,aspx,jsp,pl,cgi,js,css,txt,html,htm
+      if [ "$DIRSEARCH" == "1" ]; then
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_FULL -x 400,403,404,405,406,429,502,503,504 -F -e * -t $THREADS --random-agents
+      fi
+      if [ "$GOBUSTER" == "1" ]; then
+        gobuster -u https://$TARGET:$PORT -w $WEB_BRUTE_FULL -e -a "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36" -t $THREADS -o $LOOT_DIR/web/webbrute-$TARGET-https-port$PORT-full.txt -fw -r
+      fi
     fi
     if [ "$WEB_BRUTE_EXPLOITSCAN" == "1" ]; then
         echo -e "${OKGREEN}====================================================================================${RESET}"
         echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE FOR VULNERABILITIES $RESET"
         echo -e "${OKGREEN}====================================================================================${RESET}"
-        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_EXPLOITS -x 400,403,404,405,406,429,502,503,504 -F -e html 
+        if [ "$DIRSEARCH" == "1" ]; then
+          python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET:$PORT -w $WEB_BRUTE_EXPLOITS -x 400,403,404,405,406,429,502,503,504 -F -e * -t $THREADS --random-agents
+        fi
+        if [ "$GOBUSTER" == "1" ]; then
+          gobuster -u https://$TARGET:$PORT -w $WEB_BRUTE_EXPLOITS -e -a "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36" -t $THREADS -o $LOOT_DIR/web/webbrute-$TARGET-https-port$PORT-exploits.txt -fw -r
+        fi
     fi
-    cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
-    cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
+    if [ "$DIRSEARCH" == "1" ]; then
+      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
+      cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
+    fi
+    if [ "$GOBUSTER" == "1" ]; then
+        sort -u $LOOT_DIR/web/webbrute-$TARGET-*.txt 2> /dev/null > $LOOT_DIR/web/webbrute-$TARGET.txt 2> /dev/null
+    fi
     wget https://$TARGET:$PORT/robots.txt -O $LOOT_DIR/web/robots-$TARGET:$PORT-https.txt 2> /dev/null
     if [ "$CLUSTERD" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -226,6 +257,7 @@ if [ "$MODE" = "webporthttps" ]; then
       echo -e "$OKRED RUNNING WEB VULNERABILITY SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
       nikto -h https://$TARGET:$PORT -output $LOOT_DIR/web/nikto-$TARGET-https-port$PORT.txt
+      sed -ir "s/</\&lh\;/g" $LOOT_DIR/web/nikto-$TARGET-https-port$PORT.txt
     fi
     if [ "$SHOCKER" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -257,6 +289,9 @@ if [ "$MODE" = "webporthttps" ]; then
   rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
   if [ "$LOOT" = "1" ]; then
     loot
+  fi
+  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Scan completed: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
   fi
   exit
 fi 

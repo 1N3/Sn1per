@@ -9,7 +9,7 @@ if [ "$MODE" = "nuke" ]; then
     for a in `cat $FILE`;
     do
       if [ ! -z "$WORKSPACE" ]; then
-        args="$args -b -re -o -fp -w $WORKSPACE"
+        args="$args -b -fp -w $WORKSPACE"
         WORKSPACE_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
         echo -e "$OKBLUE[*] Saving loot to $WORKSPACE_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
         mkdir -p $WORKSPACE_DIR 2> /dev/null
@@ -40,17 +40,27 @@ if [ "$MODE" = "nuke" ]; then
       echo -e "$OKORANGE + -- --=[WARNING! Nuking ALL target! $RESET"
       echo -e "$RESET"
       if [ ! -z "$WORKSPACE_DIR" ]; then
+        echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
         echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-        sniper $args | tee $WORKSPACE_DIR/output/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+        if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+          /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+        fi
+        sniper $args | tee $WORKSPACE_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
       else
         echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-        sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +%Y%m%d%H%M`.txt 2>&1
+        if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+          /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+        fi
+        sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
       fi
       args=""
     done
   fi
   if [ "$LOOT" = "1" ]; then
     loot
+  fi
+  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Scan completed: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
   fi
   exit
 fi

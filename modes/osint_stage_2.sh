@@ -4,6 +4,9 @@
       echo -e "$OKRED SKIPPING OSINT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
     else
+      if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+        /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Running stage 2 OSINT check: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+      fi
       if [ $GOOHAK = "1" ]; then
         echo -e "${OKGREEN}====================================================================================${RESET}"
         echo -e "$OKRED RUNNING GOOGLE HACKING QUERIES $RESET"
@@ -20,5 +23,8 @@
         rm -Rf output/ cookie.txt exploits.conf
       fi
       GHDB="1"
+      if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+        /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Finished stage 2 OSINT check: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+      fi
     fi
   fi

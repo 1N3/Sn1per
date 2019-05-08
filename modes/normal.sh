@@ -23,8 +23,12 @@ if [ "$REPORT" = "1" ]; then
     args="$args -w $WORKSPACE"
   fi
   args="$args --noreport"
+  echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
   echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-normal.txt
-  sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-`date +%Y%m%d%H%M`.txt 2>&1
+  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+  fi
+  sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-`date +"%Y%m%d%H%M"`.txt 2>&1
   exit
 fi
 
@@ -50,7 +54,7 @@ echo -e "$OKRED GATHERING DNS INFO $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}"
 dig all +short $TARGET > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
 dig all +short -x $TARGET >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
-dig A $TARGET 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
+host $TARGET 2> /dev/null | grep address 2> /dev/null | awk '{print $4}' 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
 dnsenum $TARGET 2> /dev/null
 mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
 
@@ -72,6 +76,8 @@ echo -e "${OKGREEN}=============================================================
 echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}"
 if [ "$MODE" == "web" ]; then
+  nmap -sV -T5 -Pn -p 80,443  --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+elif [ "$MODE" == "webscan" ]; then 
   nmap -sV -T5 -Pn -p 80,443  --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 elif [ ! -z "$PORT" ]; then 
   nmap -sS -T5 -Pn -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
@@ -384,6 +390,7 @@ else
   wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null
   curl --connect-timeout 5 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
   curl --connect-timeout 5 -I -s -R -L http://$TARGET | tee $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
+  curl --connect-timeout 5 --max-time 5 -I -s -R -X OPTIONS http://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port80.txt 2> /dev/null
   if [ "$WEBTECH" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
@@ -402,16 +409,19 @@ else
   echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
   cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | egrep "\"" | cut -d\" -f2 | grep  \/ | sort -u 2> /dev/null | tee $LOOT_DIR/web/weblinks-http-$TARGET.txt 2> /dev/null
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED SAVING SCREENSHOTS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
   if [ $CUTYCAPT = "1" ]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED SAVING SCREENSHOTS $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}"
-    echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port80.jpg"
     if [ ${DISTRO} == "blackarch"  ]; then
       /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
     else
       cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
     fi
+  fi
+  if [ $WEBSCREENSHOT = "1" ]; then
+    cd $LOOT_DIR
+    python $INSTALL_DIR/bin/webscreenshot.py -t 5 http://$TARGET:80
   fi
   source $INSTALL_DIR/modes/normal_webporthttp.sh
   source $INSTALL_DIR/modes/osint_stage_2.sh
@@ -550,7 +560,7 @@ else
   fi
 fi
 
-if [ -z "$port_161" ];
+if [ -z "$port_161U" ];
 then
   echo -e "$OKRED + -- --=[Port 161 closed... skipping.$RESET"
 else
@@ -640,6 +650,7 @@ else
   wget -qO- -T 1 --connect-timeout=5 --read-timeout=5 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
   curl --connect-timeout 5 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
   curl --connect-timeout 5 -I -s -R -L https://$TARGET | tee $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
+  curl --connect-timeout 5 --max-time 5 -I -s -R -X OPTIONS https://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port443.txt 2> /dev/null
   if [ "$WEBTECH" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
@@ -677,6 +688,11 @@ else
   fi
   echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
 
+
+  if [ $WEBSCREENSHOT = "1" ]; then
+    cd $LOOT_DIR
+    python $INSTALL_DIR/bin/webscreenshot.py -t 5 https://$TARGET:443
+  fi
   source $INSTALL_DIR/modes/normal_webporthttps.sh
   source $INSTALL_DIR/modes/osint_stage_2.sh
 fi
@@ -1186,6 +1202,9 @@ echo -e "${OKGREEN}=============================================================
 echo -e "$OKRED SCAN COMPLETE! $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}"
 echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
+if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+  /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Scan completed: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+fi
 if [ "$LOOT" = "1" ] && [ -z "$NOLOOT" ]; then
   loot
 fi

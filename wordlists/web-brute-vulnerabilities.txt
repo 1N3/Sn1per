@@ -47,6 +47,7 @@ servlet/AdminServlet
 servlet/AxisServlet
 TiVoConnect?Command=QueryServer
 TiVoConnect?Command=QueryContainer&Container=/&Recurse=Yes
+cgi-bin/config.exp
 cgi-bin/cart32.exe
 cgi-bin/classified.cgi
 cgi-bin/download.cgi

