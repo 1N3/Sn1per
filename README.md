@@ -169,6 +169,9 @@ sniper -w <WORKSPACE_ALIAS> -d
 [*] DELETE HOST FROM WORKSPACE
 sniper -w <WORKSPACE_ALIAS> -t <TARGET> -dh
 
+[*] SCHEDULED SCANS'
+sniper -w <WORKSPACE_ALIAS> -s daily|weekly|monthly'
+
 [*] SCAN STATUS
 sniper --status
 

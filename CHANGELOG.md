@@ -1,6 +1,7 @@
 ## CHANGELOG:
 * v7.0 - Added "webscan" mode for automated Burpsuite 2.x and Arachni web application scans only
 * v7.0 - Added Slack API notifications (Disabled by default..check ~/.sniper.conf)
+* v7.0 - Added new command switch to add daily, weekly or monthly sniper scheduled scans... check README
 * v7.0 - Added scheduled scan tasks command switch (Needs additional configuration to setup... check README)
 * v7.0 - Added Axis2 authenticated deployer MSF exploit
 * v7.0 - Added Axis2 login brute force module
