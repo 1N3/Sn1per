@@ -97,47 +97,6 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] SMTP User Enumeration
 - [x] Public NFS Mounts
 
-## CORE INTEGRATIONS
-- NMap
-- Nikto
-- Metasploit
-- Arachni
-- Burpsuite
-- Slack API
-- Censys API
-
-## PLUGINS:
-- BlackWidow
-- GooHak 
-- BruteX 
-- CMSMap 
-- WPScan 
-- Shocker 
-- Slurp 
-- Spoofcheck 
-- SSH-Audit 
-- Sublist3r 
-- Wig
-- Yasuo
-- Inurlbr
-- theHarvester
-- Dirsearch
-- Gobuster
-- Clusterd
-- Whatweb
-- Jexboss
-- Webtech
-- Wafw00f
-- Slurp
-- Subjack
-- crt.sh
-- Subfinder
-- Amass
-- Dnscan
-- Subover
-- Project Sonar
-- Subjack
-
 ## KALI LINUX INSTALL:
 ```
 ./install.sh
