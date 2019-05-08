@@ -47,7 +47,7 @@ if [ "$MODE" = "webscan" ]; then
 	echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
 	touch $LOOT_DIR/scans/$TARGET-webscan.txt 2> /dev/null 
 	if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "Running webscan mode: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi
     if [ "$BURP_SCAN" == "1" ]; then
     	echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -78,7 +78,7 @@ if [ "$MODE" = "webscan" ]; then
     echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
 	loot 
 	if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "Finished webscan mode: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi
 	exit
 fi

@@ -7,7 +7,7 @@ else
   echo -e "$OKRED RUNNING BRUTE FORCE $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
   if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Running brute force: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   brutex $TARGET | tee $LOOT_DIR/credentials/brutex-$TARGET 2> /dev/null
   sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/credentials/brutex-$TARGET 2> /dev/null > $LOOT_DIR/credentials/brutex-$TARGET.txt 2> /dev/null
@@ -17,6 +17,6 @@ else
   rm -f scan.log
   echo ""
   if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Finished brute force: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
 fi

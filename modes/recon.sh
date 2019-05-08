@@ -1,6 +1,6 @@
 if [ "$RECON" = "1" ]; then
   if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Running recon scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per recon scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBLIST3R $RESET"
@@ -103,6 +103,6 @@ if [ "$RECON" = "1" ]; then
     curl -s -L --data "ip=$TARGET" https://2ip.me/en/services/information-service/provider-ip\?a\=act | grep -o -E '[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/[0-9]{1,2}' | tee $LOOT_DIR/nmap/subnets-$TARGET.txt
   fi
   if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Finished recon scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per recon scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
 fi

@@ -16,9 +16,6 @@ if [ "$MODE" = "web" ]; then
     fi
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-    if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-      /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
-    fi
     sniper -t $TARGET -m $MODE --noreport $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
     exit
   fi

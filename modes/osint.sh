@@ -1,6 +1,6 @@
 if [ "$OSINT" = "1" ]; then
 	if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "Running OSINT: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi
 	echo -e "${OKGREEN}====================================================================================${RESET}"
 	echo -e "$OKRED GATHERING WHOIS INFO $RESET"
@@ -27,6 +27,6 @@ if [ "$OSINT" = "1" ]; then
 		metagoofil -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html 2> /dev/null | tee $LOOT_DIR/osint/metagoofil-$TARGET.txt 2> /dev/null 
 	fi
 	if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "Finished OSINT: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi
 fi

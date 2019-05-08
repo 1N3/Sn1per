@@ -5,7 +5,7 @@
       echo -e "${OKGREEN}====================================================================================${RESET}"
     else
       if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-        /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Running stage 2 OSINT check: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+        /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per stage 2 OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       fi
       if [ $GOOHAK = "1" ]; then
         echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -24,7 +24,7 @@
       fi
       GHDB="1"
       if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-        /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Finished stage 2 OSINT check: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+        /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per stage 2 OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       fi
     fi
   fi

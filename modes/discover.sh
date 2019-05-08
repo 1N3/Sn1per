@@ -18,7 +18,7 @@ if [ "$MODE" = "discover" ]; then
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$OUTFILE-$MODE.txt 2> /dev/null
     if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-      /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+      /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     fi
     sniper -t $TARGET -m $MODE --noreport $args | tee $LOOT_DIR/output/sniper-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
     exit
@@ -62,7 +62,7 @@ if [ "$MODE" = "discover" ]; then
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
   if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Scan completed: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   sniper -f $LOOT_DIR/ips/discover-$OUT_FILE-sorted.txt -m flyover -w $WORKSPACE
   exit

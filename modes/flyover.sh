@@ -38,7 +38,7 @@ if [ "$MODE" = "flyover" ]; then
     echo "sniper -f $FILE -m $MODE --noreport $args" >> $LOOT_DIR/scans/$WORKSPACE-$MODE.txt
     sniper $args | tee $WORKSPACE_DIR/output/sniper-$WORKSPACE-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
     if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-      /usr/bin/python /usr/share/sniper/bin/slack.py "Starting scan: $FILE $MODE `date +"%Y-%m-%d %H:%M"`"
+      /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     fi
     args=""
     
@@ -102,7 +102,7 @@ if [ "$MODE" = "flyover" ]; then
       loot
     fi
     if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-      /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Scan completed: $FILE $MODE `date +"%Y-%m-%d %H:%M"`"
+      /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     fi
   fi
   exit

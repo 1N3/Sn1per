@@ -25,7 +25,7 @@ if [ "$MODE" = "fullportonly" ]; then
 
   logo
   if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
   if [ -z "$PORT" ]; then
@@ -63,7 +63,7 @@ if [ "$MODE" = "fullportonly" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
   if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Scan completed: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   loot
   exit

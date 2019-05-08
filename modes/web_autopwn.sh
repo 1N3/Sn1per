@@ -1,5 +1,5 @@
       if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-            /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Running web autopwn: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+            /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       fi
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING HTTP PUT UPLOAD SCANNER $RESET"
@@ -216,6 +216,6 @@
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw 2> /dev/null
       if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-            /usr/bin/python "$INSTALL_DIR/bin/slack.py" "Finished web autopwn: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
+            /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       fi
       
