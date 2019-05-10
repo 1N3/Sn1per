@@ -99,7 +99,12 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 
 ## KALI LINUX INSTALL:
 ```
-./install.sh
+bash install.sh
+```
+
+## UBUNTU/DEBIAN INSTALL:
+```
+bash install_debian_ubuntu.sh
 ```
 
 ## DOCKER INSTALL:
