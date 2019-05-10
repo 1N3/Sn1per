@@ -28,7 +28,8 @@ wget https://http.kali.org/kali/pool/main/k/kali-archive-keyring/kali-archive-ke
 apt install ./kali-archive-keyring_2018.1_all.deb
 apt update
 cp /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
-cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority
+cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
+cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
 chown root /root/.Xauthority
 XAUTHORITY=/root/.Xauthority
 git clone https://github.com/1N3/Sn1per /tmp/Sn1per

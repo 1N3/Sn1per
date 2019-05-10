@@ -1,5 +1,5 @@
 ## CHANGELOG:
-* v7.1 - Added installer and support for Debian and Ubuntu OS (install_debian.sh)
+* v7.1 - Added installer and support for Debian, Parrot and Ubuntu OS (install_debian.sh)
 * v7.0 - Added "webscan" mode for automated Burpsuite 2.x and Arachni web application scans only
 * v7.0 - Added Slack API notifications (Disabled by default..check ~/.sniper.conf)
 * v7.0 - Added new command switch to add daily, weekly or monthly sniper scheduled scans... check README

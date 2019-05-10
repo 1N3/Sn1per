@@ -102,7 +102,7 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 bash install.sh
 ```
 
-## UBUNTU/DEBIAN INSTALL:
+## UBUNTU/DEBIAN/PARROT INSTALL:
 ```
 bash install_debian_ubuntu.sh
 ```
