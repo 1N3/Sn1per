@@ -109,7 +109,7 @@ bash install_debian_ubuntu.sh
 
 ## DOCKER INSTALL:
 ```
-docker build Dockerfile
+sudo docker build -t sn1per-docker . && docker run -it sn1per-docker /bin/bash
 ```
 
 ## USAGE:
