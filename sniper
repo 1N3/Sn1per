@@ -8,6 +8,9 @@ INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
 
+# INIT POSTGRESQL
+service postgresql start
+
 # LOAD SNIPER CONFIGURATION FILE
 if [ -f ~/.sniper.conf ]; then
   source ~/.sniper.conf
