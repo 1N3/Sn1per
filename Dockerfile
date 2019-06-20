@@ -18,6 +18,8 @@ RUN set -x \
     && apt-get -yqq dist-upgrade \
     && apt-get clean
 
+RUN sed -i 's/systemctl status ${PG_SERVICE}/service ${PG_SERVICE} status/g' /usr/bin/msfdb && msfdb reinit
+
 RUN \
     apt-get --yes install git \
     && mkdir -p security \
