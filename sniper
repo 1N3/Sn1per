@@ -187,6 +187,7 @@ case $key in
     ;;
     -t|--target)
     TARGET="$2"
+    LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
     shift # past argument
     shift # past argument
     ;;
@@ -288,7 +289,6 @@ case $key in
     ls -l $INSTALL_DIR/loot/workspace/
     echo ""
     echo "cd /usr/share/sniper/loot/workspace/"
-    LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
     WORKSPACE_REPORT=$LOOT_DIR/sniper-report.html
     if [ -f $WORKSPACE_REPORT ]; then
       echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
