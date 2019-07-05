@@ -109,7 +109,7 @@ bash install_debian_ubuntu.sh
 
 ## DOCKER INSTALL:
 ```
-docker build Dockerfile
+sudo docker build -t sn1per-docker . && docker run -it sn1per-docker /bin/bash
 ```
 
 ## USAGE:
@@ -182,6 +182,20 @@ sniper --status
 
 [*] UPDATE SNIPER
 sniper -u|--update
+```
+## DOCKER USAGE:
+```
+# After Docker Install successfull:
+
+# A) Run container and get shell inside:
+docker run -it sn1per-docker /bin/bash
+
+# B) Run container, run sniper and get shell output (better integration):
+docker run -it sn1per-docker sniper $@ -t <TARGET>
+
+# C) Even better you can :
+alias sniper='docker run -it sn1per-docker sniper $@'
+sniper -t <TARGET>
 ```
 
 ### MODES:
