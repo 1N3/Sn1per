@@ -3,7 +3,7 @@
 # + -- --=[https://xerosecurity.com
 # 
 
-VER="7.0"
+VER="7.1"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
@@ -118,7 +118,7 @@ function logo {
 }
 
 function sniper_status {
-  watch -n 1 -c 'ps -ef | egrep "hydra|ruby|python|dirsearch|amass|nmap|metasploit|curl|wget|nikto" && echo "NETWORK CONNECTIONS..." && netstat -an | egrep "TIME_WAIT|EST"'
+  watch -n 1 -c 'ps -ef | egrep "sniper|slurp|hydra|ruby|python|dirsearch|amass|nmap|metasploit|curl|wget|nikto" && echo "NETWORK CONNECTIONS..." && netstat -an | egrep "TIME_WAIT|EST"'
 }
 
 function check_online {
@@ -318,6 +318,10 @@ esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
+if [ ! -z "$TARGET" ] && [ -z "$WORKSPACE" ]; then
+  WORKSPACE=$(echo "$TARGET")
+fi
+
 if [ -z "$TARGET" ] && [ -z "$WORKSPACE" ]; then
   logo
   echo "You need to specify a target or workspace to use. Type sniper --help for command usage."
@@ -396,7 +400,7 @@ function loot {
   fi
   
   echo -e "$OKORANGE + -- --=[Generating reports...$RESET"
-  cd ./output
+  cd $LOOT_DIR/output 2> /dev/null
   echo -en "$OKGREEN[$OKBLUE"
   for a in `ls sniper-*.txt 2>/dev/null`;
   #for a in `sort -u $LOOT_DIR/scans/updated.txt`;

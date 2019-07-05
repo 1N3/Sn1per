@@ -1,5 +1,13 @@
 ## CHANGELOG:
-* v7.1 - Added installer and support for Debian, Parrot and Ubuntu OS (install_debian.sh)
+* v7.1 - Added KeepBlue CVE-2019-0708 MSF scanner
+* v7.1 - Added automatic workspace generation for single target scans
+* v7.1 - Added new slack.sh API integration script
+* v7.1 - Added differential Slack notifications for new domains, new URL's and various scan outputs
+* v7.1 - Added vulners and vulscan NMap scripts
+* v7.1 - Added installer and support for Debian, Parrot and Ubuntu OS (install_debian.sh) (CC. @imhaxormad)
+* v7.1 - Fixed various issues with the DockerFile
+* v7.1 - Fixed/added Metasploit LHOST/LPORT values to all exploits based on sniper.conf settings
+* v7.1 - Fixed issue with Amass/Golang 1.11 not installing correctly
 * v7.0 - Added "webscan" mode for automated Burpsuite 2.x and Arachni web application scans only
 * v7.0 - Added Slack API notifications (Disabled by default..check ~/.sniper.conf)
 * v7.0 - Added new command switch to add daily, weekly or monthly sniper scheduled scans... check README

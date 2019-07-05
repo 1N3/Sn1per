@@ -25,14 +25,14 @@ if [ "$MODE" = "fullportonly" ]; then
 
   logo
   if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
   if [ -z "$PORT" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED PERFORMING TCP PORT SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -vv -sT -sV -O -A -T4 -oX $LOOT_DIR/nmap/nmap-$TARGET-fullport.xml -p $FULL_PORTSCAN_PORTS $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET
+    nmap -vv -sT -sV -O -A -T4 --script=/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -oX $LOOT_DIR/nmap/nmap-$TARGET-fullport.xml -p $FULL_PORTSCAN_PORTS $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET
     cp -f $LOOT_DIR/nmap/nmap-$TARGET-fullport.xml $LOOT_DIR/nmap/nmap-$TARGET.xml 2> /dev/null
     sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null
@@ -40,21 +40,21 @@ if [ "$MODE" = "fullportonly" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -Pn -sU -sV -A -T4 -v -oX $LOOT_DIR/nmap/nmap-$TARGET-fullport-udp.xml -p $DEFAULT_UDP_PORTS $TARGET 
+    nmap -Pn -sU -sV -A -T4 -v --script=/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -oX $LOOT_DIR/nmap/nmap-$TARGET-fullport-udp.xml -p $DEFAULT_UDP_PORTS $TARGET 
     sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET-udp.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null
   else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED PERFORMING TCP PORT SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -Pn -A -v -sV -T4 -p $PORT -oX $LOOT_DIR/nmap/nmap-$TARGET-tcp-port$PORT.xml $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET
+    nmap -Pn -A -v -sV -T4 --script=/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p $PORT -oX $LOOT_DIR/nmap/nmap-$TARGET-tcp-port$PORT.xml $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET
     sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null
     xsltproc $INSTALL_DIR/bin/nmap-bootstrap.xsl $LOOT_DIR/nmap/nmap-$TARGET.xml -o $LOOT_DIR/nmap/nmapreport-$TARGET.html 2> /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -Pn -A -v -sV -T4 -sU -p $PORT -Pn -oX $LOOT_DIR/nmap/nmap-$TARGET-udp-port$PORT.xml $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET-udp
+    nmap -Pn -A -v -sV -T4 -sU --script=/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p $PORT -Pn -oX $LOOT_DIR/nmap/nmap-$TARGET-udp-port$PORT.xml $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET-udp
     sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET-udp.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null
   fi
@@ -62,8 +62,12 @@ if [ "$MODE" = "fullportonly" ]; then
   echo -e "$OKRED DONE $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
-  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-    /usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+  if [ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]; then
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET.txt"
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET-udp.txt"
+  fi
+  if [ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]; then
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   loot
   exit

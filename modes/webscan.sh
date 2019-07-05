@@ -47,7 +47,7 @@ if [ "$MODE" = "webscan" ]; then
 	echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
 	touch $LOOT_DIR/scans/$TARGET-webscan.txt 2> /dev/null 
 	if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi
     if [ "$BURP_SCAN" == "1" ]; then
     	echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -65,6 +65,11 @@ if [ "$MODE" = "webscan" ]; then
 		mkdir -p $LOOT_DIR/web/https-$TARGET/
 		arachni --report-save-path=$LOOT_DIR/web/http-$TARGET/ --output-only-positives http://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt 2>&1
 		arachni --report-save-path=$LOOT_DIR/web/https-$TARGET/ --output-only-positives https://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-https-`date +"%Y%m%d%H%M"`.txt 2>&1
+
+		if [ "$SLACK_NOTIFICATIONS_ARACHNI_SCAN" == "1" ]; then
+			bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/output/sniper-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt"
+			bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/output/sniper-$TARGET-webscan-https-`date +"%Y%m%d%H%M"`.txt"
+		fi
 		cd $LOOT_DIR/web/http-$TARGET/
 		cd $LOOT_DIR/web/https-$TARGET/
 		arachni_reporter $LOOT_DIR/web/http-$TARGET/*.afr --report=html:outfile=$LOOT_DIR/web/http-$TARGET/arachni.zip
@@ -78,7 +83,7 @@ if [ "$MODE" = "webscan" ]; then
     echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
 	loot 
 	if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
-		/usr/bin/python "$INSTALL_DIR/bin/slack.py" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi
 	exit
 fi
