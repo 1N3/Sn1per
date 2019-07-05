@@ -185,15 +185,15 @@ sniper -u|--update
 ```
 ## DOCKER USAGE:
 ```
-# After Docker Install successfull:
+### After the Docker installation is successfull:
 
-# A) Run container and get shell inside:
+#### A) Run container and get a shell:
 docker run -it sn1per-docker /bin/bash
 
-# B) Run container, run sniper and get shell output (better integration):
+#### B) Run a container, run sniper and get a shell (better integration):
 docker run -it sn1per-docker sniper $@ -t <TARGET>
 
-# C) Even better you can :
+#### C) Even better you can create an alias:
 alias sniper='docker run -it sn1per-docker sniper $@'
 sniper -t <TARGET>
 ```

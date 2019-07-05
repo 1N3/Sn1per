@@ -354,7 +354,8 @@ function init {
   touch $LOOT_DIR/scans/scheduled/weekly.sh 2> /dev/null
   touch $LOOT_DIR/scans/scheduled/monthly.sh 2> /dev/null
   TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
-  /etc/init.d/metasploit start 2> /dev/null > /dev/null 2>&1 &
+  service postgresql start
+  service metasploit start
   msfdb start 2> /dev/null > /dev/null
 
   if [ "$AUTOBRUTE" == "1" ]; then
