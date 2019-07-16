@@ -370,7 +370,7 @@ else
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      nmap -A -Pn -T5 -p 80 -sV --script=http-vuln*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port80
+      nmap -A -Pn -T5 -p 80 -sV --script=*http-vuln*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port80
       sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port80.txt 2> /dev/null
       rm -f $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null
   fi
@@ -638,7 +638,7 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -A -sV -T5 -Pn -p 443 --script=/usr/share/nmap/scripts/iis-buffer-overflow.nse,http-vuln*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
+    nmap -A -sV -T5 -Pn -p 443 --script=*http-vuln*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
     sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port443.txt 2> /dev/null
     rm -f $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null
   fi

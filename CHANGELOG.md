@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v7.2 - Fixed issue with NMap http scripts not working
 * v7.1 - Added KeepBlue CVE-2019-0708 MSF scanner
 * v7.1 - Added automatic workspace generation for single target scans
 * v7.1 - Added new slack.sh API integration script
