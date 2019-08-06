@@ -1,4 +1,21 @@
 ## CHANGELOG:
+* v7.2 - Added experimental OpenVAS API integration
+* v7.2 - Improved Burpsuite 2.x API integration with vuln reporting
+* v7.2 - Added hunter.io API integration to recon mode scans
+* v7.2 - Added Cisco IKE Key Disclosure MSF exploit
+* v7.2 - Added JBoss MSF vuln scanner module
+* v7.2 - Added Apache CouchDB RCE MSF exploit
+* v7.2 - Added IBM Tivoli Endpoint Manager POST Query Buffer Overflow exploit
+* v7.2 - Added Java RMI MSF scanner
+* v7.2 - New scan mode "vulnscan"
+* v7.2 - New scan mode "massportscan"
+* v7.2 - New scan mode "massweb"
+* v7.2 - New scan mode "masswebscan"
+* v7.2 - New scan mode "massvulnscan"
+* v7.2 - Added additional Slack API notification settings
+* v7.2 - Improved NMap port detection and scan modes
+* v7.2 - Fixed issue with Censys API being enabled by default
+* v7.2 - Fixed verbose errors in subjack/subover tools
 * v7.2 - Fixed issue with NMap http scripts not working
 * v7.1 - Added KeepBlue CVE-2019-0708 MSF scanner
 * v7.1 - Added automatic workspace generation for single target scans

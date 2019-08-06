@@ -14,7 +14,7 @@ if [ "$MODE" = "webporthttps" ]; then
       mkdir $LOOT_DIR/scans 2> /dev/null
       mkdir $LOOT_DIR/output 2> /dev/null
     fi
-    echo "$TARGET $MODE port$PORT `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
+    echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE -p $PORT --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
     if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: https://$TARGET:$PORT [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"

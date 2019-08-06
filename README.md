@@ -60,6 +60,7 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] Create individual workspaces to store all scan output
 
 ## EXPLOITS:
+- [x] Cisco IKE PSK Disclosure
 - [x] Drupal RESTful Web Services unserialize() SA-CORE-2019-003
 - [x] Apache Struts: S2-057 (CVE-2018-11776): Security updates available for Apache Struts
 - [x] Drupal: CVE-2018-7600: Remote Code Execution - SA-CORE-2018-002 
@@ -72,6 +73,7 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] Apache Struts Content-Type arbitrary command execution (CVE-2017-5638) 
 - [x] Microsoft IIS WebDav ScStoragePathFromUrl Overflow CVE-2017-7269
 - [x] ManageEngine Desktop Central 9 FileUploadServlet ConnectionId Vulnerability CVE-2015-8249
+- [x] MS15-034 HTTP.sys Memory Leak
 - [x] Shellshock Bash Shell remote code execution CVE-2014-6271
 - [x] HeartBleed OpenSSL Detection CVE-2014-0160
 - [x] MS12-020: Vulnerabilities in Remote Desktop Could Allow Remote Code Execution (2671387) 
@@ -104,7 +106,7 @@ bash install.sh
 
 ## UBUNTU/DEBIAN/PARROT INSTALL:
 ```
-bash install_debian_ubuntu.sh
+sudo bash install_debian_ubuntu.sh
 ```
 
 ## DOCKER INSTALL:

@@ -76,9 +76,19 @@ if [ "$MODE" = "stealth" ]; then
   echo -e "$RESET"
   echo -e "$OKORANGE + -- --=[Launching stealth scan: $TARGET $RESET"
   echo -e "$OKGREEN $RESET"
-  
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
-
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED GATHERING WHOIS INFO $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  if [ "$WHOIS" == "1" ]; then
+    if [ "$VERBOSE" == "1" ]; then
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN whois $TARGET 2> /dev/null | tee $LOOT_DIR/osint/whois-$TARGET.txt 2> /dev/null $RESET"
+    fi
+    whois $TARGET 2> /dev/null | tee $LOOT_DIR/osint/whois-$TARGET.txt 2> /dev/null 
+    if [ "$SLACK_NOTIFICATIONS_WHOIS" == "1" ]; then
+      /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/whois-$TARGET.txt"
+    fi
+  fi
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED GATHERING DNS INFO $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"

@@ -14,9 +14,9 @@ if [ "$MODE" = "discover" ]; then
       mkdir $LOOT_DIR/output 2> /dev/null
       mkdir $LOOT_DIR/scans 2> /dev/null
     fi
-    OUT_FILE=$(echo "$TARGET" | tr / -)
+    OUT_FILE="$(echo $TARGET | tr / -)"
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
-    echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$OUTFILE-$MODE.txt 2> /dev/null
+    echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$OUT_FILE-$MODE.txt 2> /dev/null
     if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     fi
@@ -38,7 +38,7 @@ if [ "$MODE" = "discover" ]; then
   echo -e "$OKRED                                                              ____ / /"
   echo -e "$OKRED                                                                   \/$RESET"
   echo ""
-  OUT_FILE=$(echo "$TARGET" | tr / -)
+  OUT_FILE=$(echo $TARGET | tr / -)
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING PING DISCOVERY SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
@@ -47,12 +47,17 @@ if [ "$MODE" = "discover" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
-  nmap -T4 -v -p $QUICK_PORTS -sS $TARGET 2> /dev/null | tee $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt 2>/dev/null 
+  nmap -v -p $QUICK_PORTS -sS $TARGET -Pn 2> /dev/null | tee $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt 2>/dev/null 
   cat $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt | grep open | grep on | awk '{print $6}' > $LOOT_DIR/ips/sniper-$OUT_FILE-tcpips.txt
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}"
+  nmap -v -p $DEFAULT_UDP_PORTS -sU -Pn $TARGET 2> /dev/null | tee $LOOT_DIR/ips/sniper-$OUT_FILE-udp.txt 2>/dev/null 
+  cat $LOOT_DIR/ips/sniper-$OUT_FILE-udp.txt | grep open | grep on | awk '{print $6}' > $LOOT_DIR/ips/sniper-$OUT_FILE-udpips.txt
   echo -e "${OKGREEN}====================================================================================${RESET}"
   echo -e "$OKRED CURRENT TARGETS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}"
-  cat $LOOT_DIR/ips/sniper-$OUT_FILE-ping-sorted.txt $LOOT_DIR/ips/sniper-$OUT_FILE-tcpips.txt 2> /dev/null > $LOOT_DIR/ips/sniper-$OUT_FILE-ips-unsorted.txt
+  cat $LOOT_DIR/ips/sniper-$OUT_FILE-ping-sorted.txt $LOOT_DIR/ips/sniper-$OUT_FILE-tcpips.txt $LOOT_DIR/ips/sniper-$OUT_FILE-udpips.txt 2> /dev/null > $LOOT_DIR/ips/sniper-$OUT_FILE-ips-unsorted.txt
   sort -u $LOOT_DIR/ips/sniper-$OUT_FILE-ips-unsorted.txt > $LOOT_DIR/ips/discover-$OUT_FILE-sorted.txt
   cat $LOOT_DIR/ips/discover-$OUT_FILE-sorted.txt
   echo ""

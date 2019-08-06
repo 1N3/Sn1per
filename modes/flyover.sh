@@ -64,7 +64,7 @@ if [ "$MODE" = "flyover" ]; then
       webtech -u http://$TARGET 2> /dev/null | grep \- 2> /dev/null | cut -d- -f2- 2> /dev/null > $LOOT_DIR/web/webtech-$TARGET-http.txt 2> /dev/null &
       webtech -u https://$TARGET 2> /dev/null | grep \- 2> /dev/null | cut -d- -f2- 2> /dev/null > $LOOT_DIR/web/webtech-$TARGET-https.txt 2> /dev/null &
 
-      nmap -sS -T5 --open -Pn -p $QUICK_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null & 
+      nmap -sS --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null & 
 
       cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" 2>/dev/null | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null & 2> /dev/null
 

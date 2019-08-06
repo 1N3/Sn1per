@@ -53,14 +53,31 @@ if [ "$MODE" = "webscan" ]; then
     	echo -e "${OKGREEN}====================================================================================${RESET}"
     	echo -e "$OKRED RUNNING BURPSUITE SCAN $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}"
-	    if [ "$VERBOSE" == "1" ]; then
-			echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl -X POST \"http://$BURP_HOST:$BURP_PORT/v0.1/scan\" -d \"{\"scope\":{\"include\":[{\"rule\":\"http://$TARGET:80\"}],\"type\":\"SimpleScope\"},\"urls\":[\"http://$TARGET:80\"]}\"$RESET"
-	    fi
 		curl -s -X POST "http://$BURP_HOST:$BURP_PORT/v0.1/scan" -d "{\"scope\":{\"include\":[{\"rule\":\"http://$TARGET:80\"}],\"type\":\"SimpleScope\"},\"urls\":[\"http://$TARGET:80\"]}"
 		curl -s -X POST "http://$BURP_HOST:$BURP_PORT/v0.1/scan" -d "{\"scope\":{\"include\":[{\"rule\":\"https://$TARGET:443\"}],\"type\":\"SimpleScope\"},\"urls\":[\"https://$TARGET:443\"]}"
-		echo ""
+		echo ""	
+		for a in {1..30}; 
+		do 
+			echo -n "[-] SCAN #$a: "
+			curl -sI "http://127.0.0.1:1337/v0.1/scan/$a" | grep HTTP | awk '{print $2}'
+			BURP_STATUS=$(curl -s http://127.0.0.1:1337/v0.1/scan/$a | grep -o -P "crawl_and_audit.{1,100}" | cut -d\" -f3 | grep "remaining")
+			while [[ ${#BURP_STATUS} -gt "5" ]]; 
+			do 
+				BURP_STATUS=$(curl -s http://127.0.0.1:1337/v0.1/scan/$a | grep -o -P "crawl_and_audit.{1,100}" | cut -d\" -f3 | grep "remaining")
+				BURP_STATUS_FULL=$(curl -s http://127.0.0.1:1337/v0.1/scan/$a | grep -o -P "crawl_and_audit.{1,100}" | cut -d\" -f3)
+				echo "[i] STATUS: $BURP_STATUS_FULL"
+				sleep 15
+			done
+			echo "[+] VULNERABILITIES: "
+			echo "----------------------------------------------------------------"
+			curl -s "http://127.0.0.1:1337/v0.1/scan/$a" | grep -o -P "name.{1,100}" | cut -d\" -f3 | sort -u | tee $LOOT_DIR/web/burpsuite-$TARGET-$a.txt
+		done 
+		echo "[-] Done!"
     fi
     if [ "$ARACHNI_SCAN" == "1" ]; then
+    	echo -e "${OKGREEN}====================================================================================${RESET}"
+    	echo -e "$OKRED RUNNING ARACHNI SCAN $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}"
 		mkdir -p $LOOT_DIR/web/http-$TARGET/
 		mkdir -p $LOOT_DIR/web/https-$TARGET/
 		arachni --report-save-path=$LOOT_DIR/web/http-$TARGET/ --output-only-positives http://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt 2>&1
