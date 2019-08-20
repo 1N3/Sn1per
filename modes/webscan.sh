@@ -59,18 +59,18 @@ if [ "$MODE" = "webscan" ]; then
 		for a in {1..30}; 
 		do 
 			echo -n "[-] SCAN #$a: "
-			curl -sI "http://127.0.0.1:1337/v0.1/scan/$a" | grep HTTP | awk '{print $2}'
-			BURP_STATUS=$(curl -s http://127.0.0.1:1337/v0.1/scan/$a | grep -o -P "crawl_and_audit.{1,100}" | cut -d\" -f3 | grep "remaining")
+			curl -sI "http://$BURP_HOST:$BURP_PORT/v0.1/scan/$a" | grep HTTP | awk '{print $2}'
+			BURP_STATUS=$(curl -s http://$BURP_HOST:$BURP_PORT/v0.1/scan/$a | grep -o -P "crawl_and_audit.{1,100}" | cut -d\" -f3 | grep "remaining")
 			while [[ ${#BURP_STATUS} -gt "5" ]]; 
 			do 
-				BURP_STATUS=$(curl -s http://127.0.0.1:1337/v0.1/scan/$a | grep -o -P "crawl_and_audit.{1,100}" | cut -d\" -f3 | grep "remaining")
-				BURP_STATUS_FULL=$(curl -s http://127.0.0.1:1337/v0.1/scan/$a | grep -o -P "crawl_and_audit.{1,100}" | cut -d\" -f3)
+				BURP_STATUS=$(curl -s http://$BURP_HOST:$BURP_PORT/v0.1/scan/$a | grep -o -P "crawl_and_audit.{1,100}" | cut -d\" -f3 | grep "remaining")
+				BURP_STATUS_FULL=$(curl -s http://$BURP_HOST:$BURP_PORT/v0.1/scan/$a | grep -o -P "crawl_and_audit.{1,100}" | cut -d\" -f3)
 				echo "[i] STATUS: $BURP_STATUS_FULL"
 				sleep 15
 			done
 			echo "[+] VULNERABILITIES: "
 			echo "----------------------------------------------------------------"
-			curl -s "http://127.0.0.1:1337/v0.1/scan/$a" | grep -o -P "name.{1,100}" | cut -d\" -f3 | sort -u | tee $LOOT_DIR/web/burpsuite-$TARGET-$a.txt
+			curl -s "http://$BURP_HOST:$BURP_PORT/v0.1/scan/$a" | grep -o -P "name.{1,100}" | cut -d\" -f3 | sort -u | tee $LOOT_DIR/web/burpsuite-$TARGET-$a.txt
 		done 
 		echo "[-] Done!"
     fi
