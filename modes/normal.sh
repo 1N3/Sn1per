@@ -574,7 +574,7 @@ else
   fi
 fi
 
-if [ -z "$port_161U" ];
+if [ -z "$port_161" ];
 then
   echo -e "$OKRED + -- --=[Port 161 closed... skipping.$RESET"
 else
