@@ -12,9 +12,11 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 
 ## SN1PER PROFESSIONAL FEATURES:
 ### Professional reporting interface
-![](https://xerosecurity.com/images/Sn1per-v6_dashboard1.PNG)
+![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per7Box.png)
 ### Workspace Navigator
 ![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-v7-workspacenavigator.png)
+### Workspace Reporting Dashboard
+![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Top-Menu1.png)
 ### Slideshow for all gathered screenshots
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot6c.png)
 ### Searchable and sortable DNS, IP and open port database
