@@ -7,18 +7,18 @@
 [![Tweet](https://img.shields.io/twitter/url/http/xer0dayz.svg?style=social)](https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Fdeveloper.twitter.com%2Fen%2Fdocs%2Ftwitter-for-websites%2Ftweet-button%2Foverview&ref_src=twsrc%5Etfw&text=Sn1per%20-%20Automated%20Pentest%20Recon%20Scanner&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2F1N3%2FSn1per)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/xer0dayz.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=xer0dayz)
 
-[![Demo](https://i2.wp.com/xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Demo.png?w=1281&ssl=1)](https://www.youtube.com/watch?v=YlRRNM3vd8k)
-
 ## ABOUT:
 Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes. For more information regarding Sn1per Professional, go to https://xerosecurity.com. 
 
 ## SN1PER PROFESSIONAL FEATURES:
 ### Professional reporting interface
 ![](https://xerosecurity.com/images/Sn1per-v6_dashboard1.PNG)
+### Workspace Navigator
+![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-v7-workspacenavigator.png)
 ### Slideshow for all gathered screenshots
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot6c.png)
 ### Searchable and sortable DNS, IP and open port database
-![](https://xerosecurity.com/images/Sn1per-v6_screenshot31.PNG)
+![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Host-List2.png)
 ### Detailed host reports
 ![](https://xerosecurity.com/images/Sn1per-pro8.png)
 ### NMap HTML host reports
@@ -34,7 +34,7 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 To obtain a Sn1per Professional license, go to https://xerosecurity.com. 
 
 ## DEMO VIDEO:
-[![Demo](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm.png)](https://asciinema.org/a/IDckE48BNSWQ8TV8yEjJjjMNm)
+[![Demo](https://i2.wp.com/xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Demo.png?w=1281&ssl=1)](https://www.youtube.com/watch?v=YlRRNM3vd8k)
 
 ## SN1PER COMMUNITY FEATURES:
 - [x] Automatically collects basic recon (ie. whois, ping, DNS, etc.)
