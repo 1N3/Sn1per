@@ -7,6 +7,8 @@
 [![Tweet](https://img.shields.io/twitter/url/http/xer0dayz.svg?style=social)](https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Fdeveloper.twitter.com%2Fen%2Fdocs%2Ftwitter-for-websites%2Ftweet-button%2Foverview&ref_src=twsrc%5Etfw&text=Sn1per%20-%20Automated%20Pentest%20Recon%20Scanner&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2F1N3%2FSn1per)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/xer0dayz.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=xer0dayz)
 
+[![Demo](https://i2.wp.com/xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Demo.png?w=1281&ssl=1)](https://www.youtube.com/watch?v=YlRRNM3vd8k)
+
 ## ABOUT:
 Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes. For more information regarding Sn1per Professional, go to https://xerosecurity.com. 
 
@@ -110,59 +112,62 @@ sudo bash install_debian_ubuntu.sh
 ```
 
 ## DOCKER INSTALL:
+From a new Docker console, run the following commands.
 ```
-sudo docker build -t sn1per-docker . && docker run -it sn1per-docker /bin/bash
+wget https://github.com/1N3/Sn1per/DockerFile
+docker build -t sn1per-docker . 
+docker run -it sn1per-docker /bin/bash
 ```
 
 ## USAGE:
 ```
 [*] NORMAL MODE
-sniper -t|--target <TARGET>
+sniper -t <TARGET>
 
 [*] NORMAL MODE + OSINT + RECON + FULL PORT SCAN + BRUTE FORCE
-sniper -t|--target <TARGET> -o|--osint -re|--recon -fp|--fullportonly -b|--bruteforce
+sniper -t <TARGET> -o -re -fp -b
 
 [*] STEALTH MODE + OSINT + RECON
-sniper -t|--target <TARGET> -m|--mode stealth -o|--osint -re|--recon
+sniper -t <TARGET> -m stealth -o -re
 
 [*] DISCOVER MODE
-sniper -t|--target <CIDR> -m|--mode discover -w|--workspace <WORSPACE_ALIAS>
+sniper -t <CIDR> -m discover -w <WORSPACE_ALIAS>
 
 [*] FLYOVER MODE
-sniper -t|--target <TARGET> -m|--mode flyover -w|--workspace <WORKSPACE_ALIAS>
+sniper -t <TARGET> -m flyover -w <WORKSPACE_ALIAS>
 
 [*] AIRSTRIKE MODE
-sniper -f|--file /full/path/to/targets.txt -m|--mode airstrike
+sniper -f /full/path/to/targets.txt -m airstrike
 
 [*] NUKE MODE WITH TARGET LIST, BRUTEFORCE ENABLED, FULLPORTSCAN ENABLED, OSINT ENABLED, RECON ENABLED, WORKSPACE & LOOT ENABLED
-sniper -f--file /full/path/to/targets.txt -m|--mode nuke -w|--workspace <WORKSPACE_ALIAS>
+sniper -f /full/path/to/targets.txt -m nuke -w <WORKSPACE_ALIAS>
 
 [*] SCAN ONLY SPECIFIC PORT
-sniper -t|--target <TARGET> -m port -p|--port <portnum>
+sniper -t <TARGET> -m port -p <portnum>
 
 [*] FULLPORTONLY SCAN MODE
-sniper -t|--target <TARGET> -fp|--fullportonly
+sniper -t <TARGET> -fp
 
 [*] PORT SCAN MODE
-sniper -t|--target <TARGET> -m|--mode port -p|--port <PORT_NUM>
+sniper -t <TARGET> -m port -p <PORT_NUM>
 
 [*] WEB MODE - PORT 80 + 443 ONLY!
-sniper -t|--target <TARGET> -m|--mode web
+sniper -t <TARGET> -m web
 
 [*] HTTP WEB PORT HTTP MODE
-sniper -t|--target <TARGET> -m|--mode webporthttp -p|--port <port>
+sniper -t <TARGET> -m webporthttp -p <port>
 
 [*] HTTPS WEB PORT HTTPS MODE
-sniper -t|--target <TARGET> -m|--mode webporthttps -p|--port <port>
+sniper -t <TARGET> -m webporthttps -p <port>
 
 [*] WEBSCAN MODE
-sniper -t|--target <TARGET> -m|--mode webscan
+sniper -t <TARGET> -m webscan
+
+[*] VULNSCAN MODE
+sniper -t <TARGET> -m vulnscan
 
 [*] ENABLE BRUTEFORCE
-sniper -t|--target <TARGET> -b|--bruteforce
-
-[*] ENABLE LOOT IMPORTING INTO METASPLOIT
-sniper -t|--target <TARGET>
+sniper -t <TARGET> -b
 
 [*] LOOT REIMPORT FUNCTION
 sniper -w <WORKSPACE_ALIAS> --reimport
@@ -185,20 +190,6 @@ sniper --status
 [*] UPDATE SNIPER
 sniper -u|--update
 ```
-## DOCKER USAGE:
-```
-### After the Docker installation is successfull:
-
-#### A) Run container and get a shell:
-docker run -it sn1per-docker /bin/bash
-
-#### B) Run a container, run sniper and get a shell (better integration):
-docker run -it sn1per-docker sniper $@ -t <TARGET>
-
-#### C) Even better you can create an alias:
-alias sniper='docker run -it sn1per-docker sniper $@'
-sniper -t <TARGET>
-```
 
 ### MODES:
 * **NORMAL:** Performs basic scan of targets and open ports using both active and passive checks for optimal performance.
@@ -213,6 +204,7 @@ sniper -t <TARGET>
 * **WEBPORTHTTP:** Launches a full HTTP web application scan against a specific host and port.
 * **WEBPORTHTTPS:** Launches a full HTTPS web application scan against a specific host and port.
 * **WEBSCAN:** Launches a full HTTP & HTTPS web application scan against via Burpsuite and Arachni.
+* **VULNSCAN:** Launches a OpenVAS vulnerability scan.
 
 ## SAMPLE REPORT:
 https://gist.github.com/1N3/8214ec2da2c91691bcbc
