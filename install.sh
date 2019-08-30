@@ -42,6 +42,7 @@ apt-get update
 apt-get install -y python3-uritools python3-paramiko nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil clusterd ruby rubygems python dos2unix sslyze arachni aha libxml2-utils rpcbind cutycapt host whois dnsrecon curl nmap php php-curl hydra wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq golang adb xsltproc
 apt-get install -y waffit 2> /dev/null
 apt-get install -y libssl-dev 2> /dev/null
+apt-get install -y python-pip 
 apt-get remove -y python3-pip
 apt-get install -y python3-pip
 pip install dnspython colorama tldextract urllib3 ipaddress requests
