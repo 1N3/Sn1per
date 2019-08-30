@@ -11,17 +11,21 @@
 Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes. For more information regarding Sn1per Professional, go to https://xerosecurity.com. 
 
 ## SN1PER PROFESSIONAL FEATURES:
-### Workspace Navigator
+- [x] User friendly web-based interface
+- [x] Run tasks, sort, organize and analyze results
+- [x] Visualize attack surface with the "Slideshow" and thumbnail host lists
+- [x] 
+### Workspace navigator lets you easily navigate all workspaces within Sn1per
 ![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-v7-workspacenavigator.png)
-### Workspace Reporting Dashboard
+### Workspace reporting dashboard gives you a high level view of the attack surface and overall scan progress bar to ensure full scan coverage
 ![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Top-Menu1.png)
-### Slideshow for all gathered screenshots
+### Slideshow for all gathered screenshots lets you visualize the attack surface
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot6c.png)
-### Searchable and sortable DNS, IP and open port database
+### Searchable and sortable DNS, IP and open port database lets you dig deeper to find interesting hosts, ports, and meta properties
 ![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Host-List2.png)
-### Detailed host reports
+### Detailed host reports parses all command output in an easy to read HTML report with quick links to Google dorks, online recon tools and previous scan reports
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot33.PNG)
-### NMap HTML host reports
+### NMap HTML host reports parses low level network detail on each host in your workspace
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot9.png)
 ### Demo Video:
 [![Demo](https://i2.wp.com/xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Demo.png?w=1281&ssl=1)](https://www.youtube.com/watch?v=YlRRNM3vd8k)
