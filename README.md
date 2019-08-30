@@ -22,21 +22,14 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 ### Searchable and sortable DNS, IP and open port database
 ![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Host-List2.png)
 ### Detailed host reports
-![](https://xerosecurity.com/images/Sn1per-pro8.png)
+![](https://xerosecurity.com/images/Sn1per-v6_screenshot33.PNG)
 ### NMap HTML host reports
 ![](https://xerosecurity.com/images/Sn1per-v6_screenshot9.png)
-### Quick links to online recon tools and Google hacking queries
-![](https://xerosecurity.com/images/sn1per-pro5.png)
-### Takeovers and Email Security
-![](https://xerosecurity.com/images/Sn1per-v6_screenshot16.png)
-### HTML5 Notepad
-![](https://xerosecurity.com/images/Sn1per-v6_screenshot15.png)
+### DEMO VIDEO:
+[![Demo](https://i2.wp.com/xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Demo.png?w=1281&ssl=1)](https://www.youtube.com/watch?v=YlRRNM3vd8k)
 
 ## ORDER SN1PER PROFESSIONAL:
 To obtain a Sn1per Professional license, go to https://xerosecurity.com. 
-
-## DEMO VIDEO:
-[![Demo](https://i2.wp.com/xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Demo.png?w=1281&ssl=1)](https://www.youtube.com/watch?v=YlRRNM3vd8k)
 
 ## SN1PER COMMUNITY FEATURES:
 - [x] Automatically collects basic recon (ie. whois, ping, DNS, etc.)
