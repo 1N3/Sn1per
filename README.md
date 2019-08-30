@@ -15,7 +15,7 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 - [x] Easily navigate all workspaces within Sn1per
 ![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-v7-workspacenavigator.png)
 ### Workspace Dashboard
-- [x] Get a high level view of the attack surface with overall scan progress and downloadable list links to all hosts
+- [x] Get a high level view of the attack surface with overall scan progress
 ![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Top-Menu1.png)
 ### Slideshow 
 - [x] Visualize the attack surface by easily flipping through all gathered screenshots
@@ -38,6 +38,7 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] Automatically collects basic recon (ie. whois, ping, DNS, etc.)
 - [x] Automatically launches Google hacking queries against a target domain
 - [x] Automatically enumerates open ports via NMap port scanning
+- [x] Automatically exploit common vulnerabilities
 - [x] Automatically brute forces sub-domains, gathers DNS info and checks for zone transfers
 - [x] Automatically checks for sub-domain hijacking
 - [x] Automatically runs targeted NMap scripts against open ports
@@ -51,53 +52,18 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] Automatically enumerate SSL/TLS ciphers, protocols and vulnerabilities
 - [x] Automatically enumerate SNMP community strings, services and users
 - [x] Automatically list SMB users and shares, check for NULL sessions and exploit MS08-067
-- [x] Automatically exploit vulnerable JBoss, Java RMI and Tomcat servers
 - [x] Automatically tests for open X11 servers
-- [x] Auto-pwn added for Metasploitable, ShellShock, MS08-067, Default Tomcat Creds
 - [x] Performs high level enumeration of multiple hosts and subnets
 - [x] Automatically integrates with Metasploit Pro, MSFConsole and Zenmap for reporting
 - [x] Automatically gathers screenshots of all web sites
 - [x] Create individual workspaces to store all scan output
-
-## EXPLOITS:
-- [x] Cisco IKE PSK Disclosure
-- [x] Drupal RESTful Web Services unserialize() SA-CORE-2019-003
-- [x] Apache Struts: S2-057 (CVE-2018-11776): Security updates available for Apache Struts
-- [x] Drupal: CVE-2018-7600: Remote Code Execution - SA-CORE-2018-002 
-- [x] GPON Routers - Authentication Bypass / Command Injection CVE-2018-10561
-- [x] MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption
-- [x] Apache Tomcat: Remote Code Execution (CVE-2017-12617) 
-- [x] Oracle WebLogic wls-wsat Component Deserialization Remote Code Execution CVE-2017-10271
-- [x] Apache Struts Content-Type arbitrary command execution (CVE-2017-5638) 
-- [x] Apache Struts 2 Framework Checks - REST plugin with XStream handler (CVE-2017-9805) 
-- [x] Apache Struts Content-Type arbitrary command execution (CVE-2017-5638) 
-- [x] Microsoft IIS WebDav ScStoragePathFromUrl Overflow CVE-2017-7269
-- [x] ManageEngine Desktop Central 9 FileUploadServlet ConnectionId Vulnerability CVE-2015-8249
-- [x] MS15-034 HTTP.sys Memory Leak
-- [x] Shellshock Bash Shell remote code execution CVE-2014-6271
-- [x] HeartBleed OpenSSL Detection CVE-2014-0160
-- [x] MS12-020: Vulnerabilities in Remote Desktop Could Allow Remote Code Execution (2671387) 
-- [x] Tomcat Application Manager Default Ovwebusr Password Vulnerability CVE-2009-3843
-- [x] MS08-067 Microsoft Server Service Relative Path Stack Corruption
-- [x] Webmin File Disclosure CVE-2006-3392
-- [x] VsFTPd 2.3.4 Backdoor
-- [x] ProFTPd 1.3.3C Backdoor
-- [x] MS03-026 Microsoft RPC DCOM Interface Overflow
-- [x] DistCC Daemon Command Execution
-- [x] JBoss Java De-Serialization
-- [x] HTTP Writable Path PUT/DELETE File Access
-- [x] Apache Tomcat User Enumeration
-- [x] Tomcat Application Manager Login Bruteforce
-- [x] Jenkins-CI Enumeration
-- [x] HTTP WebDAV Scanner
-- [x] Android Insecure ADB
-- [x] Anonymous FTP Access
-- [x] PHPMyAdmin Backdoor
-- [x] PHPMyAdmin Auth Bypass
-- [x] OpenSSH User Enumeration
-- [x] LibSSH Auth Bypass
-- [x] SMTP User Enumeration
-- [x] Public NFS Mounts
+- [x] Scheduled scans (daily, weekly, monthly)
+- [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
+- [x] Hunter.io API integration (https://github.com/1N3/Sn1per/wiki/Hunter.io-API-Integration)
+- [x] OpenVAS API integration (https://github.com/1N3/Sn1per/wiki/OpenVAS-Integration)
+- [x] Burpsuite Professional 2.x integration (https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
+- [x] Censys API integration (https://github.com/1N3/Sn1per/wiki/Censys-API-Integration)
+- [x] Metasploit integration (https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
 
 ## KALI LINUX INSTALL:
 ```
