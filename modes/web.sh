@@ -4,7 +4,7 @@ if [ "$MODE" = "web" ]; then
     if [ ! -z "$WORKSPACE" ]; then
       args="$args -w $WORKSPACE"
       LOOT_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
-      echo -e "$OKBLUE[*] Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+      echo -e "$OKBLUE[*]$RESET Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
       mkdir -p $LOOT_DIR 2> /dev/null
       mkdir $LOOT_DIR/domains 2> /dev/null
       mkdir $LOOT_DIR/screenshots 2> /dev/null

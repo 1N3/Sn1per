@@ -9,7 +9,7 @@ if [ "$MODE" = "nuke" ]; then
     for a in `cat $FILE`;
     do
       if [ ! -z "$WORKSPACE" ]; then
-        args="$args -b -fp -w $WORKSPACE"
+        args="$args -w $WORKSPACE"
         WORKSPACE_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
         echo -e "$OKBLUE[*] Saving loot to $WORKSPACE_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
         mkdir -p $WORKSPACE_DIR 2> /dev/null

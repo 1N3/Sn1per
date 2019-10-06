@@ -10,7 +10,7 @@ if [ "$MODE" = "flyover" ]; then
     if [ ! -z "$WORKSPACE" ]; then
       args="$args -w $WORKSPACE"
       WORKSPACE_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
-      echo -e "$OKBLUE[*] Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+      echo -e "$OKBLUE[*]$RESET Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
       mkdir -p $WORKSPACE_DIR 2> /dev/null
       mkdir $WORKSPACE_DIR/domains 2> /dev/null
       mkdir $WORKSPACE_DIR/screenshots 2> /dev/null
@@ -65,7 +65,10 @@ if [ "$MODE" = "flyover" ]; then
       webtech -u https://$TARGET 2> /dev/null | grep \- 2> /dev/null | cut -d- -f2- 2> /dev/null > $LOOT_DIR/web/webtech-$TARGET-https.txt 2> /dev/null &
 
       nmap -sS --open -Pn -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null & 
-
+      WEBHOST=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null | egrep "80|443" | grep open | wc -l 2> /dev/null) 
+      if [ "$WEBHOST" -gt "0" ]; then
+        echo "$TARGET" >> $LOOT_DIR/web/webhosts-unsorted.txt 2> /dev/null
+      fi
       cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" 2>/dev/null | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null & 2> /dev/null
 
       if [ $CUTYCAPT = "1" ]; then
@@ -77,26 +80,36 @@ if [ "$MODE" = "flyover" ]; then
           cutycapt --url=https://$TARGET:443 --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null > /dev/null &
         fi
       fi
-
       if [ $WEBSCREENSHOT = "1" ]; then
         cd $LOOT_DIR
-        python $INSTALL_DIR/bin/webscreenshot.py -t 5 http://$TARGET:80 2> /dev/null > /dev/null &
-        python $INSTALL_DIR/bin/webscreenshot.py -t 5 https://$TARGET:443 2> /dev/null > /dev/null &
+        python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 http://$TARGET:80 2> /dev/null > /dev/null &
+        python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 https://$TARGET:443 2> /dev/null > /dev/null &
       fi
-
       echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
-      
+      echo "$TARGET" >> $LOOT_DIR/domains/targets-all-presorted.txt
       i=$((i+1))
       if [ "$i" -gt "$THREADS" ]; then
         i=1
         sleep 15
       fi
-
     done
     sleep 15
     sort -u LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
+    sort -u $LOOT_DIR/domains/targets-all-presorted.txt 2> /dev/null > $LOOT_DIR/domains/targets-all-sorted.txt
     rm -f $INSTALL_DIR/wget-log* 2> /dev/null
     killall webtech 2> /dev/null
+    for TARGET in `cat $LOOT_DIR/domains/targets-all-sorted.txt`; do
+      HOST_UP=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2> /dev/null | grep "host up" 2> /dev/null)
+      if [ ${#HOST_UP} -ge 2 ]; then
+        echo "$TARGET" >> $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null
+      fi
+
+      rm -f $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
+      for PORT in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml $LOOT_DIR/nmap/nmap-$TARGET-*.xml 2>/dev/null | egrep 'state="open"' | cut -d' ' -f3 | cut -d\" -f2 | sort -u | grep '[[:digit:]]'`; do
+        echo "$PORT " >> $LOOT_DIR/nmap/ports-$TARGET.txt
+      done      
+    done
+    sort -u $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null > $LOOT_DIR/nmap/livehosts-sorted.txt 2> /dev/null
     echo -e "$OKRED=====================================================================================$RESET"
     if [ "$LOOT" = "1" ]; then
       loot

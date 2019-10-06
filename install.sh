@@ -83,6 +83,14 @@ git clone https://github.com/rbsec/dnscan.git
 git clone https://github.com/christophetd/censys-subdomain-finder.git
 pip install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
+git clone https://github.com/infosec-au/altdns.git 
+git clone https://github.com/blechschmidt/massdns.git
+git clone https://github.com/ProjectAnte/dnsgen
+cd dnsgen
+pip3 install -r requirements.txt
+python3 setup.py install
+cd ..
+pip install py-altdns
 pip3 install webtech
 mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
@@ -99,6 +107,8 @@ cd ~/go/bin;go get -u github.com/subfinder/subfinder; mv subfinder /usr/local/bi
 cd /usr/share/nmap/scripts/
 git clone https://github.com/scipag/vulscan
 wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
+mkdir -p ~/.msf4/modules/exploits/web
+wget https://raw.githubusercontent.com/1N3/Exploits/master/defcon_webmin_unauth_rce.rb -O ~/.msf4/modules/exploits/web/defcon_webmin_unauth_rce.rb
 cd $PLUGINS_DIR
 echo -e "$OKORANGE + -- --=[Setting up environment...$RESET"
 mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null

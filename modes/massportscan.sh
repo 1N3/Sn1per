@@ -11,7 +11,7 @@ if [ "$MODE" = "massportscan" ]; then
       if [ ! -z "$WORKSPACE" ]; then
         args="$args -w $WORKSPACE"
         WORKSPACE_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
-        echo -e "$OKBLUE[*] Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+        echo -e "$OKBLUE[*]$RESET Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
         mkdir -p $WORKSPACE_DIR 2> /dev/null
         mkdir $WORKSPACE_DIR/domains 2> /dev/null
         mkdir $WORKSPACE_DIR/screenshots 2> /dev/null

@@ -1,4 +1,16 @@
 ## CHANGELOG:
+* v7.3 - Added CVE-2019-15107 Webmin <= 1.920 - Unauthenticated RCE MSF exploit
+* v7.3 - Added massdns plugin
+* v7.3 - Added altdns plugin
+* v7.3 - Added dnsgen plugin
+* v7.3 - Updated web file/dir wordlists from public exploits and honeypots
+* v7.3 - Added time stamps to all commands
+* v7.3 - Removed CloudFront from domain hijacking checks
+* v7.3 - Removed snmp-brute.nse script due to scan issues
+* v7.3 - Fixed issue with discover scan workspace names
+* v7.3 - Fixed issue with DockerFile (sed: can't read /usr/bin/msfdb: No such file or directory)
+* v7.3 - Fixed issue with installer on docker not having pip installed
+* v7.3 - Fixed issue with port 161 not being referenced correctly in scans
 * v7.2 - Added experimental OpenVAS API integration
 * v7.2 - Improved Burpsuite 2.x API integration with vuln reporting
 * v7.2 - Added hunter.io API integration to recon mode scans
