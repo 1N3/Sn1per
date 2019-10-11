@@ -45,6 +45,7 @@ apt-get install -y libssl-dev 2> /dev/null
 apt-get install -y python-pip 
 apt-get remove -y python3-pip
 apt-get install -y python3-pip
+apt-get install -y xmlstarlet
 pip install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
@@ -85,6 +86,9 @@ pip install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
 git clone https://github.com/infosec-au/altdns.git 
 git clone https://github.com/blechschmidt/massdns.git
+cd massdns
+make && make install
+cd ..
 git clone https://github.com/ProjectAnte/dnsgen
 cd dnsgen
 pip3 install -r requirements.txt
@@ -97,11 +101,12 @@ unzip slurp.zip
 rm -f slurp.zip
 cd ~/go/bin/;go get github.com/haccer/subjack
 cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
-rm -Rf ~/go/src/amass_2.9.0_linux_amd64 2> /dev/null
-wget https://github.com/OWASP/Amass/releases/download/2.9.0/amass_2.9.0_linux_amd64.zip -O ~/go/src/amass.zip
+wget https://github.com/OWASP/Amass/releases/download/v3.1.10/amass_v3.1.10_linux_amd64.zip -O ~/go/src/amass.zip
 cd ~/go/src/
 unzip ~/go/src/amass.zip
-ln -s ~/go/src/amass_2.9.0_linux_amd64/amass /usr/local/bin/amass2.9 -f
+mv amass_v3.1.10_linux_amd64 amass
+cd amass
+cp amass /usr/bin/amass -f 
 rm -f ~/go/src/amass.zip
 cd ~/go/bin;go get -u github.com/subfinder/subfinder; mv subfinder /usr/local/bin/subfinder
 cd /usr/share/nmap/scripts/

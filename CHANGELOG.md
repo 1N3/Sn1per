@@ -1,4 +1,10 @@
 ## CHANGELOG:
+* v7.4 - Disabled crt.sh sub-domain retrieval since service is disabled
+* v7.4 - Fixed issue with MassDNS installation
+* v7.4 - Fixed issue with AMass not running
+* v7.4 - Improved performance of AltDNS/DNSgen/MassDNS retrieval
+* v7.4 - Changed webscreenshot.py setting to use chrome browser 
+* v7.4 - Fixed issue with missing xmlstarlet package for OpenVAS scans
 * v7.3 - Added CVE-2019-15107 Webmin <= 1.920 - Unauthenticated RCE MSF exploit
 * v7.3 - Added massdns plugin
 * v7.3 - Added altdns plugin

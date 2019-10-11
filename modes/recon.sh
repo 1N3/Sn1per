@@ -13,9 +13,9 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA AMASS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    amass2.9 -ip -brute -active -o $LOOT_DIR/domains/domains-$TARGET-amass.txt -min-for-recursive 3 -d $TARGET 2>/dev/null
-    cut -d, -f1 $LOOT_DIR/domains/domains-$TARGET-amass.txt 2>/dev/null | grep $TARGET > $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt
-    cut -d, -f2 $LOOT_DIR/domains/domains-$TARGET-amass.txt 2>/dev/null > $LOOT_DIR/domains/domains-$TARGET-amass-ips-sorted.txt
+    amass -ip -brute -o $LOOT_DIR/domains/domains-$TARGET-amass.txt -min-for-recursive 3 -d $TARGET 2>/dev/null
+    cut -d" " -f1 $LOOT_DIR/domains/domains-$TARGET-amass.txt 2>/dev/null | grep $TARGET > $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt
+    cut -d" " -f2 $LOOT_DIR/domains/domains-$TARGET-amass.txt 2>/dev/null > $LOOT_DIR/domains/domains-$TARGET-amass-ips-sorted.txt
   fi
   if [ "$SUBFINDER" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -67,26 +67,27 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING ALTDNS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python2 "$INSTALL_DIR/plugins/altdns/altdns.py" -i /tmp/curl.out -w $INSTALL_DIR/wordlists/altdns.txt -o $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null 
+    python2 $INSTALL_DIR/plugins/altdns/altdns.py -i $LOOT_DIR/domains/domains-$TARGET.txt -w $INSTALL_DIR/wordlists/altdns.txt -o $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null 
   fi
   if [ "$DNSGEN" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING DNSGEN SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python3 "$INSTALL_DIR/plugins/dnsgen/dnsgen.py" /tmp/curl.out > $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt 2> /dev/null 
+    python3 $INSTALL_DIR/plugins/dnsgen/dnsgen.py $LOOT_DIR/domains/domains-$TARGET.txt > $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt 2> /dev/null 
   fi
   if [ "$MASS_DNS" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING MASSDNS ON SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     sort -u $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-alldns.txt 2> /dev/null 
-    /usr/share/sniper/plugins/massdns/bin/massdns -s 5000 -r /usr/share/sniper/plugins/massdns/lists/resolvers.txt $LOOT_DIR/domains/domains-$TARGET-alldns.txt -o S -t AAAA -q -w $LOOT_DIR/domains/domains-$TARGET-massdns.txt
+    massdns -s 5000 -r /usr/share/sniper/plugins/massdns/lists/resolvers.txt $LOOT_DIR/domains/domains-$TARGET-alldns.txt -q -o S -t A -w $LOOT_DIR/domains/domains-$TARGET-massdns.txt
     awk -F ". " '{print $1}' $LOOT_DIR/domains/domains-$TARGET-massdns.txt | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt
     cat $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt 2> /dev/null >> /tmp/curl.out 2> /dev/null
-    grep "CNAME" $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-CNAME.txt
+    grep "IN CNAME" $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-CNAME.txt
     grep "A " $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-A-records.txt
   fi
   sort -u /tmp/curl.out 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-full.txt
+  cat $LOOT_DIR/domains/domains-$TARGET-full.txt >> $LOOT_DIR/scans/updated.txt 2> /dev/null
   rm -f /tmp/curl.out 2> /dev/null
   diff $LOOT_DIR/domains/domains_old-$TARGET.txt $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{print $2}' 2> /dev/null > $LOOT_DIR/domains/domains_new-$TARGET.txt
   if [ "$SLACK_NOTIFICATIONS_DOMAINS_NEW" == "1" ]; then
