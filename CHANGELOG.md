@@ -1,6 +1,10 @@
 ## CHANGELOG:
+* v7.4 - Added reverse whois DNS search via AMass
+* v7.4 - Disabled MassDNS/DNSGen/AltDNS in default configuration (Can be enabled in ~/.sniper.conf)
 * v7.4 - Disabled crt.sh sub-domain retrieval since service is disabled
+* v7.4 - Added MassDNS IP's to master sorted IP list 
 * v7.4 - Fixed issue with MassDNS installation
+* v7.4 - Fixed bad path with DNSGen 
 * v7.4 - Fixed issue with AMass not running
 * v7.4 - Improved performance of AltDNS/DNSgen/MassDNS retrieval
 * v7.4 - Changed webscreenshot.py setting to use chrome browser 
