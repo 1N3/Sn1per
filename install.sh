@@ -101,16 +101,19 @@ unzip slurp.zip
 rm -f slurp.zip
 cd ~/go/bin/;go get github.com/haccer/subjack
 cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
+rm -Rf ~/go/src/amass*
 wget https://github.com/OWASP/Amass/releases/download/v3.1.10/amass_v3.1.10_linux_amd64.zip -O ~/go/src/amass.zip
 cd ~/go/src/
 unzip ~/go/src/amass.zip
-mv amass_v3.1.10_linux_amd64 amass
+mv amass_v3.1.10_linux_amd64 amass 2> /dev/null
 cd amass
-cp amass /usr/bin/amass -f 
-rm -f ~/go/src/amass.zip
+cp amass /usr/bin/amass -f 2> /dev/null
+rm -f ~/go/src/amass.zip 2> /dev/null
 cd ~/go/bin;go get -u github.com/subfinder/subfinder; mv subfinder /usr/local/bin/subfinder
 cd /usr/share/nmap/scripts/
+rm -Rf vulscan 2> /dev/null
 git clone https://github.com/scipag/vulscan
+rm -f /usr/share/nmap/scripts/vulners.nse
 wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
 mkdir -p ~/.msf4/modules/exploits/web
 wget https://raw.githubusercontent.com/1N3/Exploits/master/defcon_webmin_unauth_rce.rb -O ~/.msf4/modules/exploits/web/defcon_webmin_unauth_rce.rb
