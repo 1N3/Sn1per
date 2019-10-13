@@ -89,6 +89,7 @@ cd altdns
 pip install -r requirements.txt 
 python2 setup.py install 
 pip install py-altdns
+cd ..
 git clone https://github.com/blechschmidt/massdns.git
 cd massdns
 make && make install
