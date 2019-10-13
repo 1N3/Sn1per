@@ -85,6 +85,10 @@ git clone https://github.com/christophetd/censys-subdomain-finder.git
 pip install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
 git clone https://github.com/infosec-au/altdns.git 
+cd altdns
+pip install -r requirements.txt 
+python2 setup.py install 
+pip install py-altdns
 git clone https://github.com/blechschmidt/massdns.git
 cd massdns
 make && make install
@@ -94,7 +98,6 @@ cd dnsgen
 pip3 install -r requirements.txt
 python3 setup.py install
 cd ..
-pip install py-altdns
 pip3 install webtech
 mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
