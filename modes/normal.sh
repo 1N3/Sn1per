@@ -94,16 +94,6 @@ if [ -z "$PORT" ]; then
 else
   nmap -Pn -sU -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
 fi
-HOST_UP=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2> /dev/null | grep "host up" 2> /dev/null)
-if [ ${#HOST_UP} -ge 2 ]; then
-  echo "$TARGET" >> $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null
-fi
-sort -u $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null > $LOOT_DIR/nmap/livehosts-sorted.txt 2> /dev/null
-
-rm -f $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
-for PORT in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml $LOOT_DIR/nmap/nmap-$TARGET-*.xml 2>/dev/null | egrep 'state="open"' | cut -d' ' -f3 | cut -d\" -f2 | sort -u | grep '[[:digit:]]'`; do
-  echo "$PORT " >> $LOOT_DIR/nmap/ports-$TARGET.txt
-done
 if [ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET.txt"
 fi
