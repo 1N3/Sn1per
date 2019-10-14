@@ -70,7 +70,6 @@ if [ "$MODE" = "flyover" ]; then
         echo "$TARGET" >> $LOOT_DIR/web/webhosts-unsorted.txt 2> /dev/null
       fi
       cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" 2>/dev/null | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null & 2> /dev/null
-
       if [ $CUTYCAPT = "1" ]; then
         if [ ${DISTRO} == "blackarch"  ]; then
           /bin/CutyCapt --url=http://$TARGET:80 --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null &
@@ -82,8 +81,8 @@ if [ "$MODE" = "flyover" ]; then
       fi
       if [ $WEBSCREENSHOT = "1" ]; then
         cd $LOOT_DIR
-        python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 http://$TARGET:80 2> /dev/null > /dev/null &
-        python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 https://$TARGET:443 2> /dev/null > /dev/null &
+        python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 -r chromium http://$TARGET:80 2> /dev/null > /dev/null &
+        python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 -r chromium https://$TARGET:443 2> /dev/null > /dev/null &
       fi
       echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
       echo "$TARGET" >> $LOOT_DIR/domains/targets-all-presorted.txt

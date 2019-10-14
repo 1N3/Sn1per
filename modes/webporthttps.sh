@@ -148,7 +148,7 @@ if [ "$MODE" = "webporthttps" ]; then
     fi
     if [ $WEBSCREENSHOT = "1" ]; then
       cd $LOOT_DIR
-      python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 https://$TARGET:$PORT
+      python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 -r chromium https://$TARGET:$PORT
     fi
     if [ "$BURP_SCAN" == "1" ]; then
         echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

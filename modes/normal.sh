@@ -440,7 +440,7 @@ else
   fi
   if [ $WEBSCREENSHOT = "1" ]; then
     cd $LOOT_DIR
-    python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 http://$TARGET:80
+    python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 -r chromium http://$TARGET:80
   fi
   source $INSTALL_DIR/modes/normal_webporthttp.sh
   source $INSTALL_DIR/modes/osint_stage_2.sh
@@ -724,7 +724,7 @@ else
 
   if [ $WEBSCREENSHOT = "1" ]; then
     cd $LOOT_DIR
-    python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 https://$TARGET:443
+    python2 $INSTALL_DIR/bin/webscreenshot.py -t 5 -r chromium https://$TARGET:443
   fi
   source $INSTALL_DIR/modes/normal_webporthttps.sh
   source $INSTALL_DIR/modes/osint_stage_2.sh

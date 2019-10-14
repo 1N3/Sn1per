@@ -84,10 +84,10 @@ if [ "$RECON" = "1" ]; then
     echo -e "$OKRED RUNNING MASSDNS ON SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     sort -u $LOOT_DIR/domains/domains-$TARGET-presorted.txt $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-alldns.txt 2> /dev/null 
-    massdns -s 5000 -r /usr/share/sniper/plugins/massdns/lists/resolvers.txt $LOOT_DIR/domains/domains-$TARGET-alldns.txt -o S -t A -w $LOOT_DIR/domains/domains-$TARGET-massdns.txt
+    massdns -r /usr/share/sniper/plugins/massdns/lists/resolvers.txt $LOOT_DIR/domains/domains-$TARGET-alldns.txt -o S -t A -w $LOOT_DIR/domains/domains-$TARGET-massdns.txt
     awk -F ". " '{print $1}' $LOOT_DIR/domains/domains-$TARGET-massdns.txt | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt
     cat $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
-    grep "IN CNAME" $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-CNAME.txt
+    grep "CNAME" $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-CNAME.txt
     grep "A " $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-A-records.txt
     cat $LOOT_DIR/domains/domains-$TARGET-massdns-A-records.txt >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
   fi
