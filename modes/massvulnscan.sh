@@ -1,5 +1,5 @@
 # MASSWEB MODE #####################################################################################################
-if [ "$MODE" = "massweb" ]; then
+if [ "$MODE" = "massvulnscan" ]; then
   if [ -z "$FILE" ]; then
     logo
     echo "You need to specify a list of targets (ie. -f <targets.txt>) to scan."

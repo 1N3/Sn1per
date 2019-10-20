@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v7.4 - Fixed error in massvulnscan mode
 * v7.4 - Fixed issue with webscreenshot.py not running
 * v7.4 - Added reverse whois DNS search via AMass
 * v7.4 - Added MassDNS IP's to master sorted IP list 
