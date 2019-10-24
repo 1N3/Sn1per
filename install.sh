@@ -18,9 +18,9 @@ echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[https://xerosecurity.com$RESET"
 echo ""
 
-INSTALL_DIR=/usr/share/sniper
-LOOT_DIR=/usr/share/sniper/loot
-PLUGINS_DIR=/usr/share/sniper/plugins
+INSTALL_DIR=/root/Sn1per
+LOOT_DIR=/root/Sn1per
+PLUGINS_DIR=/root/Sn1per
 GO_DIR=~/go/bin
 
 echo -e "$OKGREEN + -- --=[This script will install sniper under $INSTALL_DIR. Are you sure you want to continue? (Hit Ctrl+C to exit)$RESET"
