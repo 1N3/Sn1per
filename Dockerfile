@@ -31,7 +31,6 @@ RUN apt-get install -y git \
     && cd /root/Sn1per \
     && bash /root/Sn1per/install.sh
 # Add the following to run the professional version.
-# cd /usr/share/sniper/
-# wget https://xerosecurity.com/pro/6.0/[YOURCUSTOMLICENSEKEYHERE]/pro.sh -O pro.sh
+# cd /root/Sn1per/ && wget https://xerosecurity.com/pro/6.0/[YOURCUSTOMLICENSEKEYHERE]/pro.sh -O pro.sh
 # If you did that: you need to configure the entrypoint and config/expose the web service.
 CMD ["/bin/bash"]
