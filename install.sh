@@ -23,9 +23,6 @@ LOOT_DIR=/root/Sn1per
 PLUGINS_DIR=/root/Sn1per
 GO_DIR=~/go/bin
 
-echo -e "$OKGREEN + -- --=[This script will install sniper under $INSTALL_DIR. Are you sure you want to continue? (Hit Ctrl+C to exit)$RESET"
-read answer
-
 mkdir -p $INSTALL_DIR 2> /dev/null
 mkdir -p $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/domains 2> /dev/null
