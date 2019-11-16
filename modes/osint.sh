@@ -17,7 +17,20 @@ if [ "$OSINT" = "1" ]; then
 		fi
 	fi
 	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	echo -e "$OKRED GATHERING OSINT INFO $RESET"
+	echo -e "$OKRED GATHERING ULTATOOLS DNS INFO $RESET"
+	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	if [ "$ULTRATOOLS" == "1" ]; then
+		curl -s https://www.ultratools.com/tools/ipWhoisLookupResult\?ipAddress\=$TARGET | grep -A2 label | grep -v input | grep span | cut -d">" -f2 | cut -d"<" -f1 | sed 's/\&nbsp\;//g' 2> /dev/null | tee $LOOT_DIR/osint/ultratools-$TARGET.txt 2> /dev/null
+	fi
+	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	echo -e "$OKRED GATHERING DNS INFO $RESET"
+	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	if [ "$INTODNS" == "1" ]; then
+		wget -q http://www.intodns.com/$TARGET -O $LOOT_DIR/osint/intodns-$TARGET.html 2> /dev/null
+		echo -e "$OKRED[+]$RESET Report saved to: $LOOT_DIR/osint/intodns-$TARGET.html"
+	fi
+	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	echo -e "$OKRED GATHERING THEHARVESTER OSINT INFO $RESET"
 	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	if [ "$THEHARVESTER" == "1" ]; then
 		if [ "$VERBOSE" == "1" ]; then
@@ -28,7 +41,22 @@ if [ "$OSINT" = "1" ]; then
 		if [ "$SLACK_NOTIFICATIONS_THEHARVESTER" == "1" ]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/theharvester-$TARGET.txt"
 		fi
+	fi
+	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	echo -e "$OKRED GATHERING EMAILS FROM EMAIL-FORMAT.COM $RESET"
+	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	if [ "$EMAILFORMAT" == "1" ]; then
+		curl -s https://www.email-format.com/d/$TARGET| grep @$TARGET | grep -v div | sed "s/\t//g" | sed "s/ //g" 2> /dev/null | tee $LOOT_DIR/osint/email-format-$TARGET.txt 2> /dev/null 
 
+		if [ "$SLACK_NOTIFICATIONS_EMAIL_FORMAT" == "1" ]; then
+			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/email-format-$TARGET.txt"
+		fi
+	fi
+	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	echo -e "$OKRED GATHERING DNS ALTERATIONS $RESET"
+	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	if [ "$URLCRAZY" == "1" ]; then
+		urlcrazy $TARGET 2> /dev/null | tee $LOOT_DIR/osint/urlcrazy-$TARGET.txt 2> /dev/null
 	fi
 	if [ "$METAGOOFIL" == "1" ]; then
 		if [ "$VERBOSE" == "1" ]; then
@@ -48,6 +76,12 @@ if [ "$OSINT" = "1" ]; then
 		echo -e "$OKRED GATHERING EMAILS VIA HUNTER.IO $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		curl -s "https://api.hunter.io/v2/domain-search?domain=$TARGET&api_key=$HUNTERIO_KEY" | egrep "name|value|domain|company|uri|position|phone" 2> /dev/null | tee $LOOT_DIR/osint/hunterio-$TARGET.txt 2> /dev/null
+	fi
+	if [ "$METASPLOIT_EXPLOIT" == "1" ]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED GATHERING EMAILS VIA METASPLOIT $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		msfconsole -x "use auxiliary/gather/search_email_collector; set DOMAIN $TARGET; run; exit y" | tee $LOOT_DIR/osint/msf-emails-$TARGET.txt 2> /dev/null
 	fi
 	if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"

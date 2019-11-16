@@ -3,7 +3,7 @@
 # + -- --=[https://xerosecurity.com
 # 
 
-VER="7.3"
+VER="7.4"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
@@ -358,7 +358,7 @@ function init {
   touch $LOOT_DIR/scans/scheduled/daily.sh 2> /dev/null
   touch $LOOT_DIR/scans/scheduled/weekly.sh 2> /dev/null
   touch $LOOT_DIR/scans/scheduled/monthly.sh 2> /dev/null
-  chmod 775 -Rf $LOOT_DIR 2> /dev/null
+  chmod 777 -Rf $LOOT_DIR 2> /dev/null
   TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
   service postgresql start
   msfdb start 2> /dev/null > /dev/null
@@ -429,40 +429,44 @@ function loot {
   echo -en "$OKGREEN]$RESET"
   echo ""
   cd ..
-  if [ "$SN1PER_SERVER" == "1" ]; then
-    echo -e "$OKORANGE + -- --=[ Parsing NMap Ports... $RESET"
-    echo -en "$OKGREEN[$OKBLUE"
-    for TARGET in `cat $WORKSPACE_DIR/scans/updated.txt`; do
-      echo -n "|"
-      HOST_UP=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2> /dev/null | grep "host up" 2> /dev/null)
-      if [ ${#HOST_UP} -ge 2 ]; then
-        echo "$TARGET" >> $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null
+  chmod 777 -Rf $LOOT_DIR
+  echo -e "$OKORANGE + -- --=[ Parsing NMap Ports... $RESET"
+  echo -en "$OKGREEN[$OKBLUE"
+  for TARGET in `cat $WORKSPACE_DIR/scans/updated.txt`; do
+    echo -n "|"
+    HOST_UP=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2> /dev/null | grep "host up" 2> /dev/null)
+    if [ ${#HOST_UP} -ge 2 ]; then
+      echo "$TARGET" >> $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null
+    fi
+    rm -f $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
+    for PORT in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml $LOOT_DIR/nmap/nmap-$TARGET-*.xml 2>/dev/null | egrep 'state="open"' | cut -d' ' -f3 | cut -d\" -f2 | sort -u | grep '[[:digit:]]'`; do
+      echo "$PORT " >> $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
+      if [ ${#PORT} -ge 2 ]; then
+        echo "$TARGET" >> $LOOT_DIR/nmap/openports-unsorted.txt 2> /dev/null
       fi
-      rm -f $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
-      for PORT in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml $LOOT_DIR/nmap/nmap-$TARGET-*.xml 2>/dev/null | egrep 'state="open"' | cut -d' ' -f3 | cut -d\" -f2 | sort -u | grep '[[:digit:]]'`; do
-        echo "$PORT " >> $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
-        if [ ${#PORT} -ge 2 ]; then
-          echo "$TARGET" >> $LOOT_DIR/nmap/openports-unsorted.txt 2> /dev/null
-        fi
-      done
     done
-    echo -e "$OKGREEN]$RESET"
-  fi
-  echo -e "$OKORANGE + -- --=[ Sorting all domains...$RESET"
-  sort -u $LOOT_DIR/domains/*-full.txt > $LOOT_DIR/domains/domains-all-presorted.txt 2> /dev/null
-  sed -E "s/^\.//g" $LOOT_DIR/domains/domains-all-presorted.txt | sed -E "s/^\*\.//g" |  tr '[:upper:]' '[:lower:]' | sort -u > $LOOT_DIR/domains/domains-all-presorted2.txt 2> /dev/null
-  sort -u $LOOT_DIR/domains/targets.txt > $LOOT_DIR/domains/targets-all-presorted.txt 2> /dev/null
-  sed -E "s/^\.//g" $LOOT_DIR/domains/targets-all-presorted.txt | sed -E "s/^\*\.//g" |  tr '[:upper:]' '[:lower:]' | sort -u > $LOOT_DIR/domains/targets-all-sorted.txt 2> /dev/null
+  done
+  echo -e "$OKGREEN]$RESET"
+  echo -e "$OKORANGE + -- --=[ Sorting all files...$RESET"
+  sort -u $LOOT_DIR/domains/*-full.txt 2> /dev/null > $LOOT_DIR/domains/domains-all-presorted.txt 2> /dev/null
+  sed -E "s/^\.//g" $LOOT_DIR/domains/domains-all-presorted.txt 2> /dev/null | sed -E "s/^\*\.//g" |  tr '[:upper:]' '[:lower:]' | sort -u > $LOOT_DIR/domains/domains-all-presorted2.txt 2> /dev/null
+  sort -u $LOOT_DIR/domains/targets.txt 2> /dev/null > $LOOT_DIR/domains/targets-all-presorted.txt 2> /dev/null
+  sed -E "s/^\.//g" $LOOT_DIR/domains/targets-all-presorted.txt 2> /dev/null | sed -E "s/^\*\.//g" |  tr '[:upper:]' '[:lower:]' | sort -u > $LOOT_DIR/domains/targets-all-sorted.txt 2> /dev/null
   sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
   sed -i -E 's/address//g' $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
   sort -u $LOOT_DIR/domains/domains-all-presorted2.txt $LOOT_DIR/domains/targets-all-sorted.txt 2> /dev/null > $LOOT_DIR/domains/domains-all-sorted.txt 2> /dev/null
-  diff $LOOT_DIR/domains/targets-all-sorted.txt $LOOT_DIR/domains/domains-all-sorted.txt | grep \> | awk '{print $2}' > $LOOT_DIR/domains/targets-all-unscanned.txt
+  diff $LOOT_DIR/domains/targets-all-sorted.txt $LOOT_DIR/domains/domains-all-sorted.txt 2> /dev/null | grep \> | awk '{print $2}' > $LOOT_DIR/domains/targets-all-unscanned.txt
   rm -f $LOOT_DIR/domains/targets-all-presorted.txt $LOOT_DIR/domains/targets-all-presorted2.txt 2> /dev/null
   rm -f $LOOT_DIR/domains/domains-all-presorted.txt $LOOT_DIR/domains/domains-all-presorted2.txt 2> /dev/null
-  sort -u $LOOT_DIR/nmap/openports-unsorted.txt > $LOOT_DIR/nmap/openports-sorted.txt 2> /dev/null
-  sort -u $LOOT_DIR/nmap/livehosts-unsorted.txt > $LOOT_DIR/nmap/livehosts-sorted.txt 2> /dev/null
+  sort -u $LOOT_DIR/nmap/openports-unsorted.txt 2> /dev/null > $LOOT_DIR/nmap/openports-sorted.txt 2> /dev/null
+  sort -u $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null > $LOOT_DIR/nmap/livehosts-sorted.txt 2> /dev/null
+  find $LOOT_DIR/web/ -type f -size -1c -exec rm -f {} \;
+  cd $LOOT_DIR/web/ && rm -f webhosts-all-sorted-* 2> /dev/null
+  cd $LOOT_DIR/domains/ && rm -f domains-all-sorted-* 2> /dev/null
+  cd $LOOT_DIR/nmap/ && rm -f openports-all-sorted-* 2> /dev/null
+  cd $LOOT_DIR/nmap/ && rm -f livehosts-all-sorted-* 2> /dev/null
   cd $LOOT_DIR/web/ 2> /dev/null
-  egrep -i 'HTTP/1.1 200 OK|HTTP/1.1 301 ' headers-* | cut -d':' -f1 | sed "s/headers\-http\(\|s\)\-//g" | sed "s/\.txt//g" | sort -u > webhosts-sorted.txt
+  egrep -i 'HTTP/1.' headers-* 2> /dev/null | cut -d':' -f1 | sed "s/headers\-http\(\|s\)\-//g" | sed "s/\.txt//g" | sed "s/^\-.*$//" | sort -u > $LOOT_DIR/web/webhosts-sorted.txt 2> /dev/null
   split -d -l $MAX_HOSTS -e $LOOT_DIR/web/webhosts-sorted.txt webhosts-all-sorted- 2> /dev/null
   cd $LOOT_DIR/domains/ 2> /dev/null
   split -d -l $MAX_HOSTS -e  $LOOT_DIR/domains/domains-all-sorted.txt domains-all-sorted- 2> /dev/null
@@ -470,7 +474,7 @@ function loot {
   split -d -l $MAX_HOSTS -e $LOOT_DIR/nmap/openports-sorted.txt openports-all-sorted- 2> /dev/null
   split -d -l $MAX_HOSTS -e $LOOT_DIR/nmap/livehosts-sorted.txt livehosts-all-sorted- 2> /dev/null
   echo -e "$OKORANGE + -- --=[ Removing blank screenshots and files...$RESET"
-  chmod 775 -Rf $LOOT_DIR 2> /dev/null
+  chmod 777 -Rf $LOOT_DIR 2> /dev/null
   cd $LOOT_DIR/screenshots/
   find $LOOT_DIR/screenshots/ -type f -size -9000c -exec rm -f {} \;
   find $LOOT_DIR/nmap/ -type f -size -1c -exec rm -f {} \;
@@ -517,8 +521,10 @@ fi
 
 if [ "$REIMPORT_ALL" = "1" ]; then
   if [ ! -z "$WORKSPACE_DIR" ]; then
-    echo -e "$OKORANGE + -- --=[ Parsing NMap Ports... $RESET"
     sort -u $WORKSPACE_DIR/domains/targets-all-sorted.txt $WORKSPACE_DIR/domains/domains-all-sorted.txt > $WORKSPACE_DIR/scans/updated.txt
+    rm -f $WORKSPACE_DIR/nmap/openports-unsorted.txt 2> /dev/null
+    rm -f $WORKSPACE_DIR/nmap/openports-sorted.txt 2> /dev/null
+    rm -f $WORKSPACE_DIR/reports/host-table-report.csv 2> /dev/null
     loot
     exit
   fi

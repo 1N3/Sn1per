@@ -1,4 +1,14 @@
 ## CHANGELOG:
+* v7.4 - Added LDAP anomyous search to port 389/tcp checks (Shoutout @D0rkerDevil)
+* v7.4 - Added Java RMI dump registry scan checks and exploits to port 8001/tcp (Shoutout @D0rkerDevil)
+* v7.4 - Added CheckPoint Firewall-1 SecuRemote Topology Service Hostname Disclosure MSF module
+* v7.4 - Added virtualhost scanning via web mode
+* v7.4 - Added Gobuster
+* v7.4 - Addd URLCrazy DNS alterations check to OSINT mode
+* v7.4 - Added Ultratools Whois Lookups to OSINT mode
+* v7.4 - Added Email-Format.com Email Retreival to OSINT mode
+* v7.4 - Added Metasploit OSINT email retrieval to OSINT mode
+* v7.4 - Added Hackertarget URL API retrieval to web modes
 * v7.4 - Fixed error in massvulnscan mode
 * v7.4 - Fixed issue with webscreenshot.py not running
 * v7.4 - Added reverse whois DNS search via AMass
@@ -9,6 +19,7 @@
 * v7.4 - Improved performance of AltDNS/DNSgen/MassDNS retrieval
 * v7.4 - Changed webscreenshot.py setting to use chrome browser and increased timeout
 * v7.4 - Fixed issue with missing xmlstarlet package for OpenVAS scans
+* v7.4 - Improved active web spider URL consolidation
 * v7.3 - Added CVE-2019-15107 Webmin <= 1.920 - Unauthenticated RCE MSF exploit
 * v7.3 - Added massdns plugin
 * v7.3 - Added altdns plugin

