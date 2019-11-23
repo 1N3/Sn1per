@@ -48,6 +48,7 @@ apt-get remove -y python3-pip
 apt-get install -y python3-pip
 apt-get install -y xmlstarlet
 apt-get install -y chromium
+apt-get install -y net-tools
 pip install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
@@ -129,6 +130,13 @@ cd /tmp/
 chmod +rx gobuster 
 mv gobuster /usr/bin/gobuster 
 cd $PLUGINS_DIR
+wget https://github.com/laramies/theHarvester/archive/3.0.6.tar.gz
+tar -zxvf 3.0.6.tar.gz
+rm 3.0.6.tar.gz
+rm -f /usr/bin/theharvester
+ln -s /usr/share/sniper/plugins/theHarvester-3.0.6/theHarvester.py /usr/bin/theharvester
+git clone https://github.com/laramies/metagoofil.git
+
 echo -e "$OKORANGE + -- --=[ Setting up environment...$RESET"
 mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
 cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
@@ -151,5 +159,6 @@ ln -s $INSTALL_DIR/sniper /usr/bin/sniper
 ln -s $PLUGINS_DIR/Goohak/goohak /usr/bin/goohak
 ln -s $PLUGINS_DIR/dirsearch/dirsearch.py /usr/bin/dirsearch
 msfdb init 
+
 echo -e "$OKORANGE + -- --=[ Done!$RESET"
 echo -e "$OKORANGE + -- --=[ To run, type 'sniper'! $RESET"

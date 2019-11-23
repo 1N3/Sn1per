@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v7.5 - Fixed issue with theHarvester package on Ubuntu systems
+* v7.5 - Added net-tools package for Ubuntu OS deps
 * v7.4 - Added LDAP anomyous search to port 389/tcp checks (Shoutout @D0rkerDevil)
 * v7.4 - Added Java RMI dump registry scan checks and exploits to port 8001/tcp (Shoutout @D0rkerDevil)
 * v7.4 - Added CheckPoint Firewall-1 SecuRemote Topology Service Hostname Disclosure MSF module
