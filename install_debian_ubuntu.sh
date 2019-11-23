@@ -25,8 +25,8 @@ if [ ! -f "/etc/apt/sources.list.bak" ]; then
 	echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
 	echo "deb-src http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
 fi
-wget https://http.kali.org/kali/pool/main/k/kali-archive-keyring/kali-archive-keyring_2018.1_all.deb
-apt install ./kali-archive-keyring_2018.1_all.deb
+wget https://http.kali.org/kali/pool/main/k/kali-archive-keyring/kali-archive-keyring_2018.2_all.deb
+apt install ./kali-archive-keyring_2018.2_all.deb
 apt update
 cp /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
 cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
