@@ -103,6 +103,7 @@ if [ "$MODE" = "stealth" ]; then
   host $TARGET 2> /dev/null | grep address 2> /dev/null | awk '{print $4}' 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
   dnsenum -f $INSTALL_DIR/wordlists/vhosts.txt --noreverse $TARGET 2> /dev/null
   mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
+
   if [ $SCAN_TYPE == "DOMAIN" ];
   then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -273,7 +274,7 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     if [ $CUTYCAPT = "1" ]; then
-      if [ ${DISTRO} == "blackarch"  ]; then
+      if [ $DISTRO == "blackarch"  ]; then
         /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
       else
         if [ "$VERBOSE" == "1" ]; then
@@ -443,7 +444,7 @@ if [ "$MODE" = "stealth" ]; then
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     if [ $CUTYCAPT = "1" ]; then
-      if [ ${DISTRO} == "blackarch"  ]; then
+      if [ $DISTRO == "blackarch"  ]; then
         /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
       else
         if [ "$VERBOSE" == "1" ]; then

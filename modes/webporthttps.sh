@@ -141,7 +141,7 @@ if [ "$MODE" = "webporthttps" ]; then
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     if [ $CUTYCAPT = "1" ]; then
-      if [ ${DISTRO} == "blackarch"  ]; then
+      if [ $DISTRO == "blackarch"  ]; then
         /bin/CutyCapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=5000 2> /dev/null
       else
         cutycapt --url=https://$TARGET:$PORT --out=$LOOT_DIR/screenshots/$TARGET-port$PORT.jpg --insecure --max-wait=5000 2> /dev/null

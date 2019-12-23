@@ -3,7 +3,7 @@
 # + -- --=[https://xerosecurity.com
 # 
 
-VER="7.4"
+VER="8.0"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
@@ -466,7 +466,7 @@ function loot {
   cd $LOOT_DIR/nmap/ && rm -f openports-all-sorted-* 2> /dev/null
   cd $LOOT_DIR/nmap/ && rm -f livehosts-all-sorted-* 2> /dev/null
   cd $LOOT_DIR/web/ 2> /dev/null
-  egrep -i 'HTTP/1.' headers-* 2> /dev/null | cut -d':' -f1 | sed "s/headers\-http\(\|s\)\-//g" | sed "s/\.txt//g" | sed "s/^\-.*$//" | sort -u > $LOOT_DIR/web/webhosts-sorted.txt 2> /dev/null
+  egrep -Hi 'HTTP/1.' headers-* 2> /dev/null | cut -d':' -f1 | sed "s/headers\-http\(\|s\)\-//g" | sed "s/\.txt//g" | sed "s/^\-.*$//" | sort -u > $LOOT_DIR/web/webhosts-sorted.txt 2> /dev/null
   split -d -l $MAX_HOSTS -e $LOOT_DIR/web/webhosts-sorted.txt webhosts-all-sorted- 2> /dev/null
   cd $LOOT_DIR/domains/ 2> /dev/null
   split -d -l $MAX_HOSTS -e  $LOOT_DIR/domains/domains-all-sorted.txt domains-all-sorted- 2> /dev/null

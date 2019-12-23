@@ -1,6 +1,12 @@
 ## CHANGELOG:
-* v7.5 - Fixed issue with theHarvester package on Ubuntu systems
-* v7.5 - Added net-tools package for Ubuntu OS deps
+* v8.0 - Added ASnip tool to retrieve ASN's via 'recon' mode
+* v8.0 - Added Shodan sub-domain lookup
+* v8.0 - Added script timeout flag for NMap scripts
+* v8.0 - Fixed issue with dnsenum getting stuck on gathering dns info stage
+* v8.0 - Added option to force upgrade/install.sh without user prompt (ie. ./install.sh force)
+* v8.0 - Fixed issue with theHarvester package on Ubuntu systems
+* v8.0 - Fixed error "[: ==: unary operator expected" in all modes
+* v8.0 - Added net-tools package for Ubuntu OS deps
 * v7.4 - Added LDAP anomyous search to port 389/tcp checks (Shoutout @D0rkerDevil)
 * v7.4 - Added Java RMI dump registry scan checks and exploits to port 8001/tcp (Shoutout @D0rkerDevil)
 * v7.4 - Added CheckPoint Firewall-1 SecuRemote Topology Service Hostname Disclosure MSF module

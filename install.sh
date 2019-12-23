@@ -15,8 +15,8 @@ echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
 echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
-echo -e "$OKORANGE + -- --=[ https://xerosecurity.com$RESET"
-echo -e "$OKORANGE + -- --=[ Sn1per by @xer0dayz$RESET"
+echo -e "$OKORANGE + -- --=[ https://xerosecurity.com $RESET"
+echo -e "$OKORANGE + -- --=[ Sn1per by @xer0dayz $RESET"
 echo ""
 
 INSTALL_DIR=/usr/share/sniper
@@ -25,7 +25,9 @@ PLUGINS_DIR=/usr/share/sniper/plugins
 GO_DIR=~/go/bin
 
 echo -e "$OKGREEN + -- --=[ This script will install sniper under $INSTALL_DIR. Are you sure you want to continue? (Hit Ctrl+C to exit)$RESET"
-read answer
+if [ "$1" != "force" ]; then
+	read answer
+fi
 
 mkdir -p $INSTALL_DIR 2> /dev/null
 mkdir -p $LOOT_DIR 2> /dev/null
@@ -84,6 +86,7 @@ git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
 git clone https://github.com/rbsec/dnscan.git
+git clone https://github.com/RUB-NDS/CORStest.git
 git clone https://github.com/christophetd/censys-subdomain-finder.git
 pip install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
@@ -108,6 +111,8 @@ unzip slurp.zip
 rm -f slurp.zip
 cd ~/go/bin/;go get github.com/haccer/subjack
 cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
+go get github.com/harleo/asnip
+ln -s ~/go/bin/asnip /usr/bin/asnip
 rm -Rf ~/go/src/amass*
 wget https://github.com/OWASP/Amass/releases/download/v3.1.10/amass_v3.1.10_linux_amd64.zip -O ~/go/src/amass.zip
 cd ~/go/src/
@@ -136,7 +141,10 @@ rm 3.0.6.tar.gz
 rm -f /usr/bin/theharvester
 ln -s /usr/share/sniper/plugins/theHarvester-3.0.6/theHarvester.py /usr/bin/theharvester
 git clone https://github.com/laramies/metagoofil.git
-
+git clone https://github.com/achillean/shodan-python
+cd shodan-python 
+python setup.py install
+cd ..
 echo -e "$OKORANGE + -- --=[ Setting up environment...$RESET"
 mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
 cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null

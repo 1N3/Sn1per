@@ -15,7 +15,7 @@ if [ "$RECON" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     amass enum -ip -o $LOOT_DIR/domains/domains-$TARGET-amass.txt -rf /usr/share/sniper/plugins/massdns/lists/resolvers.txt -d $TARGET 2>/dev/null
     cut -d" " -f1 $LOOT_DIR/domains/domains-$TARGET-amass.txt 2>/dev/null | grep $TARGET > $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt
-    cut -d" " -f2 $LOOT_DIR/domains/domains-$TARGET-amass.txt 2>/dev/null > $LOOT_DIR/domains/domains-$TARGET-amass-ips-sorted.txt
+    cut -d" " -f2 $LOOT_DIR/domains/domains-$TARGET-amass.txt 2>/dev/null > $LOOT_DIR/ips/amass-ips-$TARGET.txt
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING REVERSE WHOIS DNS SUBDOMAINS VIA AMASS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -44,7 +44,9 @@ if [ "$RECON" = "1" ]; then
     echo -e "$OKRED GATHERING CERTIFICATE SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKBLUE"
-    curl -s https://crt.sh/?q=%25.$TARGET > $LOOT_DIR/domains/domains-$TARGET-presorted.txt && cat $LOOT_DIR/domains/domains-$TARGET-presorted.txt | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt && cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
+    curl -s https://crt.sh/?q=%25.$TARGET > $LOOT_DIR/domains/domains-$TARGET-presorted.txt
+    cat $LOOT_DIR/domains/domains-$TARGET-presorted.txt | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | grep -v "*" | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt
+    cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
     echo ""
     echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
   fi
@@ -53,6 +55,15 @@ if [ "$RECON" = "1" ]; then
     echo -e "$OKRED GATHERING CENSYS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     python $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | tee $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null 
+  fi
+  if [ "$SHODAN" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED GATHERING SHODAN SUBDOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    shodan init $SHODAN_API_KEY
+    shodan search "hostname:*.$TARGET" > $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null 
+    awk '{print $3}' $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null | grep -v "\;" | tee $LOOT_DIR/domains/domains-$TARGET-shodan-sorted.txt 2> /dev/null
+    awk '{print $1}' $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2>/dev/null
   fi
   if [ "$PROJECT_SONAR" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -66,32 +77,36 @@ if [ "$RECON" = "1" ]; then
   cat $LOOT_DIR/domains/domains-$TARGET-subfinder.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-projectsonar.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET-shodan-sorted.txt 2>/dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/targets.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
+  sed -i '/^$/d' $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
+  sed -i '/^$/d' $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET.txt | grep -v "*" | grep -v "?" | tee $LOOT_DIR/domains/domains-$TARGET-presorted-nowildcards.txt
   if [ "$ALT_DNS" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING ALTDNS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    altdns -i $LOOT_DIR/domains/domains-$TARGET.txt -w $INSTALL_DIR/wordlists/altdns.txt -o $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null 
+    altdns -i $LOOT_DIR/domains/domains-$TARGET-presorted-nowildcards.txt -w $INSTALL_DIR/wordlists/altdns.txt -o $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null 
   fi
   if [ "$DNSGEN" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING DNSGEN SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    dnsgen $LOOT_DIR/domains/domains-$TARGET.txt > $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt 2> /dev/null 
+    dnsgen $LOOT_DIR/domains/domains-$TARGET-presorted-nowildcards.txt > $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt 2> /dev/null 
   fi
   if [ "$MASS_DNS" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING MASSDNS ON SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    sort -u $LOOT_DIR/domains/domains-$TARGET-presorted.txt $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-alldns.txt 2> /dev/null 
+    sort -u $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-alldns.txt 2> /dev/null 
     massdns -r /usr/share/sniper/plugins/massdns/lists/resolvers.txt $LOOT_DIR/domains/domains-$TARGET-alldns.txt -o S -t A -w $LOOT_DIR/domains/domains-$TARGET-massdns.txt
     awk -F ". " '{print $1}' $LOOT_DIR/domains/domains-$TARGET-massdns.txt | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt
     cat $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
     grep "CNAME" $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-CNAME.txt
-    grep "A " $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u | tee $LOOT_DIR/domains/domains-$TARGET-massdns-A-records.txt
-    cat $LOOT_DIR/domains/domains-$TARGET-massdns-A-records.txt >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
+    grep "A " $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u | tee $LOOT_DIR/ips/massdns-A-records-$TARGET.txt
+    cat $LOOT_DIR/ips/massdns-A-records-$TARGET.txt >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
   fi
-  sort -u $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-full.txt
+  sort -u $LOOT_DIR/domains/domains-$TARGET-presorted.txt $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-full.txt
   cat $LOOT_DIR/domains/domains-$TARGET-full.txt >> $LOOT_DIR/scans/updated.txt 2> /dev/null
   rm -f $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   diff $LOOT_DIR/domains/domains_old-$TARGET.txt $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{print $2}' 2> /dev/null > $LOOT_DIR/domains/domains_new-$TARGET.txt
@@ -157,6 +172,16 @@ if [ "$RECON" = "1" ]; then
     if [ "$SLACK_NOTIFICATIONS_S3_BUCKETS" == "1" ]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/takeovers-$TARGET-s3-buckets.txt"
     fi
+  fi
+  if [ "$ASN_CHECK" = "1" ]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RETRIEVING ASN INFO $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    cd $LOOT_DIR/ips/ 2>/dev/null
+    asnip -t $TARGET | tee $LOOT_DIR/ips/asn-$TARGET.txt 2>/dev/null
+    mv $LOOT_DIR/ips/cidrs.txt $LOOT_DIR/ips/cidrs-$TARGET.txt 2>/dev/null
+    mv $LOOT_DIR/ips/ips.txt $LOOT_DIR/ips/ips-$TARGET.txt 2> /dev/null 
+    cd $INSTALL_DIR 2>/dev/null 
   fi
   if [ "$SUBNET_RETRIEVAL" = "1" ]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
