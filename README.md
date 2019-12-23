@@ -192,6 +192,7 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 ## Help Topics
 
 - [x] Burpsuite Professional 2.x integration (https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
+- [x] Shodan API integration (https://github.com/1N3/Sn1per/wiki/Shodan-Integration)
 - [x] Censys API integration (https://github.com/1N3/Sn1per/wiki/Censys-API-Integration)
 - [x] Hunter.io API integration (https://github.com/1N3/Sn1per/wiki/Hunter.io-API-Integration)
 - [x] Metasploit integration (https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
@@ -199,6 +200,7 @@ https://gist.github.com/1N3/8214ec2da2c91691bcbc
 - [x] Scheduled scans (https://github.com/1N3/Sn1per/wiki/Scheduled-Scans)
 - [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
 - [x] Sn1per Configuration Options (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
+- [x] Plugins & Tools (https://github.com/1N3/Sn1per/wiki/Plugins-&-Tools)
 
 ## LICENSE:
 This software is free to distribute and use with the condition that credit is provided to the creator (@xer0dayz @XeroSecurity), is not renamed and is not for commercial use or resold and rebranded. Permission to distribute any part of the code for sale is strictly prohibited.
