@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v8.1 - Fixed issue with subfinder missing
+* v8.1 - Fixed issue with 7zip missing
 * v8.1 - Added check for Ubuntu to install.sh automatically
 * v8.0 - Added ASnip tool to retrieve ASN's via 'recon' mode
 * v8.0 - Added Shodan sub-domain lookup

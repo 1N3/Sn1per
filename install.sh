@@ -131,7 +131,7 @@ rm -f slurp.zip
 cd ~/go/bin/;go get github.com/haccer/subjack
 cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
 go get github.com/harleo/asnip
-ln -s ~/go/bin/asnip /usr/bin/asnip
+ln -s ~/go/bin/asnip /usr/bin/asnip 2>/dev/null
 rm -Rf ~/go/src/amass*
 wget https://github.com/OWASP/Amass/releases/download/v3.1.10/amass_v3.1.10_linux_amd64.zip -O ~/go/src/amass.zip
 cd ~/go/src/
@@ -140,7 +140,7 @@ mv amass_v3.1.10_linux_amd64 amass 2> /dev/null
 cd amass
 cp amass /usr/bin/amass -f 2> /dev/null
 rm -f ~/go/src/amass.zip 2> /dev/null
-cd ~/go/bin;go get -u github.com/subfinder/subfinder; mv subfinder /usr/local/bin/subfinder
+cd ~/go/bin; wget https://github.com/projectdiscovery/subfinder/releases/download/v2.2.4/subfinder-linux-amd64.tar; tar -xvf subfinder-linux-amd64.tar; rm -f subfinder-linux-amd64.tar; mv subfinder-linux-amd64 /usr/local/bin/subfinder
 cd /usr/share/nmap/scripts/
 rm -Rf vulscan 2> /dev/null
 git clone https://github.com/scipag/vulscan

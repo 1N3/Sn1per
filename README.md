@@ -62,17 +62,13 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] Hunter.io API integration (https://github.com/1N3/Sn1per/wiki/Hunter.io-API-Integration)
 - [x] OpenVAS API integration (https://github.com/1N3/Sn1per/wiki/OpenVAS-Integration)
 - [x] Burpsuite Professional 2.x integration (https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
+- [x] Shodan API integration (https://github.com/1N3/Sn1per/wiki/Shodan-Integration)
 - [x] Censys API integration (https://github.com/1N3/Sn1per/wiki/Censys-API-Integration)
 - [x] Metasploit integration (https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
 
-## KALI LINUX INSTALL:
+## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL:
 ```
 bash install.sh
-```
-
-## UBUNTU/DEBIAN/PARROT INSTALL:
-```
-sudo bash install_debian_ubuntu.sh
 ```
 
 ## DOCKER INSTALL:
