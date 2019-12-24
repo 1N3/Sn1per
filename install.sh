@@ -40,6 +40,24 @@ mkdir $LOOT_DIR/osint 2> /dev/null
 cp -Rf * $INSTALL_DIR 2> /dev/null
 cd $INSTALL_DIR
 
+# CHECK FOR UBUNTU...
+UBUNTU_CHECK=$(egrep DISTRIB_ID /etc/lsb-release)
+if [ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]; then
+	if [ ! -f "/etc/apt/sources.list.bak" ]; then
+		cp /etc/apt/sources.list /etc/apt/sources.list.bak
+		echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
+		echo "deb-src http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
+	fi
+	wget https://http.kali.org/kali/pool/main/k/kali-archive-keyring/kali-archive-keyring_2018.2_all.deb -O /tmp/kali-archive-keyring_2018.2_all.deb
+	apt install /tmp/kali-archive-keyring_2018.2_all.deb
+	apt update
+	cp /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
+	cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
+	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
+	chown root /root/.Xauthority
+	XAUTHORITY=/root/.Xauthority
+fi
+
 echo -e "$OKORANGE + -- --=[ Installing package dependencies...$RESET"
 apt-get update
 apt-get install -y python3-uritools python3-paramiko nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil clusterd ruby rubygems python dos2unix sslyze arachni aha libxml2-utils rpcbind cutycapt host whois dnsrecon curl nmap php php-curl hydra wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq golang adb xsltproc urlcrazy ldapscripts
