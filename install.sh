@@ -69,6 +69,7 @@ apt-get install -y python3-pip
 apt-get install -y xmlstarlet
 apt-get install -y chromium
 apt-get install -y net-tools
+apt-get install -y p7zip-full
 pip install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
