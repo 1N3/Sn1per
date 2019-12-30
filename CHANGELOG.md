@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v8.1 - Updated DockerFile repository
+* v8.1 - Fixed issue with -dh flag to delete host with Sn1per Pro v8.0
 * v8.1 - Fixed issue with subfinder missing
 * v8.1 - Fixed issue with 7zip missing
 * v8.1 - Added check for Ubuntu to install.sh automatically

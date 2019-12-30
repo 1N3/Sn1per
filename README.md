@@ -75,8 +75,13 @@ bash install.sh
 From a new Docker console, run the following commands.
 ```
 Download https://raw.githubusercontent.com/1N3/Sn1per/master/Dockerfile
-docker build -t sn1per-docker . 
-docker run -it sn1per-docker /bin/bash
+docker build -t sn1per . 
+docker run -it sn1per /bin/bash
+
+or 
+
+docker pull xerosecurity/sn1per
+docker run -it xerosecurity/sn1per /bin/bash
 ```
 
 ## USAGE:
