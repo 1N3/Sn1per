@@ -1,4 +1,13 @@
 ## CHANGELOG:
+* v8.1 - Added Citrix Gateway Arbitary Code Execution CVE-2019-19781 vulnerability detection
+* v8.1 - Added Pulse Secure VPN Arbitrary File Disclosure CVE-2019-11510 exploit
+* v8.1 - Added --data-length=50 for NMap IPS evasion
+* v8.1 - Removed NMap vulscan script due to F+ results
+* v8.1 - Fixed issue with CRT.SH sub-domain retrieval
+* v8.1 - Fixed "[: ==: unary operator expected" in all code
+* v8.1 - Updated web brute force wordlists
+* v8.1 - Removed null and debug errors from passive spider API output
+* v8.1 - Updated Commoncrawl index repo
 * v8.1 - Updated DockerFile repository
 * v8.1 - Fixed issue with -dh flag to delete host with Sn1per Pro v8.0
 * v8.1 - Fixed issue with subfinder missing
@@ -63,7 +72,7 @@
 * v7.2 - Fixed issue with Censys API being enabled by default
 * v7.2 - Fixed verbose errors in subjack/subover tools
 * v7.2 - Fixed issue with NMap http scripts not working
-* v7.1 - Added KeepBlue CVE-2019-0708 MSF scanner
+* v7.1 - Added BlueKeep CVE-2019-0708 MSF scanner
 * v7.1 - Added automatic workspace generation for single target scans
 * v7.1 - Added new slack.sh API integration script
 * v7.1 - Added differential Slack notifications for new domains, new URL's and various scan outputs

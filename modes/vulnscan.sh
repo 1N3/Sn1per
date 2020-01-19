@@ -1,10 +1,10 @@
 # FULLPORTONLY MODE
-if [ "$MODE" = "vulnscan" ]; then
+if [[ "$MODE" = "vulnscan" ]]; then
   
-  if [ "$REPORT" = "1" ]; then
+  if [[ "$REPORT" = "1" ]]; then
     args="-t $TARGET"
     
-    if [ ! -z "$WORKSPACE" ]; then
+    if [[ ! -z "$WORKSPACE" ]]; then
       args="$args -w $WORKSPACE"
       LOOT_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
       echo -e "$OKBLUE[*]$RESET Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
@@ -28,13 +28,13 @@ if [ "$MODE" = "vulnscan" ]; then
 
   logo
   
-  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+  if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
 
-  if [ "$OPENVAS" = "1" ]; then
+  if [[ "$OPENVAS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING OPENVAS VULNERABILITY SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -48,7 +48,7 @@ if [ "$MODE" = "vulnscan" ]; then
       resp=$(omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep $TARGET | awk '{print $2}')
       sleep 60
     done
-    if [ $REPORT_ID != "" ]; then
+    if [[ $REPORT_ID != "" ]]; then
       omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml "<get_reports report_id=\"$REPORT_ID\" format_id=\"6c248850-1f62-11e1-b082-406186ea4fc5\"/>" | cut -d\> -f3 | cut -d\< -f1 | base64 -d > "$LOOT_DIR/output/openvas-$TARGET.html"
 
       echo "Report saved to $LOOT_DIR/output/openvas-$TARGET.html"
@@ -62,11 +62,11 @@ if [ "$MODE" = "vulnscan" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
   mv $LOOT_DIR/scans/running-$TARGET-vulnscan.txt $LOOT_DIR/scans/finished-$TARGET-vulnscan.txt 2> /dev/null
-  if [ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]; then
+  if [[ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET.txt"
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET-udp.txt"
   fi
-  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+  if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   loot

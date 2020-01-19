@@ -25,7 +25,7 @@ PLUGINS_DIR=/usr/share/sniper/plugins
 GO_DIR=~/go/bin
 
 echo -e "$OKGREEN + -- --=[ This script will install sniper under $INSTALL_DIR. Are you sure you want to continue? (Hit Ctrl+C to exit)$RESET"
-if [ "$1" != "force" ]; then
+if [[ "$1" != "force" ]]; then
 	read answer
 fi
 
@@ -42,8 +42,8 @@ cd $INSTALL_DIR
 
 # CHECK FOR UBUNTU...
 UBUNTU_CHECK=$(egrep DISTRIB_ID /etc/lsb-release)
-if [ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]; then
-	if [ ! -f "/etc/apt/sources.list.bak" ]; then
+if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
+	if [[ ! -f "/etc/apt/sources.list.bak" ]]; then
 		cp /etc/apt/sources.list /etc/apt/sources.list.bak
 		echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
 		echo "deb-src http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
@@ -124,7 +124,7 @@ cd dnsgen
 pip3 install -r requirements.txt
 python3 setup.py install
 cd ..
-pip3 install webtech
+pip install webtech
 mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
 rm -f slurp.zip

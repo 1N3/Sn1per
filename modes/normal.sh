@@ -1,25 +1,25 @@
 # NORMAL SCAN #####################################################################################################
-if [ "$REPORT" = "1" ]; then
+if [[ "$REPORT" = "1" ]]; then
   args="-t $TARGET"
-  if [ "$OSINT" = "1" ]; then
+  if [[ "$OSINT" = "1" ]]; then
     args="$args -o"
   fi
-  if [ "$AUTOBRUTE" = "1" ]; then
+  if [[ "$AUTOBRUTE" = "1" ]]; then
     args="$args -b"
   fi
-  if [ "$FULLNMAPSCAN" = "1" ]; then
+  if [[ "$FULLNMAPSCAN" = "1" ]]; then
     args="$args -fp"
   fi
-  if [ "$RECON" = "1" ]; then
+  if [[ "$RECON" = "1" ]]; then
     args="$args -re"
   fi
-  if [ "$MODE" = "port" ]; then
+  if [[ "$MODE" = "port" ]]; then
     args="$args -m port"
   fi
-  if [ ! -z "$PORT" ]; then
+  if [[ ! -z "$PORT" ]]; then
     args="$args -p $PORT"
   fi
-  if [ ! -z "$WORKSPACE" ]; then
+  if [[ ! -z "$WORKSPACE" ]]; then
     args="$args -w $WORKSPACE"
   fi
   args="$args --noreport"
@@ -27,7 +27,7 @@ if [ "$REPORT" = "1" ]; then
   echo "$TARGET normal `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
   echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-normal.txt
   echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-normal.txt
-  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+  if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-`date +"%Y%m%d%H%M"`.txt 2>&1
@@ -45,7 +45,7 @@ echo -e "$OKORANGE + -- --=[https://xerosecurity.com"
 echo -e "$OKORANGE + -- --=[Sn1per v$VER by @xer0dayz"
 echo -e "$RESET"
 
-if [ ! -z $WORKSPACE ]; then
+if [[ ! -z $WORKSPACE ]]; then
   LOOT_DIR=$WORKSPACE_DIR
 fi
 
@@ -58,7 +58,7 @@ dig all +short $TARGET > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
 dig all +short -x $TARGET >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
 host $TARGET 2> /dev/null | grep address 2> /dev/null | awk '{print $4}' 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
 dnsenum -f $INSTALL_DIR/wordlists/vhosts.txt --noreverse $TARGET 2> /dev/null
-mv -f *_ips.txt $LOOT_DIR/domains/ 2>/dev/null
+mv -f *_ips.txt $LOOT_DIR/ips/ 2>/dev/null
 
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo -e "$OKRED CHECKING FOR SUBDOMAIN HIJACKING $RESET"
@@ -77,24 +77,24 @@ echo ""
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-if [ "$MODE" == "web" ]; then
-  nmap -sV -Pn -p 80,443  --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
-elif [ "$MODE" == "webscan" ]; then 
-  nmap -sV -Pn -p 80,443  --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
-elif [ ! -z "$PORT" ]; then 
-  nmap -sS -Pn -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+if [[ "$MODE" == "web" ]]; then
+  nmap -sV -Pn -p 80,443  --data-length=50 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+elif [[ "$MODE" == "webscan" ]]; then 
+  nmap -sV -Pn -p 80,443 --data-length=50 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+elif [[ ! -z "$PORT" ]]; then 
+  nmap -sS -Pn -p $PORT --data-length=50 --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 else
-  nmap -sS --open -p $DEFAULT_PORTS -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+  nmap -sS --open --data-length=50 -p $DEFAULT_PORTS -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 fi
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-if [ -z "$PORT" ]; then
-  nmap -Pn -sU -p $DEFAULT_UDP_PORTS --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
+if [[ -z "$PORT" ]]; then
+  nmap -Pn -sU --data-length=50 -p $DEFAULT_UDP_PORTS --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
 else
-  nmap -Pn -sU -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
+  nmap -Pn -sU --data-length=50 -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
 fi
-if [ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]; then
+if [[ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET.txt"
 fi
 echo ""
@@ -166,18 +166,18 @@ port_123=`grep 'portid="123"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | 
 port_161=`grep 'portid="161"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
 port_500=`grep 'portid="500"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
 
-if [ -z "$port_21" ];
+if [[ -z "$port_21" ]];
 then
   echo -e "$OKRED + -- --=[Port 21 closed... skipping.$RESET"
 else
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "$OKORANGE + -- --=[Port 21 opened... running tests...$RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -sC -p 21 -v --script-timeout 90 --script=ftp-*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port21.txt
+    nmap -A -sV -Pn -sC -p 21 -v --script-timeout 90 --script=ftp-*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port21.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT FTP VERSION SCANNER $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -205,20 +205,20 @@ else
   fi
 fi
 
-if [ -z "$port_22" ];
+if [[ -z "$port_22" ]];
 then
   echo -e "$OKRED + -- --=[Port 22 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 22 opened... running tests...$RESET"
-  if [ $DISTRO == "blackarch" ]; then
-    if [ $SSH_AUDIT = "1" ]; then
+  if [[ $DISTRO == "blackarch" ]]; then
+    if [[ $SSH_AUDIT = "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING SSH AUDIT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       /bin/ssh-audit $TARGET:22 | tee $LOOT_DIR/output/sshaudit-$TARGET-port22.txt
     fi
   else
-    if [ $SSH_AUDIT = "1" ]; then
+    if [[ $SSH_AUDIT = "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING SSH AUDIT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -227,13 +227,13 @@ else
     fi
   fi
   cd $INSTALL_DIR
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -sC -p 22 -v --script-timeout 90 --script=ssh-*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port22.txt
+    nmap -A -sV -Pn -sC -p 22 -v --script-timeout 90 --script=ssh-*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port22.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING SSH VERSION SCANNER $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -255,18 +255,18 @@ else
   fi
 fi
 
-if [ -z "$port_23" ];
+if [[ -z "$port_23" ]];
 then
   echo -e "$OKRED + -- --=[Port 23 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 23 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=telnet*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 23 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port23.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=telnet*,/usr/share/nmap/scripts/vulners -p 23 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port23.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -276,18 +276,18 @@ else
   fi
 fi
 
-if [ -z "$port_25" ];
+if [[ -z "$port_25" ]];
 then
   echo -e "$OKRED + -- --=[Port 25 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 25 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=smtp*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 25 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port25.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=smtp*,/usr/share/nmap/scripts/vulners -p 25 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port25.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING SMTP USER ENUM $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -297,72 +297,72 @@ else
   fi
 fi
 
-if [ -z "$port_53" ];
+if [[ -z "$port_53" ]];
 then
   echo -e "$OKRED + -- --=[Port 53 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 53 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=dns*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 53 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port53.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=dns*,/usr/share/nmap/scripts/vulners -p 53 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port53.txt
   fi
 fi
 
-if [ -z "$port_67" ];
+if [[ -z "$port_67" ]];
 then
   echo -e "$OKRED + -- --=[Port 67 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 67 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sU -sV -Pn -v --script-timeout 90 --script=dhcp*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 67 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port67.txt
+    nmap -A -sU -sV -Pn -v --script-timeout 90 --script=dhcp*,/usr/share/nmap/scripts/vulners -p 67 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port67.txt
   fi
 fi
 
-if [ -z "$port_68" ];
+if [[ -z "$port_68" ]];
 then
   echo -e "$OKRED + -- --=[Port 68 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 68 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sU -sV -Pn -v --script-timeout 90 --script=dhcp*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 68 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port68.txt
+    nmap -A -sU -sV -Pn -v --script-timeout 90 --script=dhcp*,/usr/share/nmap/scripts/vulners -p 68 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port68.txt
   fi
 fi
 
-if [ -z "$port_69" ];
+if [[ -z "$port_69" ]];
 then
   echo -e "$OKRED + -- --=[Port 69 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 69 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sU -sV -Pn -v --script-timeout 90 --script=tftp*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 69 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port69.txt
+    nmap -A -sU -sV -Pn -v --script-timeout 90 --script=tftp*,/usr/share/nmap/scripts/vulners -p 69 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port69.txt
   fi
 fi
 
-if [ -z "$port_79" ];
+if [[ -z "$port_79" ]];
 then
   echo -e "$OKRED + -- --=[Port 79 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 79 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=finger*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 79 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port79.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=finger*,/usr/share/nmap/scripts/vulners -p 79 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port79.txt
   fi
 fi
 
-if [ -z "$port_80" ];
+if [[ -z "$port_80" ]];
 then
   echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
 else
@@ -371,7 +371,7 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [ "$VERBOSE" == "1" ]; then
+  if [[ "$VERBOSE" == "1" ]]; then
     echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null$RESET"
     echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null$RESET"
   fi
@@ -393,7 +393,7 @@ else
   echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | egrep "\"" | cut -d\" -f2 | grep  \/ | sort -u 2> /dev/null | tee $LOOT_DIR/web/weblinks-http-$TARGET.txt 2> /dev/null
-  if [ "$WAFWOOF" = "1" ]; then
+  if [[ "$WAFWOOF" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED CHECKING FOR WAF $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -402,7 +402,7 @@ else
     rm -f $LOOT_DIR/web/waf-$TARGET-http.raw 2> /dev/null
     echo ""
   fi
-  if [ "$WHATWEB" = "1" ]; then
+  if [[ "$WHATWEB" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING HTTP INFO $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -410,7 +410,7 @@ else
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/whatweb-$TARGET-http.raw > $LOOT_DIR/web/whatweb-$TARGET-http.txt 2> /dev/null
     rm -f $LOOT_DIR/web/whatweb-$TARGET-http.raw 2> /dev/null
   fi
-  if [ "$WIG" = "1" ]; then
+  if [[ "$WIG" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING SERVER INFO $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -418,7 +418,7 @@ else
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-http > $LOOT_DIR/web/wig-$TARGET-http.txt 2> /dev/null
     rm -f $LOOT_DIR/web/wig-$TARGET-http 2> /dev/null
   fi
-  if [ "$WEBTECH" = "1" ]; then
+  if [[ "$WEBTECH" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -427,28 +427,28 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCANNING FOR VIRTUAL HOSTS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [ "$VHOSTS" == "1" ]; then
+  if [[ "$VHOSTS" == "1" ]]; then
     gobuster vhost -u http://$TARGET -w $INSTALL_DIR/wordlists/vhosts.txt -o $LOOT_DIR/osint/vhosts-http-$TARGET.txt  2> /dev/null
   fi
-  if [ "$NMAP_SCRIPTS" == "1" ]; then
+  if [[ "$NMAP_SCRIPTS" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      nmap -A -Pn -p 80 -sV -v --script-timeout 90 --script=http-adobe-coldfusion-apsa1301,http-apache-server-status,http-aspnet-debug,http-auth-finder,http-auth,http-avaya-ipoffice-users,http-awstatstotals-exec,http-axis2-dir-traversal,http-backup-finder,http-barracuda-dir-traversal,http-bigip-cookie,http-brute,http-cakephp-version,http-chrono,http-config-backup,http-cookie-flags,http-cors,http-cross-domain-policy,http-csrf,http-date,http-default-accounts,http-devframework,http-dlink-backdoor,http-dombased-xss,http-domino-enum-passwords,http-drupal-enum-users,http-drupal-enum,http-errors,http-feed,http-fetch,http-fileupload-exploiter,http-form-brute,http-form-fuzzer,http-frontpage-login,http-generator,http-git,http-gitweb-projects-enum,http-google-malware,http-grep,http-headers,http-huawei-hg5xx-vuln,http-icloud-findmyiphone,http-icloud-sendmsg,http-iis-short-name-brute,http-iis-webdav-vuln,http-internal-ip-disclosure,http-joomla-brute,http-jsonp-detection,http-ls,http-majordomo2-dir-traversal,http-method-tamper,http-methods,http-mobileversion-checker,http-ntlm-info,http-open-proxy,http-open-redirect,http-passwd,http-php-version,http-phpmyadmin-dir-traversal,http-phpself-xss,http-proxy-brute,http-put,http-qnap-nas-info,http-rfi-spider,http-robots.txt,http-robtex-reverse-ip,http-robtex-shared-ns,http-security-headers,http-server-header,http-shellshock,http-sitemap-generator,http-sql-injection,http-stored-xss,http-svn-enum,http-svn-info,http-title,http-tplink-dir-traversal,http-trace,http-traceroute,http-trane-info,http-unsafe-output-escaping,http-userdir-enum,http-vhosts,http-virustotal,http-vlcstreamer-ls,http-vmware-path-vuln,http-vuln-cve2006-3392,http-vuln-cve2009-3960,http-vuln-cve2010-0738,http-vuln-cve2010-2861,http-vuln-cve2011-3192,http-vuln-cve2011-3368,http-vuln-cve2012-1823,http-vuln-cve2013-0156,http-vuln-cve2013-6786,http-vuln-cve2013-7091,http-vuln-cve2014-2126,http-vuln-cve2014-2127,http-vuln-cve2014-2128,http-vuln-cve2014-2129,http-vuln-cve2014-3704,http-vuln-cve2014-8877,http-vuln-cve2015-1427,http-vuln-cve2015-1635,http-vuln-cve2017-1001000,http-vuln-cve2017-5638,http-vuln-cve2017-5689,http-vuln-cve2017-8917,http-vuln-misfortune-cookie,http-vuln-wnr1000-creds,http-waf-detect,http-waf-fingerprint,http-webdav-scan,http-wordpress-brute,http-wordpress-enum,http-wordpress-users,http-xssed,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port80
+      nmap -A -Pn -p 80 -sV -v --script-timeout 90 --script=http-adobe-coldfusion-apsa1301,http-apache-server-status,http-aspnet-debug,http-auth-finder,http-auth,http-avaya-ipoffice-users,http-awstatstotals-exec,http-axis2-dir-traversal,http-backup-finder,http-barracuda-dir-traversal,http-bigip-cookie,http-brute,http-cakephp-version,http-chrono,http-config-backup,http-cookie-flags,http-cors,http-cross-domain-policy,http-csrf,http-date,http-default-accounts,http-devframework,http-dlink-backdoor,http-dombased-xss,http-domino-enum-passwords,http-drupal-enum-users,http-drupal-enum,http-errors,http-feed,http-fetch,http-fileupload-exploiter,http-form-brute,http-form-fuzzer,http-frontpage-login,http-generator,http-git,http-gitweb-projects-enum,http-google-malware,http-grep,http-headers,http-huawei-hg5xx-vuln,http-icloud-findmyiphone,http-icloud-sendmsg,http-iis-short-name-brute,http-iis-webdav-vuln,http-internal-ip-disclosure,http-joomla-brute,http-jsonp-detection,http-ls,http-majordomo2-dir-traversal,http-method-tamper,http-methods,http-mobileversion-checker,http-ntlm-info,http-open-proxy,http-open-redirect,http-passwd,http-php-version,http-phpmyadmin-dir-traversal,http-phpself-xss,http-proxy-brute,http-put,http-qnap-nas-info,http-rfi-spider,http-robots.txt,http-robtex-reverse-ip,http-robtex-shared-ns,http-security-headers,http-server-header,http-shellshock,http-sitemap-generator,http-sql-injection,http-stored-xss,http-svn-enum,http-svn-info,http-title,http-tplink-dir-traversal,http-trace,http-traceroute,http-trane-info,http-unsafe-output-escaping,http-userdir-enum,http-vhosts,http-virustotal,http-vlcstreamer-ls,http-vmware-path-vuln,http-vuln-cve2006-3392,http-vuln-cve2009-3960,http-vuln-cve2010-0738,http-vuln-cve2010-2861,http-vuln-cve2011-3192,http-vuln-cve2011-3368,http-vuln-cve2012-1823,http-vuln-cve2013-0156,http-vuln-cve2013-6786,http-vuln-cve2013-7091,http-vuln-cve2014-2126,http-vuln-cve2014-2127,http-vuln-cve2014-2128,http-vuln-cve2014-2129,http-vuln-cve2014-3704,http-vuln-cve2014-8877,http-vuln-cve2015-1427,http-vuln-cve2015-1635,http-vuln-cve2017-1001000,http-vuln-cve2017-5638,http-vuln-cve2017-5689,http-vuln-cve2017-8917,http-vuln-misfortune-cookie,http-vuln-wnr1000-creds,http-waf-detect,http-waf-fingerprint,http-webdav-scan,http-wordpress-brute,http-wordpress-enum,http-wordpress-users,http-xssed,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port80
       sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port80.txt 2> /dev/null
       rm -f $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SAVING SCREENSHOTS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [ $CUTYCAPT = "1" ]; then
-    if [ $DISTRO == "blackarch"  ]; then
+  if [[ $CUTYCAPT = "1" ]]; then
+    if [[ $DISTRO == "blackarch"  ]]; then
       /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
     else
       cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
     fi
   fi
-  if [ $WEBSCREENSHOT = "1" ]; then
+  if [[ $WEBSCREENSHOT = "1" ]]; then
     cd $LOOT_DIR
     python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium http://$TARGET:80
   fi
@@ -456,25 +456,25 @@ else
   source $INSTALL_DIR/modes/osint_stage_2.sh
 fi
 
-if [ -z "$port_110" ];
+if [[ -z "$port_110" ]];
 then
   echo -e "$OKRED + -- --=[Port 110 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 110 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -v --script-timeout 90 --script=pop*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 110 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port110.txt
+    nmap -A -sV -v --script-timeout 90 --script=pop*,/usr/share/nmap/scripts/vulners -p 110 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port110.txt
   fi
 fi
 
-if [ -z "$port_111" ];
+if [[ -z "$port_111" ]];
 then
   echo -e "$OKRED + -- --=[Port 111 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 111 opened... running tests...$RESET"
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -482,7 +482,7 @@ else
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port111-nfsmount.raw > $LOOT_DIR/output/msf-$TARGET-port111-nfsmount.txt 2> /dev/null
     rm -f $LOOT_DIR/output/msf-$TARGET-port111-nfsmount.raw 2> /dev/null
   fi
-  if [ "$SHOW_MOUNT" = "1" ]; then
+  if [[ "$SHOW_MOUNT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING SHOW MOUNT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -492,37 +492,37 @@ else
   fi
 fi
 
-if [ -z "$port_123" ];
+if [[ -z "$port_123" ]];
 then
   echo -e "$OKRED + -- --=[Port 123 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 123 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sU -sV -Pn -v --script-timeout 90 --script=ntp-*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 123 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port123.txt
+    nmap -A -sU -sV -Pn -v --script-timeout 90 --script=ntp-*,/usr/share/nmap/scripts/vulners -p 123 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port123.txt
   fi
 fi
 
-if [ -z "$port_135" ];
+if [[ -z "$port_135" ]];
 then
   echo -e "$OKRED + -- --=[Port 135 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 135 opened... running tests...$RESET"
-  if [ "$RPC_INFO" = "1" ]; then
+  if [[ "$RPC_INFO" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING RPCINFO $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     rpcinfo -p $TARGET | tee $LOOT_DIR/output/rpcinfo-$TARGET-port135.txt
   fi
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -p 135 -v --script-timeout 90 --script=rpc*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port135.txt
+    nmap -A -p 135 -v --script-timeout 90 --script=rpc*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port135.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -532,24 +532,24 @@ else
   fi
 fi
 
-if [ -z "$port_137" ];
+if [[ -z "$port_137" ]];
 then
   echo -e "$OKRED + -- --=[Port 137 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 137 opened... running tests...$RESET"
-  if [ "$RPC_INFO" = "1" ]; then
+  if [[ "$RPC_INFO" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING RPCINFO $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     rpcinfo -p $TARGET | tee $LOOT_DIR/output/rpcinfo-$TARGET-port137.txt
   fi
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -p 137 -v --script-timeout 90 --script=broadcast-netbios-master-browser*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port137.txt
+    nmap -A -p 137 -v --script-timeout 90 --script=broadcast-netbios-master-browser*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port137.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -559,13 +559,13 @@ else
   fi
 fi
 
-if [ -z "$port_139" ];
+if [[ -z "$port_139" ]];
 then
   echo -e "$OKRED + -- --=[Port 139 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 139 opened... running tests...$RESET"
   SMB="1"
-  if [ "$SMB_ENUM" = "1" ]; then
+  if [[ "$SMB_ENUM" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING SMB ENUMERATION $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -573,13 +573,13 @@ else
     python $SAMRDUMP $TARGET | tee $LOOT_DIR/output/samrdump-$TARGET-port139.txt
     nbtscan $TARGET | tee $LOOT_DIR/output/nbtscan-$TARGET-port139.txt
   fi
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV  -p139 -v --script-timeout 90 --script=smb*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port139.txt
+    nmap -A -sV  -p139 -v --script-timeout 90 --script=smb*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port139.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -589,18 +589,18 @@ else
   fi
 fi
 
-if [ -z "$port_161" ];
+if [[ -z "$port_161" ]];
 then
   echo -e "$OKRED + -- --=[Port 161 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 161 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -v --script-timeout 90 --script=/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners,/usr/share/nmap/scripts/snmp-hh3c-logins.nse,/usr/share/nmap/scripts/snmp-interfaces.nse,/usr/share/nmap/scripts/snmp-ios-config.nse,/usr/share/nmap/scripts/snmp-netstat.nse,/usr/share/nmap/scripts/snmp-processes.nse,/usr/share/nmap/scripts/snmp-sysdescr.nse,/usr/share/nmap/scripts/snmp-win32-services.nse,/usr/share/nmap/scripts/snmp-win32-shares.nse,/usr/share/nmap/scripts/snmp-win32-software.nse,/usr/share/nmap/scripts/snmp-win32-users.nse -sV -A -p 161 -sU -sT $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port161.txt
+    nmap -v --script-timeout 90 --script=/usr/share/nmap/scripts/vulners,/usr/share/nmap/scripts/snmp-hh3c-logins.nse,/usr/share/nmap/scripts/snmp-interfaces.nse,/usr/share/nmap/scripts/snmp-ios-config.nse,/usr/share/nmap/scripts/snmp-netstat.nse,/usr/share/nmap/scripts/snmp-processes.nse,/usr/share/nmap/scripts/snmp-sysdescr.nse,/usr/share/nmap/scripts/snmp-win32-services.nse,/usr/share/nmap/scripts/snmp-win32-shares.nse,/usr/share/nmap/scripts/snmp-win32-software.nse,/usr/share/nmap/scripts/snmp-win32-users.nse -sV -A -p 161 -sU -sT $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port161.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -610,18 +610,18 @@ else
   fi
 fi
 
-if [ -z "$port_162" ];
+if [[ -z "$port_162" ]];
 then
   echo -e "$OKRED + -- --=[Port 162 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 162 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -v --script-timeout 90 --script=/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners,/usr/share/nmap/scripts/snmp-hh3c-logins.nse,/usr/share/nmap/scripts/snmp-interfaces.nse,/usr/share/nmap/scripts/snmp-ios-config.nse,/usr/share/nmap/scripts/snmp-netstat.nse,/usr/share/nmap/scripts/snmp-processes.nse,/usr/share/nmap/scripts/snmp-sysdescr.nse,/usr/share/nmap/scripts/snmp-win32-services.nse,/usr/share/nmap/scripts/snmp-win32-shares.nse,/usr/share/nmap/scripts/snmp-win32-software.nse,/usr/share/nmap/scripts/snmp-win32-users.nse -sV -A -p 162 -sU -sT $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port162.txt
+    nmap -v --script-timeout 90 --script=/usr/share/nmap/scripts/vulners,/usr/share/nmap/scripts/snmp-hh3c-logins.nse,/usr/share/nmap/scripts/snmp-interfaces.nse,/usr/share/nmap/scripts/snmp-ios-config.nse,/usr/share/nmap/scripts/snmp-netstat.nse,/usr/share/nmap/scripts/snmp-processes.nse,/usr/share/nmap/scripts/snmp-sysdescr.nse,/usr/share/nmap/scripts/snmp-win32-services.nse,/usr/share/nmap/scripts/snmp-win32-shares.nse,/usr/share/nmap/scripts/snmp-win32-software.nse,/usr/share/nmap/scripts/snmp-win32-users.nse -sV -A -p 162 -sU -sT $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port162.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -631,13 +631,13 @@ else
   fi
 fi
 
-if [ -z "$port_264" ];
+if [[ -z "$port_264" ]];
 then
   echo -e "$OKRED + -- --=[Port 264 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 264 opened... running tests...$RESET"
 
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -647,16 +647,16 @@ else
   fi
 fi
 
-if [ -z "$port_389" ];
+if [[ -z "$port_389" ]];
 then
   echo -e "$OKRED + -- --=[Port 389 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 389 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -p 389 -Pn -v --script-timeout 90 --script=ldap*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port389.txt
+    nmap -A -p 389 -Pn -v --script-timeout 90 --script=ldap*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port389.txt
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING LDAP ANONYMOUS SEARCH QUERY $RESET"
@@ -664,7 +664,7 @@ else
   ldapsearch -h $TARGET 389 -x -s base -b '' "(objectClass=*)" "*" + | tee $LOOT_DIR/output/ldapsearch-$TARGET-port389.txt
 fi
 
-if [ -z "$port_443" ];
+if [[ -z "$port_443" ]];
 then
   echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
 else
@@ -673,7 +673,7 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [ "$VERBOSE" == "1" ]; then
+  if [[ "$VERBOSE" == "1" ]]; then
     echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null$RESET"
     echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null$RESET"
   fi
@@ -695,7 +695,7 @@ else
   echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   cat $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null | egrep "\"" | cut -d\" -f2 | grep  \/ | sort -u 2> /dev/null | tee $LOOT_DIR/web/weblinks-https-$TARGET.txt 2> /dev/null
-  if [ "$WAFWOOF" = "1" ]; then
+  if [[ "$WAFWOOF" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED CHECKING FOR WAF $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -704,7 +704,7 @@ else
     rm -f $LOOT_DIR/web/waf-$TARGET-https.raw 2> /dev/null
     echo ""
   fi
-  if [ "$WHATWEB" = "1" ]; then
+  if [[ "$WHATWEB" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING HTTP INFO $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -712,7 +712,7 @@ else
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/whatweb-$TARGET-https.raw > $LOOT_DIR/web/whatweb-$TARGET-https.txt 2> /dev/null
     rm -f $LOOT_DIR/web/whatweb-$TARGET-https.raw 2> /dev/null
   fi
-  if [ "$WIG" = "1" ]; then
+  if [[ "$WIG" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING SERVER INFO $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -720,27 +720,27 @@ else
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-https > $LOOT_DIR/web/wig-$TARGET-https.txt 2> /dev/null
     rm -f $LOOT_DIR/web/wig-$TARGET-https 2> /dev/null
   fi
-  if [ "$WEBTECH" = "1" ]; then
+  if [[ "$WEBTECH" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     webtech -u https://$TARGET | grep \- | cut -d- -f2- | tee $LOOT_DIR/web/webtech-$TARGET-https.txt
   fi
-  if [ "$NMAP_SCRIPTS" == "1" ]; then
+  if [[ "$NMAP_SCRIPTS" == "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -p 443 -v --script-timeout 90 --script=http-adobe-coldfusion-apsa1301,http-apache-server-status,http-aspnet-debug,http-auth-finder,http-auth,http-avaya-ipoffice-users,http-awstatstotals-exec,http-axis2-dir-traversal,http-backup-finder,http-barracuda-dir-traversal,http-bigip-cookie,http-brute,http-cakephp-version,http-chrono,http-config-backup,http-cookie-flags,http-cors,http-cross-domain-policy,http-csrf,http-date,http-default-accounts,http-devframework,http-dlink-backdoor,http-dombased-xss,http-domino-enum-passwords,http-drupal-enum-users,http-drupal-enum,http-errors,http-feed,http-fetch,http-fileupload-exploiter,http-form-brute,http-form-fuzzer,http-frontpage-login,http-generator,http-git,http-gitweb-projects-enum,http-google-malware,http-grep,http-headers,http-huawei-hg5xx-vuln,http-icloud-findmyiphone,http-icloud-sendmsg,http-iis-short-name-brute,http-iis-webdav-vuln,http-internal-ip-disclosure,http-joomla-brute,http-jsonp-detection,http-ls,http-majordomo2-dir-traversal,http-method-tamper,http-methods,http-mobileversion-checker,http-ntlm-info,http-open-proxy,http-open-redirect,http-passwd,http-php-version,http-phpmyadmin-dir-traversal,http-phpself-xss,http-proxy-brute,http-put,http-qnap-nas-info,http-rfi-spider,http-robots.txt,http-robtex-reverse-ip,http-robtex-shared-ns,http-security-headers,http-server-header,http-shellshock,http-sitemap-generator,http-sql-injection,http-stored-xss,http-svn-enum,http-svn-info,http-title,http-tplink-dir-traversal,http-trace,http-traceroute,http-trane-info,http-unsafe-output-escaping,http-userdir-enum,http-vhosts,http-virustotal,http-vlcstreamer-ls,http-vmware-path-vuln,http-vuln-cve2006-3392,http-vuln-cve2009-3960,http-vuln-cve2010-0738,http-vuln-cve2010-2861,http-vuln-cve2011-3192,http-vuln-cve2011-3368,http-vuln-cve2012-1823,http-vuln-cve2013-0156,http-vuln-cve2013-6786,http-vuln-cve2013-7091,http-vuln-cve2014-2126,http-vuln-cve2014-2127,http-vuln-cve2014-2128,http-vuln-cve2014-2129,http-vuln-cve2014-3704,http-vuln-cve2014-8877,http-vuln-cve2015-1427,http-vuln-cve2015-1635,http-vuln-cve2017-1001000,http-vuln-cve2017-5638,http-vuln-cve2017-5689,http-vuln-cve2017-8917,http-vuln-misfortune-cookie,http-vuln-wnr1000-creds,http-waf-detect,http-waf-fingerprint,http-webdav-scan,http-wordpress-brute,http-wordpress-enum,http-wordpress-users,http-xssed,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
+    nmap -A -sV -Pn -p 443 -v --script-timeout 90 --script=http-adobe-coldfusion-apsa1301,http-apache-server-status,http-aspnet-debug,http-auth-finder,http-auth,http-avaya-ipoffice-users,http-awstatstotals-exec,http-axis2-dir-traversal,http-backup-finder,http-barracuda-dir-traversal,http-bigip-cookie,http-brute,http-cakephp-version,http-chrono,http-config-backup,http-cookie-flags,http-cors,http-cross-domain-policy,http-csrf,http-date,http-default-accounts,http-devframework,http-dlink-backdoor,http-dombased-xss,http-domino-enum-passwords,http-drupal-enum-users,http-drupal-enum,http-errors,http-feed,http-fetch,http-fileupload-exploiter,http-form-brute,http-form-fuzzer,http-frontpage-login,http-generator,http-git,http-gitweb-projects-enum,http-google-malware,http-grep,http-headers,http-huawei-hg5xx-vuln,http-icloud-findmyiphone,http-icloud-sendmsg,http-iis-short-name-brute,http-iis-webdav-vuln,http-internal-ip-disclosure,http-joomla-brute,http-jsonp-detection,http-ls,http-majordomo2-dir-traversal,http-method-tamper,http-methods,http-mobileversion-checker,http-ntlm-info,http-open-proxy,http-open-redirect,http-passwd,http-php-version,http-phpmyadmin-dir-traversal,http-phpself-xss,http-proxy-brute,http-put,http-qnap-nas-info,http-rfi-spider,http-robots.txt,http-robtex-reverse-ip,http-robtex-shared-ns,http-security-headers,http-server-header,http-shellshock,http-sitemap-generator,http-sql-injection,http-stored-xss,http-svn-enum,http-svn-info,http-title,http-tplink-dir-traversal,http-trace,http-traceroute,http-trane-info,http-unsafe-output-escaping,http-userdir-enum,http-vhosts,http-virustotal,http-vlcstreamer-ls,http-vmware-path-vuln,http-vuln-cve2006-3392,http-vuln-cve2009-3960,http-vuln-cve2010-0738,http-vuln-cve2010-2861,http-vuln-cve2011-3192,http-vuln-cve2011-3368,http-vuln-cve2012-1823,http-vuln-cve2013-0156,http-vuln-cve2013-6786,http-vuln-cve2013-7091,http-vuln-cve2014-2126,http-vuln-cve2014-2127,http-vuln-cve2014-2128,http-vuln-cve2014-2129,http-vuln-cve2014-3704,http-vuln-cve2014-8877,http-vuln-cve2015-1427,http-vuln-cve2015-1635,http-vuln-cve2017-1001000,http-vuln-cve2017-5638,http-vuln-cve2017-5689,http-vuln-cve2017-8917,http-vuln-misfortune-cookie,http-vuln-wnr1000-creds,http-waf-detect,http-waf-fingerprint,http-webdav-scan,http-wordpress-brute,http-wordpress-enum,http-wordpress-users,http-xssed,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
     sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port443.txt 2> /dev/null
     rm -f $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null
   fi  
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCANNING FOR VIRTUAL HOSTS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [ "$VHOSTS" == "1" ]; then
+  if [[ "$VHOSTS" == "1" ]]; then
     gobuster vhost -u https://$TARGET -w $INSTALL_DIR/wordlists/vhosts.txt -o $LOOT_DIR/osint/vhosts-https-$TARGET.txt  2> /dev/null
   fi
-  if [ "$SSL" = "1" ]; then
+  if [[ "$SSL" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -752,14 +752,14 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SAVING SCREENSHOTS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [ $DISTRO == "blackarch"  ]; then
+  if [[ $DISTRO == "blackarch"  ]]; then
     /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
   else
     cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
   fi
   echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
 
-  if [ $WEBSCREENSHOT = "1" ]; then
+  if [[ $WEBSCREENSHOT = "1" ]]; then
     cd $LOOT_DIR
     python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium https://$TARGET:443
   fi
@@ -767,13 +767,13 @@ else
   source $INSTALL_DIR/modes/osint_stage_2.sh
 fi
 
-if [ -z "$port_445" ]; then
+if [[ -z "$port_445" ]]; then
   echo -e "$OKRED + -- --=[Port 445 closed... skipping.$RESET"
-elif [ $SMB = "1" ]; then
+elif [[ $SMB = "1" ]]; then
   echo -e "$OKRED + -- --=[Port 445 scanned... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 445 opened... running tests...$RESET"
-  if [ "$SMB_ENUM" = "1" ]; then
+  if [[ "$SMB_ENUM" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED ENUMERATING SMB/NETBIOS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -781,13 +781,13 @@ else
     python $SAMRDUMP $TARGET | tee $LOOT_DIR/output/samrdump-$TARGET-port445.txt
     nbtscan $TARGET | tee $LOOT_DIR/output/nbtscan-$TARGET-port445.txt
   fi
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -p445 -v --script-timeout 90 --script=smb*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port445.txt
+    nmap -A -sV -Pn -p445 -v --script-timeout 90 --script=smb*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port445.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -795,7 +795,7 @@ else
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port445.raw > $LOOT_DIR/output/msf-$TARGET-port445.txt 2> /dev/null
     rm -f $LOOT_DIR/output/msf-$TARGET-port445.raw 2> /dev/null
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING SAMBA ARBITRARY MODULE LOAD CVE-2017-7494 $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -805,12 +805,12 @@ else
   fi
 fi
 
-if [ -z "$port_500" ];
+if [[ -z "$port_500" ]];
 then
   echo -e "$OKRED + -- --=[Port 500 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 500 opened... running tests...$RESET"
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING CISCO IKE KEY DISCLOSURE EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -820,60 +820,60 @@ else
   fi
 fi
 
-if [ -z "$port_512" ];
+if [[ -z "$port_512" ]];
 then
   echo -e "$OKRED + -- --=[Port 512 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 512 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -p 512 -v --script-timeout 90 --script=rexec*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port512.txt
+    nmap -A -sV -Pn -p 512 -v --script-timeout 90 --script=rexec*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port512.txt
   fi
 fi
 
-if [ -z "$port_513" ]
+if [[ -z "$port_513" ]];
 then
   echo -e "$OKRED + -- --=[Port 513 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 513 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -p 513 -v --script-timeout 90 --script=rlogin*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port513.txt
+    nmap -A -sV -Pn -p 513 -v --script-timeout 90 --script=rlogin*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port513.txt
   fi
 fi
 
-if [ -z "$port_514" ];
+if [[ -z "$port_514" ]];
 then
   echo -e "$OKRED + -- --=[Port 514 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 514 opened... running tests...$RESET"
-  if [ "$AMAP" = "1" ]; then
+  if [[ "$AMAP" = "1" ]]; then
     amap $TARGET 514 -A
   fi
 fi
 
-if [ -z "$port_1099" ];
+if [[ -z "$port_1099" ]];
 then
   echo -e "$OKRED + -- --=[Port 1099 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 1099 opened... running tests...$RESET"
-  if [ "$AMAP" = "1" ]; then
+  if [[ "$AMAP" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING AMAP $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     amap $TARGET 1099 -A
   fi
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -p 1099 -v --script-timeout 90 --script=rmi-*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port1099.txt
+    nmap -A -sV -Pn -p 1099 -v --script-timeout 90 --script=rmi-*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port1099.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -886,43 +886,43 @@ else
   fi
 fi
 
-if [ -z "$port_1433" ];
+if [[ -z "$port_1433" ]];
 then
   echo -e "$OKRED + -- --=[Port 1433 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 1433 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=ms-sql*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 1433 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port1433.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=ms-sql*,/usr/share/nmap/scripts/vulners -p 1433 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port1433.txt
   fi
 fi
 
-if [ -z "$port_2049" ];
+if [[ -z "$port_2049" ]];
 then
   echo -e "$OKRED + -- --=[Port 2049 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 2049 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=nfs*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 2049 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port2049.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=nfs*,/usr/share/nmap/scripts/vulners -p 2049 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port2049.txt
   fi
-  if [ "$RPC_INFO" = "1" ]; then
+  if [[ "$RPC_INFO" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING RPCINFO $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     rpcinfo -p $TARGET
   fi
-  if [ "$SHOW_MOUNT" = "1" ]; then
+  if [[ "$SHOW_MOUNT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING SHOWMOUNT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     showmount -e $TARGET
   fi
-  if [ "$SMB_ENUM" = "1" ]; then
+  if [[ "$SMB_ENUM" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED CHECKING FOR NULL SHARES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -930,7 +930,7 @@ else
   fi
 fi
 
-if [ -z "$port_2181" ];
+if [[ -z "$port_2181" ]];
 then
   echo -e "$OKRED + -- --=[Port 2181 closed... skipping.$RESET"
 else
@@ -941,18 +941,18 @@ else
   echo stat | nc $TARGET 2181 | tee $LOOT_DIR/output/zookeeper-$TARGET-port2181.txt
 fi
 
-if [ -z "$port_3306" ];
+if [[ -z "$port_3306" ]];
 then
   echo -e "$OKRED + -- --=[Port 3306 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 3306 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=mysql*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 3306 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3306.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=mysql*,/usr/share/nmap/scripts/vulners -p 3306 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3306.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -962,7 +962,7 @@ else
   fi
 fi
 
-if [ -z "$port_3310" ];
+if [[ -z "$port_3310" ]];
 then
   echo -e "$OKRED + -- --=[Port 3310 closed... skipping.$RESET"
 else
@@ -970,36 +970,36 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
-    nmap -A -p 3310 -Pn -sV  -v --script-timeout 90 --script=clamav-exec,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3310.txt
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
+    nmap -A -p 3310 -Pn -sV  -v --script-timeout 90 --script=clamav-exec,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3310.txt
   fi
 fi
 
-if [ -z "$port_3128" ];
+if [[ -z "$port_3128" ]];
 then
   echo -e "$OKRED + -- --=[Port 3128 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 3128 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -p 3128 -Pn -sV  -v --script-timeout 90 --script=*proxy*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3128.txt
+    nmap -A -p 3128 -Pn -sV  -v --script-timeout 90 --script=*proxy*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3128.txt
   fi
 fi
 
-if [ -z "$port_3389" ];
+if [[ -z "$port_3389" ]];
 then
   echo -e "$OKRED + -- --=[Port 3389 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 3389 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=rdp-*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 3389 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3389.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=rdp-*,/usr/share/nmap/scripts/vulners -p 3389 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3389.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1019,18 +1019,18 @@ else
   rdesktop $TARGET &
 fi
 
-if [ -z "$port_3632" ];
+if [[ -z "$port_3632" ]];
 then
   echo -e "$OKRED + -- --=[Port 3632 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 3632 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=distcc-*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 3632 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3632.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=distcc-*,/usr/share/nmap/scripts/vulners -p 3632 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port3632.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1040,18 +1040,18 @@ else
   fi
 fi
 
-if [ -z "$port_5432" ];
+if [[ -z "$port_5432" ]];
 then
   echo -e "$OKRED + -- --=[Port 5432 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 5432 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=pgsql-brute,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 5432 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port5432.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=pgsql-brute,/usr/share/nmap/scripts/vulners -p 5432 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port5432.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1061,7 +1061,7 @@ else
   fi
 fi
 
-if [ -z "$port_5555" ];
+if [[ -z "$port_5555" ]];
 then
   echo -e "$OKRED + -- --=[Port 5555 closed... skipping.$RESET"
 else
@@ -1073,31 +1073,31 @@ else
   adb shell pm list packages 
 fi
 
-if [ -z "$port_5800" ];
+if [[ -z "$port_5800" ]];
 then
   echo -e "$OKRED + -- --=[Port 5800 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 5800 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=vnc*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 5800 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port5800.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=vnc*,/usr/share/nmap/scripts/vulners -p 5800 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port5800.txt
   fi
 fi
 
-if [ -z "$port_5900" ];
+if [[ -z "$port_5900" ]];
 then
   echo -e "$OKRED + -- --=[Port 5900 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 5900 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV  -v --script-timeout 90 --script=vnc*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 5900 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port5900.txt
+    nmap -A -sV  -v --script-timeout 90 --script=vnc*,/usr/share/nmap/scripts/vulners -p 5900 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port5900.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1107,18 +1107,18 @@ else
   fi
 fi
 
-if [ -z "$port_5984" ];
+if [[ -z "$port_5984" ]];
 then
   echo -e "$OKRED + -- --=[Port 5984 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 5984 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=couchdb*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 5984 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port5984.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=couchdb*,/usr/share/nmap/scripts/vulners -p 5984 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port5984.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1134,18 +1134,18 @@ else
   fi
 fi
 
-if [ -z "$port_6000" ];
+if [[ -z "$port_6000" ]];
 then
   echo -e "$OKRED + -- --=[Port 6000 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 6000 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=x11*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 6000 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port6000.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=x11*,/usr/share/nmap/scripts/vulners -p 6000 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port6000.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1155,18 +1155,18 @@ else
   fi
 fi
 
-if [ -z "$port_6667" ];
+if [[ -z "$port_6667" ]];
 then
   echo -e "$OKRED + -- --=[Port 6667 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 6667 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -v --script-timeout 90 --script=irc*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners -p 6667 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port6667.txt
+    nmap -A -sV -Pn -v --script-timeout 90 --script=irc*,/usr/share/nmap/scripts/vulners -p 6667 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port6667.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1176,18 +1176,18 @@ else
   fi
 fi
 
-if [ -z "$port_7001" ];
+if [[ -z "$port_7001" ]];
 then
   echo -e "$OKRED + -- --=[Port 7001 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 7001 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -sV -p 7001 -v --script-timeout 90 --script=weblogic-t3-info.nse,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port7001.txt
+    nmap -sV -p 7001 -v --script-timeout 90 --script=weblogic-t3-info.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port7001.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1200,12 +1200,12 @@ else
   fi
 fi
 
-if [ -z "$port_8000" ];
+if [[ -z "$port_8000" ]];
 then
   echo -e "$OKRED + -- --=[Port 8000 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 8000 opened... running tests...$RESET"
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING JAVA JDWP DEBUG EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1215,24 +1215,24 @@ else
   fi
 fi
 
-if [ -z "$port_8001" ];
+if [[ -z "$port_8001" ]];
 then
   echo -e "$OKRED + -- --=[Port 8001 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 8001 opened... running tests...$RESET"
-  if [ "$AMAP" = "1" ]; then
+  if [[ "$AMAP" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING AMAP $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     amap $TARGET 8001 -A
   fi
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -A -sV -Pn -p 8001 -v --script-timeout 90 --script=rmi-*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port8001.txt
+    nmap -A -sV -Pn -p 8001 -v --script-timeout 90 --script=rmi-*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port8001.txt
   fi
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING METASPLOIT MODULES $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1245,12 +1245,12 @@ else
   fi
 fi
 
-if [ -z "$port_9495" ];
+if [[ -z "$port_9495" ]];
 then
   echo -e "$OKRED + -- --=[Port 9495 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 9495 opened... running tests...$RESET"
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING IBM TIVOLI ENDPOINT OVERFLOW EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1260,12 +1260,12 @@ else
   fi
 fi
 
-if [ -z "$port_10000" ];
+if [[ -z "$port_10000" ]];
 then
   echo -e "$OKRED + -- --=[Port 10000 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 10000 opened... running tests...$RESET"
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING WEBMIN FILE DISCLOSURE EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1281,12 +1281,12 @@ else
   fi
 fi
 
-if [ -z "$port_16992" ];
+if [[ -z "$port_16992" ]];
 then
   echo -e "$OKRED + -- --=[Port 16992 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 16992 opened... running tests...$RESET"
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING INTEL AMT AUTH BYPASS EXPLOIT $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1296,64 +1296,64 @@ else
   fi
 fi
 
-if [ -z "$port_27017" ];
+if [[ -z "$port_27017" ]];
 then
   echo -e "$OKRED + -- --=[Port 27017 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 27017 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -sV -p 27017 -Pn -v --script-timeout 90 --script=mongodb*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port27017.txt
+    nmap -sV -p 27017 -Pn -v --script-timeout 90 --script=mongodb*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port27017.txt
   fi
 fi
 
-if [ -z "$port_27018" ];
+if [[ -z "$port_27018" ]];
 then
   echo -e "$OKRED + -- --=[Port 27018 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 27018 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -sV  -p 27018 -Pn -v --script-timeout 90 --script=mongodb*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port27018.txt
+    nmap -sV  -p 27018 -Pn -v --script-timeout 90 --script=mongodb*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port27018.txt
   fi
 fi
 
-if [ -z "$port_27019" ];
+if [[ -z "$port_27019" ]];
 then
   echo -e "$OKRED + -- --=[Port 27019 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 27019 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -sV  -p 27019 -Pn -v --script-timeout 90 --script=mongodb*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port27019.txt
+    nmap -sV  -p 27019 -Pn -v --script-timeout 90 --script=mongodb*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port27019.txt
   fi
 fi
 
-if [ -z "$port_28017" ];
+if [[ -z "$port_28017" ]];
 then
   echo -e "$OKRED + -- --=[Port 28017 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 28017 opened... running tests...$RESET"
-  if [ "$NMAP_SCRIPTS" = "1" ]; then
+  if [[ "$NMAP_SCRIPTS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -sV  -p 28017 -Pn -v --script-timeout 90 --script=mongodb*,/usr/share/nmap/scripts/vulscan/vulscan.nse,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port28017.txt
+    nmap -sV  -p 28017 -Pn -v --script-timeout 90 --script=mongodb*,/usr/share/nmap/scripts/vulners $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port28017.txt
   fi
 fi
 
-if [ -z "$port_49180" ];
+if [[ -z "$port_49180" ]];
 then
   echo -e "$OKRED + -- --=[Port 49180 closed... skipping.$RESET"
 else
   echo -e "$OKORANGE + -- --=[Port 49180 opened... running tests...$RESET"
-  if [ "$METASPLOIT_EXPLOIT" = "1" ]; then
+  if [[ "$METASPLOIT_EXPLOIT" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING JAVA RMI SCANNER $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1363,11 +1363,11 @@ else
   fi
 fi
 
-if [ $YASUO = "1" ]; then
+if [[ $YASUO = "1" ]]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCANNING FOR COMMON VULNERABILITIES $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [ $DISTRO == "blackarch" ]; then
+  if [[ $DISTRO == "blackarch" ]]; then
     /bin/yasuo -r $TARGET -b all | tee $LOOT_DIR/output/yasuo-$TARGET.txt 2> /dev/null
     tee $LOOT_DIR/output/yasuo-$TARGET.raw 2> /dev/null
     sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/yasuo-$TARGET.raw > $LOOT_DIR/output/yasuo-$TARGET.txt 2> /dev/null
@@ -1387,15 +1387,15 @@ rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
 
 VULNERABLE_METASPLOIT=$(egrep -h -i -s "may be vulnerable|is vulnerable|IKE response with leak|File saved in" $LOOT_DIR/output/msf-$TARGET-*.txt 2> /dev/null)
-if [ ${#VULNERABLE_METASPLOIT} -ge 5 ]; then
+if [[ ${#VULNERABLE_METASPLOIT} -ge 5 ]]; then
   echo "$VULNERABLE_METASPLOIT" > $LOOT_DIR/output/vulnerable-metasploit-$TARGET.txt 2> /dev/null
 fi
 VULNERABLE_SHELLSHOCK=$(egrep -h -i -s "The following URLs appear to be exploitable:" $LOOT_DIR/web/shocker-$TARGET-*.txt 2> /dev/null)
-if [ ${#VULNERABLE_SHELLSHOCK} -ge 5 ]; then
+if [[ ${#VULNERABLE_SHELLSHOCK} -ge 5 ]]; then
   echo "$VULNERABLE_SHELLSHOCK" > $LOOT_DIR/output/vulnerable-shellshock-$TARGET.txt 2> /dev/null
 fi
 SHELLED=$(egrep -h -i -s "Meterpreter session|Command executed|File(s) found:|Command Stager progress|File uploaded|Command shell session" $LOOT_DIR/output/msf-$TARGET-*.txt 2> /dev/null)
-if [ ${#SHELLED} -ge 5 ]; then
+if [[ ${#SHELLED} -ge 5 ]]; then
   echo "$SHELLED" > $LOOT_DIR/output/shelled-$TARGET.txt 2> /dev/null
 fi
 
@@ -1404,9 +1404,9 @@ echo -e "$OKRED SCAN COMPLETE! $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
 mv $LOOT_DIR/scans/running-$TARGET-normal.txt $LOOT_DIR/scans/finished-$TARGET-normal.txt 2> /dev/null
-if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 fi
-if [ "$LOOT" = "1" ] && [ -z "$NOLOOT" ]; then
+if [[ "$LOOT" = "1" ] && [ -z "$NOLOOT" ]]; then
   loot
 fi

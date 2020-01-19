@@ -1,7 +1,7 @@
 # WEB MODE #############################################################################################################
-if [ "$MODE" = "web" ]; then
-  if [ "$REPORT" = "1" ]; then
-    if [ ! -z "$WORKSPACE" ]; then
+if [[ "$MODE" = "web" ]]; then
+  if [[ "$REPORT" = "1" ]]; then
+    if [[ ! -z "$WORKSPACE" ]]; then
       args="$args -w $WORKSPACE"
       LOOT_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
       echo -e "$OKBLUE[*]$RESET Saving loot to $LOOT_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"

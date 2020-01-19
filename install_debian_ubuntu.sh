@@ -18,9 +18,10 @@ echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[ https://xerosecurity.com$RESET"
 echo -e "$OKORANGE + -- --=[ Sn1per by @xer0dayz$RESET"
 echo ""
-echo -e "$OKGREEN + -- --=[ This script will setup Ubuntu and Debian based OS's for the Sn1per installation. (Hit enter to continue): $RESET"
+echo -e "$OKGREEN + -- --=[ This script will install Sn1per on Ubuntu and Debian based OS's. $RESET"
+echo -e "$OKRED + -- --=[ NOTE: Installing Sn1per on Ubuntu or Debian based OS's requires adding Kali Linux repositories to yours apt sources list. This *may* cause system instability or compatibility issues! Be sure to backup your system prior to running this script in case you need to revert. (Hit Enter to continue) $RESET"
 read answer
-if [ ! -f "/etc/apt/sources.list.bak" ]; then
+if [[ ! -f "/etc/apt/sources.list.bak" ]]; then
 	cp /etc/apt/sources.list /etc/apt/sources.list.bak
 	echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
 	echo "deb-src http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list

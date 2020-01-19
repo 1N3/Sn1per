@@ -1,7 +1,7 @@
 # DISCOVER MODE #####################################################################################################
-if [ "$MODE" = "discover" ]; then
-  if [ "$REPORT" = "1" ]; then
-    if [ ! -z "$WORKSPACE" ]; then
+if [[ "$MODE" = "discover" ]]; then
+  if [[ "$REPORT" = "1" ]]; then
+    if [[ ! -z "$WORKSPACE" ]]; then
       WORKSPACE="$(echo $WORKSPACE | tr / -)"
       args="$args -w $WORKSPACE"
       LOOT_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
@@ -18,7 +18,7 @@ if [ "$MODE" = "discover" ]; then
     OUT_FILE="$(echo $TARGET | tr / -)"
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$OUT_FILE-$MODE.txt 2> /dev/null
-    if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+    if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     fi
     sniper -t $TARGET -m $MODE --noreport $args | tee $LOOT_DIR/output/sniper-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
@@ -48,12 +48,12 @@ if [ "$MODE" = "discover" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  nmap -v -p $QUICK_PORTS -sS $TARGET -Pn 2> /dev/null | tee $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt 2>/dev/null 
+  nmap -v -p $QUICK_PORTS --data-length=50 -sS $TARGET -Pn 2> /dev/null | grep "open port" | tee $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt 2>/dev/null 
   cat $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt | grep open | grep on | awk '{print $6}' > $LOOT_DIR/ips/sniper-$OUT_FILE-tcpips.txt
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  nmap -v -p $DEFAULT_UDP_PORTS -sU -Pn $TARGET 2> /dev/null | tee $LOOT_DIR/ips/sniper-$OUT_FILE-udp.txt 2>/dev/null 
+  nmap -v -p $DEFAULT_UDP_PORTS --data-length=50 -sU -Pn $TARGET 2> /dev/null | grep "open port" | tee $LOOT_DIR/ips/sniper-$OUT_FILE-udp.txt 2>/dev/null 
   cat $LOOT_DIR/ips/sniper-$OUT_FILE-udp.txt | grep open | grep on | awk '{print $6}' > $LOOT_DIR/ips/sniper-$OUT_FILE-udpips.txt
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED CURRENT TARGETS $RESET"
@@ -67,7 +67,7 @@ if [ "$MODE" = "discover" ]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+  if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   sniper -f $LOOT_DIR/ips/discover-$OUT_FILE-sorted.txt -m flyover -w $WORKSPACE

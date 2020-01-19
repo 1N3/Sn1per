@@ -1,14 +1,14 @@
 # NUKE MODE #####################################################################################################
-if [ "$MODE" = "nuke" ]; then
-  if [ -z "$FILE" ]; then
+if [[ "$MODE" = "nuke" ]]; then
+  if [[ -z "$FILE" ]]; then
     logo
     echo "You need to specify a list of targets (ie. -f <targets.txt>) to scan."
     exit
   fi
-  if [ "$REPORT" = "1" ]; then
+  if [[ "$REPORT" = "1" ]]; then
     for a in `cat $FILE`;
     do
-      if [ ! -z "$WORKSPACE" ]; then
+      if [[ ! -z "$WORKSPACE" ]]; then
         args="$args -w $WORKSPACE"
         WORKSPACE_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
         echo -e "$OKBLUE[*] Saving loot to $WORKSPACE_DIR [$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
@@ -39,16 +39,16 @@ if [ "$MODE" = "nuke" ]; then
       echo -e "$OKRED --------------------------------------------------------- $RESET"
       echo -e "$OKORANGE + -- --=[WARNING! Nuking ALL target! $RESET"
       echo -e "$RESET"
-      if [ ! -z "$WORKSPACE_DIR" ]; then
+      if [[ ! -z "$WORKSPACE_DIR" ]]; then
         echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
         echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-        if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+        if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
           /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
         fi
         sniper $args | tee $WORKSPACE_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
       else
         echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-        if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+        if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
           /bin/bash "$INSTALL_DIR/bin/slack.sh" "Starting scan: $TARGET $MODE `date +"%Y-%m-%d %H:%M"`"
         fi
         sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
@@ -56,10 +56,10 @@ if [ "$MODE" = "nuke" ]; then
       args=""
     done
   fi
-  if [ "$LOOT" = "1" ]; then
+  if [[ "$LOOT" = "1" ]]; then
     loot
   fi
-  if [ "$SLACK_NOTIFICATIONS" == "1" ]; then
+  if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   exit
