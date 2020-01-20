@@ -1407,6 +1407,6 @@ mv $LOOT_DIR/scans/running-$TARGET-normal.txt $LOOT_DIR/scans/finished-$TARGET-n
 if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 fi
-if [[ "$LOOT" = "1" ] && [ -z "$NOLOOT" ]]; then
+if [[ "$LOOT" = "1" ]] && [[ -z "$NOLOOT" ]]; then
   loot
 fi

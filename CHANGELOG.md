@@ -5,6 +5,7 @@
 * v8.1 - Removed NMap vulscan script due to F+ results
 * v8.1 - Fixed issue with CRT.SH sub-domain retrieval
 * v8.1 - Fixed "[: ==: unary operator expected" in all code
+* v8.1 - Updated Sn1per Professional autoload settings
 * v8.1 - Updated web brute force wordlists
 * v8.1 - Removed null and debug errors from passive spider API output
 * v8.1 - Updated Commoncrawl index repo

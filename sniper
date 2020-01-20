@@ -494,23 +494,13 @@ function loot {
       PRE_NAME=$(echo $WORKSPACE | sed "s/\./-/g")
       sed -i "s/notepad/notepad-$PRE_NAME/g" "$LOOT_DIR/notes/notepad.html" 2> /dev/null
     fi
-    if [[ "$SN1PER_AUTOLOAD" = "1" ]]; then
+    if [[ "$SN1PER_AUTOLOAD" = "1" ]] && [[ ! -f "$INSTALL_DIR/pro/settings.php" ]]; then
       echo -e "$OKORANGE + -- --=[ Loading Sn1per Professional...$RESET"
       source $INSTALL_DIR/pro.sh
       $BROWSER $LOOT_DIR/sniper-report.html 2> /dev/null > /dev/null &
-    elif [[ "$SN1PER_AUTOLOAD" = "0" ]]; then
+    else
       echo -e "$OKORANGE + -- --=[ Generating Sn1per Professional reports...$RESET"
       source $INSTALL_DIR/pro.sh
-    else
-      echo -e "$OKORANGE + -- --=[ Do you want to load Sn1per Professional (y or n)? $RESET"
-      read ANS
-      if [[ "$ANS" == "y" ]]; then
-        echo -e "$OKORANGE + -- --=[ Loading Sn1per Professional...$RESET"
-        source $INSTALL_DIR/pro.sh
-        $BROWSER $LOOT_DIR/sniper-report.html 2> /dev/null > /dev/null &
-      else 
-        echo -e "$OKORANGE + -- --=[ Skipping report generation. $RESET"
-      fi
     fi
   else
     echo -e "$OKRED + -- --=[ Sn1per Professional is not installed. To download Sn1per Professional, go to https://xerosecurity.com. $RESET"
