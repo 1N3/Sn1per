@@ -4,6 +4,7 @@
 * v8.1 - Added --data-length=50 for NMap IPS evasion
 * v8.1 - Removed NMap vulscan script due to F+ results
 * v8.1 - Fixed issue with CRT.SH sub-domain retrieval
+* v8.1 - Updated Kali Linux keyring package
 * v8.1 - Fixed "[: ==: unary operator expected" in all code
 * v8.1 - Updated Sn1per Professional autoload settings
 * v8.1 - Updated web brute force wordlists
