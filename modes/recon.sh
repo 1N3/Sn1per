@@ -157,7 +157,7 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "$OKRED STARTING SUBJACK HIJACKING SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     cp $LOOT_DIR/nmap/subjack-$TARGET.txt $LOOT_DIR/nmap/subjack_old-$TARGET.txt 2> /dev/null
-    ~/go/bin/subjack -w $LOOT_DIR/domains/domains-$TARGET-full.txt -t $THREADS -timeout 30 -o $LOOT_DIR/nmap/subjack-$TARGET.txt -a -v
+    ~/go/bin/subjack -w $LOOT_DIR/domains/domains-$TARGET-full.txt -c ~/go/src/github.com/haccer/subjack/fingerprints.json -t $THREADS -timeout 30 -o $LOOT_DIR/nmap/subjack-$TARGET.txt -a -v
     diff $LOOT_DIR/nmap/subjack_old-$TARGET.txt $LOOT_DIR/nmap/subjack-$TARGET.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{$1=""; print $0}' 2> /dev/null > $LOOT_DIR/nmap/subjack_new-$TARGET.txt
     if [[ "$SLACK_NOTIFICATIONS_SUBJACK_NEW" == "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/subjack_new-$TARGET.txt"
