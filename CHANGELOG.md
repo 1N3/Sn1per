@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.2 - Added Spyse sub-domain enumeration tool (https://github.com/zeropwn/spyse.py)
 * v8.2 - Fixed issue with Subjack (open /src/github.com/haccer/subjack/fingerprints.json: no such file or directory)
 * v8.1 - Added Citrix Gateway Arbitary Code Execution CVE-2019-19781 vulnerability detection
 * v8.1 - Added Pulse Secure VPN Arbitrary File Disclosure CVE-2019-11510 exploit

@@ -50,18 +50,27 @@ if [[ "$RECON" = "1" ]]; then
     echo ""
     echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
   fi
+  if [[ "$SPYSE" = "1" ]]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED GATHERING SPYSE SUBDOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKBLUE"
+    spyse -target $TARGET --subdomains | grep $TARGET | tee $LOOT_DIR/domains/domains-$TARGET-spyse.txt
+    echo ""
+    echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-spyse.txt"
+  fi
   if [[ "$CENSYS_SUBDOMAINS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING CENSYS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | tee $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null 
+    python $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | tee $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null
   fi
   if [[ "$SHODAN" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING SHODAN SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     shodan init $SHODAN_API_KEY
-    shodan search "hostname:*.$TARGET" > $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null 
+    shodan search "hostname:*.$TARGET" > $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null
     awk '{print $3}' $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null | grep -v "\;" | tee $LOOT_DIR/domains/domains-$TARGET-shodan-sorted.txt 2> /dev/null
     awk '{print $1}' $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2>/dev/null
   fi
@@ -69,9 +78,10 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING PROJECT SONAR SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    curl -fsSL "https://dns.bufferover.run/dns?q=.$TARGET" | sed 's/\"//g' | cut -f2 -d "," |sort -u | grep $TARGET | tee $LOOT_DIR/domains/domains-$TARGET-projectsonar.txt 2> /dev/null 
+    curl -fsSL "https://dns.bufferover.run/dns?q=.$TARGET" | sed 's/\"//g' | cut -f2 -d "," | grep -v "<BR>" | sort -u | grep $TARGET | tee $LOOT_DIR/domains/domains-$TARGET-projectsonar.txt 2> /dev/null
   fi
   cat $LOOT_DIR/domains/domains-$TARGET-crt.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET-spyse.txt /dev/null > $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-subfinder.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
