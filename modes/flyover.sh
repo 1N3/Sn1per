@@ -65,7 +65,7 @@ if [[ "$MODE" = "flyover" ]]; then
       webtech -u http://$TARGET 2> /dev/null | grep \- 2> /dev/null | cut -d- -f2- 2> /dev/null > $LOOT_DIR/web/webtech-$TARGET-http.txt 2> /dev/null &
       webtech -u https://$TARGET 2> /dev/null | grep \- 2> /dev/null | cut -d- -f2- 2> /dev/null > $LOOT_DIR/web/webtech-$TARGET-https.txt 2> /dev/null &
 
-      nmap -sS --open -Pn --data-length=50 -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null & 
+      nmap -sS --open -Pn $NMAP_OPTIONS -p $DEFAULT_PORTS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null & 
       WEBHOST=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null | egrep "80|443" | grep open | wc -l 2> /dev/null) 
       if [[ "$WEBHOST" -gt "0" ]]; then
         echo "$TARGET" >> $LOOT_DIR/web/webhosts-unsorted.txt 2> /dev/null

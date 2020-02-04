@@ -90,18 +90,18 @@ mkdir -p $GO_DIR 2> /dev/null
 
 echo -e "$OKORANGE + -- --=[ Downloading extensions...$RESET"
 git clone https://github.com/1N3/BruteX.git 
-git clone https://github.com/1N3/Findsploit.git
-git clone https://github.com/1N3/Goohak.git
+git clone https://github.com/1N3/Findsploit.git 
+git clone https://github.com/1N3/Goohak.git 
 git clone https://github.com/1N3/BlackWidow
-cp /usr/share/sniper/plugins/BlackWidow/blackwidow /usr/bin/blackwidow
+cp /usr/share/sniper/plugins/BlackWidow/blackwidow /usr/bin/blackwidow 
 cp /usr/share/sniper/plugins/BlackWidow/injectx.py /usr/bin/injectx.py
 pip install -r /usr/share/sniper/plugins/BlackWidow/requirements.txt
-git clone https://github.com/Dionach/CMSmap.git
-git clone https://github.com/0xsauby/yasuo.git
-git clone https://github.com/aboul3la/Sublist3r
-git clone https://github.com/nccgroup/shocker.git
+git clone https://github.com/Dionach/CMSmap.git 
+git clone https://github.com/0xsauby/yasuo.git 
+git clone https://github.com/1N3/Sublist3r.git
+git clone https://github.com/nccgroup/shocker.git 
 git clone https://github.com/BishopFox/spoofcheck.git
-git clone https://github.com/arthepsy/ssh-audit
+git clone https://github.com/arthepsy/ssh-audit 
 git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
@@ -109,11 +109,11 @@ git clone https://github.com/rbsec/dnscan.git
 git clone https://github.com/RUB-NDS/CORStest.git
 git clone https://github.com/christophetd/censys-subdomain-finder.git
 pip install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
-pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt
-git clone https://github.com/infosec-au/altdns.git
+pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
+git clone https://github.com/infosec-au/altdns.git 
 cd altdns
-pip install -r requirements.txt
-python2 setup.py install
+pip install -r requirements.txt 
+python2 setup.py install 
 pip install py-altdns
 cd ..
 git clone https://github.com/blechschmidt/massdns.git
@@ -152,8 +152,8 @@ wget https://raw.githubusercontent.com/1N3/Exploits/master/defcon_webmin_unauth_
 wget https://github.com/OJ/gobuster/releases/download/v3.0.1/gobuster-linux-amd64.7z -O /tmp/gobuster.7z
 cd /tmp/
 7z e gobuster.7z
-chmod +rx gobuster
-mv gobuster /usr/bin/gobuster
+chmod +rx gobuster 
+mv gobuster /usr/bin/gobuster 
 cd $PLUGINS_DIR
 wget https://github.com/laramies/theHarvester/archive/3.0.6.tar.gz
 tar -zxvf 3.0.6.tar.gz
@@ -162,7 +162,7 @@ rm -f /usr/bin/theharvester
 ln -s /usr/share/sniper/plugins/theHarvester-3.0.6/theHarvester.py /usr/bin/theharvester
 git clone https://github.com/laramies/metagoofil.git
 git clone https://github.com/achillean/shodan-python
-cd shodan-python
+cd shodan-python 
 python setup.py install
 cd ..
 pip3 install spyse.py

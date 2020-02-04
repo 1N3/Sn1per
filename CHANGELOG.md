@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v8.2 - Added check with insecure SSL/TLS connections
+* v8.2 - Added NMAP_OPTIONS setting in ~/.sniper.conf to configure optional NMap settings
 * v8.2 - Fixed issue with ManageEngine MSF exploit payload
 * v8.2 - Added Spyse sub-domain enumeration tool (https://github.com/zeropwn/spyse.py)
 * v8.2 - Fixed issue with Subjack (open /src/github.com/haccer/subjack/fingerprints.json: no such file or directory)

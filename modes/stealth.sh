@@ -125,7 +125,7 @@ if [[ "$MODE" = "stealth" ]]; then
   if [[ "$VERBOSE" == "1" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN nmap -sS --open -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt$RESET"
   fi
-  nmap -sS --open --data-length=50 -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+  nmap -sS --open -Pn $NMAP_OPTIONS $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
   if [[ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET.txt"
   fi
@@ -439,6 +439,12 @@ if [[ "$MODE" = "stealth" ]]; then
       sslscan --no-failed $TARGET | tee $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/sslscan-$TARGET.raw > $LOOT_DIR/web/sslscan-$TARGET.txt 2> /dev/null
       rm -f $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null
+    fi
+    if [[ "$SSL_INSECURE" == "1" ]]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED CHECKING FOR INSECURE SSL/TLS CONFIGURATIONS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      curl https://$TARGET 2> $LOOT_DIR/web/curldebug-$TARGET.txt > /dev/null
     fi
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED SAVING SCREENSHOTS $RESET"

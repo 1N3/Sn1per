@@ -9,7 +9,7 @@ else
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per full portscan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
-  nmap -Pn -v -sV -A -O --data-length=50 --script=/usr/share/nmap/scripts/vulners -oX $LOOT_DIR/nmap/nmap-$TARGET-fullport.xml -p $FULL_PORTSCAN_PORTS $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET
+  nmap -Pn -v -sV -A -O $NMAP_OPTIONS --script=/usr/share/nmap/scripts/vulners -oX $LOOT_DIR/nmap/nmap-$TARGET-fullport.xml -p $FULL_PORTSCAN_PORTS $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET
   cp -f $LOOT_DIR/nmap/nmap-$TARGET-fullport.xml $LOOT_DIR/nmap/nmap-$TARGET.xml 2> /dev/null
   sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null
   rm -f $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null
@@ -20,7 +20,7 @@ else
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  nmap -Pn -sU -sV -A -v --data-length=50 --script=/usr/share/nmap/scripts/vulners -p $DEFAULT_UDP_PORTS -oX $LOOT_DIR/nmap/nmap-$TARGET-fullport-udp.xml $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET-udp
+  nmap -Pn -sU -sV -A -v $NMAP_OPTIONS --script=/usr/share/nmap/scripts/vulners -p $DEFAULT_UDP_PORTS -oX $LOOT_DIR/nmap/nmap-$TARGET-fullport-udp.xml $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET-udp
   sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET-udp.txt 2> /dev/null
   rm -f $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null
   HOST_UP=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2> /dev/null | grep "host up" 2> /dev/null)

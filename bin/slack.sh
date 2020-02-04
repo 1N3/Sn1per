@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SLACK_API_TOKEN=""
+SLACK_API_TOKEN=$(grep SLACK_API_TOKEN ~/.sniper.conf | cut -d\" -f2)
 SLACK_CHANNEL="sn1per-professional"
 MESSAGE="$1"
 

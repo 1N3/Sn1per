@@ -8,6 +8,8 @@ if [[ "$RECON" = "1" ]]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   if [[ "$SUBLIST3R" = "1" ]]; then
     python $PLUGINS_DIR/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+    sed -ie 's/<BR>/\n/g' domains-paypal.com-full.txt 2> /dev/null
+    mv -f $LOOT_DIR/domains/domains-$TARGET.txte $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
   fi
   if [[ "$AMASS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -34,6 +36,8 @@ if [[ "$RECON" = "1" ]]; then
     python $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_QUICK -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
     cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt 2>/dev/null | grep $TARGET| awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
     dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
+    sed -ie 's/<BR>/\n/g' $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
+    mv -f $LOOT_DIR/domains/domains-$TARGET.txte $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
   fi
   echo ""
   if [[ "$CRTSH" = "1" ]]; then
@@ -48,7 +52,7 @@ if [[ "$RECON" = "1" ]]; then
     cat $LOOT_DIR/domains/domains-$TARGET-presorted.txt | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/BR/\n/g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | grep -v "*" | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt
     cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
     echo ""
-    echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-full.txt"
+    echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-crt.txt"
   fi
   if [[ "$SPYSE" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -63,14 +67,14 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING CENSYS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | tee $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null
+    python $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | tee $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null 
   fi
   if [[ "$SHODAN" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING SHODAN SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     shodan init $SHODAN_API_KEY
-    shodan search "hostname:*.$TARGET" > $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null
+    shodan search "hostname:*.$TARGET" > $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null 
     awk '{print $3}' $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null | grep -v "\;" | tee $LOOT_DIR/domains/domains-$TARGET-shodan-sorted.txt 2> /dev/null
     awk '{print $1}' $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2>/dev/null
   fi
@@ -117,6 +121,8 @@ if [[ "$RECON" = "1" ]]; then
     cat $LOOT_DIR/ips/massdns-A-records-$TARGET.txt >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
   fi
   cat $LOOT_DIR/domains/domains-$TARGET-presorted.txt $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt 2> /dev/null | sort -u 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-full.txt
+  sed -ie 's/<BR>/\n/g' $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null
+  mv -f $LOOT_DIR/domains/domains-$TARGET-full.txte $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-full.txt >> $LOOT_DIR/scans/updated.txt 2> /dev/null
   #rm -f $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   diff $LOOT_DIR/domains/domains_old-$TARGET.txt $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{print $2}' 2> /dev/null > $LOOT_DIR/domains/domains_new-$TARGET.txt
