@@ -41,7 +41,7 @@ cp -Rf * $INSTALL_DIR 2> /dev/null
 cd $INSTALL_DIR
 
 # CHECK FOR UBUNTU...
-UBUNTU_CHECK=$(egrep DISTRIB_ID /etc/lsb-release)
+UBUNTU_CHECK=$(egrep DISTRIB_ID /etc/lsb-release 2> /dev/null)
 if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	if [[ ! -f "/etc/apt/sources.list.bak" ]]; then
 		cp /etc/apt/sources.list /etc/apt/sources.list.bak
