@@ -188,7 +188,9 @@ rm -f /usr/bin/dirsearch
 ln -s $INSTALL_DIR/sniper /usr/bin/sniper
 ln -s $PLUGINS_DIR/Goohak/goohak /usr/bin/goohak
 ln -s $PLUGINS_DIR/dirsearch/dirsearch.py /usr/bin/dirsearch
-msfdb init 
-
+msfdb init
+echo -e "$OKORANGE + -- --=[ Adding start menu shortcuts... $RESET"
+cp -f $INSTALL_DIR/sn1per.desktop /usr/share/applications/ 2> /dev/null
+cp -f $INSTALL_DIR/sn1per.png /usr/share/pixmaps/ 2> /dev/null
 echo -e "$OKORANGE + -- --=[ Done!$RESET"
 echo -e "$OKORANGE + -- --=[ To run, type 'sniper'! $RESET"

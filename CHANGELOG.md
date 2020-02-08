@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.2 - Added Kali XFCE start menu app & icon
 * v8.2 - Added check with insecure SSL/TLS connections
 * v8.2 - Added NMAP_OPTIONS setting in ~/.sniper.conf to configure optional NMap settings
 * v8.2 - Fixed issue with ManageEngine MSF exploit payload

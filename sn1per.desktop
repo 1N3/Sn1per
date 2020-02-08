@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=sn1per
+Encoding=UTF-8
+Exec=bash-wrapper "sudo sniper"
+Icon=/usr/share/pixmaps/sn1per.png
+StartupNotify=false
+Terminal=true
+Type=Application
+Categories=08-exploitation-tools;02-vulnerability-analysis;01-info-gathering;
+X-Kali-Package=sn1per
+Comment=
+Path=
