@@ -167,8 +167,8 @@ echo -e "$OKORANGE + -- --=[ Setting up environment...$RESET"
 mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
 cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
 cd $PLUGINS_DIR/BlackWidow/ && bash install.sh force 2> /dev/null
-cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
-cd $PLUGINS_DIR/Findsploit/ && bash install.sh 2> /dev/null
+cd $PLUGINS_DIR/BruteX/ && bash install.sh force 2> /dev/null
+cd $PLUGINS_DIR/Findsploit/ && bash install.sh force 2> /dev/null
 cd $PLUGINS_DIR/spoofcheck/ && pip install -r requirements.txt 2> /dev/null
 cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
 cd $INSTALL_DIR
