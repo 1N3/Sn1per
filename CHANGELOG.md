@@ -1,4 +1,8 @@
 ## CHANGELOG:
+* v8.2 - Fixed issue with Masswebscan mode not working
+* v8.2 - Added Rails file exposure exploit CVE-2019-5418
+* v8.2 - Updated wordlist selections to fingerprint common vulnerable applications
+* v8.2 - Added h8mail compromised credentials check to OSINT (-o) mode
 * v8.2 - Added Kali XFCE start menu app & icon
 * v8.2 - Added check with insecure SSL/TLS connections
 * v8.2 - Added NMAP_OPTIONS setting in ~/.sniper.conf to configure optional NMap settings

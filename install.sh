@@ -29,7 +29,15 @@ if [[ "$1" != "force" ]]; then
 	read answer
 fi
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root"
+   exit 1
+fi
+
 mkdir -p $INSTALL_DIR 2> /dev/null
+chmod 777 -Rf $INSTALL_DIR 2> /dev/null
+chown root $INSTALL_DIR/sniper 2> /dev/null
+chmod 4777 $INSTALL_DIR/sniper 2> /dev/null
 mkdir -p $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/domains 2> /dev/null
 mkdir $LOOT_DIR/screenshots 2> /dev/null
@@ -163,11 +171,12 @@ cd shodan-python
 python setup.py install
 cd ..
 pip3 install spyse.py
+pip install h8mail
 echo -e "$OKORANGE + -- --=[ Setting up environment...$RESET"
 mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
 cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
 cd $PLUGINS_DIR/BlackWidow/ && bash install.sh force 2> /dev/null
-cd $PLUGINS_DIR/BruteX/ && bash install.sh force 2> /dev/null
+cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/spoofcheck/ && pip install -r requirements.txt 2> /dev/null
 cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install

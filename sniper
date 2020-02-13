@@ -66,16 +66,16 @@ function help {
   echo ' sniper -f targets.txt -m nuke -w <WORKSPACE_ALIAS>'
   echo ""
   echo ' [*] MASS PORT SCAN MODE'
-  echo ' sniper -f targets.txt -m massportscan'
+  echo ' sniper -f targets.txt -m massportscan -w <WORKSPACE_ALIAS>'
   echo ""
   echo ' [*] MASS WEB SCAN MODE'
-  echo ' sniper -f targets.txt -m massweb'
+  echo ' sniper -f targets.txt -m massweb -w <WORKSPACE_ALIAS>'
   echo ""
   echo ' [*] MASS WEBSCAN SCAN MODE'
-  echo ' sniper -f targets.txt -m masswebscan'
+  echo ' sniper -f targets.txt -m masswebscan -w <WORKSPACE_ALIAS>'
   echo ""
   echo ' [*] MASS VULN SCAN MODE'
-  echo ' sniper -f targets.txt -m massvulnscan'
+  echo ' sniper -f targets.txt -m massvulnscan -w <WORKSPACE_ALIAS>'
   echo ""
   echo ' [*] PORT SCAN MODE'
   echo ' sniper -t <TARGET> -m port -p <PORT_NUM>'
@@ -277,7 +277,7 @@ case $key in
     read ANS
     rm -Rf /usr/share/sniper/loot/workspace/$WORKSPACE/
     echo "Workspace /usr/share/sniper/loot/workspace/$WORKSPACE/ was removed."
-    sniper -w default --reimport 
+    sniper -w default --reimport
     exit
     shift # past argument
     ;;
@@ -289,7 +289,7 @@ case $key in
     rm -f $WORKSPACE_DIR/nmap/ports-$TARGET.txt 2> /dev/null
     rm -f $WORKSPACE_DIR/web/title-*-$TARGET.txt 2> /dev/null
     rm -f $WORKSPACE_DIR/web/headers-*-$TARGET.txt 2> /dev/null
-    sniper --reimportall -w $WORKSPACE 
+    sniper --reimportall -w $WORKSPACE
     exit
     shift # past argument
     ;;
@@ -362,7 +362,9 @@ function init {
   touch $LOOT_DIR/scans/scheduled/daily.sh 2> /dev/null
   touch $LOOT_DIR/scans/scheduled/weekly.sh 2> /dev/null
   touch $LOOT_DIR/scans/scheduled/monthly.sh 2> /dev/null
-  chmod 777 -Rf $LOOT_DIR 2> /dev/null
+  chmod 777 -Rf $INSTALL_DIR 2> /dev/null
+  chown root $INSTALL_DIR/sniper 2> /dev/null
+  chmod 4777 $INSTALL_DIR/sniper 2> /dev/null
   TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
   service postgresql start
   msfdb start 2> /dev/null > /dev/null
