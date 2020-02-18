@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.2 - Fixed issue with firefox not loading on Kali Linux 2020.1
 * v8.2 - Fixed issue with Masswebscan mode not working
 * v8.2 - Added Rails file exposure exploit CVE-2019-5418
 * v8.2 - Updated wordlist selections to fingerprint common vulnerable applications

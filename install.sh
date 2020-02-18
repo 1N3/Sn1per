@@ -48,6 +48,11 @@ mkdir $LOOT_DIR/osint 2> /dev/null
 cp -Rf * $INSTALL_DIR 2> /dev/null
 cd $INSTALL_DIR
 
+sudo cp -a /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
+sudo cp -a /home/$USER/.Xauthority /root/.Xauthority 2> /dev/null
+sudo chown root: /root/.Xauthority 2> /dev/null
+XAUTHORITY=/root/.Xauthority
+
 # CHECK FOR UBUNTU...
 UBUNTU_CHECK=$(egrep DISTRIB_ID /etc/lsb-release 2> /dev/null)
 if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
