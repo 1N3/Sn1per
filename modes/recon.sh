@@ -126,8 +126,11 @@ if [[ "$RECON" = "1" ]]; then
   cat $LOOT_DIR/domains/domains-$TARGET-full.txt >> $LOOT_DIR/scans/updated.txt 2> /dev/null
   #rm -f $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   diff $LOOT_DIR/domains/domains_old-$TARGET.txt $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{print $2}' 2> /dev/null > $LOOT_DIR/domains/domains_new-$TARGET.txt
-  if [[ "$SLACK_NOTIFICATIONS_DOMAINS_NEW" == "1" ]]; then
+  if [[ "$SLACK_NOTIFICATIONS_DOMAINS_NEW" == "1" ]] && [[ -s "$LOOT_DIR/domains/domains_new-$TARGET.txt" ]]; then
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/domains/domains_new-$TARGET.txt"
+    echo "[xerosecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+    cat $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null >> $LOOT_DIR/scans/notifications.txt 2> /dev/null 
   fi
   echo -e "$RESET"
   if [[ "$SPOOF_CHECK" = "1" ]]; then

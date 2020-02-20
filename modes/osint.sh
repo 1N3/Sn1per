@@ -36,7 +36,7 @@ if [[ "$OSINT" = "1" ]]; then
 		if [[ "$VERBOSE" == "1" ]]; then
 			echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python2.7 $THEHARVESTER_PATH -d $TARGET -l 100 -b all 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null  $RESET"
 		fi
-		theharvester -d $TARGET -l 100 -b all 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null 
+		theharvester -d $TARGET -l 25 -b all 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null 
 
 		if [[ "$SLACK_NOTIFICATIONS_THEHARVESTER" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/theharvester-$TARGET.txt"
@@ -66,7 +66,7 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "$OKRED COLLECTING OSINT FROM ONLINE DOCUMENTS $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		cd $INSTALL_DIR/plugins/metagoofil/
-		python metagoofil.py -d $TARGET -t doc,pdf,xls,csv,txt -l 100 -n 100 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html 2> /dev/null | tee $LOOT_DIR/osint/metagoofil-$TARGET.txt 2> /dev/null 
+		python metagoofil.py -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html 2> /dev/null | tee $LOOT_DIR/osint/metagoofil-$TARGET.txt 2> /dev/null 
 		cd $INSTALL_DIR
 		if [[ "$SLACK_NOTIFICATIONS_METAGOOFIL" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/metagoofil-$TARGET.txt"
@@ -84,6 +84,12 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		msfconsole -x "use auxiliary/gather/search_email_collector; set DOMAIN $TARGET; run; exit y" | tee $LOOT_DIR/osint/msf-emails-$TARGET.txt 2> /dev/null
 	fi
+	if [[ "$H8MAIL" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED CHECKING FOR COMPROMISED CREDENTIALS $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		h8mail -q domain --target $TARGET -o $LOOT_DIR/osint/h8mail-$TARGET.csv 2> /dev/null
+	fi	
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi
