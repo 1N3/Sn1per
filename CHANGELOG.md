@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.2 - Added root priv check to sniper script to run
 * v8.2 - Added NMap port change notifications via Slack
 * v8.2 - Fixed issue with firefox not loading on Kali Linux 2020.1
 * v8.2 - Fixed issue with Masswebscan mode not working

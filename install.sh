@@ -176,7 +176,7 @@ cd shodan-python
 python setup.py install
 cd ..
 pip3 install spyse.py
-pip install h8mail
+pip install h8mail 2> /dev/null
 echo -e "$OKORANGE + -- --=[ Setting up environment...$RESET"
 mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
 cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null

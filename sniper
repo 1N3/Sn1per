@@ -3,6 +3,11 @@
 # + -- --=[https://xerosecurity.com
 # 
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root"
+   exit 1
+fi
+
 VER="8.1"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
