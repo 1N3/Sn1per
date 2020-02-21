@@ -87,7 +87,7 @@ if [[ "$MODE" = "fullportonly" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/ports-$TARGET.diff"
     echo "[xerosecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
-    cat $LOOT_DIR/nmap/ports-$TARGET.diff 2> /dev/null | grep "<|>" >> $LOOT_DIR/scans/notifications.txt 2> /dev/null 
+    cat $LOOT_DIR/nmap/ports-$TARGET.diff 2> /dev/null | egrep "<|>" >> $LOOT_DIR/scans/notifications.txt 2> /dev/null 
   fi
   
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
