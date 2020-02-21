@@ -2,6 +2,11 @@
 # Uninstall script for Sn1per
 # Created by @xer0dayz - https://xerosecurity.com
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root"
+   exit 1
+fi
+
 # VARS
 OKBLUE='\033[94m'
 OKRED='\033[91m'

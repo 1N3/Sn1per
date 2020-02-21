@@ -2,6 +2,11 @@
 # Install script for Sn1per
 # Crated by @xer0dayz - https://xerosecurity.com
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root"
+   exit 1
+fi
+
 OKBLUE='\033[94m'
 OKRED='\033[91m'
 OKGREEN='\033[92m'
@@ -34,6 +39,7 @@ cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
 cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
 chown root /root/.Xauthority
 XAUTHORITY=/root/.Xauthority
+rm -Rf /tmp/Sn1per 2> /dev/null
 git clone https://github.com/1N3/Sn1per /tmp/Sn1per
 cd /tmp/Sn1per
 bash install.sh
