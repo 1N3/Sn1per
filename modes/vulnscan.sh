@@ -35,26 +35,59 @@ if [[ "$MODE" = "vulnscan" ]]; then
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
 
   if [[ "$OPENVAS" = "1" ]]; then
+    sudo openvas-start 2> /dev/null > /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING OPENVAS VULNERABILITY SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    ASSET_ID=$(omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml="<create_target><name>$TARGET</name><hosts>$TARGET</hosts></create_target>" | xmlstarlet sel -t -v /create_target_response/@id) && echo "ASSET_ID: $ASSET_ID"
-    TASK_ID=$(omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml "<create_task><name>$TARGET</name><preferences><preference><scanner_name>source_iface</scanner_name><value>eth0</value></preference></preferences><config id=\"74db13d6-7489-11df-91b9-002264764cea\"/><target id=\"$ASSET_ID\"/></create_task>" | xmlstarlet sel -t -v /create_task_response/@id) && echo "TASK_ID: $TASK_ID"
-    REPORT_ID=$(omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml "<start_task task_id=\"$TASK_ID\"/>" | cut -d\> -f3 | cut -d\< -f1) && echo "REPORT_ID: $REPORT_ID"
+    echo "Scanning target: $TARGET "
+    echo ""
+    echo "-----------------------------------------------"
+    echo "Listing OpenVAS version..."
+    echo "-----------------------------------------------"
+    omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -O
+    echo ""
+    echo "Listing OpenVAS targets..."
+    echo "-----------------------------------------------"
+    omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -T
+    echo ""
+    echo "Listing OpenVAS tasks..."
+    echo "-----------------------------------------------"
+    omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G
+    echo ""
+    echo "Creating scan task..."
+    echo "-----------------------------------------------"
+    ASSET_ID=$(omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml="<create_target><name>$TARGET</name><hosts>$TARGET</hosts></create_target>" | xmlstarlet sel -t -v /create_target_response/@id) && echo "ASSET_ID: $ASSET_ID"
+    if [[ "$ASSET_ID" == "" ]]; then
+      ASSET_ID_ERROR=$(omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml="<create_target><name>$TARGET</name><hosts>$TARGET</hosts></create_target>")
+      if [[ "$ASSET_ID_ERROR" == *"Target exists already"* ]]; then
+        ASSET_ID=$(omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -T | grep " $TARGET" | awk '{print $1}')
+        echo "ASSET_ID: $ASSET_ID"
+      fi
+    fi
+    TASK_ID=$(omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml "<create_task><name>$TARGET</name><preferences><preference><scanner_name>source_iface</scanner_name><value>eth0</value></preference></preferences><config id=\"74db13d6-7489-11df-91b9-002264764cea\"/><target id=\"$ASSET_ID\"/></create_task>" | xmlstarlet sel -t -v /create_task_response/@id) && echo "TASK_ID: $TASK_ID"
+    if [[ "TASK_ID" == "" ]]; then
+      omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml "<create_task><name>$TARGET</name><preferences><preference><scanner_name>source_iface</scanner_name><value>eth0</value></preference></preferences><config id=\"74db13d6-7489-11df-91b9-002264764cea\"/><target id=\"$ASSET_ID\"/></create_task>"
+    fi
+    REPORT_ID=$(omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml "<start_task task_id=\"$TASK_ID\"/>" | cut -d\> -f3 | cut -d\< -f1) && echo "REPORT_ID: $REPORT_ID"
+    if [[ "$REPORT_ID" == "" ]]; then
+      omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml "<start_task task_id=\"$TASK_ID\"/>"
+    fi
+    echo ""
     resp=""
     while [[ $resp != "Done" && $REPORT_ID != "" ]]
     do
-      omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep $TARGET
-      resp=$(omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep $TARGET | awk '{print $2}')
+      omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep $TASK_ID
+      resp=$(omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep "$TASK_ID" | awk '{print $2}')
       sleep 60
     done
     if [[ $REPORT_ID != "" ]]; then
-      omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml "<get_reports report_id=\"$REPORT_ID\" format_id=\"6c248850-1f62-11e1-b082-406186ea4fc5\"/>" | cut -d\> -f3 | cut -d\< -f1 | base64 -d > "$LOOT_DIR/output/openvas-$TARGET.html"
+      omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD --xml "<get_reports report_id=\"$REPORT_ID\" format_id=\"6c248850-1f62-11e1-b082-406186ea4fc5\"/>" | cut -d\> -f3 | cut -d\< -f1 | base64 -d > "$LOOT_DIR/output/openvas-$TARGET.html"
 
       echo "Report saved to $LOOT_DIR/output/openvas-$TARGET.html"
+      cat $LOOT_DIR/output/openvas-$TARGET.html 2> /dev/null
     else
       echo "No report ID found. Listing scan tasks:"
-      omp -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep $TARGET
+      omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep $TARGET
     fi
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
