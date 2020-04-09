@@ -83,6 +83,7 @@ apt-get install -y xmlstarlet
 apt-get install -y chromium
 apt-get install -y net-tools
 apt-get install -y p7zip-full
+apt-get install -y js-beautifier
 pip install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
@@ -117,7 +118,13 @@ git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
 git clone https://github.com/rbsec/dnscan.git
 git clone https://github.com/RUB-NDS/CORStest.git
+git clone https://github.com/hisxo/gitGraber.git
+git clone https://github.com/1N3/LinkFinder
+cd LinkFinder
+python setup.py install
+cd ..
 git clone https://github.com/christophetd/censys-subdomain-finder.git
+pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt
 pip install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt
 git clone https://github.com/infosec-au/altdns.git
@@ -141,13 +148,14 @@ unzip slurp.zip
 rm -f slurp.zip
 cd ~/go/bin/;go get github.com/haccer/subjack
 cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
+GO111MODULE=on go get -u github.com/theblackturtle/fprobe; ln -s ~/go/bin/fprobe /usr/bin/fprobe
 go get github.com/harleo/asnip
 ln -s ~/go/bin/asnip /usr/bin/asnip 2>/dev/null
 rm -Rf ~/go/src/amass*
-wget https://github.com/OWASP/Amass/releases/download/v3.1.10/amass_v3.1.10_linux_amd64.zip -O ~/go/src/amass.zip
+wget https://github.com/OWASP/Amass/releases/download/v3.5.4/amass_v3.5.4_linux_amd64.zip -O ~/go/src/amass.zip
 cd ~/go/src/
 unzip ~/go/src/amass.zip
-mv amass_v3.1.10_linux_amd64 amass 2> /dev/null
+mv amass_v3.5.4_linux_amd64 amass 2> /dev/null
 cd amass
 cp amass /usr/bin/amass -f 2> /dev/null
 rm -f ~/go/src/amass.zip 2> /dev/null

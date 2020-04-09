@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.3 - Added fix for missing Amass package
 * v8.3 - Added sniper.conf options for OPENVAS_HOST and OPENVAS_PORT selection for remote instances
 * v8.3 - Improved 'vulnscan' mode via OpenVAS to scan the same asset multiple times with improved error handling
 * v8.2 - Added root priv check to sniper script to run
