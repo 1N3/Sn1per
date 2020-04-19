@@ -8,7 +8,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-VER="8.2"
+VER="8.3"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
@@ -33,6 +33,9 @@ function help {
   echo ""
   echo ' [*] NORMAL MODE'
   echo ' sniper -t <TARGET>'
+  echo ""
+  echo ' [*] SPECIFY CUSTOM CONFIG FILE'
+  echo ' sniper -c /full/path/to/sniper.conf -t <TARGET> -m <MODE> -w <WORKSPACE>'
   echo ""
   echo ' [*] NORMAL MODE + OSINT + RECON'
   echo ' sniper -t <TARGET> -o -re'
@@ -133,25 +136,15 @@ function sniper_status {
   watch -n 1 -c 'ps -ef | egrep "sniper|slurp|hydra|ruby|python|dirsearch|amass|nmap|metasploit|curl|wget|nikto" && echo "NETWORK CONNECTIONS..." && netstat -an | egrep "TIME_WAIT|EST"'
 }
 
-function check_online {
-  if [[ ! -z "$ONLINE" ]]; then
-    ONLINE=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
-    if [[ -z "$ONLINE" ]]; then
-      ONLINE="0"
-      echo -e "$OKBLUE[*]$RESET Checking for active internet connection $OKBLUE[$RESET${OKRED}FAIL${RESET}$OKBLUE]"
-      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET sniper is running in offline mode.$RESET"
-    else
-      ONLINE="1"
-      echo -e "$OKBLUE[*]$RESET Checking for active internet connection $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
-    fi
-  fi
-}
-
 function check_update {
   if [[ "$ENABLE_AUTO_UPDATES" == "1" ]] && [[ "$ONLINE" == "1" ]]; then
     LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [[ "$LATEST_VER" != "$VER" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper v$LATEST_VER is available to download... To update, type$OKRED \"sniper -u\" $RESET"
+    fi
+    if [[ -f "$INSTALL_DIR/pro/settings.php" ]]; then
+      LICENSE_KEY=$(grep "LICENSE_KEY" $INSTALL_DIR/pro/settings.php 2> /dev/null | cut -d\" -f2 2> /dev/null )
+      PRO_UPDATE=$(curl --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER"  2> /dev/null | bash -  2> /dev/null > /dev/null)
     fi
   fi
 }
@@ -184,6 +177,24 @@ if [[ "$UPDATE" = "1" ]]; then
   exit
 fi
 
+function check_online {
+  ONLINE=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
+  if [[ -z "$ONLINE" ]]; then
+    ONLINE=$(curl --connect-timeout 3 --insecure -s "https://xerosecurity.com/community/updates.txt?$VER" 2> /dev/null)
+    if [[ -z "$ONLINE" ]]; then
+      ONLINE="0"
+      echo -e "$OKBLUE[*]$RESET Checking for active internet connection $OKBLUE[$RESET${OKRED}FAIL${RESET}$OKBLUE]"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET sniper is running in offline mode.$RESET"
+    else
+      ONLINE="1"
+      echo -e "$OKBLUE[*]$RESET Checking for active internet connection $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+    fi
+  else
+    ONLINE="1"
+    echo -e "$OKBLUE[*]$RESET Checking for active internet connection $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+  fi
+}
+
 # COMMAND LINE SWITCHES
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -194,6 +205,15 @@ case $key in
     -h|--help)
     help
     shift # past argument
+    ;;
+    -c|--config)
+    CONFIG="$2"
+    echo -e "$OKBLUE[*]$RESET Creating backup of existing config to ~/.sniper.conf.bak...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+    cp -f ~/.sniper.conf ~/.sniper.conf.bak
+    echo -e "$OKBLUE[*]$RESET Copying $CONFIG to ~/.sniper.conf...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+    cp -f $CONFIG ~/.sniper.conf 
+    shift
+    shift
     ;;
     -t)
     TARGET="$2"
@@ -288,13 +308,14 @@ case $key in
     ;;
     -dh|--delete-host)
     echo "Removing $TARGET from $WORKSPACE"
-    sed -i "/$TARGET/d" $WORKSPACE_DIR/domains/targets-all-sorted.txt $WORKSPACE_DIR/domains/domains-all-sorted.txt $WORKSPACE_DIR/domains/targets.txt $WORKSPACE_DIR/nmap/livehosts-sorted.txt $WORKSPACE_DIR/domains/targets-all-unscanned.txt $WORKSPACE_DIR/reports/host-table-report.csv
+    sed -i "/$TARGET/d" $WORKSPACE_DIR/domains/* $WORKSPACE_DIR/reports/host-table-report.csv
+    egrep -R "$TARGET" $WORKSPACE_DIR/domains/* $WORKSPACE_DIR/reports/host-table-report.csv
     rm -f $WORKSPACE_DIR/screenshots/$TARGET*.jpg 2> /dev/null
     rm -f $WORKSPACE_DIR/nmap/dns-$TARGET.txt 2> /dev/null
     rm -f $WORKSPACE_DIR/nmap/ports-$TARGET.txt 2> /dev/null
     rm -f $WORKSPACE_DIR/web/title-*-$TARGET.txt 2> /dev/null
     rm -f $WORKSPACE_DIR/web/headers-*-$TARGET.txt 2> /dev/null
-    sniper --reimportall -w $WORKSPACE
+    #sniper --reimportall -w $WORKSPACE
     exit
     shift # past argument
     ;;
@@ -311,6 +332,17 @@ case $key in
       echo -e "$OKORANGE + -- --=[ Loading workspaces...$RESET"
       $BROWSER $INSTALL_DIR/loot/workspace/ 2> /dev/null > /dev/null &
     fi
+    exit
+    shift
+    ;;
+    --export)
+    if [[ -z "$WORKSPACE" ]]; then
+      echo "You need to set a workspace via the -w switch to export a workspace."
+      exit
+    fi
+    echo "Archiving $WORKSPACE to $INSTALL_DIR/loot/$WORKSPACE.tar"
+    cd $INSTALL_DIR/loot/workspace/ && tar -cvf ../$WORKSPACE.tar $WORKSPACE 
+    echo "Done!"
     exit
     shift
     ;;
@@ -367,6 +399,7 @@ function init {
   touch $LOOT_DIR/scans/scheduled/daily.sh 2> /dev/null
   touch $LOOT_DIR/scans/scheduled/weekly.sh 2> /dev/null
   touch $LOOT_DIR/scans/scheduled/monthly.sh 2> /dev/null
+  touch $LOOT_DIR/scans/notifications.txt 2> /dev/null
   chmod 777 -Rf $INSTALL_DIR 2> /dev/null
   chown root $INSTALL_DIR/sniper 2> /dev/null
   chmod 4777 $INSTALL_DIR/sniper 2> /dev/null
@@ -442,25 +475,26 @@ function loot {
   done
   echo -en "$OKGREEN]$RESET"
   echo ""
+  rm -f sniper-*.txt 2>/dev/null
   cd ..
   chmod 777 -Rf $LOOT_DIR
-  echo -e "$OKORANGE + -- --=[ Parsing NMap Ports... $RESET"
-  echo -en "$OKGREEN[$OKBLUE"
-  for TARGET in `cat $WORKSPACE_DIR/scans/updated.txt`; do
-    echo -n "|"
-    HOST_UP=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2> /dev/null | grep "host up" 2> /dev/null)
-    if [[ ${#HOST_UP} -ge 2 ]]; then
-      echo "$TARGET" >> $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null
-    fi
-    rm -f $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
-    for PORT in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml $LOOT_DIR/nmap/nmap-$TARGET-*.xml 2>/dev/null | egrep 'state="open"' | cut -d' ' -f3 | cut -d\" -f2 | sort -u | grep '[[:digit:]]'`; do
-      echo "$PORT " >> $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
-      if [[ ${#PORT} -ge 2 ]]; then
-        echo "$TARGET" >> $LOOT_DIR/nmap/openports-unsorted.txt 2> /dev/null
-      fi
-    done
-  done
-  echo -e "$OKGREEN]$RESET"
+  #echo -e "$OKORANGE + -- --=[ Parsing NMap Ports... $RESET"
+  #echo -en "$OKGREEN[$OKBLUE"
+  #for TARGET in `cat $WORKSPACE_DIR/scans/updated.txt`; do
+    #echo -n "|"
+    #HOST_UP=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2> /dev/null | grep "host up" 2> /dev/null)
+    #if [[ ${#HOST_UP} -ge 2 ]]; then
+    #  echo "$TARGET" >> $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null
+    #fi
+    #rm -f $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
+    #for PORT in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml $LOOT_DIR/nmap/nmap-$TARGET-*.xml 2>/dev/null | egrep 'state="open"' | cut -d' ' -f3 | cut -d\" -f2 | sort -u | grep '[[:digit:]]'`; do
+    #  echo "$PORT " >> $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
+    #  if [[ ${#PORT} -ge 2 ]]; then
+    #    echo "$TARGET" >> $LOOT_DIR/nmap/openports-unsorted.txt 2> /dev/null
+    #  fi
+    #done
+  #done
+  #echo -e "$OKGREEN]$RESET"
   echo -e "$OKORANGE + -- --=[ Sorting all files...$RESET"
   sort -u $LOOT_DIR/domains/*-full.txt 2> /dev/null > $LOOT_DIR/domains/domains-all-presorted.txt 2> /dev/null
   sed -E "s/^\.//g" $LOOT_DIR/domains/domains-all-presorted.txt 2> /dev/null | sed -E "s/^\*\.//g" |  tr '[:upper:]' '[:lower:]' | sort -u > $LOOT_DIR/domains/domains-all-presorted2.txt 2> /dev/null

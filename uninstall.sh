@@ -3,7 +3,7 @@
 # Created by @xer0dayz - https://xerosecurity.com
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
+   echo "This script must be run as root" 
    exit 1
 fi
 

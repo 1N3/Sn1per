@@ -35,6 +35,7 @@ en-US/splunkd/__raw/services/server/info/server-info?output_mode=json
 env
 errorlog.axd
 .git
+dispatcher/invalidate.cache
 .git/config
 .gitignore
 global-protect/portal/css/login.css
@@ -10953,3 +10954,7 @@ wps/wsdl/*
 wps_semanticTag 
 wsrp 
 unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/passwd
+secure/admin/SendBulkMail.jspa
+secure/ContactAdministrators.jspa
+secure/ContactAdministrators!default.jspa
+secure/admin/EditApplicationProperties!default.jspa

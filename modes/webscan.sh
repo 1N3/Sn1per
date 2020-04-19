@@ -48,6 +48,7 @@ if [[ "$MODE" = "webscan" ]]; then
 	touch $LOOT_DIR/scans/$TARGET-webscan.txt 2> /dev/null 
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+		echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 	fi
     if [[ "$BURP_SCAN" == "1" ]]; then
     	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -86,7 +87,9 @@ if [[ "$MODE" = "webscan" ]]; then
 		mkdir -p $LOOT_DIR/web/http-$TARGET/
 		mkdir -p $LOOT_DIR/web/https-$TARGET/
 		arachni --report-save-path=$LOOT_DIR/web/http-$TARGET/ --output-only-positives http://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt 2>&1
+		cp -f $LOOT_DIR/output/sniper-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt $LOOT_DIR/web/arachni-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt 2> /dev/null
 		arachni --report-save-path=$LOOT_DIR/web/https-$TARGET/ --output-only-positives https://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-https-`date +"%Y%m%d%H%M"`.txt 2>&1
+		cp -f $LOOT_DIR/output/sniper-$TARGET-webscan-https-`date +"%Y%m%d%H%M"`.txt $LOOT_DIR/web/arachni-$TARGET-webscan-https-`date +"%Y%m%d%H%M"`.txt 2> /dev/null
 
 		if [[ "$SLACK_NOTIFICATIONS_ARACHNI_SCAN" == "1" ]]; then
 			bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/output/sniper-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt"
@@ -106,6 +109,7 @@ if [[ "$MODE" = "webscan" ]]; then
 	loot 
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+		echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 	fi
 	exit
 fi

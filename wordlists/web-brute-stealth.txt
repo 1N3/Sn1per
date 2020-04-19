@@ -1,3 +1,4 @@
+lbs
 $defaultview?Readviewentries
 actuator/env
 actuator/health
@@ -61,6 +62,7 @@ jmx-console
 jmx-console/HtmlAdaptor
 js
 Makefile
+;/..;/manager
 manager/html
 package.json
 phpinfo.php
@@ -128,3 +130,4 @@ wp-content/plugins/easy-wp-smtp/readme.txt
 wp-json/wp/v2/users
 wp-login.php?action=register
 xmlrpc.php
+dispatcher/invalidate.cache

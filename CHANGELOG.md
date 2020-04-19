@@ -1,10 +1,25 @@
 ## CHANGELOG:
+* v8.3 - Added Github subdomain retrieval (requires API key/conf options enabled)
+* v8.3 - Added NMAP_OPTIONS setting to sniper.conf to configure optional NMap scan settings
+* v8.3 - Added option to specify custom Sn1per configuration via (-c) switch
+* v8.3 - Created several custom config files to select from, including: bug_bounty_quick, bug_bounty_max_javascript, super_stealth_mode, webpwn_only + more
+* v8.3 - Added workspace --export option to backup/export a workspace
+* v8.3 - Added flyover mode tuning options to sniper.conf
+* v8.3 - Added GitGraber automated Github leak search (https://github.com/hisxo/gitGraber)
+* v8.3 - Added static Javascript parsing for sub-domains, URL's, path relative links and comments
+* v8.3 - Added js-beautifier
+* v8.3 - Added LinkFinder Javascript link finder (https://github.com/GerbenJavado/LinkFinder)
+* v8.3 - Added fprobe HTTP probe checker (https://github.com/theblackturtle/fprobe)
+* v8.3 - Added Cisco RV320 and RV325 Unauthenticated Remote Code Execution CVE-2019-1653 MSF exploit
+* v8.3 - Improved performance of 'stealth' and 'recon' modes
+* v8.3 - Updated default port lists
+* v8.3 - Improved performance of all port scans
 * v8.3 - Added fix for missing Amass package
 * v8.3 - Added sniper.conf options for OPENVAS_HOST and OPENVAS_PORT selection for remote instances
 * v8.3 - Improved 'vulnscan' mode via OpenVAS to scan the same asset multiple times with improved error handling
 * v8.2 - Added root priv check to sniper script to run
 * v8.2 - Added NMap port change notifications via Slack
-* v8.2 - Fixed issue with firefox not loading on Kali Linux 2020.1
+* v8.2 - Fixed issue with firefox not loading on Kali Linux 2020.1 
 * v8.2 - Fixed issue with Masswebscan mode not working
 * v8.2 - Added Rails file exposure exploit CVE-2019-5418
 * v8.2 - Updated wordlist selections to fingerprint common vulnerable applications

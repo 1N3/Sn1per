@@ -1,61 +1,62 @@
 if [[ "$OSINT" = "1" ]]; then
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-	fi
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	echo -e "$OKRED GATHERING WHOIS INFO $RESET"
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+	fi	
 	if [[ "$WHOIS" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED GATHERING WHOIS INFO $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		if [[ "$VERBOSE" == "1" ]]; then
 			echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN whois $TARGET 2> /dev/null | tee $LOOT_DIR/osint/whois-$TARGET.txt 2> /dev/null $RESET"
 		fi
 		whois $TARGET 2> /dev/null | tee $LOOT_DIR/osint/whois-$TARGET.txt 2> /dev/null 
-
-
 		if [[ "$SLACK_NOTIFICATIONS_WHOIS" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/whois-$TARGET.txt"
 		fi
 	fi
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	echo -e "$OKRED GATHERING ULTATOOLS DNS INFO $RESET"
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	if [[ "$ULTRATOOLS" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED GATHERING ULTATOOLS DNS INFO $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		curl -s https://www.ultratools.com/tools/ipWhoisLookupResult\?ipAddress\=$TARGET | grep -A2 label | grep -v input | grep span | cut -d">" -f2 | cut -d"<" -f1 | sed 's/\&nbsp\;//g' 2> /dev/null | tee $LOOT_DIR/osint/ultratools-$TARGET.txt 2> /dev/null
 	fi
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	echo -e "$OKRED GATHERING DNS INFO $RESET"
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	if [[ "$INTODNS" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED GATHERING DNS INFO $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		wget -q http://www.intodns.com/$TARGET -O $LOOT_DIR/osint/intodns-$TARGET.html 2> /dev/null
 		echo -e "$OKRED[+]$RESET Report saved to: $LOOT_DIR/osint/intodns-$TARGET.html"
 	fi
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	echo -e "$OKRED GATHERING THEHARVESTER OSINT INFO $RESET"
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	if [[ "$THEHARVESTER" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED GATHERING THEHARVESTER OSINT INFO $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		if [[ "$VERBOSE" == "1" ]]; then
 			echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python2.7 $THEHARVESTER_PATH -d $TARGET -l 100 -b all 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null  $RESET"
 		fi
-		theharvester -d $TARGET -l 25 -b all 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null 
-
+		cp -f /etc/theHarvester/api-keys.yaml ~/api-keys.yaml 2> /dev/null
+		cd ~ 2> /dev/null
+		theHarvester -d $TARGET -b all 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null 
+		cd $INSTALL_DIR 2> /dev/null
 		if [[ "$SLACK_NOTIFICATIONS_THEHARVESTER" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/theharvester-$TARGET.txt"
 		fi
 	fi
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	echo -e "$OKRED GATHERING EMAILS FROM EMAIL-FORMAT.COM $RESET"
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	if [[ "$EMAILFORMAT" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED GATHERING EMAILS FROM EMAIL-FORMAT.COM $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		curl -s https://www.email-format.com/d/$TARGET| grep @$TARGET | grep -v div | sed "s/\t//g" | sed "s/ //g" 2> /dev/null | tee $LOOT_DIR/osint/email-format-$TARGET.txt 2> /dev/null 
 
 		if [[ "$SLACK_NOTIFICATIONS_EMAIL_FORMAT" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/email-format-$TARGET.txt"
 		fi
 	fi
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	echo -e "$OKRED GATHERING DNS ALTERATIONS $RESET"
-	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	if [[ "$URLCRAZY" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED GATHERING DNS ALTERATIONS $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		urlcrazy $TARGET 2> /dev/null | tee $LOOT_DIR/osint/urlcrazy-$TARGET.txt 2> /dev/null
 	fi
 	if [[ "$METAGOOFIL" == "1" ]]; then
@@ -89,8 +90,23 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "$OKRED CHECKING FOR COMPROMISED CREDENTIALS $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		h8mail -q domain --target $TARGET -o $LOOT_DIR/osint/h8mail-$TARGET.csv 2> /dev/null
+	fi
+	if [[ "$GITHUB_SECRETS" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED CHECKING FOR GITHUB SECRETS $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		cd $INSTALL_DIR/plugins/gitGraber/
+		ORGANIZATION=$(echo $TARGET | awk -F. '{print $(NF-1)}' 2> /dev/null)
+		mv $LOOT_DIR/osint/github-urls-$ORGANIZATION.txt $LOOT_DIR/osint/github-urls-$ORGANIZATION.old 2> /dev/null
+		mv -f rawGitUrls.txt $LOOT_DIR/osint/github-urls-$ORGANIZATION.txt 2> /dev/null
+		touch rawGitUrls.txt 2> /dev/null
+		python3 gitGraber.py -q "\"org:$ORGANIZATION\"" -s 2>&1 | tee $LOOT_DIR/osint/gitGrabber-$ORGANIZATION.txt 2> /dev/null
+		diff $LOOT_DIR/osint/github-urls-$ORGANIZATION.txt $LOOT_DIR/osint/github-urls-$ORGANIZATION.old 2> /dev/null > $LOOT_DIR/osint/github-urls-$ORGANIZATION.diff
+		cat $LOOT_DIR/osint/github-urls-$ORGANIZATION.diff 2> /dev/null
+		#python3 gitGraber.py -k wordlists/keywords.txt -q "\"$TARGET\"" -s 2>&1 | tee $LOOT_DIR/osint/gitGrabber-$TARGET.txt 2> /dev/null
 	fi	
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+		echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 	fi
 fi

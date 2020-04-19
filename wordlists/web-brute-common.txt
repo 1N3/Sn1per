@@ -1,5 +1,7 @@
+;/..;/manager
 .git/config
 .travis.yml
+dispatcher/invalidate.cache
 Makefile
 Dockerfile
 package.json
@@ -5346,3 +5348,4 @@ wiki
 zabbix
 zimbra
 zipkin
+graphql

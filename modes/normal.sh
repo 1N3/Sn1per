@@ -29,8 +29,9 @@ if [[ "$REPORT" = "1" ]]; then
   echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-normal.txt 2> /dev/null
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+    echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
   fi
-  sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-`date +"%Y%m%d%H%M"`.txt 2>&1
+  ../sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-`date +"%Y%m%d%H%M"`.txt 2>&1
   exit
 fi
 
@@ -57,13 +58,13 @@ echo -e "${OKGREEN}=============================================================
 dig all +short $TARGET > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
 dig all +short -x $TARGET >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
 host $TARGET 2> /dev/null | grep address 2> /dev/null | awk '{print $4}' 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
-dnsenum -f $INSTALL_DIR/wordlists/vhosts.txt --noreverse $TARGET 2> /dev/null
+#dnsenum -f $INSTALL_DIR/wordlists/vhosts.txt --noreverse $TARGET 2> /dev/null
 mv -f *_ips.txt $LOOT_DIR/ips/ 2>/dev/null
 
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo -e "$OKRED CHECKING FOR SUBDOMAIN HIJACKING $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null
+cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "anima|bitly|wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null
 
 source $INSTALL_DIR/modes/osint.sh
 source $INSTALL_DIR/modes/recon.sh
@@ -77,57 +78,43 @@ echo ""
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-
-
-
 mv -f $LOOT_DIR/nmap/ports-$TARGET.txt $LOOT_DIR/nmap/ports-$TARGET.old 2> /dev/null
 
-
-
 if [[ "$MODE" == "web" ]]; then
-  nmap -sV -Pn -p 80,443  $NMAP_OPTIONS --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+  nmap -p 80,443  $NMAP_OPTIONS --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 elif [[ "$MODE" == "webscan" ]]; then 
-  nmap -sV -Pn -p 80,443 $NMAP_OPTIONS --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+  nmap -p 80,443 $NMAP_OPTIONS --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 elif [[ ! -z "$PORT" ]]; then 
-  nmap -sS -Pn -p $PORT $NMAP_OPTIONS --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+  nmap -p $PORT $NMAP_OPTIONS --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 else
-  nmap -sS --open $NMAP_OPTIONS -p $DEFAULT_PORTS -Pn $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
+  nmap -p $DEFAULT_PORTS $NMAP_OPTIONS --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 fi
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 if [[ -z "$PORT" ]]; then
-  nmap -Pn -sU $NMAP_OPTIONS -p $DEFAULT_UDP_PORTS --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
+  nmap -sU $NMAP_OPTIONS -p $DEFAULT_UDP_PORTS --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
 else
-  nmap -Pn -sU $NMAP_OPTIONS -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
+  nmap -sU $NMAP_OPTIONS -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
 fi
-
-
-
-
 
 rm -f $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
 for PORT in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml $LOOT_DIR/nmap/nmap-$TARGET-*.xml 2>/dev/null | egrep 'state="open"' | cut -d' ' -f3 | cut -d\" -f2 | sort -u | grep '[[:digit:]]'`; do
   echo "$PORT " >> $LOOT_DIR/nmap/ports-$TARGET.txt
 done  
 
-
-
 HOST_UP=$(cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2> /dev/null | grep "host up" 2> /dev/null)
 if [[ ${#HOST_UP} -ge 2 ]]; then
   echo "$TARGET" >> $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null
 fi
 sort -u $LOOT_DIR/nmap/livehosts-unsorted.txt 2> /dev/null > $LOOT_DIR/nmap/livehosts-sorted.txt 2> /dev/null
-
-
 diff $LOOT_DIR/nmap/ports-$TARGET.old $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null > $LOOT_DIR/nmap/ports-$TARGET.diff 2> /dev/null
-
-
+cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2>/dev/null | egrep "MAC Address:" | awk '{print $3 " " $4 " " $5 " " $6}' > $LOOT_DIR/nmap/macaddress-$TARGET.txt 2> /dev/null
+cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt $LOOT_DIR/output/nmap-$TARGET-*.txt 2>/dev/null | egrep "OS details:|OS guesses:" | cut -d\: -f2 | sed 's/,//g' | head -c50 - > $LOOT_DIR/nmap/osfingerprint-$TARGET.txt 2> /dev/null
 
 if [[ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET.txt"
 fi
-
 
 if [[ "$SLACK_NOTIFICATIONS_NMAP_DIFF" == "1" ]] && [[ -s "$LOOT_DIR/nmap/ports-$TARGET.diff" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
@@ -136,8 +123,13 @@ if [[ "$SLACK_NOTIFICATIONS_NMAP_DIFF" == "1" ]] && [[ -s "$LOOT_DIR/nmap/ports-
   cat $LOOT_DIR/nmap/ports-$TARGET.diff | egrep "<|>" >> $LOOT_DIR/scans/notifications.txt
 fi
 
-
-
+if [[ "$HTTP_PROBE" == "1" ]]; then
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo -e "$OKRED RUNNING HTTP PROBE $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo "$TARGET" | fprobe -c 200 -p xlarge | tee $LOOT_DIR/web/httprobe-$TARGET.txt 2> /dev/null
+  echo "$TARGET" | fprobe -c 200 -p xlarge -v | tee $LOOT_DIR/web/httprobe-$TARGET-verbose.txt 2> /dev/null
+fi
 
 echo ""
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -797,6 +789,13 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     curl https://$TARGET 2> $LOOT_DIR/web/curldebug-$TARGET.txt > /dev/null
   fi
+  #if [[ "$METASPLOIT_EXPLOIT" == "1" ]]; then
+  #  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  #  echo -e "$OKRED CHECKING FOR INSECURE SSL/TLS CONFIGURATIONS $RESET"
+  #  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  #fi
+  # NEED TO FINISH...
+
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SAVING SCREENSHOTS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1429,8 +1428,8 @@ if [[ $YASUO = "1" ]]; then
 fi
 
 cd $INSTALL_DIR
-source modes/fullportscan.sh
-source modes/bruteforce.sh
+source fullportscan.sh
+source bruteforce.sh
 rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
 
@@ -1454,6 +1453,7 @@ echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
 mv $LOOT_DIR/scans/running-$TARGET-normal.txt $LOOT_DIR/scans/finished-$TARGET-normal.txt 2> /dev/null
 if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 fi
 if [[ "$LOOT" = "1" ]] && [[ -z "$NOLOOT" ]]; then
   loot

@@ -30,7 +30,7 @@ if [[ "$1" != "force" ]]; then
 fi
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
+   echo "This script must be run as root" 
    exit 1
 fi
 
@@ -66,7 +66,7 @@ if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	apt update
 	cp /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
 	cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
-	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null
+	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
 	chown root /root/.Xauthority
 	XAUTHORITY=/root/.Xauthority
 fi
@@ -76,7 +76,7 @@ apt-get update
 apt-get install -y python3-uritools python3-paramiko nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil clusterd ruby rubygems python dos2unix sslyze arachni aha libxml2-utils rpcbind cutycapt host whois dnsrecon curl nmap php php-curl hydra wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq golang adb xsltproc urlcrazy ldapscripts
 apt-get install -y waffit 2> /dev/null
 apt-get install -y libssl-dev 2> /dev/null
-apt-get install -y python-pip
+apt-get install -y python-pip 
 apt-get remove -y python3-pip
 apt-get install -y python3-pip
 apt-get install -y xmlstarlet
@@ -103,16 +103,16 @@ mkdir -p $PLUGINS_DIR/nmap_scripts/ 2> /dev/null
 mkdir -p $GO_DIR 2> /dev/null
 
 echo -e "$OKORANGE + -- --=[ Downloading extensions...$RESET"
-git clone https://github.com/1N3/BruteX.git
-git clone https://github.com/1N3/Findsploit.git
+git clone https://github.com/1N3/BruteX.git 
+git clone https://github.com/1N3/Findsploit.git 
 git clone https://github.com/1N3/Goohak.git
 git clone https://github.com/1N3/BlackWidow
-git clone https://github.com/Dionach/CMSmap.git
-git clone https://github.com/0xsauby/yasuo.git
+git clone https://github.com/Dionach/CMSmap.git 
+git clone https://github.com/0xsauby/yasuo.git 
 git clone https://github.com/1N3/Sublist3r.git
-git clone https://github.com/nccgroup/shocker.git
+git clone https://github.com/nccgroup/shocker.git 
 git clone https://github.com/BishopFox/spoofcheck.git
-git clone https://github.com/arthepsy/ssh-audit
+git clone https://github.com/arthepsy/ssh-audit 
 git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
@@ -121,16 +121,16 @@ git clone https://github.com/RUB-NDS/CORStest.git
 git clone https://github.com/hisxo/gitGraber.git
 git clone https://github.com/1N3/LinkFinder
 cd LinkFinder
-python setup.py install
+python setup.py install 
 cd ..
 git clone https://github.com/christophetd/censys-subdomain-finder.git
 pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt
 pip install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
-pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt
-git clone https://github.com/infosec-au/altdns.git
+pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
+git clone https://github.com/infosec-au/altdns.git 
 cd altdns
-pip install -r requirements.txt
-python2 setup.py install
+pip install -r requirements.txt 
+python2 setup.py install 
 pip install py-altdns
 cd ..
 git clone https://github.com/blechschmidt/massdns.git
@@ -170,8 +170,8 @@ wget https://raw.githubusercontent.com/1N3/Exploits/master/defcon_webmin_unauth_
 wget https://github.com/OJ/gobuster/releases/download/v3.0.1/gobuster-linux-amd64.7z -O /tmp/gobuster.7z
 cd /tmp/
 7z e gobuster.7z
-chmod +rx gobuster
-mv gobuster /usr/bin/gobuster
+chmod +rx gobuster 
+mv gobuster /usr/bin/gobuster 
 cd $PLUGINS_DIR
 wget https://github.com/laramies/theHarvester/archive/3.0.6.tar.gz
 tar -zxvf 3.0.6.tar.gz
@@ -180,14 +180,12 @@ rm -f /usr/bin/theharvester
 ln -s /usr/share/sniper/plugins/theHarvester-3.0.6/theHarvester.py /usr/bin/theharvester
 git clone https://github.com/laramies/metagoofil.git
 git clone https://github.com/achillean/shodan-python
-cd shodan-python
+cd shodan-python 
 python setup.py install
 cd ..
 pip3 install spyse.py
-pip install h8mail 2> /dev/null
+pip install h8mail 2> /dev/null 
 echo -e "$OKORANGE + -- --=[ Setting up environment...$RESET"
-mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
-cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
 cd $PLUGINS_DIR/BlackWidow/ && bash install.sh force 2> /dev/null
 cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh 2> /dev/null
@@ -212,5 +210,11 @@ msfdb init
 echo -e "$OKORANGE + -- --=[ Adding start menu shortcuts... $RESET"
 cp -f $INSTALL_DIR/sn1per.desktop /usr/share/applications/ 2> /dev/null
 cp -f $INSTALL_DIR/sn1per.png /usr/share/pixmaps/ 2> /dev/null
+
+echo -e "$OKORANGE + -- --=[ Copying the old Sn1per configuration file to /root/.sniper.conf.old $RESET"
+mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
+echo -e "$OKORANGE + -- --=[ Copying updated Sn1per configuration file to /root/.sniper.conf $RESET"
+cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
+echo -e "$OKBLUE + -- --=[ NOTE: You may need to copy your old API keys and config to the new sniper.conf file at /root/.sniper.conf $RESET"
 echo -e "$OKORANGE + -- --=[ Done! $RESET"
 echo -e "$OKORANGE + -- --=[ To run, type 'sniper'! $RESET"
