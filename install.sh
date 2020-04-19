@@ -83,7 +83,7 @@ apt-get install -y xmlstarlet
 apt-get install -y chromium
 apt-get install -y net-tools
 apt-get install -y p7zip-full
-apt-get install -y js-beautifier
+apt-get install -y jsbeautifier
 pip3 install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
