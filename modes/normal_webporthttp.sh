@@ -42,7 +42,7 @@ if [[ "$MODE" = "web" ]]; then
     fi
   fi
   if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then
-    source javascript-analysis.sh
+    source modes/javascript-analysis.sh
   fi
   touch $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
   cp $LOOT_DIR/web/dirsearch-$TARGET.txt $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null

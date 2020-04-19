@@ -36,7 +36,7 @@ if [[ "$MODE" = "flyover" ]]; then
     echo -e "$OKRED "
     echo -e "$RESET"
     echo "sniper -f $FILE -m $MODE --noreport $args" >> $LOOT_DIR/scans/$WORKSPACE-$MODE.txt
-    ../sniper $args | tee $WORKSPACE_DIR/output/sniper-$WORKSPACE-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
+    sniper $args | tee $WORKSPACE_DIR/output/sniper-$WORKSPACE-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt

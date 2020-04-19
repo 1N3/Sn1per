@@ -21,7 +21,7 @@ if [[ "$MODE" = "webporthttp" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: http://$TARGET:$PORT [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: http://$TARGET:$PORT [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
     fi
-    ../sniper -t $TARGET -m $MODE -p $PORT --noreport $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-$PORT-`date +"%Y%m%d%H%M"`.txt 2>&1
+    sniper -t $TARGET -m $MODE -p $PORT --noreport $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-$PORT-`date +"%Y%m%d%H%M"`.txt 2>&1
     exit
   fi
   echo -e "$OKRED                ____               $RESET"
@@ -199,7 +199,7 @@ if [[ "$MODE" = "webporthttp" ]]; then
       fi
     fi
     if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then
-      source javascript-analysis.sh
+      source modes/javascript-analysis.sh
     fi
     touch $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
     cp $LOOT_DIR/web/dirsearch-$TARGET.txt $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
@@ -307,9 +307,9 @@ if [[ "$MODE" = "webporthttp" ]]; then
     fi
     if [[ $METASPLOIT_EXPLOIT = "1" ]]; then
       SSL="false"
-      source web_autopwn.sh
+      source modes/web_autopwn.sh
     fi
-    source osint_stage_2.sh
+    source modes/osint_stage_2.sh
   fi
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"

@@ -31,7 +31,7 @@ if [[ "$REPORT" = "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
   fi
-  ../sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-`date +"%Y%m%d%H%M"`.txt 2>&1
+  sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-`date +"%Y%m%d%H%M"`.txt 2>&1
   exit
 fi
 
@@ -1428,8 +1428,8 @@ if [[ $YASUO = "1" ]]; then
 fi
 
 cd $INSTALL_DIR
-source fullportscan.sh
-source bruteforce.sh
+source modes/fullportscan.sh
+source modes/bruteforce.sh
 rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
 
