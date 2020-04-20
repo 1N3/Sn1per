@@ -101,7 +101,7 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING GITHUB SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python3 /usr/share/sniper/bin/github-subdomains.py -t $GITHUB_API_TOKEN -d braintree-api.com $LOOT_DIR/domains/domains-$TARGET-github.txt 2> /dev/null
+    python3 /usr/share/sniper/bin/github-subdomains.py -t $GITHUB_API_TOKEN -d $TARGET $LOOT_DIR/domains/domains-$TARGET-github.txt 2> /dev/null
   fi
   cat $LOOT_DIR/domains/domains-$TARGET-crt.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-spyse.txt /dev/null > $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
