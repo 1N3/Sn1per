@@ -106,7 +106,7 @@ FLYOVER_MAX_HOSTS="5"
 FLYOVER_DELAY="10"
 
 # NMAP OPTIONS
-NMAP_OPTIONS="-Pn -sS --privileged -n -PE -v --max-retries 3 --min-rtt-timeout 500ms --max-rtt-timeout 3000ms --initial-rtt-timeout 500ms --defeat-rst-ratelimit --min-rate 450 --max-rate 15000 --script-args=vulns.showall --script-timeout 180 --data-length=50 --script-args http.useragent='' --min-parallelism 1000"
+NMAP_OPTIONS="-sV -Pn -O -v --script-args http.useragent=''"
 
 # NMAP PORT CONFIGURATIONS
 QUICK_PORTS="21,22,23,25,53,80,110,111,135,137,138,139,143,161,162,443,445,512,513,514,993,995,1099,1433,1723,3306,3389,4444,5000,5001,5104,5555,5432,5555,5800,5900,5901,6093,6095,6443,6667,7000,7001,7002,8009,8080,8081,8082,8089,8220,8443,8888,8000,9080,9443,10000,10250,49180"
