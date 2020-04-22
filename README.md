@@ -190,8 +190,8 @@ sniper -u|--update
 ## SAMPLE REPORT:
 https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
-## Help Topics
-
+### Help Topics
+- [x] Github API integration (https://github.com/1N3/Sn1per/wiki/Github-API-Integration)
 - [x] Burpsuite Professional 2.x integration (https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
 - [x] Shodan API integration (https://github.com/1N3/Sn1per/wiki/Shodan-Integration)
 - [x] Censys API integration (https://github.com/1N3/Sn1per/wiki/Censys-API-Integration)
