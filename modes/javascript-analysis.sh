@@ -20,7 +20,7 @@
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED DISPLAYING PATH RELATIVE LINKS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      grep -h -v $LOOT_DIR/web/javascript-linkfinder-$TARGET-*.txt 2> /dev/null | grep -v "Running " | awk '{print $1}' | sort -u | tee $LOOT_DIR/web/javascript-$TARGET-path-relative.txt
+      cat $LOOT_DIR/web/javascript-linkfinder-$TARGET-*.txt 2> /dev/null | grep -v "Running " | awk '{print $1}' | sort -u | tee $LOOT_DIR/web/javascript-$TARGET-path-relative.txt
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED DISPLAYING JAVASCRIPT URLS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

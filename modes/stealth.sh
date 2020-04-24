@@ -299,7 +299,7 @@ if [[ "$MODE" = "stealth" ]]; then
         gobuster -u http://$TARGET -w $WEB_BRUTE_STEALTH -e | tee $LOOT_DIR/web/webbrute-$TARGET-http-stealth.txt
         sort -u $LOOT_DIR/web/webbrute-$TARGET-*.txt 2> /dev/null > $LOOT_DIR/web/webbrute-$TARGET.txt 2> /dev/null
       fi
-      wget http://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-http.txt 2> /dev/null
+      wget --connect-timeout=5 --read-timeout=10 --tries=1 http://$TARGET/robots.txt -O $LOOT_DIR/web/robots-$TARGET-http.txt 2> /dev/null
       egrep -v '<|>|;|(|)' $LOOT_DIR/web/robots-$TARGET-http.txt | tee $LOOT_DIR/web/robots-$TARGET-http.txt
     fi
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

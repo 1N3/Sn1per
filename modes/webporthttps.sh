@@ -266,7 +266,7 @@ if [[ "$MODE" = "webporthttps" ]]; then
     if [[ "$GOBUSTER" == "1" ]]; then
         sort -u $LOOT_DIR/web/webbrute-$TARGET-*.txt 2> /dev/null > $LOOT_DIR/web/webbrute-$TARGET.txt 2> /dev/null
     fi
-    wget https://$TARGET:$PORT/robots.txt -O $LOOT_DIR/web/robots-$TARGET:$PORT-https.txt 2> /dev/null
+    wget --connect-timeout=5 --read-timeout=10 --tries=1 https://$TARGET:$PORT/robots.txt -O $LOOT_DIR/web/robots-$TARGET:$PORT-https.txt 2> /dev/null
     if [[ "$CLUSTERD" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
