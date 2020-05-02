@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v8.4 - Fixed issue with airstrike mode not updated Sn1per Professional v8.0 host list
+* v8.4 - Added rapiddns subdomain retrieval
 * v8.3 - Added Github subdomain retrieval (requires API key/conf options enabled)
 * v8.3 - Added NMAP_OPTIONS setting to sniper.conf to configure optional NMap scan settings
 * v8.3 - Added option to specify custom Sn1per configuration via (-c) switch
@@ -14,7 +16,6 @@
 * v8.3 - Improved performance of 'stealth' and 'recon' modes
 * v8.3 - Updated default port lists
 * v8.3 - Improved performance of all port scans
-* v8.3 - Removed all pip v2 commands from installer
 * v8.3 - Added fix for missing Amass package
 * v8.3 - Added sniper.conf options for OPENVAS_HOST and OPENVAS_PORT selection for remote instances
 * v8.3 - Improved 'vulnscan' mode via OpenVAS to scan the same asset multiple times with improved error handling
