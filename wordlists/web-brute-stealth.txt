@@ -1,4 +1,3 @@
-lbs
 $defaultview?Readviewentries
 actuator/env
 actuator/health
@@ -7,6 +6,7 @@ AddressBookJ2WE/services/AddressBook
 admin
 Admin
 admin-console
+administrator
 AlbumCatalogWeb
 api
 AppManagementStatus
@@ -28,6 +28,8 @@ crossdomain.xml
 css
 .csv
 data
+deployment-config.json
+dispatcher/invalidate.cache
 Dockerfile
 .DS_Store
 elmah.axd
@@ -35,6 +37,8 @@ en-US/splunkd/__raw/services/server/info/server-info?output_mode=json
 .env
 env
 errorlog.axd
+.ftpconfig
+ftpsync.settings
 .git
 .git/config
 .gitignore
@@ -61,6 +65,7 @@ invoker/JMXInvokerServlet
 jmx-console
 jmx-console/HtmlAdaptor
 js
+lbs
 Makefile
 ;/..;/manager
 manager/html
@@ -75,6 +80,7 @@ pview/
 readme.md
 readme.txt
 register/check/username?username=thisaccountdoesntexist
+.remote-sync.json
 robots.txt
 script
 scripts
@@ -83,6 +89,7 @@ securityRealm/createAccount
 server-info
 server-manager/html
 server-status
+sftp-config.json
 signup
 sitemap.xml
 .ssh
@@ -101,6 +108,8 @@ userContent/
 users
 view/All/builds
 view/All/newjob
+.vscode/ftp-sync.json
+.vscode/sftp.json
 _vti_bin/
 _vti_bin/sites.asmx?wsdl
 _vti_bin/spsdisco.aspx
@@ -130,4 +139,3 @@ wp-content/plugins/easy-wp-smtp/readme.txt
 wp-json/wp/v2/users
 wp-login.php?action=register
 xmlrpc.php
-dispatcher/invalidate.cache

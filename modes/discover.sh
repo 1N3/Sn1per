@@ -65,6 +65,7 @@ if [[ "$MODE" = "discover" ]]; then
   echo ""
   echo -e "$OKRED[+]$RESET Target list saved to $LOOT_DIR/ips/discover-$OUT_FILE-sorted.txt "
   echo -e "$OKRED[i] To scan all IP's, use sniper -f $LOOT_DIR/ips/discover-$OUT_FILE-sorted.txt -m flyover -w $WORKSPACE $RESET"
+  source modes/sc0pe.sh 
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

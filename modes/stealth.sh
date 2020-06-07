@@ -174,9 +174,9 @@ if [[ "$MODE" = "stealth" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null$RESET"
     fi
     wget -qO- -T 1 --connect-timeout=5 --read-timeout=10 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null
-    curl --connect-timeout 5 --max-time 10 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
-    curl --connect-timeout 5 -s -R -L http://$TARGET > $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
-    curl --connect-timeout 5 --max-time 10 -I -s -R -X OPTIONS http://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port80.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 10 -I -s --insecure -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 -s -R -L --insecure http://$TARGET > $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 10 -I -s --insecure -R -X OPTIONS http://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port80.txt 2> /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -247,7 +247,12 @@ if [[ "$MODE" = "stealth" ]]; then
       curl -sX GET "http://api.hackertarget.com/pagelinks/?q=http://$TARGET" | egrep -v "API count|no links found|input url is invalid|API count|no links found|input url is invalid" | tee $LOOT_DIR/web/hackertarget-http-$TARGET.txt 2> /dev/null
       echo " "
     fi
-
+    if [[ "$GUA" == "1" ]]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED FETCHING GUA URLS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      gua2 -subs $TARGET | tee $LOOT_DIR/web/gua-$TARGET.txt 2> /dev/null
+    fi
     if [[ "$BLACKWIDOW" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER $RESET"
@@ -263,6 +268,7 @@ if [[ "$MODE" = "stealth" ]]; then
       cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/hackertarget-*-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/gua-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       sed -ir "s/</\&lh\;/g" $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       mv -f $LOOT_DIR/web/spider-$TARGET.txtr $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       sort -u $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null > $LOOT_DIR/web/spider-$TARGET.sorted 2>/dev/null
@@ -280,12 +286,12 @@ if [[ "$MODE" = "stealth" ]]; then
       echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       if [[ "$VERBOSE" == "1" ]]; then
-        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,500,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
       fi
       if [[ "$DIRSEARCH" == "1" ]]; then
         touch $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
         cp $LOOT_DIR/web/dirsearch-$TARGET.txt $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
-        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,502,503,504 -F -e * -t $THREADS --random-agents --plain-text-report=$LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > /dev/null && cat $LOOT_DIR/web/dirsearch-$TARGET.txt
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,500,502,503,504 -F -e "/" -t $THREADS --random-agents --plain-text-report=$LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > /dev/null && cat $LOOT_DIR/web/dirsearch-$TARGET.txt
         cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
         cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
         sort -u $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > $LOOT_DIR/web/dirsearch-$TARGET.sorted 2> /dev/null
@@ -319,6 +325,14 @@ if [[ "$MODE" = "stealth" ]]; then
       cd $LOOT_DIR
       python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium http://$TARGET:80
     fi
+    if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED RUNNING SC0PE PASSIVE WEB VULNERABILITY SCAN $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      SSL="false"
+      source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    fi
   fi
  
   if [[ -z "$port_443" ]];
@@ -335,9 +349,9 @@ if [[ "$MODE" = "stealth" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null$RESET"
     fi
     wget -qO- -T 1 --connect-timeout=5 --read-timeout=10 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
-    curl --connect-timeout 5 --max-time 10 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
-    curl --connect-timeout 5 -s -R -L https://$TARGET > $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
-    curl --connect-timeout 5 --max-time 10 -I -s -R -X OPTIONS https://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port443.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 10 -I -s --insecure -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 -s -R -L --insecure https://$TARGET > $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 10 -I -s --insecure -R -X OPTIONS https://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port443.txt 2> /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -408,6 +422,12 @@ if [[ "$MODE" = "stealth" ]]; then
       curl -sX GET "http://api.hackertarget.com/pagelinks/?q=https://$TARGET" | egrep -v "API count|no links found|input url is invalid|API count|no links found|input url is invalid" | tee $LOOT_DIR/web/hackertarget-https-$TARGET.txt 2> /dev/null
       echo " "
     fi
+    if [[ "$GUA" == "1" ]]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED FETCHING GUA URLS $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      gua2 -subs $TARGET | tee $LOOT_DIR/web/gua-$TARGET.txt 2> /dev/null
+    fi
     if [[ "$BLACKWIDOW" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING ACTIVE WEB SPIDER $RESET"
@@ -423,6 +443,7 @@ if [[ "$MODE" = "stealth" ]]; then
       cat $LOOT_DIR/web/waybackurls-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/hackertarget-*-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       cat $LOOT_DIR/web/passivespider-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
+      cat $LOOT_DIR/web/gua-$TARGET.txt 2> /dev/null >> $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       sed -ir "s/</\&lh\;/g" $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
       sort -u $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null > $LOOT_DIR/web/spider-$TARGET.sorted 2>/dev/null
       mv $LOOT_DIR/web/spider-$TARGET.sorted $LOOT_DIR/web/spider-$TARGET.txt 2>/dev/null
@@ -439,12 +460,12 @@ if [[ "$MODE" = "stealth" ]]; then
       echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       if [[ "$VERBOSE" == "1" ]]; then
-        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,500,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
       fi
       if [[ "$DIRSEARCH" == "1" ]]; then
         touch $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
         cp $LOOT_DIR/web/dirsearch-$TARGET.txt $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
-        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,502,503,504 -F -e * -t $THREADS --random-agents --plain-text-report=$LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > /dev/null && cat $LOOT_DIR/web/dirsearch-$TARGET.txt
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,500,502,503,504 -F -e "/" -t $THREADS --random-agents --plain-text-report=$LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > /dev/null && cat $LOOT_DIR/web/dirsearch-$TARGET.txt
         cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
         cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
         sort -u $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > $LOOT_DIR/web/dirsearch-$TARGET.sorted 2> /dev/null
@@ -499,7 +520,18 @@ if [[ "$MODE" = "stealth" ]]; then
       python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium https://$TARGET:443
     fi
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
+    if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED RUNNING SC0PE PASSIVE WEB VULNERABILITY SCAN $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      SSL="false"
+      source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    fi
   fi
+
+  source modes/sc0pe.sh 
+  
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -526,6 +558,7 @@ if [[ "$MODE" = "stealth" ]]; then
   mv $LOOT_DIR/scans/running-$TARGET-stealth.txt $LOOT_DIR/scans/finished-$TARGET-stealth.txt 2> /dev/null
   rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
   sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
+  
   if [[ "$LOOT" = "1" ]]; then
     loot
   fi

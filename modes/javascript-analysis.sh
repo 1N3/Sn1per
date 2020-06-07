@@ -4,6 +4,8 @@
       echo -e "$OKRED DOWNLOADING ALL JAVASCRIPT FILES $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       for a in `grep "\.js" $LOOT_DIR/web/spider-$TARGET.txt | head -n $MAX_JAVASCRIPT_FILES | cut -d\? -f1 | sort -u`; do echo "Downloading - $a" && FILENAME=$(echo "$a" | awk -F/ '{print $(NF-0)}') && curl --connect-timeout 10 --max-time 10 -s -R -L --insecure $a | js-beautify - > $FILENAME 2> /dev/null; done;
+      for a in `grep "\.js" $LOOT_DIR/web/weblinks-htt*-$TARGET.txt 2> /dev/null | egrep -i 'http' | head -n $MAX_JAVASCRIPT_FILES | cut -d\? -f1 | sort -u`; do echo "Downloading - $a" && FILENAME=$(echo "$a" | awk -F/ '{print $(NF-0)}') && curl --connect-timeout 10 --max-time 10 -s -R -L --insecure $a | js-beautify - > $FILENAME 2> /dev/null; done;
+      for a in `grep "\.js" $LOOT_DIR/web/weblinks-htt*-$TARGET.txt 2> /dev/null | egrep -iv 'http' | head -n $MAX_JAVASCRIPT_FILES | cut -d\? -f1 | sort -u`; do echo "Downloading - https://$a" && FILENAME=$(echo "https://$a" | awk -F/ '{print $(NF-0)}') && curl --connect-timeout 10 --max-time 10 -s -R -L --insecure $a | js-beautify - > $FILENAME 2> /dev/null; done;
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED DISPLAYING ALL JAVASCRIPT COMMENTS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -31,3 +33,6 @@
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       grep -h http $LOOT_DIR/web/javascript-linkfinder-$TARGET-*.txt 2> /dev/null | grep -v "Running " | awk '{print $1}' | egrep "http\:\/\/|https\:\/\/" | cut -d\/ -f3 | sort -u | tee $LOOT_DIR/web/javascript-$TARGET-domains.txt
       WEB_JAVASCRIPT_ANALYSIS="0"
+
+
+

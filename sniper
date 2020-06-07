@@ -400,6 +400,7 @@ function init {
   mkdir $LOOT_DIR/osint 2> /dev/null
   mkdir $LOOT_DIR/credentials 2> /dev/null
   mkdir $LOOT_DIR/web 2> /dev/null
+  mkdir $LOOT_DIR/vulnerabilities 2> /dev/null
   mkdir $LOOT_DIR/notes 2> /dev/null
   mkdir -p $LOOT_DIR/scans/scheduled/ 2> /dev/null
   touch $LOOT_DIR/scans/scheduled/daily.sh 2> /dev/null

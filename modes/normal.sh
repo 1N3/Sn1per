@@ -113,7 +113,7 @@ cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt 2>/dev/nul
 cat $LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/nmap/nmap-$TARGET-*.txt $LOOT_DIR/output/nmap-$TARGET-*.txt 2>/dev/null | egrep "OS details:|OS guesses:" | cut -d\: -f2 | sed 's/,//g' | head -c50 - > $LOOT_DIR/nmap/osfingerprint-$TARGET.txt 2> /dev/null
 
 if [[ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]]; then
-  /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET.txt"
+  /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/ports-$TARGET.txt"
 fi
 
 if [[ "$SLACK_NOTIFICATIONS_NMAP_DIFF" == "1" ]] && [[ -s "$LOOT_DIR/nmap/ports-$TARGET.diff" ]]; then
@@ -410,9 +410,9 @@ else
     echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null$RESET"
   fi
   wget -qO- -T 1 --connect-timeout=5 --read-timeout=10 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 --max-time 10 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 -s -R -L http://$TARGET > $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 --max-time 10 -I -s -R -X OPTIONS http://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port80.txt 2> /dev/null
+  curl --connect-timeout 5 --max-time 10 -I -s --insecure -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
+  curl --connect-timeout 5 -s -R -L --insecure http://$TARGET > $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
+  curl --connect-timeout 5 --max-time 10 -I -s --insecure -R -X OPTIONS http://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port80.txt 2> /dev/null
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -712,9 +712,9 @@ else
     echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null$RESET"
   fi
   wget -qO- -T 1 --connect-timeout=5 --read-timeout=10 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 --max-time 10 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 -s -R -L https://$TARGET > $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 --max-time 10 -I -s -R -X OPTIONS https://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port443.txt 2> /dev/null
+  curl --connect-timeout 5 --max-time 10 -I -s --insecure -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
+  curl --connect-timeout 5 -s -R -L --insecure https://$TARGET > $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
+  curl --connect-timeout 5 --max-time 10 -I -s --insecure -R -X OPTIONS https://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port443.txt 2> /dev/null
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -1445,6 +1445,8 @@ SHELLED=$(egrep -h -i -s "Meterpreter session|Command executed|File(s) found:|Co
 if [[ ${#SHELLED} -ge 5 ]]; then
   echo "$SHELLED" > $LOOT_DIR/output/shelled-$TARGET.txt 2> /dev/null
 fi
+
+source modes/sc0pe.sh 
 
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo -e "$OKRED SCAN COMPLETE! $RESET"

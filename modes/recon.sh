@@ -103,6 +103,12 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     python3 /usr/share/sniper/bin/github-subdomains.py -t $GITHUB_API_TOKEN -d $TARGET $LOOT_DIR/domains/domains-$TARGET-github.txt 2> /dev/null
   fi
+  if [[ "$RAPIDDNS" = "1" ]]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED GATHERING GITHUB SUBDOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    curl -s "https://rapiddns.io/subdomain/$TARGET?full=1&down=1#exportData()" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*" | sort -u | grep "$TARGET" | cut -d\/ -f3 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-rapiddns.txt 2> /dev/null
+  fi
   cat $LOOT_DIR/domains/domains-$TARGET-crt.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-spyse.txt /dev/null > $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
@@ -112,6 +118,7 @@ if [[ "$RECON" = "1" ]]; then
   cat $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-shodan-sorted.txt 2>/dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-github.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET-rapiddns.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/targets.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   sed -i '/^$/d' $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   sed -i '/^$/d' $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
