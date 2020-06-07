@@ -1,0 +1,9 @@
+AUTHOR='@xer0dayz'
+VULN_NAME='PulseSecure VPN Detected'
+URI='/dana-na/auth/url_admin/welcome.cgi'
+METHOD='GET'
+MATCH='<title>SSL'
+SEVERITY='P5 - INFO'
+CURL_OPTS="--user-agent '' -s -L --insecure"
+SECONDARY_COMMANDS=''
+GREP_OPTIONS='-i'

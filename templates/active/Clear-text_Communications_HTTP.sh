@@ -1,0 +1,9 @@
+AUTHOR='@xer0dayz'
+VULN_NAME='Clear-Text Protocol - HTTP'
+URI='/'
+METHOD='GET'
+MATCH='200 OK'
+SEVERITY='P2 - HIGH'
+CURL_OPTS="--user-agent '' -s"
+SECONDARY_COMMANDS=''
+GREP_OPTIONS='-i'

@@ -1,0 +1,9 @@
+AUTHOR='@xer0dayz'
+VULN_NAME='Contact Form 7 Wordpress Plugin Found 1'
+URI="/wp-content/plugins/drag-and-drop-multiple-file-upload-contact-form-7/readme.txt"
+METHOD='GET'
+MATCH='Contact Form 7'
+SEVERITY='P5 - INFO'
+CURL_OPTS="--user-agent '' -s --insecure"
+SECONDARY_COMMANDS=''
+GREP_OPTIONS='-i'
