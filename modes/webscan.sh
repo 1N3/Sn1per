@@ -134,7 +134,7 @@ if [[ "$MODE" = "webscan" ]]; then
 		unzip arachni.zip
 		cd $INSTALL_DIR
 	fi
-	source modes/sc0pe.sh 
+	source $INSTALL_DIR/modes/sc0pe.sh 
 
 	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	echo -e "$OKRED SCAN COMPLETE! $RESET"

@@ -91,7 +91,7 @@ if [[ "$MODE" = "vulnscan" ]]; then
       omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep $TARGET
     fi
   fi
-  source modes/sc0pe.sh 
+  source $INSTALL_DIR/modes/sc0pe.sh 
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

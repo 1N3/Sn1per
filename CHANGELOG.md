@@ -10,6 +10,7 @@
 * v8.4 - Improved efficiency of 'web' and 'recon' mode scans
 * v8.4 - Fixed issue with dirsearch asterisk being used incorrectly
 * v8.4 - Fixed issue with airstrike mode not updated Sn1per Professional v8.0 host list
+* v8.4 - Fixed issue with webtech re.error: invalid group reference 1 at position 130
 * v8.3 - Added Github subdomain retrieval (requires API key/conf options enabled)
 * v8.3 - Added NMAP_OPTIONS setting to sniper.conf to configure optional NMap scan settings
 * v8.3 - Added option to specify custom Sn1per configuration via (-c) switch

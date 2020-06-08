@@ -222,7 +222,7 @@ if [[ "$MODE" = "webporthttps" ]]; then
       fi
     fi
     if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then
-      source modes/javascript-analysis.sh
+      source $INSTALL_DIR/modes/javascript-analysis.sh
     fi
     touch $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
     cp $LOOT_DIR/web/dirsearch-$TARGET.txt $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
@@ -322,12 +322,12 @@ if [[ "$MODE" = "webporthttps" ]]; then
     cd $INSTALL_DIR
 
     SSL="true"
-    source modes/web_autopwn.sh 
-    source modes/osint_stage_2.sh
+    source $INSTALL_DIR/modes/web_autopwn.sh 
+    source $INSTALL_DIR/modes/osint_stage_2.sh
     
   fi
 
-  source modes/sc0pe.sh 
+  source $INSTALL_DIR/modes/sc0pe.sh 
   
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"

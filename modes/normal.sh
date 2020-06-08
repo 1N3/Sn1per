@@ -1428,8 +1428,8 @@ if [[ $YASUO = "1" ]]; then
 fi
 
 cd $INSTALL_DIR
-source modes/fullportscan.sh
-source modes/bruteforce.sh
+source $INSTALL_DIR/modes/fullportscan.sh
+source $INSTALL_DIR/modes/bruteforce.sh
 rm -f $LOOT_DIR/.fuse_* 2> /dev/null
 sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
 
@@ -1446,7 +1446,7 @@ if [[ ${#SHELLED} -ge 5 ]]; then
   echo "$SHELLED" > $LOOT_DIR/output/shelled-$TARGET.txt 2> /dev/null
 fi
 
-source modes/sc0pe.sh 
+source $INSTALL_DIR/modes/sc0pe.sh 
 
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo -e "$OKRED SCAN COMPLETE! $RESET"

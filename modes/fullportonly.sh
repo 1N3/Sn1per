@@ -59,7 +59,7 @@ if [[ "$MODE" = "fullportonly" ]]; then
     sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET-udp.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null
   fi
-  source modes/sc0pe.sh 
+  source $INSTALL_DIR/modes/sc0pe.sh 
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

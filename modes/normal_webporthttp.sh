@@ -49,7 +49,7 @@ if [[ "$MODE" = "web" ]]; then
     fi
   fi
   if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then
-    source modes/javascript-analysis.sh
+    source $INSTALL_DIR/modes/javascript-analysis.sh
   fi
   touch $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
   cp $LOOT_DIR/web/dirsearch-$TARGET.txt $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
@@ -155,6 +155,6 @@ if [[ "$MODE" = "web" ]]; then
   cd $INSTALL_DIR
   PORT="80"
   SSL="false"
-  source modes/web_autopwn.sh
+  source $INSTALL_DIR/modes/web_autopwn.sh
 
 fi 

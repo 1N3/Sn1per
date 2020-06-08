@@ -142,7 +142,7 @@ cd dnsgen
 pip3 install -r requirements.txt
 python3 setup.py install
 cd ..
-pip3 install webtech
+pip3 install -U webtech
 mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
 unzip slurp.zip
 rm -f slurp.zip
