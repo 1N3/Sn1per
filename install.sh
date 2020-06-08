@@ -152,7 +152,7 @@ GO111MODULE=on go get -u github.com/theblackturtle/fprobe; ln -s ~/go/bin/fprobe
 go get github.com/harleo/asnip
 ln -s ~/go/bin/asnip /usr/bin/asnip 2>/dev/null
 GO111MODULE=on go get -u -v github.com/lc/gau
-ln -s /root/go/bin/gau /usr/bin/gau2
+ln -s /root/go/bin/gau /usr/bin/gau2 2> /dev/null
 rm -Rf ~/go/src/amass*
 wget https://github.com/OWASP/Amass/releases/download/v3.5.4/amass_v3.5.4_linux_amd64.zip -O ~/go/src/amass.zip
 cd ~/go/src/
