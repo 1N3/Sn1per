@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.5 - Fixed Dockerfile with updated Kali image (CC. @stevemcilwain)
 * v8.4 - Added project "Sc0pe" active/passive vulnerability scanner
 * v8.4 - Added 68 new active sc0pe templates
 * v8.4 - Added 14 new passive sc0pe templates

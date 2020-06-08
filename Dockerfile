@@ -1,4 +1,4 @@
-FROM kalilinux/kali-linux-docker
+FROM kalilinux/kali-rolling
 
 LABEL org.label-schema.name='Sn1per - Kali Linux' \
     org.label-schema.description='Automated pentest framework for offensive security experts' \
