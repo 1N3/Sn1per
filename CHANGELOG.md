@@ -4,10 +4,11 @@
 * v8.4 - Added 14 new passive sc0pe templates
 * v8.4 - Added OWASP ZAP API integration
 * v8.4 - Added 8 new Sn1per configuration templates (see /usr/share/sniper/conf/)
-* v8.4 - Added Gua (https://github.com/lc/gau)
+* v8.4 - Added Gau (https://github.com/lc/gau)
 * v8.4 - Added rapiddns subdomain retrieval
 * v8.4 - Updated web content wordlists
 * v8.4 - Improved efficiency of 'web' and 'recon' mode scans
+* v8.4 - Disabled legacy Metasploit web exploits (check Sn1per conf to re-enable)
 * v8.4 - Fixed issue with dirsearch asterisk being used incorrectly
 * v8.4 - Fixed issue with airstrike mode not updated Sn1per Professional v8.0 host list
 * v8.4 - Fixed issue with webtech re.error: invalid group reference 1 at position 130
