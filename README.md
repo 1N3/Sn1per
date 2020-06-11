@@ -161,8 +161,14 @@ sniper -w <WORKSPACE_ALIAS> --reimportall
 [*] LOOT REIMPORT FUNCTION
 sniper -w <WORKSPACE_ALIAS> --reload
 
+[*] LOOT EXPORT FUNCTION
+sniper -w <WORKSPACE_ALIAS> --export
+
 [*] SCHEDULED SCANS
 sniper -w <WORKSPACE_ALIAS> -s daily|weekly|monthly
+
+[*] USE A CUSTOM CONFIG
+sniper -c /path/to/sniper.conf -t <TARGET> -w <WORKSPACE_ALIAS>
 
 [*] UPDATE SNIPER
 sniper -u|--update
@@ -173,7 +179,7 @@ sniper -u|--update
 * **STEALTH:** Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking.
 * **FLYOVER:** Fast multi-threaded high level scans of multiple targets (useful for collecting high level data on many hosts quickly).
 * **AIRSTRIKE:** Quickly enumerates open ports/services on multiple hosts and performs basic fingerprinting. To use, specify the full location of the file which contains all hosts, IPs that need to be scanned and run ./sn1per /full/path/to/targets.txt airstrike to begin scanning.
-* **NUKE:** Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke. 
+* **NUKE:** Launch full audit of multiple hosts specified in text file of choice. Usage example: ./sniper /pentest/loot/targets.txt nuke.
 * **DISCOVER:** Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.
 * **PORT:** Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
 * **FULLPORTONLY:** Performs a full detailed port scan and saves results to XML.
@@ -191,16 +197,20 @@ sniper -u|--update
 https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
 ### Help Topics
+
 - [x] Github API integration (https://github.com/1N3/Sn1per/wiki/Github-API-Integration)
 - [x] Burpsuite Professional 2.x integration (https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
+- [x] OWASP ZAP integration (https://github.com/1N3/Sn1per/wiki/OWASP-ZAP-Integration)
 - [x] Shodan API integration (https://github.com/1N3/Sn1per/wiki/Shodan-Integration)
 - [x] Censys API integration (https://github.com/1N3/Sn1per/wiki/Censys-API-Integration)
 - [x] Hunter.io API integration (https://github.com/1N3/Sn1per/wiki/Hunter.io-API-Integration)
 - [x] Metasploit integration (https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
 - [x] OpenVAS API integration (https://github.com/1N3/Sn1per/wiki/OpenVAS-Integration)
 - [x] Scheduled scans (https://github.com/1N3/Sn1per/wiki/Scheduled-Scans)
+- [x] Sc0pe Templates (https://github.com/1N3/Sn1per/wiki/Sc0pe-Templates)
 - [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
 - [x] Sn1per Configuration Options (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
+- [x] Sn1per Configuration Templates (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
 - [x] Plugins & Tools (https://github.com/1N3/Sn1per/wiki/Plugins-&-Tools)
 
 ## LICENSE:
