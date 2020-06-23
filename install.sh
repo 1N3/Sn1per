@@ -73,10 +73,11 @@ fi
 
 echo -e "$OKORANGE + -- --=[ Installing package dependencies...$RESET"
 apt-get update
-apt-get install -y python3-uritools python3-paramiko nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil clusterd ruby rubygems python dos2unix sslyze arachni aha libxml2-utils rpcbind cutycapt host whois dnsrecon curl nmap php php-curl hydra wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq golang adb xsltproc urlcrazy ldapscripts
+apt-get install -y python3-uritools python3-paramiko nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil ruby rubygems python dos2unix sslyze aha libxml2-utils rpcbind cutycapt host whois dnsrecon curl nmap php php-curl hydra wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq golang adb xsltproc urlcrazy ldapscripts
 apt-get install -y waffit 2> /dev/null
+apt-get install -y clusterd 2> /dev/null
 apt-get install -y libssl-dev 2> /dev/null
-apt-get install -y python-pip 
+apt-get install -y python-pip
 apt-get remove -y python3-pip
 apt-get install -y python3-pip
 apt-get install -y xmlstarlet
@@ -187,6 +188,15 @@ python setup.py install
 cd ..
 pip3 install spyse.py
 pip3 install h8mail 2> /dev/null
+# ARACHNI MANUAL INSTALL
+wget https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -O /tmp/arachni.tar.gz
+cd /tmp/
+tar -zxvf arachni.tar.gz
+cd arachni*
+mkdir -p /usr/share/arachni 2> /dev/null
+cp -Rf * /usr/share/arachni/
+cd /usr/share/arachni/bin/
+for a in `ls`; do ln -fs $PWD/$a /usr/bin/$a; done;
 echo -e "$OKORANGE + -- --=[ Setting up environment...$RESET"
 cd $PLUGINS_DIR/BlackWidow/ && bash install.sh force 2> /dev/null
 cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
@@ -216,6 +226,6 @@ echo -e "$OKORANGE + -- --=[ Copying the old Sn1per configuration file to /root/
 mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
 echo -e "$OKORANGE + -- --=[ Copying updated Sn1per configuration file to /root/.sniper.conf $RESET"
 cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
-echo -e "$OKBLUE + -- --=[ NOTE: You may need to copy your old API keys and config to the new sniper.conf file at /root/.sniper.conf $RESET"
+echo -e "$OKORANGE + -- --=[ NOTE: You may need to copy your old API keys and config to the new sniper.conf file at /root/.sniper.conf $RESET"
 echo -e "$OKORANGE + -- --=[ Done! $RESET"
 echo -e "$OKORANGE + -- --=[ To run, type 'sniper'! $RESET"

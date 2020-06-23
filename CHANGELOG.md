@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v8.5 - Fixed issue with installer on latest Kali and Docker builds
+* v8.5 - Fixed custom installer for Arachni
 * v8.5 - Fixed Dockerfile with updated Kali image (CC. @stevemcilwain)
 * v8.4 - Added project "Sc0pe" active/passive vulnerability scanner
 * v8.4 - Added 68 new active sc0pe templates
