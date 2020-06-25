@@ -10,27 +10,13 @@
 ## ABOUT:
 Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes. For more information regarding Sn1per Professional, go to https://xerosecurity.com. 
 
-## SN1PER PROFESSIONAL FEATURES:
-### Workspace Navigator 
-- [x] Easily navigate all workspaces within Sn1per
-![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-v7-workspacenavigator.png)
-### Workspace Dashboard
-- [x] Get a high level view of the attack surface with overall scan progress
-![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Top-Menu1.png)
-### Slideshow 
-- [x] Visualize the attack surface by easily flipping through all gathered screenshots
-![](https://xerosecurity.com/images/Sn1per-v6_screenshot6c.png)
-### Host List
-- [x] Easily search and sort through all hosts within the workspace using various meta properties
-![](https://xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Host-List2.png)
-### Detailed Host Reports 
-- [x] Get more details on any host within the workspace. 
-![](https://xerosecurity.com/images/Sn1per-v6_screenshot33.PNG)
-### NMap HTML Reports
-- [x] View low level network information on each host
-![](https://xerosecurity.com/images/Sn1per-v6_screenshot9.png)
-### Demo Video:
-[![Demo](https://i2.wp.com/xerosecurity.com/wordpress/wp-content/uploads/2019/05/Sn1per-Professional-v7.0-Demo.png?w=1281&ssl=1)](https://www.youtube.com/watch?v=YlRRNM3vd8k)
+[![](https://xerosecurity.com/images/xerosecurity-sn1per1.PNG)](https://xerosecurity.com/)
+[![](https://xerosecurity.com/images/xerosecurity-sn1per2.PNG)](https://xerosecurity.com/)
+[![](https://xerosecurity.com/images/xerosecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=YlRRNM3vd8k)
+[![](https://xerosecurity.com/images/xerosecurity-sn1per4.PNG)](https://xerosecurity.com/)
+[![](https://xerosecurity.com/images/xerosecurity-sn1per5.PNG)](https://xerosecurity.com/)
+[![](https://xerosecurity.com/images/xerosecurity-sn1per6.PNG)](https://xerosecurity.com/)
+
 ### Purchase Sn1per Professional:
 To obtain a Sn1per Professional license, go to https://xerosecurity.com. 
 
