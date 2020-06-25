@@ -1,9 +1,9 @@
 AUTHOR='@xer0dayz'
-VULN_NAME='Citrix VPN Detected'
-URI='/vpn/index.html'
+VULN_NAME='Jolokia Version Disclosure'
+URI='/jolokia/version'
 METHOD='GET'
-MATCH="Netscaler\ Gateway"
-SEVERITY='P5 - INFO'
+MATCH="\"agent\"\:"
+SEVERITY='P4 - LOW'
 CURL_OPTS="--user-agent '' -s -L --insecure"
 SECONDARY_COMMANDS=''
 GREP_OPTIONS='-i'

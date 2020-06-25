@@ -1,8 +1,8 @@
 AUTHOR='@xer0dayz'
-VULN_NAME='Citrix VPN Detected'
-URI='/vpn/index.html'
+VULN_NAME='Weblogic Application Server Detected'
+URI='/'
 METHOD='GET'
-MATCH="Netscaler\ Gateway"
+MATCH="Weblogic\ Application\ Server"
 SEVERITY='P5 - INFO'
 CURL_OPTS="--user-agent '' -s -L --insecure"
 SECONDARY_COMMANDS=''

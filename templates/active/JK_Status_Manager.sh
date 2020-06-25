@@ -1,8 +1,8 @@
 AUTHOR='@xer0dayz'
-VULN_NAME='Citrix VPN Detected'
-URI='/vpn/index.html'
+VULN_NAME='JK Status Manager'
+URI='/jkstatus/'
 METHOD='GET'
-MATCH="Netscaler\ Gateway"
+MATCH="JK\ Status\ Manager"
 SEVERITY='P5 - INFO'
 CURL_OPTS="--user-agent '' -s -L --insecure"
 SECONDARY_COMMANDS=''

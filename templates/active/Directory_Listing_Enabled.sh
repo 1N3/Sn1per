@@ -1,9 +1,9 @@
 AUTHOR='@xer0dayz'
-VULN_NAME='Citrix VPN Detected'
-URI='/vpn/index.html'
+VULN_NAME='Directory Listing Enabled'
+URI='/'
 METHOD='GET'
-MATCH="Netscaler\ Gateway"
-SEVERITY='P5 - INFO'
+MATCH='To Parent Directory'
+SEVERITY='P4 - LOW'
 CURL_OPTS="--user-agent '' -s -L --insecure"
 SECONDARY_COMMANDS=''
 GREP_OPTIONS='-i'

@@ -1,8 +1,8 @@
 AUTHOR='@xer0dayz'
-VULN_NAME='Citrix VPN Detected'
-URI='/vpn/index.html'
+VULN_NAME='TeamQuest Login Found'
+URI='/teamquest/cgi-bin/login'
 METHOD='GET'
-MATCH="Netscaler\ Gateway"
+MATCH='TeamQuest - Login'
 SEVERITY='P5 - INFO'
 CURL_OPTS="--user-agent '' -s -L --insecure"
 SECONDARY_COMMANDS=''

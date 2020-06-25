@@ -1,8 +1,8 @@
 AUTHOR='@xer0dayz'
-VULN_NAME='Citrix VPN Detected'
-URI='/vpn/index.html'
+VULN_NAME='Jenkins Detected'
+URI='/login?from=%2F'
 METHOD='GET'
-MATCH="Netscaler\ Gateway"
+MATCH="\[Jenkins\]"
 SEVERITY='P5 - INFO'
 CURL_OPTS="--user-agent '' -s -L --insecure"
 SECONDARY_COMMANDS=''
