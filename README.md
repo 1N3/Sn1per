@@ -53,8 +53,6 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] Metasploit integration (https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
 
 ## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL:
-![](https://xerosecurity.com/images/kali-logo.jpg)
-
 ```
 bash install.sh
 ```
