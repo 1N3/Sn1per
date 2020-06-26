@@ -12,13 +12,13 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 
 [![](https://xerosecurity.com/images/xerosecurity-sn1per1.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per2.PNG)](https://xerosecurity.com/)
-[![](https://xerosecurity.com/images/xerosecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=YlRRNM3vd8k)
+[![](https://xerosecurity.com/images/xerosecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=K-8QHDafhcA)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per4.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per5.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per6.PNG)](https://xerosecurity.com/)
 
 ### Purchase Sn1per Professional:
-To obtain a Sn1per Professional license, go to https://xerosecurity.com. 
+To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 
 ## SN1PER COMMUNITY FEATURES:
 - [x] Automatically collects basic recon (ie. whois, ping, DNS, etc.)
@@ -53,11 +53,13 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] Metasploit integration (https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
 
 ## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL:
+![](https://xerosecurity.com/images/kali-logo.PNG)
 ```
 bash install.sh
 ```
 
 ## DOCKER INSTALL:
+[![](https://xerosecurity.com/images/docker-logo.PNG)](https://hub.docker.com/r/xerosecurity/sn1per)
 From a new Docker console, run the following commands.
 ```
 Download https://raw.githubusercontent.com/1N3/Sn1per/master/Dockerfile
@@ -179,7 +181,7 @@ sniper -u|--update
 * **VULNSCAN:** Launches a OpenVAS vulnerability scan.
 * **MASSVULNSCAN:** Launches a "vulnscan" mode scans on multiple targets specified via the "-f" switch.
 
-## SAMPLE REPORT:
+## SAMPLE OUTPUT:
 https://gist.github.com/1N3/8214ec2da2c91691bcbc
 
 ### Help Topics
