@@ -26,10 +26,10 @@ echo ""
 
 INSTALL_DIR=/usr/share/sniper
 
-echo -e "$OKGREEN + -- --=[This script will uninstall sniper and remove ALL files under $INSTALL_DIR. Are you sure you want to continue?$RESET"
-read answer 
+echo -e "$OKRED[>]$RESET This script will uninstall sniper and remove ALL files under $INSTALL_DIR. Are you sure you want to continue?$RESET"
+read answer
 
 rm -Rf /usr/share/sniper/
 rm -f /usr/bin/sniper
 
-echo -e "$OKORANGE + -- --=[Done!$RESET"
+echo -e "$OKBLUE[*]$RESET Done!$RESET"

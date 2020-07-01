@@ -1,4 +1,8 @@
 ## CHANGELOG:
+* v8.5 - Added http-default-accounts NMap NSE to check for default web credentials
+* v8.5 - Fixed several issues with install.sh to resolve deps on Ubuntu and Kali 2020.2
+* v8.5 - Removed larger wordlists to reduce install size of Sn1per
+* v8.5 - Added 20+ new active/passive sc0pe templates
 * v8.5 - Fixed issue with installer on latest Kali and Docker builds
 * v8.5 - Fixed custom installer for Arachni
 * v8.5 - Fixed Dockerfile with updated Kali image (CC. @stevemcilwain)

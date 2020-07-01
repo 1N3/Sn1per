@@ -24,13 +24,13 @@ LOOT_DIR=/usr/share/sniper/loot
 PLUGINS_DIR=/usr/share/sniper/plugins
 GO_DIR=~/go/bin
 
-echo -e "$OKGREEN + -- --=[ This script will install sn1per under $INSTALL_DIR. Are you sure you want to continue? (Hit Ctrl+C to exit)$RESET"
+echo -e "$OKRED[>]$RESET This script will install sn1per under $INSTALL_DIR. Are you sure you want to continue? (Hit Ctrl+C to exit)$RESET"
 if [[ "$1" != "force" ]]; then
 	read answer
 fi
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
+   echo "This script must be run as root"
    exit 1
 fi
 
@@ -56,60 +56,93 @@ XAUTHORITY=/root/.Xauthority
 # CHECK FOR UBUNTU...
 UBUNTU_CHECK=$(egrep DISTRIB_ID /etc/lsb-release 2> /dev/null)
 if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
-	if [[ ! -f "/etc/apt/sources.list.bak" ]]; then
-		cp /etc/apt/sources.list /etc/apt/sources.list.bak
-		echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
-		echo "deb-src http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
-	fi
-	wget https://http.kali.org/pool/main/k/kali-archive-keyring/kali-archive-keyring_2020.2_all.deb -O /tmp/kali-archive-keyring_2020.2_all.deb
-	apt install /tmp/kali-archive-keyring_2020.2_all.deb
-	apt update
 	cp /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
 	cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
-	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
+	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null
 	chown root /root/.Xauthority
 	XAUTHORITY=/root/.Xauthority
+
+	echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
+	curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
+  	chmod 755 /tmp/msfinstall
+  	/tmp/msfinstall
+
 fi
 
-echo -e "$OKORANGE + -- --=[ Installing package dependencies...$RESET"
+echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
 apt-get update
-apt-get install -y python3-uritools python3-paramiko nfs-common eyewitness nodejs wafw00f xdg-utils metagoofil ruby rubygems python dos2unix sslyze aha libxml2-utils rpcbind cutycapt host whois dnsrecon curl nmap php php-curl hydra wpscan sqlmap nbtscan enum4linux cisco-torch metasploit-framework theharvester dnsenum nikto smtp-user-enum whatweb sslscan amap jq golang adb xsltproc urlcrazy ldapscripts
-apt-get install -y waffit 2> /dev/null
-apt-get install -y clusterd 2> /dev/null
+apt-get install -y python3-paramiko
+apt-get install -y nfs-common
+apt-get install -y nodejs
+apt-get install -y wafw00f
+apt-get install -y xdg-utils
+apt-get install -y ruby
+apt-get install -y rubygems
+apt-get install -y python
+apt-get install -y dos2unix
+apt-get install -y aha
+apt-get install -y libxml2-utils
+apt-get install -y rpcbind
+apt-get install -y cutycapt
+apt-get install -y host
+apt-get install -y whois
+apt-get install -y dnsrecon
+apt-get install -y curl
+apt-get install -y nmap
+apt-get install -y php
+apt-get install -y php-curl
+apt-get install -y hydra
+apt-get install -y sqlmap
+apt-get install -y nbtscan
+apt-get install -y nikto
+apt-get install -y whatweb
+apt-get install -y sslscan
+apt-get install -y jq
+apt-get install -y golang
+apt-get install -y adb
+apt-get install -y xsltproc
+apt-get install -y ldapscripts
 apt-get install -y libssl-dev 2> /dev/null
 apt-get install -y python-pip
 apt-get remove -y python3-pip
 apt-get install -y python3-pip
 apt-get install -y xmlstarlet
-apt-get install -y chromium
 apt-get install -y net-tools
 apt-get install -y p7zip-full
 apt-get install -y jsbeautifier
+apt-get install -y metasploit-framework 2> /dev/null
+
 pip3 install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
-echo -e "$OKORANGE + -- --=[ Installing gem dependencies...$RESET"
-gem install rake
-gem install ruby-nmap net-http-persistent mechanize text-table
-gem install public_suffix
+echo -e "$OKBLUE[*]$RESET Installing gem dependencies...$RESET"
+echo -e "$OKBLUE[*]$RESET Installing rake...$RESET"
+gem install rake 2> /dev/null > /dev/null
+echo -e "$OKBLUE[*]$RESET Installing ruby-nmap...$RESET"
+gem install ruby-nmap 2> /dev/null > /dev/null
+echo -e "$OKBLUE[*]$RESET Installing net-http-persistent...$RESET"
+gem install net-http-persistent 2> /dev/null > /dev/null
+echo -e "$OKBLUE[*]$RESET Installing mechanize...$RESET"
+gem install mechanize 2> /dev/null > /dev/null
+echo -e "$OKBLUE[*]$RESET Installing text-table...$RESET"
+gem install text-table 2> /dev/null > /dev/null
+echo -e "$OKBLUE[*]$RESET Installing public_suffix...$RESET"
+gem install public_suffix 2> /dev/null > /dev/null
 
-echo -e "$OKORANGE + -- --=[ Setting up Ruby...$RESET"
+echo -e "$OKBLUE[*]$RESET Setting up Ruby...$RESET"
 dpkg-reconfigure ruby
 
-echo -e "$OKORANGE + -- --=[ Cleaning up old extensions...$RESET"
+echo -e "$OKBLUE[*]$RESET Cleaning up old extensions...$RESET"
 rm -Rf $PLUGINS_DIR 2> /dev/null
 mkdir $PLUGINS_DIR 2> /dev/null
 cd $PLUGINS_DIR
-mkdir -p $PLUGINS_DIR/nmap_scripts/ 2> /dev/null
 mkdir -p $GO_DIR 2> /dev/null
 
-echo -e "$OKORANGE + -- --=[ Downloading extensions...$RESET"
+echo -e "$OKBLUE[*]$RESET Downloading extensions...$RESET"
 git clone https://github.com/1N3/BruteX.git
 git clone https://github.com/1N3/Findsploit.git
 git clone https://github.com/1N3/Goohak.git
 git clone https://github.com/1N3/BlackWidow
-git clone https://github.com/Dionach/CMSmap.git
-git clone https://github.com/0xsauby/yasuo.git
 git clone https://github.com/1N3/Sublist3r.git
 git clone https://github.com/nccgroup/shocker.git
 git clone https://github.com/BishopFox/spoofcheck.git
@@ -117,36 +150,39 @@ git clone https://github.com/arthepsy/ssh-audit
 git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
-git clone https://github.com/rbsec/dnscan.git
 git clone https://github.com/RUB-NDS/CORStest.git
 git clone https://github.com/hisxo/gitGraber.git
 git clone https://github.com/1N3/LinkFinder
+git clone https://github.com/christophetd/censys-subdomain-finder.git
+git clone https://github.com/rbsec/dnscan.git
+git clone https://github.com/infosec-au/altdns.git
+git clone https://github.com/blechschmidt/massdns.git
+git clone https://github.com/ProjectAnte/dnsgen
+git clone https://github.com/scipag/vulscan
+git clone https://github.com/laramies/metagoofil.git
+git clone https://github.com/achillean/shodan-python
+git clone https://github.com/Dionach/CMSmap.git
+git clone https://github.com/0xsauby/yasuo.git
+
 cd LinkFinder
 python setup.py install
 cd ..
-git clone https://github.com/christophetd/censys-subdomain-finder.git
 pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt
 pip3 install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt
-git clone https://github.com/infosec-au/altdns.git
 cd altdns
 pip3 install -r requirements.txt
 python2 setup.py install
 pip3 install py-altdns 2> /dev/null
 cd ..
-git clone https://github.com/blechschmidt/massdns.git
 cd massdns
 make && make install
 cd ..
-git clone https://github.com/ProjectAnte/dnsgen
 cd dnsgen
 pip3 install -r requirements.txt
 python3 setup.py install
 cd ..
 pip3 install -U webtech
-mv $INSTALL_DIR/bin/slurp.zip $PLUGINS_DIR
-unzip slurp.zip
-rm -f slurp.zip
 cd ~/go/bin/;go get github.com/haccer/subjack
 cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
 GO111MODULE=on go get -u github.com/theblackturtle/fprobe; ln -s ~/go/bin/fprobe /usr/bin/fprobe
@@ -165,7 +201,6 @@ rm -f ~/go/src/amass.zip 2> /dev/null
 cd ~/go/bin; wget https://github.com/projectdiscovery/subfinder/releases/download/v2.2.4/subfinder-linux-amd64.tar; tar -xvf subfinder-linux-amd64.tar; rm -f subfinder-linux-amd64.tar; mv subfinder-linux-amd64 /usr/local/bin/subfinder
 cd /usr/share/nmap/scripts/
 rm -Rf vulscan 2> /dev/null
-git clone https://github.com/scipag/vulscan
 rm -f /usr/share/nmap/scripts/vulners.nse
 wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
 mkdir -p ~/.msf4/modules/exploits/web
@@ -176,33 +211,38 @@ cd /tmp/
 chmod +rx gobuster
 mv gobuster /usr/bin/gobuster
 cd $PLUGINS_DIR
-wget https://github.com/laramies/theHarvester/archive/3.0.6.tar.gz
-tar -zxvf 3.0.6.tar.gz
-rm 3.0.6.tar.gz
-rm -f /usr/bin/theharvester
-ln -s /usr/share/sniper/plugins/theHarvester-3.0.6/theHarvester.py /usr/bin/theharvester
-git clone https://github.com/laramies/metagoofil.git
-git clone https://github.com/achillean/shodan-python
 cd shodan-python
 python setup.py install
 cd ..
 pip3 install spyse.py
 pip3 install h8mail 2> /dev/null
+cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
+cd $PLUGINS_DIR
+
+# THEHARVESTER MANUAL INSTALL
+wget https://github.com/laramies/theHarvester/archive/3.0.6.tar.gz
+tar -zxvf 3.0.6.tar.gz
+rm 3.0.6.tar.gz
+rm -f /usr/bin/theharvester
+ln -s /usr/share/sniper/plugins/theHarvester-3.0.6/theHarvester.py /usr/bin/theharvester
+
 # ARACHNI MANUAL INSTALL
 wget https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -O /tmp/arachni.tar.gz
 cd /tmp/
-tar -zxvf arachni.tar.gz
-cd arachni*
+tar -zxf arachni.tar.gz
+rm -f /tmp/arachni.tar.gz 2> /dev/null
+cd arachni-*
 mkdir -p /usr/share/arachni 2> /dev/null
-cp -Rf * /usr/share/arachni/
+cp -Rf * /usr/share/arachni/ 2> /dev/null
 cd /usr/share/arachni/bin/
 for a in `ls`; do ln -fs $PWD/$a /usr/bin/$a; done;
-echo -e "$OKORANGE + -- --=[ Setting up environment...$RESET"
+
+echo -e "$OKBLUE[*]$RESET Setting up environment...$RESET"
 cd $PLUGINS_DIR/BlackWidow/ && bash install.sh force 2> /dev/null
 cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/spoofcheck/ && pip3 install -r requirements.txt 2> /dev/null
-cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
+
 cd $INSTALL_DIR
 mkdir $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
@@ -218,14 +258,22 @@ rm -f /usr/bin/dirsearch
 ln -s $INSTALL_DIR/sniper /usr/bin/sniper
 ln -s $PLUGINS_DIR/Goohak/goohak /usr/bin/goohak
 ln -s $PLUGINS_DIR/dirsearch/dirsearch.py /usr/bin/dirsearch
-msfdb init
-echo -e "$OKORANGE + -- --=[ Adding start menu shortcuts... $RESET"
+
+msfdb init 2> /dev/null
+
+echo -e "$OKBLUE[*]$RESET Adding start menu and desktop shortcuts... $RESET"
 cp -f $INSTALL_DIR/sn1per.desktop /usr/share/applications/ 2> /dev/null
 cp -f $INSTALL_DIR/sn1per.png /usr/share/pixmaps/ 2> /dev/null
-echo -e "$OKORANGE + -- --=[ Copying the old Sn1per configuration file to /root/.sniper.conf.old $RESET"
+mkdir -p /usr/share/sniper/loot/workspaces/ 2> /dev/null
+ln -fs /usr/share/sniper/loot/workspaces/ /home/kali/Desktop/workspaces 2> /dev/null
+ln -fs /usr/share/sniper/loot/workspaces/ /root/Desktop/workspaces 2> /dev/null
+
+echo -e "$OKBLUE[*]$RESET Copying the old Sn1per configuration file to /root/.sniper.conf.old $RESET"
 mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
-echo -e "$OKORANGE + -- --=[ Copying updated Sn1per configuration file to /root/.sniper.conf $RESET"
+
+echo -e "$OKBLUE[*]$RESET Copying updated Sn1per configuration file to /root/.sniper.conf $RESET"
 cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
-echo -e "$OKORANGE + -- --=[ NOTE: You may need to copy your old API keys and config to the new sniper.conf file at /root/.sniper.conf $RESET"
-echo -e "$OKORANGE + -- --=[ Done! $RESET"
-echo -e "$OKORANGE + -- --=[ To run, type 'sniper'! $RESET"
+
+echo -e "$OKBLUE[i]$RESET NOTE: You may need to copy your old API keys and config to the new sniper.conf file at /root/.sniper.conf $RESET"
+echo -e "$OKRED[>]$RESET Done! $RESET"
+echo -e "$OKRED[>]$RESET To run, type 'sniper'! $RESET"
