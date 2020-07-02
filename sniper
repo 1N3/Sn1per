@@ -8,7 +8,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-VER="8.4"
+VER="8.5"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
@@ -413,6 +413,7 @@ function init {
   TARGET="$(echo $TARGET | sed 's/https:\/\///g' | sed 's/http:\/\///g')"
   service postgresql start
   msfdb start 2> /dev/null > /dev/null
+  chown root /run/user/1000/gdm/Xauthority 2> /dev/null
   UPDATED_TARGETS=$LOOT_DIR/scans/updated.txt
 
   if [[ "$AUTOBRUTE" == "1" ]]; then
