@@ -14,7 +14,7 @@ LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
 
 # INIT POSTGRESQL
-service postgresql start
+service postgresql start 2> /dev/null
 
 # LOAD SNIPER CONFIGURATION FILE
 if [[ -f ~/.sniper.conf ]]; then
@@ -31,94 +31,94 @@ DISTRO=$(cat /etc/*-release | grep DISTRIB_ID= | cut -d'=' -f2)
 function help {
   logo
   echo ""
-  echo ' [*] NORMAL MODE'
+  echo -e "$OKBLUE[*]$RESET NORMAL MODE"
   echo ' sniper -t <TARGET>'
   echo ""
-  echo ' [*] SPECIFY CUSTOM CONFIG FILE'
+  echo -e "$OKBLUE[*]$RESET SPECIFY CUSTOM CONFIG FILE"
   echo ' sniper -c /full/path/to/sniper.conf -t <TARGET> -m <MODE> -w <WORKSPACE>'
   echo ""
-  echo ' [*] NORMAL MODE + OSINT + RECON'
+  echo -e "$OKBLUE[*]$RESET NORMAL MODE + OSINT + RECON"
   echo ' sniper -t <TARGET> -o -re'
   echo ""
-  echo ' [*] STEALTH MODE + OSINT + RECON'
+  echo -e "$OKBLUE[*]$RESET STEALTH MODE + OSINT + RECON"
   echo ' sniper -t <TARGET> -m stealth -o -re'
   echo ""
-  echo ' [*] DISCOVER MODE'
+  echo -e "$OKBLUE[*]$RESET DISCOVER MODE"
   echo ' sniper -t <CIDR> -m discover -w <WORSPACE_ALIAS>'
   echo ""
-  echo ' [*] SCAN ONLY SPECIFIC PORT'
+  echo -e "$OKBLUE[*]$RESET SCAN ONLY SPECIFIC PORT"
   echo ' sniper -t <TARGET> -m port -p <portnum>'
   echo ""
-  echo ' [*] FULLPORTONLY SCAN MODE'
+  echo -e "$OKBLUE[*]$RESET FULLPORTONLY SCAN MODE"
   echo ' sniper -t <TARGET> -fp'
   echo ""
-  echo ' [*] WEB MODE - PORT 80 + 443 ONLY!'
+  echo -e "$OKBLUE[*]$RESET WEB MODE - PORT 80 + 443 ONLY!"
   echo ' sniper -t <TARGET> -m web'
   echo ""
-  echo ' [*] HTTP WEB PORT MODE'
+  echo -e "$OKBLUE[*]$RESET HTTP WEB PORT MODE"
   echo ' sniper -t <TARGET> -m webporthttp -p <port>'
   echo ""
-  echo ' [*] HTTPS WEB PORT MODE'
+  echo -e "$OKBLUE[*]$RESET HTTPS WEB PORT MODE"
   echo ' sniper -t <TARGET> -m webporthttps -p <port>'
   echo ""
-  echo ' [*] HTTP WEBSCAN MODE'
+  echo -e "$OKBLUE[*]$RESET HTTP WEBSCAN MODE"
   echo ' sniper -t <TARGET> -m webscan '
   echo ""
-  echo ' [*] ENABLE BRUTEFORCE'
+  echo -e "$OKBLUE[*]$RESET ENABLE BRUTEFORCE"
   echo ' sniper -t <TARGET> -b'
   echo ""
-  echo ' [*] AIRSTRIKE MODE'
+  echo -e "$OKBLUE[*]$RESET AIRSTRIKE MODE"
   echo ' sniper -f targets.txt -m airstrike'
   echo ""
-  echo ' [*] NUKE MODE WITH TARGET LIST, BRUTEFORCE ENABLED, FULLPORTSCAN ENABLED, OSINT ENABLED, RECON ENABLED, WORKSPACE & LOOT ENABLED'
+  echo -e "$OKBLUE[*]$RESET NUKE MODE WITH TARGET LIST, BRUTEFORCE ENABLED, FULLPORTSCAN ENABLED, OSINT ENABLED, RECON ENABLED, WORKSPACE & LOOT ENABLED"
   echo ' sniper -f targets.txt -m nuke -w <WORKSPACE_ALIAS>'
   echo ""
-  echo ' [*] MASS PORT SCAN MODE'
+  echo -e "$OKBLUE[*]$RESET MASS PORT SCAN MODE"
   echo ' sniper -f targets.txt -m massportscan -w <WORKSPACE_ALIAS>'
   echo ""
-  echo ' [*] MASS WEB SCAN MODE'
+  echo -e "$OKBLUE[*]$RESET MASS WEB SCAN MODE"
   echo ' sniper -f targets.txt -m massweb -w <WORKSPACE_ALIAS>'
   echo ""
-  echo ' [*] MASS WEBSCAN SCAN MODE'
+  echo -e "$OKBLUE[*]$RESET MASS WEBSCAN SCAN MODE"
   echo ' sniper -f targets.txt -m masswebscan -w <WORKSPACE_ALIAS>'
   echo ""
-  echo ' [*] MASS VULN SCAN MODE'
+  echo -e "$OKBLUE[*]$RESET MASS VULN SCAN MODE"
   echo ' sniper -f targets.txt -m massvulnscan -w <WORKSPACE_ALIAS>'
   echo ""
-  echo ' [*] PORT SCAN MODE'
+  echo -e "$OKBLUE[*]$RESET PORT SCAN MODE"
   echo ' sniper -t <TARGET> -m port -p <PORT_NUM>'
   echo ""
-  echo ' [*] LIST WORKSPACES'
+  echo -e "$OKBLUE[*]$RESET LIST WORKSPACES"
   echo ' sniper --list'
   echo ""
-  echo ' [*] DELETE WORKSPACE'
+  echo -e "$OKBLUE[*]$RESET DELETE WORKSPACE"
   echo ' sniper -w <WORKSPACE_ALIAS> -d'
   echo ""
-  echo ' [*] DELETE HOST FROM WORKSPACE'
+  echo -e "$OKBLUE[*]$RESET DELETE HOST FROM WORKSPACE"
   echo ' sniper -w <WORKSPACE_ALIAS> -t <TARGET> -dh'
   echo ""
-  echo ' [*] GET SNIPER SCAN STATUS'
+  echo -e "$OKBLUE[*]$RESET GET SNIPER SCAN STATUS"
   echo ' sniper --status'
   echo ""
-  echo ' [*] LOOT REIMPORT FUNCTION'
+  echo -e "$OKBLUE[*]$RESET LOOT REIMPORT FUNCTION"
   echo ' sniper -w <WORKSPACE_ALIAS> --reimport'
   echo ""
-  echo ' [*] LOOT REIMPORTALL FUNCTION'
+  echo -e "$OKBLUE[*]$RESET LOOT REIMPORTALL FUNCTION"
   echo ' sniper -w <WORKSPACE_ALIAS> --reimportall'
   echo ""
-  echo ' [*] LOOT REIMPORT FUNCTION'
+  echo -e "$OKBLUE[*]$RESET LOOT REIMPORT FUNCTION"
   echo ' sniper -w <WORKSPACE_ALIAS> --reload'
   echo ""
-  echo ' [*] LOOT EXPORT FUNCTION'
+  echo -e "$OKBLUE[*]$RESET LOOT EXPORT FUNCTION"
   echo ' sniper -w <WORKSPACE_ALIAS> --export'
   echo ""
-  echo ' [*] SCHEDULED SCANS'
+  echo -e "$OKBLUE[*]$RESET SCHEDULED SCANS"
   echo ' sniper -w <WORKSPACE_ALIAS> -s daily|weekly|monthly'
   echo ""
-  echo ' [*] USE A CUSTOM CONFIG'
+  echo -e "$OKBLUE[*]$RESET USE A CUSTOM CONFIG"
   echo ' sniper -c /path/to/sniper.conf -t <TARGET> -w <WORKSPACE_ALIAS>'
   echo ""
-  echo ' [*] UPDATE SNIPER'
+  echo -e "$OKBLUE[*]$RESET UPDATE SNIPER"
   echo ' sniper -u|--update'
   echo ""
   echo ""
@@ -214,10 +214,10 @@ case $key in
     ;;
     -c|--config)
     CONFIG="$2"
-    echo -e "$OKBLUE[*]$RESET Creating backup of existing config to ~/.sniper.conf.bak...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
-    cp -f ~/.sniper.conf ~/.sniper.conf.bak
+    echo -e "$OKBLUE[*]$RESET Creating backup of existing config to /root/.sniper.conf.bak...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+    cp -f /root/.sniper.conf /root/.sniper.conf.bak
     echo -e "$OKBLUE[*]$RESET Copying $CONFIG to ~/.sniper.conf...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
-    cp -f $CONFIG ~/.sniper.conf
+    cp -f $CONFIG /root/.sniper.conf
     shift
     shift
     ;;
@@ -480,7 +480,11 @@ function loot {
   done
   echo -en "$OKGREEN]$RESET"
   echo ""
-  rm -f sniper-*.txt 2>/dev/null
+
+
+  # DISABLED FOR CONTINUITY / ENABLE FOR SPEED
+  #rm -f sniper-*.txt 2>/dev/null
+
   cd ..
   chmod 777 -Rf $LOOT_DIR
   #echo -e "$OKORANGE + -- --=[ Parsing NMap Ports... $RESET"
@@ -585,7 +589,6 @@ fi
 if [[ ${TARGET:0:1} =~ $REGEX ]];
 then
   SCAN_TYPE="IP"
-  
 else
   SCAN_TYPE="DOMAIN"
 fi

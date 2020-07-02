@@ -1,4 +1,11 @@
 ## CHANGELOG:
+* v8.5 - Added sc0pe template to check for default credentials via BruteX
+* v8.5 - Added fullportscans to all 'web' mode scans to ensure full port coverage
+* v8.5 - Fixed issue with 2nd stage OSINT scans not running
+* v8.5 - Added port values to sc0pe engine to define port numbers
+* v8.5 - Fixed issue with LinkFinder not working
+* v8.5 - Fixed issue with Javascript link parser
+* v8.5 - Added phantomjs dependency to fix webscreenshots on Ubuntu
 * v8.5 - Added http-default-accounts NMap NSE to check for default web credentials
 * v8.5 - Fixed several issues with install.sh to resolve deps on Ubuntu and Kali 2020.2
 * v8.5 - Removed larger wordlists to reduce install size of Sn1per

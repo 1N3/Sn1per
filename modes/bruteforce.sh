@@ -3,6 +3,8 @@ if [[ "$AUTOBRUTE" = "0" ]]; then
   echo -e "$OKRED SKIPPING BRUTE FORCE $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 else
+  echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-bruteforce.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING BRUTE FORCE $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -21,6 +23,9 @@ else
     echo "$CRACKED" > $LOOT_DIR/output/cracked-$TARGET.txt 2> /dev/null
   fi
   echo ""
+  mv $LOOT_DIR/scans/running-$TARGET-bruteforce.txt $LOOT_DIR/scans/finished-$TARGET-bruteforce.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+
   if [[ "$SLACK_NOTIFICATIONS_BRUTEFORCE" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/credentials/brutex-$TARGET.txt"
   fi

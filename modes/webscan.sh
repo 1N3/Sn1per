@@ -46,6 +46,9 @@ if [[ "$MODE" = "webscan" ]]; then
 	echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
 	echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
 	touch $LOOT_DIR/scans/$TARGET-webscan.txt 2> /dev/null 
+	echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-webscan.txt 2> /dev/null
+	ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 		echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
@@ -140,10 +143,15 @@ if [[ "$MODE" = "webscan" ]]; then
 	echo -e "$OKRED SCAN COMPLETE! $RESET"
 	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
-	loot 
-	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
+
+    mv $LOOT_DIR/scans/running-$TARGET-webscan.txt $LOOT_DIR/scans/finished-$TARGET-webscan.txt 2> /dev/null
+    ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+
+    if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 		echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 	fi
+
+	loot 
 	exit
 fi

@@ -49,6 +49,10 @@ if [[ "$MODE" = "flyover" ]]; then
       echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
       touch $LOOT_DIR/scans/$TARGET-$MODE.txt 2> /dev/null
       echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
+
+      echo "sniper -t $TARGET -m $MODE $args" >> $LOOT_DIR/scans/running-$TARGET-$MODE.txt 2> /dev/null
+      ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+
       echo -e "$OKRED=====================================================================================$RESET"
       echo -e "${OKBLUE}HOST:$RESET $TARGET"
 
@@ -62,6 +66,9 @@ if [[ "$MODE" = "flyover" ]]; then
 
       curl --connect-timeout 5 -I -s -R --insecure http://$TARGET 2> /dev/null > $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null & 
       curl --connect-timeout 5 -I -s -R --insecure https://$TARGET 2> /dev/null > $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null &
+      
+      curl --connect-timeout 5 -s -R -L --insecure http://$TARGET > $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null &
+      curl --connect-timeout 5 -s -R -L --insecure https://$TARGET > $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null &
 
       webtech -u http://$TARGET 2> /dev/null | grep \- 2> /dev/null | cut -d- -f2- 2> /dev/null > $LOOT_DIR/web/webtech-$TARGET-http.txt 2> /dev/null &
       webtech -u https://$TARGET 2> /dev/null | grep \- 2> /dev/null | cut -d- -f2- 2> /dev/null > $LOOT_DIR/web/webtech-$TARGET-https.txt 2> /dev/null &
@@ -90,6 +97,11 @@ if [[ "$MODE" = "flyover" ]]; then
       fi
       echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
       echo "$TARGET" >> $LOOT_DIR/domains/targets-all-presorted.txt
+
+      mv $LOOT_DIR/scans/running-$TARGET-$MODE.txt $LOOT_DIR/scans/finished-$TARGET-$MODE.txt 2> /dev/null
+      ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt 2> /dev/null
+      RUNNING_TASKS=$(wc -l $LOOT_DIR/scans/tasks-running.txt 2> /dev/null)
+
       i=$((i+1))
       if [[ "$i" -gt "$FLYOVER_MAX_HOSTS" ]]; then
         i=1
@@ -137,13 +149,14 @@ if [[ "$MODE" = "flyover" ]]; then
       fi
     done
     echo -e "$OKRED=====================================================================================$RESET"
-    if [[ "$LOOT" = "1" ]]; then
-      loot
-    fi
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
     fi
+    if [[ "$LOOT" = "1" ]]; then
+      loot
+    fi
+    
   fi
   exit
 fi

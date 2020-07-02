@@ -31,6 +31,8 @@ if [[ "$MODE" = "stealth" ]]; then
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-stealth.txt
+    ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+    
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
@@ -286,12 +288,12 @@ if [[ "$MODE" = "stealth" ]]; then
       echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       if [[ "$VERBOSE" == "1" ]]; then
-        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,500,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x $WEB_BRUTE_EXCLUDE_CODES -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
       fi
       if [[ "$DIRSEARCH" == "1" ]]; then
         touch $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
         cp $LOOT_DIR/web/dirsearch-$TARGET.txt $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
-        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,500,502,503,504 -F -e "/" -t $THREADS --random-agents --plain-text-report=$LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > /dev/null && cat $LOOT_DIR/web/dirsearch-$TARGET.txt
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u http://$TARGET -w $WEB_BRUTE_STEALTH -x $WEB_BRUTE_EXCLUDE_CODES -F -e "/" -t $THREADS --random-agents --plain-text-report=$LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > /dev/null && cat $LOOT_DIR/web/dirsearch-$TARGET.txt
         cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
         cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
         sort -u $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > $LOOT_DIR/web/dirsearch-$TARGET.sorted 2> /dev/null
@@ -323,15 +325,7 @@ if [[ "$MODE" = "stealth" ]]; then
     fi
     if [[ $WEBSCREENSHOT = "1" ]]; then
       cd $LOOT_DIR
-      python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium http://$TARGET:80
-    fi
-    if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      echo -e "$OKRED RUNNING SC0PE PASSIVE WEB VULNERABILITY SCAN $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      SSL="false"
-      source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      python2 $INSTALL_DIR/bin/webscreenshot.py http://$TARGET:80
     fi
   fi
  
@@ -460,12 +454,12 @@ if [[ "$MODE" = "stealth" ]]; then
       echo -e "$OKRED RUNNING FILE/DIRECTORY BRUTE FORCE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       if [[ "$VERBOSE" == "1" ]]; then
-        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,500,502,503,504 -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
+        echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x $WEB_BRUTE_EXCLUDE_CODES -F -e php,asp,aspx,bak,zip,tar.gz,html,htm $RESET"
       fi
       if [[ "$DIRSEARCH" == "1" ]]; then
         touch $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
         cp $LOOT_DIR/web/dirsearch-$TARGET.txt $LOOT_DIR/web/dirsearch-$TARGET.bak 2> /dev/null
-        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x 400,404,405,406,429,500,502,503,504 -F -e "/" -t $THREADS --random-agents --plain-text-report=$LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > /dev/null && cat $LOOT_DIR/web/dirsearch-$TARGET.txt
+        python3 $PLUGINS_DIR/dirsearch/dirsearch.py -u https://$TARGET -w $WEB_BRUTE_STEALTH -x $WEB_BRUTE_EXCLUDE_CODES -F -e "/" -t $THREADS --random-agents --plain-text-report=$LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > /dev/null && cat $LOOT_DIR/web/dirsearch-$TARGET.txt
         cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* 2> /dev/null
         cat $PLUGINS_DIR/dirsearch/reports/$TARGET/* > $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null
         sort -u $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null > $LOOT_DIR/web/dirsearch-$TARGET.sorted 2> /dev/null
@@ -517,17 +511,23 @@ if [[ "$MODE" = "stealth" ]]; then
     fi
     if [[ $WEBSCREENSHOT = "1" ]]; then
       cd $LOOT_DIR
-      python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium https://$TARGET:443
+      python2 $INSTALL_DIR/bin/webscreenshot.py https://$TARGET:443
     fi
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
-    if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      echo -e "$OKRED RUNNING SC0PE PASSIVE WEB VULNERABILITY SCAN $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      SSL="false"
-      source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    fi
+  fi
+
+  if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING SC0PE PASSIVE WEB VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    SSL="false"
+    PORT="80"
+    echo "$INSTALL_DIR/modes/sc0pe-passive-scan.sh"
+    source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
+    SSL="true"
+    PORT="443"
+    source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   fi
 
   source $INSTALL_DIR/modes/sc0pe.sh 
@@ -556,6 +556,7 @@ if [[ "$MODE" = "stealth" ]]; then
   echo -e ""
   echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
   mv $LOOT_DIR/scans/running-$TARGET-stealth.txt $LOOT_DIR/scans/finished-$TARGET-stealth.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
   rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
   sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
   

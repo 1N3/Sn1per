@@ -62,12 +62,13 @@ if [[ "$MODE" = "massweb" ]]; then
       args=""
     done
   fi
-  if [[ "$LOOT" = "1" ]]; then
-    loot
-  fi
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
   fi
+  if [[ "$LOOT" = "1" ]]; then
+    loot
+  fi
+  
   exit
 fi

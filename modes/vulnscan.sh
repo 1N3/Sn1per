@@ -34,6 +34,8 @@ if [[ "$MODE" = "vulnscan" ]]; then
   fi
   
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
+  echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-vulnscan.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
   if [[ "$OPENVAS" = "1" ]]; then
     sudo openvas-start 2> /dev/null > /dev/null
@@ -97,6 +99,7 @@ if [[ "$MODE" = "vulnscan" ]]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
   mv $LOOT_DIR/scans/running-$TARGET-vulnscan.txt $LOOT_DIR/scans/finished-$TARGET-vulnscan.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
   if [[ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET.txt"
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET-udp.txt"
@@ -108,5 +111,3 @@ if [[ "$MODE" = "vulnscan" ]]; then
   loot
   exit
 fi
-
-
