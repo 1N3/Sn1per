@@ -61,11 +61,6 @@ if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null
 	chown root /root/.Xauthority
 	XAUTHORITY=/root/.Xauthority
-
-	echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
-	curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
-  	chmod 755 /tmp/msfinstall
-  	/tmp/msfinstall
 fi
 
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
@@ -110,7 +105,11 @@ apt-get install -y net-tools
 apt-get install -y p7zip-full
 apt-get install -y jsbeautifier
 apt-get install -y phantomjs 2> /dev/null
-apt-get install -y metasploit-framework 2> /dev/null
+
+echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
+curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
+chmod 755 /tmp/msfinstall
+/tmp/msfinstall
 
 pip3 install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
