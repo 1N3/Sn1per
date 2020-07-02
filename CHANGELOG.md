@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.5 - Added Phantomjs manual installer
 * v8.5 - Added sc0pe template to check for default credentials via BruteX
 * v8.5 - Added fullportscans to all 'web' mode scans to ensure full port coverage
 * v8.5 - Fixed issue with 2nd stage OSINT scans not running

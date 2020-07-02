@@ -109,7 +109,7 @@ apt-get install -y xmlstarlet
 apt-get install -y net-tools
 apt-get install -y p7zip-full
 apt-get install -y jsbeautifier
-apt-get install -y phantomjs
+apt-get install -y phantomjs 2> /dev/null
 apt-get install -y metasploit-framework 2> /dev/null
 
 pip3 install dnspython colorama tldextract urllib3 ipaddress requests
@@ -236,6 +236,14 @@ mkdir -p /usr/share/arachni 2> /dev/null
 cp -Rf * /usr/share/arachni/ 2> /dev/null
 cd /usr/share/arachni/bin/
 for a in `ls`; do ln -fs $PWD/$a /usr/bin/$a; done;
+
+# PHANTOMJS MANUAL INSTALL
+cd /usr/local/share
+wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 2> /dev/null
+tar xjf phantomjs-1.9.7-linux-x86_64.tar.bz2 2> /dev/null
+ln -s /usr/local/share/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/share/phantomjs 2> /dev/null
+ln -s /usr/local/share/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs 2> /dev/null
+ln -s /usr/local/share/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/bin/phantomjs 2> /dev/null
 
 echo -e "$OKBLUE[*]$RESET Setting up environment...$RESET"
 cd $PLUGINS_DIR/BlackWidow/ && bash install.sh force 2> /dev/null
