@@ -522,7 +522,6 @@ if [[ "$MODE" = "stealth" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     SSL="false"
     PORT="80"
-    echo "$INSTALL_DIR/modes/sc0pe-passive-scan.sh"
     source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
     SSL="true"
     PORT="443"

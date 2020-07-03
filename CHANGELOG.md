@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.6 - Removed verbose comment from stealth scan
 * v8.5 - Added manual installer for Metasploit
 * v8.5 - Added Phantomjs manual installer
 * v8.5 - Added sc0pe template to check for default credentials via BruteX
