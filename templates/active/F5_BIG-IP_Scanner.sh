@@ -1,8 +1,8 @@
 AUTHOR='@xer0dayz'
-VULN_NAME='Fortigate Pulse Connect Secure Detected'
-URI='/remote/login?lang=en'
+VULN_NAME='F5 BIG-IP Detected'
+URI='/'
 METHOD='GET'
-MATCH='<title>Please Login'
+MATCH='<title>F5 BIG-IP'
 SEVERITY='P5 - INFO'
 CURL_OPTS="--user-agent '' -s -L --insecure"
 SECONDARY_COMMANDS=''

@@ -1,4 +1,11 @@
 ## CHANGELOG:
+* v8.6 - Added CVE-2020-5902 F5 BIG-IP RCE sc0pe template
+* v8.6 - Added CVE-2020-5902 F5 BIG-IP XSS sc0pe template
+* v8.6 - Added F5 BIG-IP detection sc0pe template
+* v8.6 - Added interesting ports sc0pe template
+* v8.6 - Added components with known vulnerabilities sc0pe template
+* v8.6 - Added server header disclosure sc0pe template
+* v8.6 - Added SMBv1 enabled sc0pe template
 * v8.6 - Removed verbose comment from stealth scan
 * v8.5 - Added manual installer for Metasploit
 * v8.5 - Added Phantomjs manual installer
