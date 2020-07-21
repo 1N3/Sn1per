@@ -1,4 +1,4 @@
-![](https://github.com/1N3/Sn1per/blob/master/Sn1per.jpg)
+![](https://github.com/1N3/Sn1per/blob/master/Sn1per.gif)
 
 [![GitHub release](https://img.shields.io/github/release/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/releases)
 [![GitHub issues](https://img.shields.io/github/issues/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/issues)

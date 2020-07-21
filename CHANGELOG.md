@@ -444,7 +444,7 @@
 * v1.6a - Various improvements to overall optimization of scans
 * v1.6a - Added new "web" mode for full web application scans 
 * v1.6 - Added 4 new modes including: stealth, port, airstrike and nuke
-* v1.6 - Added Java de-serialization scanner
+* v1.6 - Added java de-serialization scanner
 * v1.6 - Added reporting option to output to console and text file for all scans
 * v1.6 - Added option to set Sn1per full path for universal command line access
 * v1.6 - Added in DirBuster for web file brute forcing
