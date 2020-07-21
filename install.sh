@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install script for sn1per
-# Crated by @xer0dayz - https://xerosecurity.com
+# Created by @xer0dayz - https://xerosecurity.com
 
 OKBLUE='\033[94m'
 OKRED='\033[91m'
@@ -50,6 +50,7 @@ cd $INSTALL_DIR
 
 sudo cp -a /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
 sudo cp -a /home/$USER/.Xauthority /root/.Xauthority 2> /dev/null
+sudo cp -a /home/kali/.Xauthority /root/.Xauthority 2> /dev/null
 sudo chown root: /root/.Xauthority 2> /dev/null
 XAUTHORITY=/root/.Xauthority
 
@@ -105,6 +106,8 @@ apt-get install -y net-tools
 apt-get install -y p7zip-full
 apt-get install -y jsbeautifier
 apt-get install -y phantomjs 2> /dev/null
+apt-get install openvas
+apt-get install greenbone-security-assistant
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
@@ -219,11 +222,11 @@ cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
 cd $PLUGINS_DIR
 
 # THEHARVESTER MANUAL INSTALL
-wget https://github.com/laramies/theHarvester/archive/3.0.6.tar.gz
-tar -zxvf 3.0.6.tar.gz
-rm 3.0.6.tar.gz
+wget https://github.com/laramies/theHarvester/archive/V3.1.tar.gz
+tar -zxvf V3.1.tar.gz
+rm V3.1.tar.gz
 rm -f /usr/bin/theharvester
-ln -s /usr/share/sniper/plugins/theHarvester-3.0.6/theHarvester.py /usr/bin/theharvester
+ln -s /usr/share/sniper/plugins/theHarvester-3.1/theHarvester.py /usr/bin/theharvester
 
 # ARACHNI MANUAL INSTALL
 wget https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -O /tmp/arachni.tar.gz
