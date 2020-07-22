@@ -37,7 +37,7 @@ if [[ "$OSINT" = "1" ]]; then
 		fi
 		cp -f /etc/theHarvester/api-keys.yaml ~/api-keys.yaml 2> /dev/null
 		cd ~ 2> /dev/null
-		theHarvester -d $TARGET -b all 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null 
+		theharvester -d $TARGET -b baidu,bing,bingapi,certspotter,crtsh,dnsdumpster,dogpile,duckduckgo,google,hunter,intelx,linkedin,linkedin_links,netcraft,otx,securityTrails,spyse,threatcrowd,trello,twitter,vhost,virustotal,yahoo 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null
 		cd $INSTALL_DIR 2> /dev/null
 		if [[ "$SLACK_NOTIFICATIONS_THEHARVESTER" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/theharvester-$TARGET.txt"
@@ -47,7 +47,7 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		echo -e "$OKRED GATHERING EMAILS FROM EMAIL-FORMAT.COM $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-		curl -s https://www.email-format.com/d/$TARGET| grep @$TARGET | grep -v div | sed "s/\t//g" | sed "s/ //g" 2> /dev/null | tee $LOOT_DIR/osint/email-format-$TARGET.txt 2> /dev/null 
+		curl -s https://www.email-format.com/d/$TARGET| grep @$TARGET | grep -v div | sed "s/\t//g" | sed "s/ //g" 2> /dev/null | tee $LOOT_DIR/osint/email-format-$TARGET.txt 2> /dev/null
 
 		if [[ "$SLACK_NOTIFICATIONS_EMAIL_FORMAT" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/email-format-$TARGET.txt"
@@ -67,11 +67,17 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "$OKRED COLLECTING OSINT FROM ONLINE DOCUMENTS $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		cd $INSTALL_DIR/plugins/metagoofil/
-		python metagoofil.py -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html 2> /dev/null | tee $LOOT_DIR/osint/metagoofil-$TARGET.txt 2> /dev/null 
+		python metagoofil.py -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html 2> /dev/null | tee $LOOT_DIR/osint/metagoofil-$TARGET.txt 2> /dev/null
 		cd $INSTALL_DIR
 		if [[ "$SLACK_NOTIFICATIONS_METAGOOFIL" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/metagoofil-$TARGET.txt"
 		fi
+	fi
+	if [[ "$URLSCANIO" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED COLLECTING OSINT FROM URLSCAN.IO $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		curl --insecure -L -s "https://urlscan.io/api/v1/search/?q=domain:$TARGET" 2> /dev/null | egrep "country|server|domain|ip|asn|$TARGET|prt"| sort -u | tee $LOOT_DIR/osint/urlscanio-$TARGET.txt 2> /dev/null
 	fi
 	if [[ "$HUNTERIO" == "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

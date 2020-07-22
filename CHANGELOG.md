@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.6 - Updated theharvester command to exclude github-code search
 * v8.6 - Updated theharvester installer to v3.1
 * v8.6 - Added urlscan.io API to OSINT mode (-o)
 * v8.6 - Added OpenVAS package to install.sh
