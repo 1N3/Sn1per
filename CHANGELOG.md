@@ -1,8 +1,9 @@
 ## CHANGELOG:
+* v8.6 - Added CVE-2020-3452 - Cisco ASA/FTD Arbitrary File Reading Vulnerability Sc0pe template
 * v8.6 - Updated theharvester command to exclude github-code search
 * v8.6 - Updated theharvester installer to v3.1
 * v8.6 - Added urlscan.io API to OSINT mode (-o)
-* v8.6 - Added OpenVAS package to install.sh
+* v8.6 - Added OpenVAS package to install.sh 
 * v8.6 - Added Palo Alto GlobalProtect PAN-OS Portal Sc0pe template
 * v8.6 - Fixed issue with Javascript downloader downloading localhost files instead of target
 * v8.6 - Added CVE-2020-5902 F5 BIG-IP RCE sc0pe template
@@ -62,7 +63,7 @@
 * v8.3 - Improved 'vulnscan' mode via OpenVAS to scan the same asset multiple times with improved error handling
 * v8.2 - Added root priv check to sniper script to run
 * v8.2 - Added NMap port change notifications via Slack
-* v8.2 - Fixed issue with firefox not loading on Kali Linux 2020.1
+* v8.2 - Fixed issue with firefox not loading on Kali Linux 2020.1 
 * v8.2 - Fixed issue with Masswebscan mode not working
 * v8.2 - Added Rails file exposure exploit CVE-2019-5418
 * v8.2 - Updated wordlist selections to fingerprint common vulnerable applications
@@ -110,9 +111,9 @@
 * v7.4 - Fixed error in massvulnscan mode
 * v7.4 - Fixed issue with webscreenshot.py not running
 * v7.4 - Added reverse whois DNS search via AMass
-* v7.4 - Added MassDNS IP's to master sorted IP list
+* v7.4 - Added MassDNS IP's to master sorted IP list 
 * v7.4 - Fixed issue with MassDNS installation
-* v7.4 - Fixed bad path with DNSGen
+* v7.4 - Fixed bad path with DNSGen 
 * v7.4 - Fixed issue with AMass not running
 * v7.4 - Improved performance of AltDNS/DNSgen/MassDNS retrieval
 * v7.4 - Changed webscreenshot.py setting to use chrome browser and increased timeout
@@ -169,9 +170,9 @@
 * v7.0 - Added Webscreenshot.py and disabled cutycapt from default config
 * v7.0 - Added Gobuster (Disabled by default..check ~/.sniper.conf)
 * v7.0 - Fixed issue with SubOver not working due to bad path
-* v7.0 - Fixed issue with flyover mode running 2x
+* v7.0 - Fixed issue with flyover mode running 2x 
 * v6.3 - Added Drupal RESET Unserialize RCE CVE-2019-6340
-* v6.2 - Added Glassfish Admin traversal MSF exploit
+* v6.2 - Added Glassfish Admin traversal MSF exploit 
 * v6.2 - Added ElasticSearch Java Injection MSF RCE exploit
 * v6.2 - Added WebTech web fingerprinting tool
 * v6.2 - Added censys subdomain retrieval and API key config
@@ -261,13 +262,13 @@
 * v5.1 - Changed default brute force list for dnscan to improve performance of scans
 * v5.1 - Removed CloudHunter and SubOver references (CC. 爱上平顶山)
 * v5.0 - Added Sn1per Pro reporting interface (see https://xerosecurity.com for more details)
-* v5.0 - Added GPON Router RCE auto exploit
+* v5.0 - Added GPON Router RCE auto exploit 
 * v5.0 - Added Cloudapp.net Azure subdomain takeover check
 * v5.0 - Added Cisco ASA Directory Traversal auto exploit (CVE-2018-0296)
 * v5.0 - Added Wig Web Information Gatherer
 * v5.0 - Added Dirsearch with custom dirsearch wordlists (quick, normal, full)
 * v5.0 - Fixed bug in installer/upgrade which copied the local dir contents to the install dir
-* v5.0 - Improved scan performance while taking web screenshots
+* v5.0 - Improved scan performance while taking web screenshots 
 * v5.0 - Fixed repo issue with Slurp (Shoutz to @ifly53e)
 * v5.0 - Fixed issues with wrong ports listed in port scans (Shoutz to @ifly53e)
 * v5.0 - Minor code fixes and typos corrected (Shoutz to @ifly53e)
@@ -286,7 +287,7 @@
 * v4.1 - Fixed issue with path relative file inclusion via the -f flag. You can now include just the local filename (sniper -f targets.txt).
 * v4.0 - Added new command switch options for all sniper scans (see --help for details)
 * v4.0 - Added HTML formatted report for all workspaces to display screenshots, headers, reports and open ports
-* v4.0 - Added optional scan options such as --recon, --osint, --fullportonly --bruteforce, etc. to selectively enable scan modules. (see --help for details)
+* v4.0 - Added optional scan options such as --recon, --osint, --fullportonly --bruteforce, etc. to selectively enable scan modules. (see --help for details) 
 * v4.0 - Improved Yasou scan options to include existing NMap XML files
 * v4.0 - Added automatic HTML/TXT/PDF reporting for all scans by default
 * v4.0 - Updated default workspace directory to store all loot files by $TARGET name or $WORKSPACE alias
@@ -315,10 +316,10 @@
 * v2.8 - Added custerd software enumeration tool
 * v2.7 - Fixed issue with sniper update command and install.sh not running
 * v2.7 - Fixed errors with GooHak
-* v2.7 - Fixed syntax errors in sniper conditional statements
-* v2.7 - Added CloudFail
+* v2.7 - Fixed syntax errors in sniper conditional statements 
+* v2.7 - Added CloudFail 
 * v2.7 - Fixed issue with [: ==: unary operator expected errors
-* v2.6 - Added Blackarch Linux support
+* v2.6 - Added Blackarch Linux support 
 * v2.6 - Added $BROWSER variable to set default browser
 * v2.5g - Updated README with update command
 * v2.5f - Fixes for various bugs reported and fixed by @ifly53e (https://github.com/1N3/Sn1per/pull/89)
@@ -403,7 +404,7 @@
 * v1.8c - Fixed issue with Metasploit SSH scans
 * v1.8c - Added auto-update to install.sh to automatically pull latest github release
 * v1.8b - Fixed bug with NMap UDP scan options
-* v1.8b - Fixed install.sh dependencies
+* v1.8b - Fixed install.sh dependencies 
 * v1.8b - Fixed jexboss options
 * v1.8a - Updated sub-domain hijack list of domains (CC: th3gundy)
 * v1.8 - Added sub-domain hijack scans for all sub-domains
@@ -411,7 +412,7 @@
 * v1.8 - Added additional stealth and airstrike checks for port 80 and 443
 * v1.8 - Fixed issue with theHarvester not working with google
 * v1.7g - Added email security/spoofing checks
-* v1.7f - Added Zenmap XML auto-imports
+* v1.7f - Added Zenmap XML auto-imports 
 * v1.7f - Added ClamAV RCE Nmap script
 * v1.7e - Fixed minor issue with airstrike and nuke mode
 * v1.7e - Fixed minor issues with discover mode
@@ -421,7 +422,7 @@
 * v1.7d - Added sslyze
 * v1.7d - Added 'discover' mode for full subnet scans
 * v1.7d - Added verbosity to scan tasks to separate sub-tasks better
-* v1.7c - Added plain text reporting
+* v1.7c - Added plain text reporting 
 * v1.7c - Improved loot directory structure and sorting
 * v1.7b - Fixed issue with airstrike mode not scanning correctly
 * v1.7b - Improved passive recon performance
@@ -448,7 +449,7 @@
 * v1.6a - Added improvements to recon phase
 * v1.6a - Fixed small issue with 3rd party extension
 * v1.6a - Various improvements to overall optimization of scans
-* v1.6a - Added new "web" mode for full web application scans
+* v1.6a - Added new "web" mode for full web application scans 
 * v1.6 - Added 4 new modes including: stealth, port, airstrike and nuke
 * v1.6 - Added Java de-serialization scanner
 * v1.6 - Added reporting option to output to console and text file for all scans
