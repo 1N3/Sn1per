@@ -1,0 +1,9 @@
+AUTHOR='@xer0dayz'
+VULN_NAME='Palo Alto GlobalProtect PAN-OS Portal Detected'
+URI='/global-protect/login.esp'
+METHOD='GET'
+MATCH="<title>GlobalProtect"
+SEVERITY='P5 - INFO'
+CURL_OPTS="--user-agent '' -s -L --insecure"
+SECONDARY_COMMANDS=''
+GREP_OPTIONS='-i'

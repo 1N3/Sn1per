@@ -1,4 +1,17 @@
 ## CHANGELOG:
+* v8.6 - Added CVE-2020-12720 - vBulletin Unauthenticaed SQLi
+* v8.6 - Added CVE-2020-9757 - SEOmatic < 3.3.0 Server-Side Template Injection
+* v8.6 - Added CVE-2020-1147 - Remote Code Execution in Microsoft SharePoint Server
+* v8.6 - Added CVE-2020-3187 - Citrix Unauthenticated File Deletion
+* v8.6 - Added CVE-2020-8193 - Citrix Unauthenticated LFI
+* v8.6 - Added CVE-2020-8194 - Citrix ADC & NetScaler Gateway Reflected Code Injection
+* v8.6 - Added CVE-2020-8982 - Citrix ShareFile StorageZones Unauthenticated Arbitrary File Read
+* v8.6 - Added CVE-2020-9484 - Apache Tomcat RCE by deserialization
+* v8.6 - Added Cisco VPN scanner template
+* v8.6 - Added Tiki Wiki CMS scanner template
+* v8.6 - Added Palo Alto PAN OS Portal scanner template
+* v8.6 - Added SAP NetWeaver AS JAVA LM Configuration Wizard Detection
+* v8.6 - Added delete task workspace function to remove running tasks
 * v8.6 - Added CVE-2020-3452 - Cisco ASA/FTD Arbitrary File Reading Vulnerability Sc0pe template
 * v8.6 - Updated theharvester command to exclude github-code search
 * v8.6 - Updated theharvester installer to v3.1
