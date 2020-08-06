@@ -84,8 +84,8 @@ apt-get install -y whois
 apt-get install -y dnsrecon
 apt-get install -y curl
 apt-get install -y nmap
-apt-get install -y php
-apt-get install -y php-curl
+apt-get install -y php7.4
+apt-get install -y php7.4-curl
 apt-get install -y hydra
 apt-get install -y sqlmap
 apt-get install -y nbtscan
@@ -106,8 +106,8 @@ apt-get install -y net-tools
 apt-get install -y p7zip-full
 apt-get install -y jsbeautifier
 apt-get install -y phantomjs 2> /dev/null
-apt-get install openvas
-apt-get install greenbone-security-assistant
+apt-get install -y openvas
+apt-get install -y greenbone-security-assistant
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
@@ -278,12 +278,5 @@ mkdir -p /usr/share/sniper/loot/workspaces/ 2> /dev/null
 ln -fs /usr/share/sniper/loot/workspaces/ /home/kali/Desktop/workspaces 2> /dev/null
 ln -fs /usr/share/sniper/loot/workspaces/ /root/Desktop/workspaces 2> /dev/null
 
-echo -e "$OKBLUE[*]$RESET Copying the old Sn1per configuration file to /root/.sniper.conf.old $RESET"
-mv ~/.sniper.conf ~/.sniper.conf.old 2> /dev/null
-
-echo -e "$OKBLUE[*]$RESET Copying updated Sn1per configuration file to /root/.sniper.conf $RESET"
-cp $INSTALL_DIR/sniper.conf ~/.sniper.conf 2> /dev/null
-
-echo -e "$OKBLUE[i]$RESET NOTE: You may need to copy your old API keys and config to the new sniper.conf file at /root/.sniper.conf $RESET"
 echo -e "$OKRED[>]$RESET Done! $RESET"
 echo -e "$OKRED[>]$RESET To run, type 'sniper'! $RESET"

@@ -1,4 +1,7 @@
 ## CHANGELOG:
+* v8.6 - Added new Sn1per configuration flow that allows persistent user configurations and API key transfer
+* v8.6 - Updated port lists to remove duplicate ports error and slim down list
+* v8.6 - Updated PHP to 7.4
 * v8.6 - Added CVE-2020-12720 - vBulletin Unauthenticaed SQLi
 * v8.6 - Added CVE-2020-9757 - SEOmatic < 3.3.0 Server-Side Template Injection
 * v8.6 - Added CVE-2020-1147 - Remote Code Execution in Microsoft SharePoint Server
