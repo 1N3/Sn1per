@@ -67,7 +67,9 @@ fi
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
 apt-get update
 for i in adb aha curl cutycapt dnsrecon dos2unix golang greenbone-security-assistant host hydra jq jsbeautifier ldapscripts libssl-dev libxml2-utils nbtscan net-tools nfs-common nikto nmap nodejs openvas p7zip-full phantomjs php7.4 php7.4-curl python python-pip python3-paramiko python3-pip rpcbind ruby rubygems sqlmap sslscan wafw00f whatweb whois xdg-utils xmlstarlet xsltproc; do
-     apt install -y $i 2>/dev/null
+     if [ ! -x `which $i` ]; then
+          apt install -y $i 2>/dev/null
+     fi
 done
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
