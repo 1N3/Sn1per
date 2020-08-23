@@ -1,4 +1,9 @@
 ## CHANGELOG:
+* v8.7 - Fixed logic error in stealth mode recon scans not running
+* v8.7 - Added CVE-2020-7048 - WP Database Reset 3.15 Unauthenticated Database Reset
+* v8.7 - Fixed F- detection in Wordpress Sc0pe templates
+* v8.7 - Added CVE-2020-11530 - Wordpress Chop Slider 3 Plugin SQL Injection
+* v8.7 - Added CVE-2019-11580 - Atlassian Crowd Data Center Unauthenticated RCE
 * v8.7 - Added CVE-2019-16759 - vBulletin 5.x 0-Day Pre-Auth Remote Command Execution Bypass
 * v8.6 - Added new Sn1per configuration flow that allows persistent user configurations and API key transfer
 * v8.6 - Updated port lists to remove duplicate ports error and slim down list

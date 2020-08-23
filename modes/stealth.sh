@@ -115,11 +115,11 @@ if [[ "$MODE" = "stealth" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i \"wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp\" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null$RESET"
     fi
     cat $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null | egrep -i "anima|bitly|wordpress|instapage|heroku|github|bitbucket|squarespace|fastly|feed|fresh|ghost|helpscout|helpjuice|instapage|pingdom|surveygizmo|teamwork|tictail|shopify|desk|teamwork|unbounce|helpjuice|helpscout|pingdom|tictail|campaign|monitor|cargocollective|statuspage|tumblr|amazon|hubspot|cloudfront|modulus|unbounce|uservoice|wpengine|cloudapp" | tee $LOOT_DIR/nmap/takeovers-$TARGET.txt 2>/dev/null
-    source $INSTALL_DIR/modes/osint.sh
-    source $INSTALL_DIR/modes/recon.sh
-    cd $INSTALL_DIR
     echo ""
   fi
+  source $INSTALL_DIR/modes/osint.sh
+  source $INSTALL_DIR/modes/recon.sh
+  cd $INSTALL_DIR
   echo ""
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
