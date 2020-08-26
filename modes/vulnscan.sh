@@ -1,9 +1,7 @@
 # FULLPORTONLY MODE
 if [[ "$MODE" = "vulnscan" ]]; then
-  
   if [[ "$REPORT" = "1" ]]; then
     args="-t $TARGET"
-    
     if [[ ! -z "$WORKSPACE" ]]; then
       args="$args -w $WORKSPACE"
       LOOT_DIR=$INSTALL_DIR/loot/workspace/$WORKSPACE
@@ -17,26 +15,26 @@ if [[ "$MODE" = "vulnscan" ]]; then
       mkdir $LOOT_DIR/scans 2> /dev/null
       mkdir $LOOT_DIR/output 2> /dev/null
     fi
-
-    args="$args --noreport -m vulnscan" 
+    args="$args --noreport -m vulnscan"
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-vulnscan.txt
-    echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-vulnscan.txt
     sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
     exit
   fi
-
   logo
-  
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
   fi
-  
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
-  echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-vulnscan.txt 2> /dev/null
-  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
-
+  echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+  if [[ "$NESSUS" = "1" ]]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING NESSUS VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    bash /usr/share/sniper/bin/nessus.sh $TARGET $NESSUS_KEY $NESSUS_HOST $NESSUS_USERNAME $NESSUS_PASSWORD $NESSUS_POLICY_ID $LOOT_DIR
+  fi
   if [[ "$OPENVAS" = "1" ]]; then
     sudo openvas-start 2> /dev/null > /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -93,13 +91,13 @@ if [[ "$MODE" = "vulnscan" ]]; then
       omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep $TARGET
     fi
   fi
-  source $INSTALL_DIR/modes/sc0pe.sh 
+  source $INSTALL_DIR/modes/sc0pe.sh
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
-  mv $LOOT_DIR/scans/running-$TARGET-vulnscan.txt $LOOT_DIR/scans/finished-$TARGET-vulnscan.txt 2> /dev/null
-  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+  rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
   if [[ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET.txt"
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/nmap-$TARGET-udp.txt"

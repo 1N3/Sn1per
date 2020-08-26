@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v8.7 - Fixed/added Nessus integration (Pro only)
 * v8.7 - Fixed logic error in stealth mode recon scans not running
 * v8.7 - Added CVE-2020-7048 - WP Database Reset 3.15 Unauthenticated Database Reset
 * v8.7 - Fixed F- detection in Wordpress Sc0pe templates
