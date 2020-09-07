@@ -438,6 +438,11 @@ function init {
   service postgresql start
   msfdb start 2> /dev/null > /dev/null
   chown root /run/user/1000/gdm/Xauthority 2> /dev/null
+  sudo cp -a /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
+  sudo cp -a /home/$USER/.Xauthority /root/.Xauthority 2> /dev/null
+  sudo cp -a /home/kali/.Xauthority /root/.Xauthority 2> /dev/null
+  sudo chown root: /root/.Xauthority 2> /dev/null
+  XAUTHORITY=/root/.Xauthority
   UPDATED_TARGETS=$LOOT_DIR/scans/updated.txt
 
   if [[ "$AUTOBRUTE" == "1" ]]; then
