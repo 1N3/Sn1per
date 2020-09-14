@@ -569,6 +569,14 @@ function loot {
     find $LOOT_DIR/nmap/ -type f -size -1c -exec rm -f {} \;
     cd $LOOT_DIR
     if [[ -f $SNIPER_PRO ]]; then
+      wc -l $LOOT_DIR/scans/notifications.txt 2> /dev/null | awk '{print $1}' > $LOOT_DIR/scans/notifications_total.txt 2> /dev/null
+      cat $LOOT_DIR/scans/tasks-running.txt 2> /dev/null > $LOOT_DIR/scans/tasks-running_total.txt 2> /dev/null
+      wc -l $LOOT_DIR/scans/tasks.txt 2> /dev/null | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/tasks_total.txt 2> /dev/null
+      wc -l $LOOT_DIR/scans/scheduled/*.sh 2> /dev/null | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/scheduled_tasks_total.txt 2> /dev/null
+      grep "Host\ status" $LOOT_DIR/scans/notifications.txt 2> /dev/null | wc -l | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/host_status_changes_total.txt 2> /dev/null
+      grep "Port\ change" $LOOT_DIR/scans/notifications.txt 2> /dev/null | wc -l | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/port_changes_total.txt 2> /dev/null
+      wc -l $LOOT_DIR/domains/domains_new-*.txt 2> /dev/null | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/domain_changes_total.txt 2> /dev/null
+      cat $LOOT_DIR/web/dirsearch-new-*.txt $LOOT_DIR/web/spider-new-*.txt 2> /dev/null | wc -l | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/url_changes_total.txt 2> /dev/null
       if [[ -f "$LOOT_DIR/notes/notepad.html" ]]; then
         echo -n "" 2>/dev/null
       else

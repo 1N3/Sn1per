@@ -50,8 +50,8 @@ if [[ "$MODE" = "flyover" ]]; then
       touch $LOOT_DIR/scans/$TARGET-$MODE.txt 2> /dev/null
       echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
 
-      echo "sniper -t $TARGET -m $MODE $args" >> $LOOT_DIR/scans/running-$TARGET-$MODE.txt 2> /dev/null
-      ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+      echo "sniper -t $TARGET -m $MODE $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+      ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
       echo -e "$OKRED=====================================================================================$RESET"
       echo -e "${OKBLUE}HOST:$RESET $TARGET"
@@ -98,8 +98,8 @@ if [[ "$MODE" = "flyover" ]]; then
       echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
       echo "$TARGET" >> $LOOT_DIR/domains/targets-all-presorted.txt
 
-      mv $LOOT_DIR/scans/running-$TARGET-$MODE.txt $LOOT_DIR/scans/finished-$TARGET-$MODE.txt 2> /dev/null
-      ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt 2> /dev/null
+      rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+      ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt 2> /dev/null
       RUNNING_TASKS=$(wc -l $LOOT_DIR/scans/tasks-running.txt 2> /dev/null)
 
       i=$((i+1))
@@ -131,7 +131,7 @@ if [[ "$MODE" = "flyover" ]]; then
     diff $LOOT_DIR/nmap/livehosts-sorted.old $LOOT_DIR/nmap/livehosts-sorted.txt 2> /dev/null > $LOOT_DIR/nmap/livehosts-sorted.diff 2> /dev/null
 
     if [[ "$SLACK_NOTIFICATIONS_NMAP_DIFF" == "1" ]] && [[ -s "$LOOT_DIR/nmap/livehosts-sorted.diff" ]]; then
-      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Host status change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Host status change detected on $WORKSPACE (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/livehosts-sorted.diff"
       echo "[xerosecurity.com] •?((¯°·._.• Host status change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
       cat $LOOT_DIR/nmap/livehosts-sorted.diff | egrep "<|>" >> $LOOT_DIR/scans/notifications.txt

@@ -29,10 +29,7 @@ if [[ "$MODE" = "stealth" ]]; then
     fi
     args="$args --noreport -m stealth"
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
-    echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-    echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-stealth.txt
-    ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
-    
+    echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt    
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
@@ -81,6 +78,8 @@ if [[ "$MODE" = "stealth" ]]; then
   echo -e "$OKORANGE + -- --=[ Launching stealth scan: $TARGET $RESET"
   echo -e "$OKGREEN $RESET"
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
+  echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_stealth.txt
+  ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
   if [[ "$WHOIS" == "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING WHOIS INFO $RESET"
@@ -278,6 +277,8 @@ if [[ "$MODE" = "stealth" ]]; then
       diff $LOOT_DIR/web/spider-$TARGET.bak $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{print $2}' 2> /dev/null > $LOOT_DIR/web/spider-new-$TARGET.txt
       if [[ "$SLACK_NOTIFICATIONS_SPIDER_NEW" == "1" ]]; then
         /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/web/spider-new-$TARGET.txt"
+        echo "[xerosecurity.com] •?((¯°·._.• Spider URL change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+        cat $LOOT_DIR/web/spider-new-$TARGET.txt 2> /dev/null >> $LOOT_DIR/scans/notifications.txt 2> /dev/null 
       fi
     fi
     if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then
@@ -301,6 +302,8 @@ if [[ "$MODE" = "stealth" ]]; then
         diff $LOOT_DIR/web/dirsearch-$TARGET.bak $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{print $2 " " $3 " " $4}' 2> /dev/null > $LOOT_DIR/web/dirsearch-new-$TARGET.txt
         if [[ "$SLACK_NOTIFICATIONS_DIRSEARCH_NEW" == "1" ]]; then
           /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/web/dirsearch-new-$TARGET.txt"
+          echo "[xerosecurity.com] •?((¯°·._.• Disovered URL change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+          cat $LOOT_DIR/web/dirsearch-new-$TARGET.txt 2> /dev/null >> $LOOT_DIR/scans/notifications.txt 2> /dev/null 
         fi
       fi
       if [[ "$GOBUSTER" == "1" ]]; then
@@ -444,6 +447,8 @@ if [[ "$MODE" = "stealth" ]]; then
       diff $LOOT_DIR/web/spider-$TARGET.bak $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{print $2}' 2> /dev/null > $LOOT_DIR/web/spider-new-$TARGET.txt
       if [[ "$SLACK_NOTIFICATIONS_SPIDER_NEW" == "1" ]]; then
         /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/web/spider-new-$TARGET.txt"
+        echo "[xerosecurity.com] •?((¯°·._.• Spider URL change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+        cat $LOOT_DIR/web/spider-new-$TARGET.txt 2> /dev/null >> $LOOT_DIR/scans/notifications.txt 2> /dev/null 
       fi
     fi
     if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then
@@ -467,6 +472,8 @@ if [[ "$MODE" = "stealth" ]]; then
         diff $LOOT_DIR/web/dirsearch-$TARGET.bak $LOOT_DIR/web/dirsearch-$TARGET.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{print $2 " " $3 " " $4}' 2> /dev/null > $LOOT_DIR/web/dirsearch-new-$TARGET.txt
         if [[ "$SLACK_NOTIFICATIONS_DIRSEARCH_NEW" == "1" ]]; then
           /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/web/dirsearch-new-$TARGET.txt"
+          echo "[xerosecurity.com] •?((¯°·._.• Disovered URL change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+          cat $LOOT_DIR/web/dirsearch-new-$TARGET.txt 2> /dev/null >> $LOOT_DIR/scans/notifications.txt 2> /dev/null 
         fi
       fi
       if [[ "$GOBUSTER" == "1" ]]; then
@@ -522,10 +529,16 @@ if [[ "$MODE" = "stealth" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     SSL="false"
     PORT="80"
-    source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
+    source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
     SSL="true"
     PORT="443"
-    source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
+    source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+
+    for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
+      source $file
+    done
+
+    source $INSTALL_DIR/modes/sc0pe-network-scan.sh    
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   fi
 
@@ -554,8 +567,8 @@ if [[ "$MODE" = "stealth" ]]; then
   echo -e ""
   echo -e ""
   echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
-  mv $LOOT_DIR/scans/running-$TARGET-stealth.txt $LOOT_DIR/scans/finished-$TARGET-stealth.txt 2> /dev/null
-  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+  rm -f $LOOT_DIR/scans/running_${TARGET}_stealth.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
   rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
   sort -u $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null > $LOOT_DIR/ips/ips-all-sorted.txt 2> /dev/null
   

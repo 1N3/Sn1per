@@ -35,8 +35,7 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     subfinder -o $LOOT_DIR/domains/domains-$TARGET-subfinder.txt -b -d $TARGET -w $DOMAINS_DEFAULT -t 100 2>/dev/null
     wc -l $LOOT_DIR/domains/domains-$TARGET-subfinder.txt 
-  fi
-  
+  fi  
   if [[ "$DNSCAN" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS VIA DNSCAN (THIS COULD TAKE A WHILE...) $RESET"

@@ -15,7 +15,7 @@ if [[ "$MODE" = "vulnscan" ]]; then
       mkdir $LOOT_DIR/scans 2> /dev/null
       mkdir $LOOT_DIR/output 2> /dev/null
     fi
-    args="$args --noreport -m vulnscan"
+    args="$args --noreport -m vulnscan" 
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-vulnscan.txt
     sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
@@ -25,7 +25,7 @@ if [[ "$MODE" = "vulnscan" ]]; then
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
-  fi
+  fi  
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
   echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
   ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
@@ -91,7 +91,28 @@ if [[ "$MODE" = "vulnscan" ]]; then
       omp -h $OPENVAS_HOST -p $OPENVAS_PORT -u $OPENVAS_USERNAME -w $OPENVAS_PASSWORD -G | grep $TARGET
     fi
   fi
-  source $INSTALL_DIR/modes/sc0pe.sh
+  if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      SSL="false"
+      PORT="80"
+      source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+      source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
+      SSL="true"
+      PORT="443"
+      source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+      source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
+
+      for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
+        source $file
+      done
+
+      source $INSTALL_DIR/modes/sc0pe-network-scan.sh
+  fi
+
+  source $INSTALL_DIR/modes/sc0pe.sh 
+
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

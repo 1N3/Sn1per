@@ -1,3 +1,8 @@
+/CTCWebService/CTCWebServiceBean
+/CTCWebService/CTCWebServiceBean?wsdl
+/CTCWebService/Config1?wsdl
+UploadTest.aspx
+ReportServer/pages/ReportViewer.aspx
 $defaultview?Readviewentries
 actuator/env
 actuator/health

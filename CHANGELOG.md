@@ -1,5 +1,17 @@
 ## CHANGELOG:
-* v8.7 - Fixed/added Nessus integration (Pro only)
+* v8.7 - Updated web file bruteforce lists
+* v8.7 - Added updated Slack API integration/notifications
+* v8.7 - Added Magento 2.3.0 SQL Injection sc0pe template
+* v8.7 - Added CVE-2020-15920 - Unauthenticated RCE at Mida eFramework sc0pe template
+* v8.7 - Added CVE-2019-7192 - QNAP Pre-Auth Root RCE sc0pe template
+* v8.7 - Added CVE-2020-10204 - Sonatype Nexus Repository RCE sc0pe template
+* v8.7 - Added CVE-2020-13167 - Netsweeper WebAdmin unixlogin.php Python Code Injection sc0pe template
+* v8.7 - Added CVE-2020-2140 - Jenkin AuditTrailPlugin XSS sc0pe template
+* v8.7 - Added CVE-2020-7209 - LinuxKI Toolset 6.01 Remote Command Execution sc0pe template
+* v8.7 - Added CVE-2019-16662 - rConfig 3.9.2 Remote Code Execution sc0pe template
+* v8.7 - Added Sitemap.xml Detected sc0pe template
+* v8.7 - Added Robots.txt Detected sc0pe template
+* v8.7 - Added AWS S3 Public Bucket Listing sc0pe template
 * v8.7 - Fixed logic error in stealth mode recon scans not running
 * v8.7 - Added CVE-2020-7048 - WP Database Reset 3.15 Unauthenticated Database Reset
 * v8.7 - Fixed F- detection in Wordpress Sc0pe templates

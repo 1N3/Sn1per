@@ -233,13 +233,4 @@
             sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_rv32x_rce.raw > $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_rv32x_rce.txt 2> /dev/null
             rm -f $LOOT_DIR/output/msf-$TARGET-port$PORT-cisco_rv32x_rce.raw 2> /dev/null
       fi
-
-      if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
-            echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-            echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
-            echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-            source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
-            source $INSTALL_DIR/modes/sc0pe-active-scan.sh
-            echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      fi
       

@@ -43,28 +43,17 @@ if [[ ! -z $WORKSPACE ]]; then
 fi
 
 echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
-
-
-
-
-
-echo "$TARGET normal `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
-echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-normal.txt 2> /dev/null
-echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-normal.txt 2> /dev/null
-ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
-
-
+echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks-unsorted.txt 2> /dev/null
+mv -f $LOOT_DIR/scans/tasks-unsorted.txt /dev/null $LOOT_DIR/scans/tasks.txt 2> /dev/null
+echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/${TARGET}-${MODE}.txt 2> /dev/null
+echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
 if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-  echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+  echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 fi
 
-
-
-
-
-  
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo -e "$OKRED GATHERING DNS INFO $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -481,7 +470,7 @@ else
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      nmap -Pn -p 80 -sV -v --script-timeout 90 --script=http-adobe-coldfusion-apsa1301,http-apache-server-status,http-aspnet-debug,http-auth-finder,http-auth,http-avaya-ipoffice-users,http-awstatstotals-exec,http-axis2-dir-traversal,http-backup-finder,http-barracuda-dir-traversal,http-brute,http-cakephp-version,http-chrono,http-config-backup,http-cookie-flags,http-cors,http-cross-domain-policy,http-csrf,http-date,http-default-accounts,http-devframework,http-dlink-backdoor,http-dombased-xss,http-domino-enum-passwords,http-drupal-enum-users,http-drupal-enum,http-errors,http-feed,http-fetch,http-fileupload-exploiter,http-form-brute,http-form-fuzzer,http-frontpage-login,http-generator,http-git,http-gitweb-projects-enum,http-google-malware,http-grep,http-headers,http-huawei-hg5xx-vuln,http-icloud-findmyiphone,http-icloud-sendmsg,http-iis-short-name-brute,http-iis-webdav-vuln,http-internal-ip-disclosure,http-joomla-brute,http-ls,http-majordomo2-dir-traversal,http-method-tamper,http-methods,http-mobileversion-checker,http-ntlm-info,http-open-proxy,http-open-redirect,http-passwd,http-php-version,http-phpmyadmin-dir-traversal,http-phpself-xss,http-proxy-brute,http-put,http-qnap-nas-info,http-rfi-spider,http-robots.txt,http-robtex-reverse-ip,http-robtex-shared-ns,http-security-headers,http-server-header,http-shellshock,http-sitemap-generator,http-sql-injection,http-stored-xss,http-svn-enum,http-svn-info,http-title,http-tplink-dir-traversal,http-trace,http-traceroute,http-unsafe-output-escaping,http-userdir-enum,http-vhosts,http-virustotal,http-vlcstreamer-ls,http-vmware-path-vuln,http-vuln-cve2006-3392,http-vuln-cve2009-3960,http-vuln-cve2010-0738,http-vuln-cve2010-2861,http-vuln-cve2011-3192,http-vuln-cve2011-3368,http-vuln-cve2012-1823,http-vuln-cve2013-0156,http-vuln-cve2013-6786,http-vuln-cve2013-7091,http-vuln-cve2014-2126,http-vuln-cve2014-2127,http-vuln-cve2014-2128,http-vuln-cve2014-2129,http-vuln-cve2014-3704,http-vuln-cve2014-8877,http-vuln-cve2015-1427,http-vuln-cve2015-1635,http-vuln-cve2017-1001000,http-vuln-cve2017-5638,http-vuln-cve2017-5689,http-vuln-cve2017-8917,http-vuln-misfortune-cookie,http-vuln-wnr1000-creds,http-waf-detect,http-waf-fingerprint,http-webdav-scan,http-wordpress-brute,http-wordpress-enum,http-wordpress-users,http-xssed,/usr/share/nmap/scripts/vulners,http-default-accounts --script-args http-default-accounts.fingerprintfile=/usr/share/sniper/bin/http-default-accounts-fingerprints-nndefaccts.lua $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port80
+      nmap -Pn -p 80 -sV -v --script-timeout 90 --script=http-auth-finder,http-auth,http-brute,/usr/share/nmap/scripts/vulners,http-default-accounts --script-args http-default-accounts.fingerprintfile=/usr/share/sniper/bin/http-default-accounts-fingerprints-nndefaccts.lua $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port80
       sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port80.txt 2> /dev/null
       rm -f $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null
   fi
@@ -499,8 +488,28 @@ else
     cd $LOOT_DIR
     python2 $INSTALL_DIR/bin/webscreenshot.py http://$TARGET:80
   fi
+  
   source $INSTALL_DIR/modes/normal_webporthttp.sh
+
+  cd $INSTALL_DIR
+  PORT="80"
+  SSL="false"
+  source $INSTALL_DIR/modes/web_autopwn.sh
+
+  if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+      source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
+
+      for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
+        source $file
+      done
+  fi
+
   source $INSTALL_DIR/modes/osint_stage_2.sh
+
 fi
 
 if [[ -z "$port_110" ]];
@@ -777,7 +786,7 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -sV -Pn -p 443 -v --script-timeout 90 --script=http-adobe-coldfusion-apsa1301,http-apache-server-status,http-aspnet-debug,http-auth-finder,http-auth,http-avaya-ipoffice-users,http-awstatstotals-exec,http-axis2-dir-traversal,http-backup-finder,http-barracuda-dir-traversal,http-brute,http-cakephp-version,http-chrono,http-config-backup,http-cookie-flags,http-cors,http-cross-domain-policy,http-csrf,http-date,http-default-accounts,http-devframework,http-dlink-backdoor,http-dombased-xss,http-domino-enum-passwords,http-drupal-enum-users,http-drupal-enum,http-errors,http-feed,http-fetch,http-fileupload-exploiter,http-form-brute,http-form-fuzzer,http-frontpage-login,http-generator,http-git,http-gitweb-projects-enum,http-google-malware,http-grep,http-headers,http-huawei-hg5xx-vuln,http-icloud-findmyiphone,http-icloud-sendmsg,http-iis-short-name-brute,http-iis-webdav-vuln,http-internal-ip-disclosure,http-joomla-brute,http-ls,http-majordomo2-dir-traversal,http-method-tamper,http-methods,http-mobileversion-checker,http-ntlm-info,http-open-proxy,http-open-redirect,http-passwd,http-php-version,http-phpmyadmin-dir-traversal,http-phpself-xss,http-proxy-brute,http-put,http-qnap-nas-info,http-rfi-spider,http-robots.txt,http-robtex-reverse-ip,http-robtex-shared-ns,http-security-headers,http-server-header,http-shellshock,http-sitemap-generator,http-sql-injection,http-stored-xss,http-svn-enum,http-svn-info,http-title,http-tplink-dir-traversal,http-trace,http-traceroute,http-unsafe-output-escaping,http-userdir-enum,http-vhosts,http-virustotal,http-vlcstreamer-ls,http-vmware-path-vuln,http-vuln-cve2006-3392,http-vuln-cve2009-3960,http-vuln-cve2010-0738,http-vuln-cve2010-2861,http-vuln-cve2011-3192,http-vuln-cve2011-3368,http-vuln-cve2012-1823,http-vuln-cve2013-0156,http-vuln-cve2013-6786,http-vuln-cve2013-7091,http-vuln-cve2014-2126,http-vuln-cve2014-2127,http-vuln-cve2014-2128,http-vuln-cve2014-2129,http-vuln-cve2014-3704,http-vuln-cve2014-8877,http-vuln-cve2015-1427,http-vuln-cve2015-1635,http-vuln-cve2017-1001000,http-vuln-cve2017-5638,http-vuln-cve2017-5689,http-vuln-cve2017-8917,http-vuln-misfortune-cookie,http-vuln-wnr1000-creds,http-waf-detect,http-waf-fingerprint,http-webdav-scan,http-wordpress-brute,http-wordpress-enum,http-wordpress-users,http-xssed,/usr/share/nmap/scripts/vulners,http-default-accounts --script-args http-default-accounts.fingerprintfile=/usr/share/sniper/bin/http-default-accounts-fingerprints-nndefaccts.lua  $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
+    nmap -sV -Pn -p 443 -v --script-timeout 90 --script=http-auth-finder,http-auth,http-brute,/usr/share/nmap/scripts/vulners,http-default-accounts $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
     sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port443.txt 2> /dev/null
     rm -f $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null
   fi  
@@ -802,13 +811,6 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     curl https://$TARGET 2> $LOOT_DIR/web/curldebug-$TARGET.txt > /dev/null
   fi
-  #if [[ "$METASPLOIT_EXPLOIT" == "1" ]]; then
-  #  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  #  echo -e "$OKRED CHECKING FOR INSECURE SSL/TLS CONFIGURATIONS $RESET"
-  #  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  #fi
-  # NEED TO FINISH...
-
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SAVING SCREENSHOTS $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -823,8 +825,28 @@ else
     cd $LOOT_DIR
     python2 $INSTALL_DIR/bin/webscreenshot.py https://$TARGET:443
   fi
+
   source $INSTALL_DIR/modes/normal_webporthttps.sh
+
+  cd $INSTALL_DIR
+  PORT="443"
+  SSL="true"
+  source $INSTALL_DIR/modes/web_autopwn.sh
+
+  if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+      source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
+
+      for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
+        source $file
+      done
+  fi
+
   source $INSTALL_DIR/modes/osint_stage_2.sh
+
 fi
 
 if [[ -z "$port_445" ]]; then
@@ -1440,6 +1462,10 @@ if [[ $YASUO = "1" ]]; then
   fi
 fi
 
+if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
+    source $INSTALL_DIR/modes/sc0pe-network-scan.sh
+fi
+
 cd $INSTALL_DIR
 source $INSTALL_DIR/modes/fullportscan.sh
 source $INSTALL_DIR/modes/bruteforce.sh
@@ -1465,11 +1491,11 @@ echo -e "${OKGREEN}=============================================================
 echo -e "$OKRED SCAN COMPLETE! $RESET"
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
-mv $LOOT_DIR/scans/running-$TARGET-normal.txt $LOOT_DIR/scans/finished-$TARGET-normal.txt 2> /dev/null
-ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [normal] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 fi
 if [[ "$LOOT" = "1" ]] && [[ -z "$NOLOOT" ]]; then
   loot

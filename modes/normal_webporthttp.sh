@@ -1,6 +1,6 @@
 if [[ "$MODE" = "web" ]]; then
-  echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-$MODE.txt 2> /dev/null
-  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+  echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per HTTP web scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
@@ -150,18 +150,10 @@ if [[ "$MODE" = "web" ]]; then
       rm -f $LOOT_DIR/web/jexboss-$TARGET-port80.raw 2> /dev/null
       cd $INSTALL_DIR
   fi
-
-  mv $LOOT_DIR/scans/running-$TARGET-$MODE.txt $LOOT_DIR/scans/finished-$TARGET-$MODE.txt 2> /dev/null
-  ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
-
+  rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per HTTP web scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per HTTP web scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
   fi
-  
-  cd $INSTALL_DIR
-  PORT="80"
-  SSL="false"
-  source $INSTALL_DIR/modes/web_autopwn.sh
-
 fi 

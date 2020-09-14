@@ -80,7 +80,6 @@ if [[ "$MODE" = "airstrike" ]]; then
   fi
   if [[ "$LOOT" = "1" ]]; then
     loot
-  fi
-  
+  fi  
   exit
 fi

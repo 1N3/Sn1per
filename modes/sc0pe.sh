@@ -21,4 +21,9 @@
       egrep -h LOW $LOOT_DIR/vulnerabilities/sc0pe-$TARGET-*.txt 2> /dev/null | tee -a $LOOT_DIR/vulnerabilities/vulnerability-report-$TARGET.txt 2> /dev/null
       egrep -h INFO $LOOT_DIR/vulnerabilities/sc0pe-$TARGET-*.txt 2> /dev/null | tee -a $LOOT_DIR/vulnerabilities/vulnerability-report-$TARGET.txt 2> /dev/null
       echo "====================================================================================" | tee -a $LOOT_DIR/vulnerabilities/vulnerability-report-$TARGET.txt 2> /dev/null
-      
+      sort -u $LOOT_DIR/vulnerabilities/sc0pe-*.txt > $LOOT_DIR/vulnerabilities/sc0pe-all-vulnerabilities-sorted.txt 2> /dev/null
+      egrep "CRITICAL" $LOOT_DIR/vulnerabilities/sc0pe-all-vulnerabilities-sorted.txt 2> /dev/null | wc -l > $LOOT_DIR/vulnerabilities/critical_vulns_total.txt
+      egrep "HIGH" $LOOT_DIR/vulnerabilities/sc0pe-all-vulnerabilities-sorted.txt 2> /dev/null | wc -l > $LOOT_DIR/vulnerabilities/high_vulns_total.txt
+      egrep "MEDIUM" $LOOT_DIR/vulnerabilities/sc0pe-all-vulnerabilities-sorted.txt 2> /dev/null | wc -l > $LOOT_DIR/vulnerabilities/medium_vulns_total.txt
+      egrep "LOW" $LOOT_DIR/vulnerabilities/sc0pe-all-vulnerabilities-sorted.txt 2> /dev/null | wc -l > $LOOT_DIR/vulnerabilities/low_vulns_total.txt
+      egrep "INFO" $LOOT_DIR/vulnerabilities/sc0pe-all-vulnerabilities-sorted.txt 2> /dev/null | wc -l > $LOOT_DIR/vulnerabilities/info_vulns_total.txt

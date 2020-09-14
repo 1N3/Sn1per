@@ -46,25 +46,13 @@ if [[ "$MODE" = "webscan" ]]; then
 	echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
 	echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
 	touch $LOOT_DIR/scans/$TARGET-webscan.txt 2> /dev/null 
-	echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running-$TARGET-webscan.txt 2> /dev/null
-	ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
-
+	echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+	ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 		echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 	fi
-	if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
-	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	    echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
-	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	    SSL="false"
-	    source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
-	    source $INSTALL_DIR/modes/sc0pe-active-scan.sh
-	    SSL="true"
-	    source $INSTALL_DIR/modes/sc0pe-passive-scan.sh
-	    source $INSTALL_DIR/modes/sc0pe-active-scan.sh
-	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-	fi
+	
     if [[ "$BURP_SCAN" == "1" ]]; then
     	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     	echo -e "$OKRED RUNNING BURPSUITE SCAN $RESET"
@@ -103,12 +91,14 @@ if [[ "$MODE" = "webscan" ]]; then
     	sudo python3 /usr/share/sniper/bin/zap-scan.py "http://$TARGET/" 
     	DATE=$(date +"%Y%m%d%H%M")
     	sudo grep "'" /usr/share/sniper/bin/zap-report.txt | cut -d\' -f2 | cut -d\\ -f1 > $LOOT_DIR/web/zap-report-$TARGET-http-$DATE.html
+    	cp -f $LOOT_DIR/web/zap-report-$TARGET-http-$DATE.html $LOOT_DIR/web/zap-report-$TARGET-http.html 2> /dev/null
     	echo "[i] Scan complete."
     	echo "[+] Report saved to: $LOOT_DIR/web/zap-report-$TARGET-http-$DATE.html"
     	sleep 5
     	echo "[i] Scanning: https://$TARGET/"
     	sudo python3 /usr/share/sniper/bin/zap-scan.py "https://$TARGET/"
     	sudo grep "'" /usr/share/sniper/bin/zap-report.txt | cut -d\' -f2 | cut -d\\ -f1 > $LOOT_DIR/web/zap-report-$TARGET-https-$DATE.html
+    	cp -f $LOOT_DIR/web/zap-report-$TARGET-https-$DATE.html $LOOT_DIR/web/zap-report-$TARGET-https.html 2> /dev/null
     	echo "[i] Scan complete."
     	echo "[+] Report saved to: $LOOT_DIR/web/zap-report-$TARGET-https-$DATE.html"
     fi
@@ -116,16 +106,17 @@ if [[ "$MODE" = "webscan" ]]; then
     	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     	echo -e "$OKRED RUNNING ARACHNI SCAN $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		DATE=$(date +"%Y%m%d%H%M")
 		mkdir -p $LOOT_DIR/web/http-$TARGET/
 		mkdir -p $LOOT_DIR/web/https-$TARGET/
-		arachni --report-save-path=$LOOT_DIR/web/http-$TARGET/ --output-only-positives http://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt 2>&1
-		cp -f $LOOT_DIR/output/sniper-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt $LOOT_DIR/web/arachni-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt 2> /dev/null
-		arachni --report-save-path=$LOOT_DIR/web/https-$TARGET/ --output-only-positives https://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-https-`date +"%Y%m%d%H%M"`.txt 2>&1
-		cp -f $LOOT_DIR/output/sniper-$TARGET-webscan-https-`date +"%Y%m%d%H%M"`.txt $LOOT_DIR/web/arachni-$TARGET-webscan-https-`date +"%Y%m%d%H%M"`.txt 2> /dev/null
-
+		arachni --report-save-path=$LOOT_DIR/web/http-$TARGET/ --output-only-positives http://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-http-${DATE}.txt
+		cp -vf $LOOT_DIR/output/sniper-$TARGET-webscan-http-${DATE}.txt $LOOT_DIR/web/arachni-$TARGET-webscan-http.txt
+		sleep 1
+		arachni --report-save-path=$LOOT_DIR/web/https-$TARGET/ --output-only-positives https://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-https-${DATE}.txt
+		cp -vf $LOOT_DIR/output/sniper-$TARGET-webscan-https-${DATE}.txt $LOOT_DIR/web/arachni-$TARGET-webscan-https.txt
 		if [[ "$SLACK_NOTIFICATIONS_ARACHNI_SCAN" == "1" ]]; then
-			bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/output/sniper-$TARGET-webscan-http-`date +"%Y%m%d%H%M"`.txt"
-			bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/output/sniper-$TARGET-webscan-https-`date +"%Y%m%d%H%M"`.txt"
+			bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/output/sniper-$TARGET-webscan-http-$DATE.txt"
+			bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/output/sniper-$TARGET-webscan-https-$DATE.txt"
 		fi
 		cd $LOOT_DIR/web/http-$TARGET/
 		cd $LOOT_DIR/web/https-$TARGET/
@@ -137,15 +128,30 @@ if [[ "$MODE" = "webscan" ]]; then
 		unzip arachni.zip
 		cd $INSTALL_DIR
 	fi
+	if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
+	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	    echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
+	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	    SSL="false"
+	    PORT="80"
+	    source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+	    source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
+	    SSL="true"
+	    PORT="443"
+	    source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+	    source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
+	    for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
+          source $file
+        done
+	    source $INSTALL_DIR/modes/sc0pe-network-scan.sh
+	fi
 	source $INSTALL_DIR/modes/sc0pe.sh 
-
 	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	echo -e "$OKRED SCAN COMPLETE! $RESET"
 	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
-
-    mv $LOOT_DIR/scans/running-$TARGET-webscan.txt $LOOT_DIR/scans/finished-$TARGET-webscan.txt 2> /dev/null
-    ls -lh $LOOT_DIR/scans/running-*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+    rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+    ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
