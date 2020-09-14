@@ -140,9 +140,6 @@ if [[ "$MODE" = "webscan" ]]; then
 	    PORT="443"
 	    source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
 	    source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
-	    for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
-          source $file
-        done
 	    source $INSTALL_DIR/modes/sc0pe-network-scan.sh
 	fi
 	source $INSTALL_DIR/modes/sc0pe.sh 

@@ -28,3 +28,7 @@
                   fi
                   rm -f /tmp/match.out 2> /dev/null
             done
+
+            for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
+              source $file
+            done
