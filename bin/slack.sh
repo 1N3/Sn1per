@@ -3,9 +3,9 @@
 # By @xer0dayz - https://xerosecurity.com
 #
 
-source /usr/share/sniper/sniper.conf
-source /root/.sniper.conf
-source /root/.sniper_api_keys.conf
+source /usr/share/sniper/sniper.conf 2> /dev/null
+source /root/.sniper.conf 2> /dev/null
+source /root/.sniper_api_keys.conf 2> /dev/null
 
 MESSAGE="$1"
 
