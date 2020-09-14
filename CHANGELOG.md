@@ -2,6 +2,7 @@
 * v8.7 - Updated web file bruteforce lists
 * v8.7 - Added updated Slack API integration/notifications
 * v8.7 - Added Arachni, Nikto, Nessus, NMap + 20 passive sc0pe vulnerability parsers
+* v8.7 - Added MobileIron Login sc0pe template
 * v8.7 - Added Revive Adserver XSS sc0pe template
 * v8.7 - Added IceWarp Webmail XSS sc0pe template
 * v8.7 - Added Mara CMS v7.5 XSS sc0pe template
