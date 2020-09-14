@@ -7,6 +7,6 @@ TYPE="network"
 
 rm -f $LOOT_DIR/vulnerabilities/sc0pe-$TARGET-$OUTPUT_NAME.txt 2> /dev/null
 
-egrep "$GREP_OPTIONS" "$MATCH" $FILENAME | awk -v AWK_TARGET="$TARGET" '$5=AWK_TARGET{print "P3 - MEDIUM, Components with Known Vulnerabilities - NMap, " $5 ", " $2 " " $3 " " $4}' >> $LOOT_DIR/vulnerabilities/sc0pe-$TARGET-$OUTPUT_NAME.txt
+egrep "$GREP_OPTIONS" "$MATCH" $FILENAME 2> /dev/null | awk -v AWK_TARGET="$TARGET" '$5=AWK_TARGET{print "P3 - MEDIUM, Components with Known Vulnerabilities - NMap, " $5 ", " $2 " " $3 " " $4}' 2> /dev/null >> $LOOT_DIR/vulnerabilities/sc0pe-$TARGET-$OUTPUT_NAME.txt
 
-cat $LOOT_DIR/vulnerabilities/sc0pe-$TARGET-$OUTPUT_NAME.txt
+cat $LOOT_DIR/vulnerabilities/sc0pe-$TARGET-$OUTPUT_NAME.txt 2> /dev/null

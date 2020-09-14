@@ -1,6 +1,6 @@
 AUTHOR='@xer0dayz'
 VULN_NAME='Apache Solr Detected'
-URI='/'
+URI=''
 METHOD='GET'
 MATCH="Solr\ Admin"
 SEVERITY='P5 - INFO'
