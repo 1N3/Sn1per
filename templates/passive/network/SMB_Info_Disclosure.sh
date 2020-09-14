@@ -1,0 +1,9 @@
+AUTHOR='@xer0dayz'
+VULN_NAME='SMB Info Disclosure'
+FILENAME="$LOOT_DIR/output/msf-$TARGET-port139.txt $LOOT_DIR/output/msf-$TARGET-port445.txt"
+MATCH="\[\+\]"
+SEVERITY='P4 - LOW'
+GREP_OPTIONS='-i'
+SEARCH='positive'
+SECONDARY_COMMANDS=''
+TYPE="network"

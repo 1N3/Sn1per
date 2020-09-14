@@ -8,4 +8,6 @@ if [ "$SSL" = "true" ]; then
 	SEARCH='positive'
 	SECONDARY_COMMANDS=''
 	URI="/"
+else
+	break
 fi

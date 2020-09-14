@@ -7,4 +7,6 @@ if [ "$SSL" = "false" ]; then
 	GREP_OPTIONS='-i'
 	SEARCH='positive'
 	SECONDARY_COMMANDS=''
+else
+	break
 fi

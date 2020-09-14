@@ -8,7 +8,7 @@ if [ -f $LOOT_DIR/web/headers-http-$TARGET.txt ]; then
 		GREP_OPTIONS='-i'
 		SEARCH='negative'
 		SECONDARY_COMMANDS=''
-		URI="/"
+		URI=""
 	else
 		AUTHOR='@xer0dayz'
 		VULN_NAME='Clickjacking HTTPS'
@@ -18,6 +18,6 @@ if [ -f $LOOT_DIR/web/headers-http-$TARGET.txt ]; then
 		GREP_OPTIONS='-i'
 		SEARCH='negative'
 		SECONDARY_COMMANDS=''
-		URI="/"
+		URI=""
 	fi
 fi

@@ -1,8 +1,9 @@
 AUTHOR='@xer0dayz'
-VULN_NAME='Component With Known Vulnerabilities 2'
+VULN_NAME='SMBv1 Enabled'
 FILENAME="$LOOT_DIR/output/nmap-$TARGET-*.txt"
-MATCH="CVE\-"
+MATCH="SMBv1"
 SEVERITY='P3 - MEDIUM'
 GREP_OPTIONS='-i'
 SEARCH='positive'
 SECONDARY_COMMANDS=''
+TYPE="network"
