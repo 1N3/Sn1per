@@ -2,11 +2,12 @@
 * v8.7 - Updated web file bruteforce lists
 * v8.7 - Added updated Slack API integration/notifications
 * v8.7 - Added Arachni, Nikto, Nessus, NMap + 20 passive sc0pe vulnerability parsers
+* v8.7 - Added CVE-2020-15129 - Open Redirect In Traefik sc0pe template
 * v8.7 - Added MobileIron Login sc0pe template
 * v8.7 - Added Revive Adserver XSS sc0pe template
 * v8.7 - Added IceWarp Webmail XSS sc0pe template
 * v8.7 - Added Mara CMS v7.5 XSS sc0pe template
-* v8.7 - Added Administrative Privilege Escalation in SAP NetWeaver
+* v8.7 - Added Administrative Privilege Escalation in SAP NetWeaver sc0pe template
 * v8.7 - Added Magento 2.3.0 SQL Injection sc0pe template
 * v8.7 - Added CVE-2020-15920 - Unauthenticated RCE at Mida eFramework sc0pe template
 * v8.7 - Added CVE-2019-7192 - QNAP Pre-Auth Root RCE sc0pe template
@@ -19,11 +20,11 @@
 * v8.7 - Added Robots.txt Detected sc0pe template
 * v8.7 - Added AWS S3 Public Bucket Listing sc0pe template
 * v8.7 - Fixed logic error in stealth mode recon scans not running
-* v8.7 - Added CVE-2020-7048 - WP Database Reset 3.15 Unauthenticated Database Reset
+* v8.7 - Added CVE-2020-7048 - WP Database Reset 3.15 Unauthenticated Database Reset sc0pe template
 * v8.7 - Fixed F- detection in Wordpress Sc0pe templates
-* v8.7 - Added CVE-2020-11530 - Wordpress Chop Slider 3 Plugin SQL Injection
-* v8.7 - Added CVE-2019-11580 - Atlassian Crowd Data Center Unauthenticated RCE
-* v8.7 - Added CVE-2019-16759 - vBulletin 5.x 0-Day Pre-Auth Remote Command Execution Bypass
+* v8.7 - Added CVE-2020-11530 - Wordpress Chop Slider 3 Plugin SQL Injection sc0pe template
+* v8.7 - Added CVE-2019-11580 - Atlassian Crowd Data Center Unauthenticated RCE sc0pe template
+* v8.7 - Added CVE-2019-16759 - vBulletin 5.x 0-Day Pre-Auth Remote Command Execution Bypass sc0pe template
 * v8.6 - Added new Sn1per configuration flow that allows persistent user configurations and API key transfer
 * v8.6 - Updated port lists to remove duplicate ports error and slim down list
 * v8.6 - Updated PHP to 7.4
