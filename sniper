@@ -157,25 +157,31 @@ function sniper_status {
   watch -n 1 -c 'ps -ef | egrep "sniper|slurp|hydra|ruby|python|dirsearch|amass|nmap|metasploit|curl|wget|nikto" && echo "NETWORK CONNECTIONS..." && netstat -an | egrep "TIME_WAIT|EST"'
 }
 
+# CHECK FOR UPDATES
 function check_update {
   if [[ "$ENABLE_AUTO_UPDATES" == "1" ]] && [[ "$ONLINE" == "1" ]]; then
+    if [[ -f "$INSTALL_DIR/pro/settings.php" ]]; then
+      LICENSE_KEY=$(grep "LICENSE_KEY" $INSTALL_DIR/pro/settings.php | cut -d\" -f2 2> /dev/null)
+      PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER" 2> /dev/null > /dev/null | bash - 2> /dev/null > /dev/null)
+    fi
     LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [[ "$LATEST_VER" != "$VER" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper v$LATEST_VER is available to download... To update, type$OKRED \"sniper -u\" $RESET"
     fi
-    if [[ -f "$INSTALL_DIR/pro/settings.php" ]]; then
-      LICENSE_KEY=$(grep "LICENSE_KEY" $INSTALL_DIR/pro/settings.php 2> /dev/null | cut -d\" -f2 2> /dev/null )
-      PRO_UPDATE=$(curl --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER"  2> /dev/null | bash -  2> /dev/null > /dev/null)
-    fi
   fi
 }
 
+# APPLY UPDATES
 function update {
   logo
   echo -e "$OKBLUE[*]$RESET Checking for updates...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
   if [[ "$ONLINE" == "0" ]]; then
     echo "You will need to download the latest release manually at https://github.com/1N3/Sn1per/"
   else
+    if [[ -f "$INSTALL_DIR/pro/settings.php" ]]; then
+      LICENSE_KEY=$(grep "LICENSE_KEY" $INSTALL_DIR/pro/settings.php | cut -d\" -f2 )
+      PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER" 2> /dev/null | bash - 2> /dev/null > /dev/null)
+    fi
     LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [[ "$LATEST_VER" != "$VER" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] Sn1per $LATEST_VER is available to download...Do you want to update? (y or n)$RESET"
@@ -198,10 +204,11 @@ if [[ "$UPDATE" = "1" ]]; then
   exit
 fi
 
+# CHECK IF ONLINE
 function check_online {
-  ONLINE=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
+  ONLINE=$(curl --connect-timeout 3 --insecure -s "https://xerosecurity.com/community/updates.txt?$VER" 2> /dev/null)
   if [[ -z "$ONLINE" ]]; then
-    ONLINE=$(curl --connect-timeout 3 --insecure -s "https://xerosecurity.com/community/updates.txt?$VER" 2> /dev/null)
+    ONLINE=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [[ -z "$ONLINE" ]]; then
       ONLINE="0"
       echo -e "$OKBLUE[*]$RESET Checking for active internet connection $OKBLUE[$RESET${OKRED}FAIL${RESET}$OKBLUE]"
