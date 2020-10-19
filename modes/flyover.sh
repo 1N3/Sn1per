@@ -37,6 +37,9 @@ if [[ "$MODE" = "flyover" ]]; then
     echo -e "$RESET"
     echo "sniper -f $FILE -m $MODE --noreport $args" >> $LOOT_DIR/scans/$WORKSPACE-$MODE.txt
     sniper $args | tee $WORKSPACE_DIR/output/sniper-$WORKSPACE-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
+    echo "$FILE $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
+    echo "sniper -f $FILE -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${WORKSPACE}_${MODE}.txt
+    ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
@@ -55,6 +58,7 @@ if [[ "$MODE" = "flyover" ]]; then
 
       echo -e "$OKRED=====================================================================================$RESET"
       echo -e "${OKBLUE}HOST:$RESET $TARGET"
+      echo "$TARGET" | httpx -ip -cdn -cname -title -content-length -status-code -silent -location -web-server 2> /dev/null
 
       dig all +short $TARGET 2> /dev/null > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null & 
       dig all +short -x $TARGET 2> /dev/null >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null & 
@@ -148,6 +152,8 @@ if [[ "$MODE" = "flyover" ]]; then
         cat $LOOT_DIR/nmap/ports-$a.diff | egrep "<|>" >> $LOOT_DIR/scans/notifications.txt
       fi
     done
+    rm -f $LOOT_DIR/scans/running_${WORKSPACE}_${MODE}.txt 2> /dev/null
+    ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
     echo -e "$OKRED=====================================================================================$RESET"
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"

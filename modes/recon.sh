@@ -104,7 +104,7 @@ if [[ "$RECON" = "1" ]]; then
   fi
   if [[ "$RAPIDDNS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED GATHERING GITHUB SUBDOMAINS $RESET"
+    echo -e "$OKRED GATHERING RAPIDDNS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     curl -s "https://rapiddns.io/subdomain/$TARGET?full=1&down=1#exportData()" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*" | sort -u | grep "$TARGET" | cut -d\/ -f3 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-rapiddns.txt 2> /dev/null
   fi
@@ -177,6 +177,12 @@ if [[ "$RECON" = "1" ]]; then
     cat $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null >> $LOOT_DIR/scans/notifications.txt 2> /dev/null 
   fi
   echo -e "$RESET"
+  if [[ "$STATIC_GREP_SEARCH" = "1" ]]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED DISPLAYING INTERESTING DOMAINS SEARCH $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    egrep -iE "GREP_INTERESTING_SUBDOMAINS" $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null | tee $LOOT_DIR/domains/domains_interesting-$TARGET.txt | head -n "$GREP_MAX_LINES"
+  fi
   if [[ "$SPOOF_CHECK" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED CHECKING FOR EMAIL SECURITY $RESET"
@@ -254,6 +260,12 @@ if [[ "$RECON" = "1" ]]; then
     if [[ "$SLACK_NOTIFICATIONS_SUBNETS" == "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/ips/subnets-$TARGET.txt"
     fi
+  fi
+  if [[ "$SCAN_ALL_DISCOVERED_DOMAINS" = "1" ]]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED STARTING FLYOVER SCAN OF ALL DOMAINS $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    sniper -f $LOOT_DIR/domains/domains-$TARGET-full.txt -m flyover -w $WORKSPACE
   fi
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per recon scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"

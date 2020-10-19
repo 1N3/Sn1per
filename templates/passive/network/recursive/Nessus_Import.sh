@@ -1,6 +1,6 @@
 AUTHOR='@xer0dayz'
 VULN_NAME='Nessus Import'
-FILENAME="$LOOT_DIR/output/nessus-report_$TARGET_*.csv"
+FILENAME="${LOOT_DIR}/output/nessus-report_${TARGET}_*.csv"
 OUTPUT_NAME=$(echo $VULN_NAME | sed -E 's/[^[:alnum:]]+/_/g')
 TYPE="network"
 

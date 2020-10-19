@@ -30,7 +30,7 @@ if [[ "$1" != "force" ]]; then
 fi
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
+   echo "This script must be run as root" 
    exit 1
 fi
 
@@ -59,18 +59,55 @@ UBUNTU_CHECK=$(egrep DISTRIB_ID /etc/lsb-release 2> /dev/null)
 if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	cp /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
 	cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
-	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null
+	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
 	chown root /root/.Xauthority
 	XAUTHORITY=/root/.Xauthority
 fi
 
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
 apt-get update
-for i in adb aha curl cutycapt dnsrecon dos2unix golang greenbone-security-assistant host hydra jq jsbeautifier ldapscripts libssl-dev libxml2-utils nbtscan net-tools nfs-common nikto nmap nodejs openvas p7zip-full phantomjs php7.4 php7.4-curl python python-pip python3-paramiko python3-pip rpcbind ruby rubygems sqlmap sslscan wafw00f whatweb whois xdg-utils xmlstarlet xsltproc; do
-     if [ -z `which $i` ]; then
-          apt install -y $i 2>/dev/null
-     fi
-done
+apt-get install -y python3-paramiko
+apt-get install -y nfs-common
+apt-get install -y nodejs
+apt-get install -y wafw00f
+apt-get install -y xdg-utils
+apt-get install -y ruby
+apt-get install -y rubygems
+apt-get install -y python
+apt-get install -y dos2unix
+apt-get install -y aha
+apt-get install -y libxml2-utils
+apt-get install -y rpcbind
+apt-get install -y cutycapt
+apt-get install -y host
+apt-get install -y whois
+apt-get install -y dnsrecon
+apt-get install -y curl
+apt-get install -y nmap
+apt-get install -y php7.4
+apt-get install -y php7.4-curl
+apt-get install -y hydra
+apt-get install -y sqlmap
+apt-get install -y nbtscan
+apt-get install -y nikto
+apt-get install -y whatweb
+apt-get install -y sslscan
+apt-get install -y jq
+apt-get install -y golang
+apt-get install -y adb
+apt-get install -y xsltproc
+apt-get install -y ldapscripts
+apt-get install -y libssl-dev 2> /dev/null
+apt-get install -y python-pip 
+apt-get remove -y python3-pip
+apt-get install -y python3-pip
+apt-get install -y xmlstarlet
+apt-get install -y net-tools
+apt-get install -y p7zip-full
+apt-get install -y jsbeautifier
+apt-get install -y phantomjs 2> /dev/null
+apt-get install -y openvas
+apt-get install -y greenbone-security-assistant
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
@@ -104,14 +141,14 @@ cd $PLUGINS_DIR
 mkdir -p $GO_DIR 2> /dev/null
 
 echo -e "$OKBLUE[*]$RESET Downloading extensions...$RESET"
-git clone https://github.com/1N3/BruteX.git
-git clone https://github.com/1N3/Findsploit.git
+git clone https://github.com/1N3/BruteX.git 
+git clone https://github.com/1N3/Findsploit.git 
 git clone https://github.com/1N3/Goohak.git
 git clone https://github.com/1N3/BlackWidow
 git clone https://github.com/1N3/Sublist3r.git
-git clone https://github.com/nccgroup/shocker.git
+git clone https://github.com/nccgroup/shocker.git 
 git clone https://github.com/BishopFox/spoofcheck.git
-git clone https://github.com/arthepsy/ssh-audit
+git clone https://github.com/arthepsy/ssh-audit 
 git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
@@ -120,24 +157,24 @@ git clone https://github.com/hisxo/gitGraber.git
 git clone https://github.com/1N3/LinkFinder
 git clone https://github.com/christophetd/censys-subdomain-finder.git
 git clone https://github.com/rbsec/dnscan.git
-git clone https://github.com/infosec-au/altdns.git
+git clone https://github.com/infosec-au/altdns.git 
 git clone https://github.com/blechschmidt/massdns.git
 git clone https://github.com/ProjectAnte/dnsgen
 git clone https://github.com/scipag/vulscan
 git clone https://github.com/laramies/metagoofil.git
 git clone https://github.com/achillean/shodan-python
-git clone https://github.com/Dionach/CMSmap.git
-git clone https://github.com/0xsauby/yasuo.git
+git clone https://github.com/Dionach/CMSmap.git 
+git clone https://github.com/0xsauby/yasuo.git 
 
 cd LinkFinder
-python setup.py install
+python setup.py install 
 cd ..
 pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt
 pip3 install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
-pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt
+pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
 cd altdns
-pip3 install -r requirements.txt
-python2 setup.py install
+pip3 install -r requirements.txt 
+python2 setup.py install 
 pip3 install py-altdns 2> /dev/null
 cd ..
 cd massdns
@@ -155,6 +192,8 @@ go get github.com/harleo/asnip
 ln -s ~/go/bin/asnip /usr/bin/asnip 2>/dev/null
 GO111MODULE=on go get -u -v github.com/lc/gau
 ln -s /root/go/bin/gau /usr/bin/gau2 2> /dev/null
+GO111MODULE=auto go get -u -v github.com/projectdiscovery/httpx/cmd/httpx
+ln -s /root/go/bin/httpx /usr/bin/httpx 2> /dev/null
 rm -Rf ~/go/src/amass*
 wget https://github.com/OWASP/Amass/releases/download/v3.5.4/amass_v3.5.4_linux_amd64.zip -O ~/go/src/amass.zip
 cd ~/go/src/
@@ -165,22 +204,31 @@ cp amass /usr/bin/amass -f 2> /dev/null
 rm -f ~/go/src/amass.zip 2> /dev/null
 cd ~/go/bin; wget https://github.com/projectdiscovery/subfinder/releases/download/v2.2.4/subfinder-linux-amd64.tar; tar -xvf subfinder-linux-amd64.tar; rm -f subfinder-linux-amd64.tar; mv subfinder-linux-amd64 /usr/local/bin/subfinder
 cd /usr/share/nmap/scripts/
-rm -Rf vulscan 2> /dev/null
 rm -f /usr/share/nmap/scripts/vulners.nse
 wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
+cd /usr/share/nmap/vulscan/
+rm -f *.csv
+wget https://www.computec.ch/projekte/vulscan/download/cve.csv
+wget https://www.computec.ch/projekte/vulscan/download/exploitdb.csv
+wget https://www.computec.ch/projekte/vulscan/download/openvas.csv
+wget https://www.computec.ch/projekte/vulscan/download/osvdb.csv
+wget https://www.computec.ch/projekte/vulscan/download/scipvuldb.csv
+wget https://www.computec.ch/projekte/vulscan/download/securityfocus.csv
+wget https://www.computec.ch/projekte/vulscan/download/securitytracker.csv
+wget https://www.computec.ch/projekte/vulscan/download/xforce.csv
 mkdir -p ~/.msf4/modules/exploits/web
 wget https://raw.githubusercontent.com/1N3/Exploits/master/defcon_webmin_unauth_rce.rb -O ~/.msf4/modules/exploits/web/defcon_webmin_unauth_rce.rb
 wget https://github.com/OJ/gobuster/releases/download/v3.0.1/gobuster-linux-amd64.7z -O /tmp/gobuster.7z
 cd /tmp/
 7z e gobuster.7z
-chmod +rx gobuster
-mv gobuster /usr/bin/gobuster
+chmod +rx gobuster 
+mv gobuster /usr/bin/gobuster 
 cd $PLUGINS_DIR
-cd shodan-python
+cd shodan-python 
 python setup.py install
 cd ..
 pip3 install spyse.py
-pip3 install h8mail 2> /dev/null
+pip3 install h8mail 2> /dev/null 
 cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
 cd $PLUGINS_DIR
 
@@ -189,12 +237,12 @@ wget https://github.com/laramies/theHarvester/archive/V3.1.tar.gz
 tar -zxvf V3.1.tar.gz
 rm V3.1.tar.gz
 rm -f /usr/bin/theharvester
-ln -s /usr/share/sniper/plugins/theHarvester-3.1/theHarvester.py /usr/bin/theharvester
+ln -s /usr/share/sniper/plugins/theHarvester-3.1/theHarvester.py /usr/bin/theharvester-3.1
 
 # ARACHNI MANUAL INSTALL
 wget https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -O /tmp/arachni.tar.gz
 cd /tmp/
-tar -zxf arachni.tar.gz
+tar -zxf arachni.tar.gz 
 rm -f /tmp/arachni.tar.gz 2> /dev/null
 cd arachni-*
 mkdir -p /usr/share/arachni 2> /dev/null
@@ -216,7 +264,7 @@ cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/spoofcheck/ && pip3 install -r requirements.txt 2> /dev/null
 
-cd $INSTALL_DIR
+cd $INSTALL_DIR 
 mkdir $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
 mkdir $LOOT_DIR/nmap -p 2> /dev/null

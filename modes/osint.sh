@@ -32,12 +32,9 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		echo -e "$OKRED GATHERING THEHARVESTER OSINT INFO $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-		if [[ "$VERBOSE" == "1" ]]; then
-			echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN python2.7 $THEHARVESTER_PATH -d $TARGET -l 100 -b all 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null  $RESET"
-		fi
 		cp -f /etc/theHarvester/api-keys.yaml ~/api-keys.yaml 2> /dev/null
 		cd ~ 2> /dev/null
-		theharvester -d $TARGET -b baidu,bing,bingapi,certspotter,crtsh,dnsdumpster,dogpile,duckduckgo,google,hunter,intelx,linkedin,linkedin_links,netcraft,otx,securityTrails,spyse,threatcrowd,trello,twitter,vhost,virustotal,yahoo 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null 
+		theharvester-3.1 -d $TARGET -b baidu,bing,bingapi,certspotter,crtsh,dnsdumpster,dogpile,duckduckgo,google,hunter,intelx,linkedin,linkedin_links,netcraft,otx,securityTrails,spyse,threatcrowd,trello,twitter,vhost,virustotal,yahoo 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null 
 		cd $INSTALL_DIR 2> /dev/null
 		if [[ "$SLACK_NOTIFICATIONS_THEHARVESTER" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/theharvester-$TARGET.txt"

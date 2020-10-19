@@ -27,3 +27,10 @@
       egrep "MEDIUM" $LOOT_DIR/vulnerabilities/sc0pe-all-vulnerabilities-sorted.txt 2> /dev/null | wc -l > $LOOT_DIR/vulnerabilities/medium_vulns_total.txt
       egrep "LOW" $LOOT_DIR/vulnerabilities/sc0pe-all-vulnerabilities-sorted.txt 2> /dev/null | wc -l > $LOOT_DIR/vulnerabilities/low_vulns_total.txt
       egrep "INFO" $LOOT_DIR/vulnerabilities/sc0pe-all-vulnerabilities-sorted.txt 2> /dev/null | wc -l > $LOOT_DIR/vulnerabilities/info_vulns_total.txt
+      WORKSPACE_RISK_CRITCAL=$(cat $LOOT_DIR/vulnerabilities/critical_vulns_total.txt 2> /dev/null)
+      WORKSPACE_RISK_HIGH=$(cat $LOOT_DIR/vulnerabilities/high_vulns_total.txt 2> /dev/null)
+      WORKSPACE_RISK_MEDIUM=$(cat $LOOT_DIR/vulnerabilities/medium_vulns_total.txt 2> /dev/null)
+      WORKSPACE_RISK_LOW=$(cat $LOOT_DIR/vulnerabilities/low_vulns_total.txt 2> /dev/null)
+      WORKSPACE_RISK_INFO=$(cat $LOOT_DIR/vulnerabilities/info_vulns_total.txt 2> /dev/null)
+      WORKSPACE_RISK_TOTAL=$(($WORKSPACE_RISK_CRITCAL*5+$WORKSPACE_RISK_HIGH*4+$WORKSPACE_RISK_MEDIUM*3+$WORKSPACE_RISK_LOW*2+$WORKSPACE_RISK_INFO*1))
+      echo "$WORKSPACE_RISK_TOTAL" > $LOOT_DIR/vulnerabilities/vuln_score_total.txt 2> /dev/null

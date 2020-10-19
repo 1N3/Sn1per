@@ -1,6 +1,5 @@
 # FULLPORTONLY MODE
 if [[ "$MODE" = "fullportonly" ]]; then
-
   if [[ "$REPORT" = "1" ]]; then
     args="-t $TARGET"
     if [[ ! -z "$WORKSPACE" ]]; then
@@ -18,18 +17,22 @@ if [[ "$MODE" = "fullportonly" ]]; then
     fi
     args="$args --noreport -m fullportonly" 
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
-    echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt
+    echo "sniper -t $TARGET -m $MODE --noreport " >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt
     ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
     sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
     exit
   fi
-
   logo
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
   fi
   echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
+
+  if [[ -f "/usr/share/sniper/pro/.portscanner.conf" ]]; then
+    source /usr/share/sniper/pro/.portscanner.conf
+  fi
+
   if [[ -z "$PORT" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED PERFORMING TCP PORT SCAN $RESET"
@@ -38,12 +41,6 @@ if [[ "$MODE" = "fullportonly" ]]; then
     sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null
     xsltproc $INSTALL_DIR/bin/nmap-bootstrap.xsl $LOOT_DIR/nmap/nmap-$TARGET.xml -o $LOOT_DIR/nmap/nmapreport-$TARGET.html 2> /dev/null
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -sU $NMAP_OPTIONS --script=/usr/share/nmap/scripts/vulners -oX $LOOT_DIR/nmap/nmap-$TARGET-udp.xml -p $DEFAULT_UDP_PORTS $TARGET 
-    sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET-udp.txt 2> /dev/null
-    rm -f $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null
   else
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED PERFORMING TCP PORT SCAN $RESET"
@@ -52,17 +49,8 @@ if [[ "$MODE" = "fullportonly" ]]; then
     sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET.txt 2> /dev/null
     rm -f $LOOT_DIR/nmap/nmap-$TARGET 2> /dev/null
     xsltproc $INSTALL_DIR/bin/nmap-bootstrap.xsl $LOOT_DIR/nmap/nmap-$TARGET.xml -o $LOOT_DIR/nmap/nmapreport-$TARGET.html 2> /dev/null
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED PERFORMING UDP PORT SCAN $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -sU $NMAP_OPTIONS --script=/usr/share/nmap/scripts/vulners -p $PORT -Pn -oX $LOOT_DIR/nmap/nmap-$TARGET-udp-port$PORT.xml $TARGET | tee $LOOT_DIR/nmap/nmap-$TARGET-udp
-    sed -r "s/</\&lh\;/g" $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null > $LOOT_DIR/nmap/nmap-$TARGET-udp.txt 2> /dev/null
-    rm -f $LOOT_DIR/nmap/nmap-$TARGET-udp 2> /dev/null
   fi
-  source $INSTALL_DIR/modes/sc0pe.sh 
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED SCAN COMPLETE! $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  cp -f $LOOT_DIR/nmap/nmapreport-$TARGET.html $LOOT_DIR/nmap/nmapreport-$TARGET-`date +"%Y-%m-%d-%H-%M"`.html 2> /dev/null
   echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
   rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
   ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
@@ -98,6 +86,28 @@ if [[ "$MODE" = "fullportonly" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
   fi
+
+  if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING SC0PE PASSIVE WEB VULNERABILITY SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    SSL="false"
+    PORT="80"
+    source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+    SSL="true"
+    PORT="443"
+    source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+    for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
+      source $file
+    done
+    source $INSTALL_DIR/modes/sc0pe-network-scan.sh    
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    source $INSTALL_DIR/modes/sc0pe.sh 
+  fi
+
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo -e "$OKRED SCAN COMPLETE! $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 
   loot
   exit

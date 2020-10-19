@@ -1,4 +1,31 @@
 ## CHANGELOG:
+* v8.8 - Added automatic 'flyover' scans of all discovered domains for 'recon' mode
+* v8.8 - Added static grep searching rules of all URL's and sub-domains (see sniper.conf for details)
+* v8.8 - Added verbose status logging to flyover mode showing HTTP status/redirect/title, etc.
+* v8.8 - Added integration for Port Scanner Add-on for Sn1per Professional
+* v8.8 - Added enhanced scanning of all unique dynamic URL's via InjectX fuzzer
+* v8.8 - Added CVE-2020-25213 - WP File Manager File Upload sc0pe template
+* v8.8 - Added cPanel Login Found sc0pe template
+* v8.8 - Added Wordpress WP-File-Manager Version Detected sc0pe template
+* v8.8 - Added VMware vCenter Unauthenticated Arbitrary File Read sc0pe template
+* v8.8 - Added PHP Composer Disclosure sc0pe template
+* v8.8 - Added Git Config Disclosure sc0pe template
+* v8.8 - Added updated NMap vulscan DB files
+* v8.8 - Added CVE-2020-9047 - exacqVision Web Service Remote Code Execution sc0pe template
+* v8.8 - Removed UDP port scan settings/options and combined with full portscan ports
+* v8.8 - Added CVE-2019-8442 - Jira Webroot Directory Traversal sc0pe template
+* v8.8 - Added CVE-2020-2034 - PAN-OS GlobalProtect OS Command Injection sc0pe template
+* v8.8 - Added CVE-2020-2551 - Unauthenticated Oracle WebLogic Server Remote Code Execution sc0pe template
+* v8.8 - Added CVE-2020-14181 - User Enumeration Via Insecure Jira Endpoint sc0pe template
+* v8.8 - Added Smuggler HTTP request smuggling detection
+* v8.8 - Added CVE-2020-0618 - Remote Code Execution SQL Server Reporting Services sc0pe template
+* v8.8 - Added CVE-2020-5412 - Full-read SSRF in Spring Cloud Netflix sc0pe template
+* v8.8 - Added Jaspersoft Detected sc0pe template
+* v8.8 - Added improved dirsearch exclude options to all web file/dir searches
+* v8.8 - Fixed naming conflict for theharvester
+* v8.8 - Created backups of all NMap HTML reports for fullportonly scans
+* v8.8 - Added line limit to GUA URL's displayed in console
+* v8.7 - Added AvantFAX LOGIN Detected sc0pe template
 * v8.7 - Updated web file bruteforce lists
 * v8.7 - Added updated Slack API integration/notifications
 * v8.7 - Added Arachni, Nikto, Nessus, NMap + 20 passive sc0pe vulnerability parsers
