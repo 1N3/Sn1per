@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v8.9 - Fixed error in install.sh for theharvester sym link
+* v8.9 - Fixed issue with flyover mode not capturing web screenshots
 * v8.8 - Added automatic 'flyover' scans of all discovered domains for 'recon' mode
 * v8.8 - Added static grep searching rules of all URL's and sub-domains (see sniper.conf for details)
 * v8.8 - Added verbose status logging to flyover mode showing HTTP status/redirect/title, etc.

@@ -237,8 +237,7 @@ cd $PLUGINS_DIR
 wget https://github.com/laramies/theHarvester/archive/V3.1.tar.gz
 tar -zxvf V3.1.tar.gz
 rm V3.1.tar.gz
-rm -f /usr/bin/theharvester
-ln -s /usr/share/sniper/plugins/theHarvester-3.1/theHarvester.py /usr/bin/theharvester-3.1
+ln -fs /usr/share/sniper/plugins/theHarvester-3.1/theHarvester.py /usr/bin/theharvester-3.1
 
 # ARACHNI MANUAL INSTALL
 wget https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -O /tmp/arachni.tar.gz
