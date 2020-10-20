@@ -187,7 +187,7 @@ cd ..
 pip3 install -U webtech
 cd ~/go/bin/;go get github.com/haccer/subjack
 cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
-GO111MODULE=on go get -u github.com/theblackturtle/fprobe; ln -s ~/go/bin/fprobe /usr/bin/fprobe
+GO111MODULE=on go get -u github.com/theblackturtle/fprobe; ln -fs ~/go/bin/fprobe /usr/bin/fprobe
 go get github.com/harleo/asnip
 ln -s ~/go/bin/asnip /usr/bin/asnip 2>/dev/null
 GO111MODULE=on go get -u -v github.com/lc/gau
@@ -206,8 +206,9 @@ cd ~/go/bin; wget https://github.com/projectdiscovery/subfinder/releases/downloa
 cd /usr/share/nmap/scripts/
 rm -f /usr/share/nmap/scripts/vulners.nse
 wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
-cd /usr/share/nmap/vulscan/
-rm -f *.csv
+mkdir -p /usr/share/nmap/vulscan/ 2> /dev/null
+cd /usr/share/nmap/vulscan/ 2> /dev/null
+rm -f *.csv 2> /dev/null
 wget https://www.computec.ch/projekte/vulscan/download/cve.csv
 wget https://www.computec.ch/projekte/vulscan/download/exploitdb.csv
 wget https://www.computec.ch/projekte/vulscan/download/openvas.csv
