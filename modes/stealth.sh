@@ -296,7 +296,7 @@ if [[ "$MODE" = "stealth" ]]; then
     fi
     if [[ $WEBSCREENSHOT = "1" ]]; then
       cd $LOOT_DIR
-      python2 $INSTALL_DIR/bin/webscreenshot.py http://$TARGET:80
+      python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium http://$TARGET:80
     fi
   fi
  
@@ -462,7 +462,7 @@ if [[ "$MODE" = "stealth" ]]; then
     fi
     if [[ $WEBSCREENSHOT = "1" ]]; then
       cd $LOOT_DIR
-      python2 $INSTALL_DIR/bin/webscreenshot.py https://$TARGET:443
+      python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium https://$TARGET:443
     fi
     echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
   fi

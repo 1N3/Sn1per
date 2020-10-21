@@ -108,6 +108,7 @@ apt-get install -y jsbeautifier
 apt-get install -y phantomjs 2> /dev/null
 apt-get install -y openvas
 apt-get install -y greenbone-security-assistant
+apt-get install -y chromium
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall

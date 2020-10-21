@@ -96,8 +96,8 @@ if [[ "$MODE" = "flyover" ]]; then
       fi
       if [[ $WEBSCREENSHOT = "1" ]]; then
         cd $LOOT_DIR
-        python2 $INSTALL_DIR/bin/webscreenshot.py http://$TARGET:80 2> /dev/null > /dev/null &
-        python2 $INSTALL_DIR/bin/webscreenshot.py https://$TARGET:443 2> /dev/null > /dev/null &
+        python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium http://$TARGET:80 2> /dev/null > /dev/null &
+        python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium https://$TARGET:443 2> /dev/null > /dev/null &
       fi
       echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
       echo "$TARGET" >> $LOOT_DIR/domains/targets-all-presorted.txt
