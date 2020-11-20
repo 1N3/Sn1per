@@ -62,6 +62,10 @@ if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
 	chown root /root/.Xauthority
 	XAUTHORITY=/root/.Xauthority
+	snap install chromium 2> /dev/null
+    ln -s /snap/bin/chromium /usr/bin/chromium 2> /dev/null
+    xhost + 2> /dev/null
+    mkdir -p /run/user/0 2> /dev/null
 fi
 
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
@@ -106,9 +110,7 @@ apt-get install -y net-tools
 apt-get install -y p7zip-full
 apt-get install -y jsbeautifier
 apt-get install -y phantomjs 2> /dev/null
-apt-get install -y openvas
-apt-get install -y greenbone-security-assistant
-apt-get install -y chromium
+apt-get install -y chromium 2> /dev/null
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
