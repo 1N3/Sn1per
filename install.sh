@@ -68,14 +68,6 @@ if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	mkdir -p /run/user/0 2> /dev/null
 fi
 
-# CHECK FOR DEBIAN
-DEBIAN_CHECK=$(uname -a | grep Debian 2> /dev/null | wc -l 2> /dev/null)
-if [[ $DEBIAN_CHECK == "1" ]]; then
-	sudo apt -y install lsb-release apt-transport-https ca-certificates
-	sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/php.list
-fi
-
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
 apt-get update
 apt-get install -y python3-paramiko
