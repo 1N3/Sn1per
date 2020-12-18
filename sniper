@@ -8,7 +8,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-VER="8.8"
+VER="8.9"
 INSTALL_DIR="/usr/share/sniper"
 LOOT_DIR="$INSTALL_DIR/loot/$TARGET"
 SNIPER_PRO=$INSTALL_DIR/pro.sh
@@ -17,7 +17,7 @@ SNIPER_PRO=$INSTALL_DIR/pro.sh
 service postgresql start 2> /dev/null
 
 # LOAD DEFAULT SNIPER CONFIGURATION FILE
-source $INSTALL_DIR/sniper.conf 
+source $INSTALL_DIR/sniper.conf
 echo -e "$OKBLUE[*]$RESET Loaded configuration file from $INSTALL_DIR/sniper.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
 
 if [[ -f /root/.sniper.conf ]]; then
@@ -31,7 +31,7 @@ if [[ -f /root/.sniper.conf ]]; then
     source /root/.sniper_api_keys.conf
     echo -e "$OKBLUE[*]$RESET Loaded API keys from /root/.sniper_api_keys.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
   fi
-  
+
 else
   # IF NO USER CONFIG PRESENT, CREATE IT FROM THE DEFAULT TEMPLATE
   cp $INSTALL_DIR/sniper.conf /root/.sniper.conf 2> /dev/null
@@ -168,7 +168,7 @@ function check_update {
     LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [[ "$LATEST_VER" != "$VER" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper v$LATEST_VER is available to download... To update, type$OKRED \"sniper -u\" $RESET"
-    fi    
+    fi
   fi
   touch /tmp/update-check.txt 2> /dev/null
 }
@@ -246,7 +246,7 @@ case $key in
     echo -e "$OKBLUE[*]$RESET Creating backup of existing config to /root/.sniper.conf.bak...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
     cp -f /root/.sniper.conf /root/.sniper.conf.bak
     echo -e "$OKBLUE[*]$RESET Copying $CONFIG to /root/.sniper.conf...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
-    cp -f $CONFIG /root/.sniper.conf 
+    cp -f $CONFIG /root/.sniper.conf
     dos2unix /root/.sniper.conf 2> /dev/null > /dev/null
     source /root/.sniper.conf
     sleep 1
@@ -365,7 +365,7 @@ case $key in
     rm -vf $WORKSPACE_DIR/scans/running_$TARGET_*.txt
     ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $WORKSPACE_DIR/scans/tasks-running.txt 2> /dev/null
     ps -ef | egrep "$TARGET|sniper"
-    ps -ef | egrep "sniper" | awk '{print $2}' | xargs -i sudo kill -9 {} 
+    ps -ef | egrep "sniper" | awk '{print $2}' | xargs -i sudo kill -9 {}
     exit
     shift # past argument
     ;;
@@ -391,7 +391,7 @@ case $key in
       exit
     fi
     echo "Archiving $WORKSPACE to $INSTALL_DIR/loot/$WORKSPACE.tar"
-    cd $INSTALL_DIR/loot/workspace/ && tar -cvf ../$WORKSPACE.tar $WORKSPACE 
+    cd $INSTALL_DIR/loot/workspace/ && tar -cvf ../$WORKSPACE.tar $WORKSPACE
     cp -Rf $WORKSPACE ${WORKSPACE}_`date +"%Y-%m-%d"`
     echo "Done!"
     exit
