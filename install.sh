@@ -30,7 +30,7 @@ if [[ "$1" != "force" ]]; then
 fi
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
+   echo "This script must be run as root" 
    exit 1
 fi
 
@@ -59,7 +59,7 @@ UBUNTU_CHECK=$(egrep DISTRIB_ID /etc/lsb-release 2> /dev/null)
 if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	cp /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
 	cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
-	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null
+	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
 	chown root /root/.Xauthority
 	XAUTHORITY=/root/.Xauthority
 	snap install chromium 2> /dev/null
@@ -109,9 +109,8 @@ apt-get install -y xmlstarlet
 apt-get install -y net-tools
 apt-get install -y p7zip-full
 apt-get install -y jsbeautifier
+apt-get install -y theharvester 2> /dev/null
 apt-get install -y phantomjs 2> /dev/null
-#apt-get install -y openvas
-#apt-get install -y greenbone-security-assistant
 apt-get install -y chromium 2> /dev/null
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
@@ -146,14 +145,14 @@ cd $PLUGINS_DIR
 mkdir -p $GO_DIR 2> /dev/null
 
 echo -e "$OKBLUE[*]$RESET Downloading extensions...$RESET"
-git clone https://github.com/1N3/BruteX.git
-git clone https://github.com/1N3/Findsploit.git
+git clone https://github.com/1N3/BruteX.git 
+git clone https://github.com/1N3/Findsploit.git 
 git clone https://github.com/1N3/Goohak.git
 git clone https://github.com/1N3/BlackWidow
 git clone https://github.com/1N3/Sublist3r.git
-git clone https://github.com/nccgroup/shocker.git
+git clone https://github.com/nccgroup/shocker.git 
 git clone https://github.com/BishopFox/spoofcheck.git
-git clone https://github.com/arthepsy/ssh-audit
+git clone https://github.com/arthepsy/ssh-audit 
 git clone https://github.com/1N3/jexboss.git
 git clone https://github.com/maurosoria/dirsearch.git
 git clone https://github.com/jekyc/wig.git
@@ -162,24 +161,24 @@ git clone https://github.com/hisxo/gitGraber.git
 git clone https://github.com/1N3/LinkFinder
 git clone https://github.com/christophetd/censys-subdomain-finder.git
 git clone https://github.com/rbsec/dnscan.git
-git clone https://github.com/infosec-au/altdns.git
+git clone https://github.com/infosec-au/altdns.git 
 git clone https://github.com/blechschmidt/massdns.git
 git clone https://github.com/ProjectAnte/dnsgen
 git clone https://github.com/scipag/vulscan
 git clone https://github.com/laramies/metagoofil.git
 git clone https://github.com/achillean/shodan-python
-git clone https://github.com/Dionach/CMSmap.git
+git clone https://github.com/Dionach/CMSmap.git 
 git clone https://github.com/defparam/smuggler.git
 
 cd LinkFinder
-python setup.py install
+python setup.py install 
 cd ..
 pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt
 pip3 install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
-pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt
+pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
 cd altdns
-pip3 install -r requirements.txt
-python2 setup.py install
+pip3 install -r requirements.txt 
+python2 setup.py install 
 pip3 install py-altdns 2> /dev/null
 cd ..
 cd massdns
@@ -227,27 +226,21 @@ wget https://raw.githubusercontent.com/1N3/Exploits/master/defcon_webmin_unauth_
 wget https://github.com/OJ/gobuster/releases/download/v3.0.1/gobuster-linux-amd64.7z -O /tmp/gobuster.7z
 cd /tmp/
 7z e gobuster.7z
-chmod +rx gobuster
-mv gobuster /usr/bin/gobuster
+chmod +rx gobuster 
+mv gobuster /usr/bin/gobuster 
 cd $PLUGINS_DIR
-cd shodan-python
+cd shodan-python 
 python setup.py install
 cd ..
 pip3 install spyse.py
-pip3 install h8mail 2> /dev/null
+pip3 install h8mail 2> /dev/null 
 cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
 cd $PLUGINS_DIR
-
-# THEHARVESTER MANUAL INSTALL
-wget https://github.com/laramies/theHarvester/archive/V3.1.tar.gz
-tar -zxvf V3.1.tar.gz
-rm V3.1.tar.gz
-ln -fs /usr/share/sniper/plugins/theHarvester-3.1/theHarvester.py /usr/bin/theharvester-3.1
 
 # ARACHNI MANUAL INSTALL
 wget https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -O /tmp/arachni.tar.gz
 cd /tmp/
-tar -zxf arachni.tar.gz
+tar -zxf arachni.tar.gz 
 rm -f /tmp/arachni.tar.gz 2> /dev/null
 cd arachni-*
 mkdir -p /usr/share/arachni 2> /dev/null
@@ -269,7 +262,7 @@ cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/Findsploit/ && bash install.sh 2> /dev/null
 cd $PLUGINS_DIR/spoofcheck/ && pip3 install -r requirements.txt 2> /dev/null
 
-cd $INSTALL_DIR
+cd $INSTALL_DIR 
 mkdir $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
 mkdir $LOOT_DIR/nmap -p 2> /dev/null
@@ -285,11 +278,14 @@ ln -s $INSTALL_DIR/sniper /usr/bin/sniper
 ln -s $PLUGINS_DIR/Goohak/goohak /usr/bin/goohak
 ln -s $PLUGINS_DIR/dirsearch/dirsearch.py /usr/bin/dirsearch
 ln -s /usr/share/sniper /sniper 2> /dev/null
+ln -s /usr/share/sniper /usr/share/sn1per 2> /dev/null
 ln -s /usr/share/sniper/loot/workspace /workspace 2> /dev/null
 ln -s /usr/share/sniper/loot/workspace /root/workspace 2> /dev/null
 ln -s /usr/share/sniper /root/sniper 2> /dev/null
-ln -s /root/.sniper.conf /usr/share/sniper/conf/sniper.conf
-ln -s /root/.sniper_api_keys.conf /usr/share/sniper/conf/sniper_api_keys.conf
+ln -s /root/.sniper.conf /usr/share/sniper/conf/sniper.conf 2> /dev/null
+ln -s /root/.sniper_api_keys.conf /usr/share/sniper/conf/sniper_api_keys.conf 2> /dev/null
+mv /root/.sniper.conf /root/.sniper.conf.bak 2> /dev/null
+cp -vf /usr/share/sniper/sniper.conf /root/.sniper.conf 2> /dev/null
 msfdb init 2> /dev/null
 
 echo -e "$OKBLUE[*]$RESET Adding start menu and desktop shortcuts... $RESET"

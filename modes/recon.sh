@@ -1,8 +1,10 @@
 if [[ "$RECON" = "1" ]]; then
+  echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per recon scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per recon scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-    echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per recon scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per recon scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
+
+  touch $LOOT_DIR/domains/domains_old-$TARGET.txt 2> /dev/null
   cp $LOOT_DIR/domains/domains-$TARGET-full.txt $LOOT_DIR/domains/domains_old-$TARGET.txt 2> /dev/null
   
   if [[ "$SUBLIST3R" = "1" ]]; then
@@ -12,7 +14,7 @@ if [[ "$RECON" = "1" ]]; then
     python /usr/share/sniper/plugins/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null > /dev/null
     sed -ie 's/<BR>/\n/g' domains-$TARGET-full.txt 2> /dev/null
     mv -f $LOOT_DIR/domains/domains-$TARGET.txte $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
-    wc -l $LOOT_DIR/domains/domains-$TARGET.txt 
+    wc -l $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
   fi
   if [[ "$AMASS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -27,25 +29,25 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "$OKRED GATHERING REVERSE WHOIS DNS SUBDOMAINS VIA AMASS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     amass intel -whois -d $TARGET > $LOOT_DIR/domains/domains-$TARGET-reverse-whois.txt 2> /dev/null
-    wc -l $LOOT_DIR/domains/domains-$TARGET-reverse-whois.txt
+    wc -l $LOOT_DIR/domains/domains-$TARGET-reverse-whois.txt 2> /dev/null
   fi
   if [[ "$SUBFINDER" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBFINDER (THIS COULD TAKE A WHILE...) $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     subfinder -o $LOOT_DIR/domains/domains-$TARGET-subfinder.txt -b -d $TARGET -w $DOMAINS_DEFAULT -t 100 2>/dev/null
-    wc -l $LOOT_DIR/domains/domains-$TARGET-subfinder.txt 
+    wc -l $LOOT_DIR/domains/domains-$TARGET-subfinder.txt 2> /dev/null
   fi  
   if [[ "$DNSCAN" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED BRUTE FORCING DNS SUBDOMAINS VIA DNSCAN (THIS COULD TAKE A WHILE...) $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_QUICK -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
+    python3 $PLUGINS_DIR/dnscan/dnscan.py -d $TARGET -w $DOMAINS_QUICK -o $LOOT_DIR/domains/domains-dnscan-$TARGET.txt -i $LOOT_DIR/domains/domains-ips-$TARGET.txt
     cat $LOOT_DIR/domains/domains-dnscan-$TARGET.txt 2>/dev/null | grep $TARGET| awk '{print $3}' | sort -u >> $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
     dos2unix $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null
     sed -ie 's/<BR>/\n/g' $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
     mv -f $LOOT_DIR/domains/domains-$TARGET.txte $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
-    wc -l $LOOT_DIR/domains/domains-$TARGET.txt
+    wc -l $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
   fi
   echo ""
   if [[ "$CRTSH" = "1" ]]; then
@@ -55,11 +57,10 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING CERTIFICATE SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKBLUE"
+    echo -e "$RESET"
     curl -s https://crt.sh/?q=%25.$TARGET > $LOOT_DIR/domains/domains-$TARGET-presorted.txt
     cat $LOOT_DIR/domains/domains-$TARGET-presorted.txt | grep $TARGET | grep TD | sed -e 's/<//g' | sed -e 's/>//g' | sed -e 's/TD//g' | sed -e 's/BR/\n/g' | sed -e 's/\///g' | sed -e 's/ //g' | sed -n '1!p' | grep -v "*" | sort -u > $LOOT_DIR/domains/domains-$TARGET-crt.txt
-    #cat $LOOT_DIR/domains/domains-$TARGET-crt.txt
-    wc -l $LOOT_DIR/domains/domains-$TARGET-crt.txt
+    wc -l $LOOT_DIR/domains/domains-$TARGET-crt.txt 2> /dev/null
     echo ""
     echo -e "${OKRED}[+] Domains saved to: $LOOT_DIR/domains/domains-$TARGET-crt.txt"
   fi
@@ -69,14 +70,14 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKBLUE"
     spyse -target $TARGET --subdomains | grep $TARGET > $LOOT_DIR/domains/domains-$TARGET-spyse.txt
-    wc -l $LOOT_DIR/domains/domains-$TARGET-spyse.txt
+    wc -l $LOOT_DIR/domains/domains-$TARGET-spyse.txt 2> /dev/null
   fi
   if [[ "$CENSYS_SUBDOMAINS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING CENSYS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     python $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | egrep -v "Searching|Found" > $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null 
-    wc -l $LOOT_DIR/domains/domains-$TARGET-censys.txt
+    wc -l $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null
   fi
   if [[ "$SHODAN" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -86,15 +87,15 @@ if [[ "$RECON" = "1" ]]; then
     shodan search "hostname:*.$TARGET" > $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null 
     awk '{print $3}' $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null | grep -v "\;" > $LOOT_DIR/domains/domains-$TARGET-shodan-sorted.txt 2> /dev/null
     awk '{print $1}' $LOOT_DIR/domains/shodan-$TARGET.txt 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2>/dev/null
-    wc -l $LOOT_DIR/domains/domains-$TARGET-shodan-sorted.txt 
-    wc -l $LOOT_DIR/ips/ips-all-unsorted.txt
+    wc -l $LOOT_DIR/domains/domains-$TARGET-shodan-sorted.txt 2> /dev/null
+    wc -l $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
   fi
   if [[ "$PROJECT_SONAR" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING PROJECT SONAR SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     curl -fsSL "https://dns.bufferover.run/dns?q=.$TARGET" | sed 's/\"//g' | cut -f2 -d "," | grep -v "<BR>" | sort -u | grep $TARGET > $LOOT_DIR/domains/domains-$TARGET-projectsonar.txt 2> /dev/null
-    wc -l $LOOT_DIR/domains/domains-$TARGET-projectsonar.txt 
+    wc -l $LOOT_DIR/domains/domains-$TARGET-projectsonar.txt 2> /dev/null
   fi
   if [[ "$GITHUB_SUBDOMAINS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -109,7 +110,7 @@ if [[ "$RECON" = "1" ]]; then
     curl -s "https://rapiddns.io/subdomain/$TARGET?full=1&down=1#exportData()" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*" | sort -u | grep "$TARGET" | cut -d\/ -f3 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-rapiddns.txt 2> /dev/null
   fi
   cat $LOOT_DIR/domains/domains-$TARGET-crt.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
-  cat $LOOT_DIR/domains/domains-$TARGET-spyse.txt /dev/null > $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
+  cat $LOOT_DIR/domains/domains-$TARGET-spyse.txt /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-amass-sorted.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-subfinder.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
@@ -121,14 +122,14 @@ if [[ "$RECON" = "1" ]]; then
   cat $LOOT_DIR/domains/targets.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   sed -i '/^$/d' $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   sed -i '/^$/d' $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
-  cat $LOOT_DIR/domains/domains-$TARGET.txt | grep -v "*" | grep -v "?" > $LOOT_DIR/domains/domains-$TARGET-presorted-nowildcards.txt
-  wc -l $LOOT_DIR/domains/domains-$TARGET.txt
+  cat $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null | grep -v "*" | grep -v "?" 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-presorted-nowildcards.txt
+  wc -l $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
   if [[ "$SUBBRUTE_DNS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING SUBBRUTE SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     python "$INSTALL_DIR/plugins/massdns/scripts/subbrute.py" $INSTALL_DIR/wordlists/domains-all.txt $TARGET 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-subbrute.txt 2> /dev/null
-    wc -l $LOOT_DIR/domains/domains-$TARGET-subbrute.txt
+    wc -l $LOOT_DIR/domains/domains-$TARGET-subbrute.txt 2> /dev/null
   fi
   if [[ "$ALT_DNS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -136,45 +137,52 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo "$TARGET" > /tmp/domain 2> /dev/null
     altdns -i /tmp/domain -w $INSTALL_DIR/wordlists/altdns.txt -o $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null 
-    wc -l $LOOT_DIR/domains/domains-$TARGET-altdns.txt 
+    wc -l $LOOT_DIR/domains/domains-$TARGET-altdns.txt 2> /dev/null
   fi
   if [[ "$DNSGEN" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING DNSGEN SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     dnsgen /tmp/domain > $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt 2> /dev/null 
-    wc -l $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt 
+    wc -l $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt 2> /dev/null
   fi
   if [[ "$MASS_DNS" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RUNNING MASSDNS ON SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     sort -u $LOOT_DIR/domains/domains-$TARGET-presorted-nowildcards.txt $LOOT_DIR/domains/domains-$TARGET-dnsgen.txt $LOOT_DIR/domains/domains-$TARGET-altdns.txt $LOOT_DIR/domains/domains-$TARGET-subbrute.txt 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-alldns.txt 2> /dev/null 
-    wc -l $LOOT_DIR/domains/domains-$TARGET-alldns.txt
+    wc -l $LOOT_DIR/domains/domains-$TARGET-alldns.txt 2> /dev/null
     massdns -r /usr/share/sniper/plugins/massdns/lists/resolvers.txt $LOOT_DIR/domains/domains-$TARGET-alldns.txt -o S -t A -w $LOOT_DIR/domains/domains-$TARGET-massdns.txt > /dev/null
-    awk -F ". " '{print $1}' $LOOT_DIR/domains/domains-$TARGET-massdns.txt | grep -v "*" | sort -u > $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt
-    wc -l $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt
+    awk -F ". " '{print $1}' $LOOT_DIR/domains/domains-$TARGET-massdns.txt 2> /dev/null | grep -v "*" | sort -u > $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt 2> /dev/null
+    wc -l $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt 2> /dev/null
     cat $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt 2> /dev/null >> $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
-    grep "CNAME" $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u > $LOOT_DIR/domains/domains-$TARGET-massdns-CNAME.txt
-    wc -l $LOOT_DIR/domains/domains-$TARGET-massdns-CNAME.txt
-    grep "A " $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u > $LOOT_DIR/ips/massdns-A-records-$TARGET.txt
-    wc -l $LOOT_DIR/ips/massdns-A-records-$TARGET.txt
-    cat $LOOT_DIR/ips/massdns-A-records-$TARGET.txt >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
-    wc -l $LOOT_DIR/ips/ips-all-unsorted.txt
+    #grep "CNAME" $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u > $LOOT_DIR/domains/domains-$TARGET-massdns-CNAME.txt
+    #wc -l $LOOT_DIR/domains/domains-$TARGET-massdns-CNAME.txt
+    #grep "A " $LOOT_DIR/domains/domains-$TARGET-massdns.txt | awk '{print $3}' | grep -v "*" | sort -u > $LOOT_DIR/ips/massdns-A-records-$TARGET.txt
+    #wc -l $LOOT_DIR/ips/massdns-A-records-$TARGET.txt
+    #cat $LOOT_DIR/ips/massdns-A-records-$TARGET.txt >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
+    #wc -l $LOOT_DIR/ips/ips-all-unsorted.txt
   fi
   cat $LOOT_DIR/domains/domains-$TARGET-presorted.txt $LOOT_DIR/domains/domains-$TARGET-massdns-sorted.txt 2> /dev/null | sort -u 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-full.txt
   sed -ie 's/<BR>/\n/g' $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null
   mv -f $LOOT_DIR/domains/domains-$TARGET-full.txte $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null
-  wc -l $LOOT_DIR/domains/domains-$TARGET-full.txt 
+  wc -l $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null
   cat $LOOT_DIR/domains/domains-$TARGET-full.txt >> $LOOT_DIR/scans/updated.txt 2> /dev/null
   #rm -f $LOOT_DIR/domains/domains-$TARGET-presorted.txt 2> /dev/null
   diff $LOOT_DIR/domains/domains_old-$TARGET.txt $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null | grep "> " 2> /dev/null | awk '{print $2}' 2> /dev/null > $LOOT_DIR/domains/domains_new-$TARGET.txt
-  wc -l $LOOT_DIR/domains/domains_new-$TARGET.txt
-  if [[ "$SLACK_NOTIFICATIONS_DOMAINS_NEW" == "1" ]] && [[ -s "$LOOT_DIR/domains/domains_new-$TARGET.txt" ]]; then
-    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-    /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/domains/domains_new-$TARGET.txt"
-    echo "[xerosecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
-    cat $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null >> $LOOT_DIR/scans/notifications.txt 2> /dev/null 
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo -e "$OKRED NEW SUBDOMAINS $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  wc -l $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null
+  cat $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null
+
+  if [[ $(wc -c $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null | awk '{print $1}') > 3 ]]; then
+    echo "[xerosecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+    cat $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null >> $LOOT_DIR/scans/notifications_new.txt 2> /dev/null 
+    if [[ "$SLACK_NOTIFICATIONS_DOMAINS_NEW" == "1" ]]; then
+      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+      /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/domains/domains_new-$TARGET.txt"
+    fi
   fi
   echo -e "$RESET"
   if [[ "$STATIC_GREP_SEARCH" = "1" ]]; then
@@ -267,8 +275,8 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     sniper -f $LOOT_DIR/domains/domains-$TARGET-full.txt -m flyover -w $WORKSPACE
   fi
+  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per recon scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-    echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per recon scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
 fi

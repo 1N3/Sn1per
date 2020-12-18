@@ -22,7 +22,7 @@ if [[ "$MODE" = "nuke" ]]; then
       fi
       args="$args --noreport --noloot"
       TARGET="$a"
-      args="$args -t $TARGET"
+      args="$args -t $TARGET -b"
       echo -e "$OKRED "
       echo -e "$OKRED                              ____"
       echo -e "$OKRED                      __,-~~/~    \`---."
@@ -40,13 +40,10 @@ if [[ "$MODE" = "nuke" ]]; then
       echo -e "$OKORANGE + -- --=[WARNING! Nuking ALL target! $RESET"
       echo -e "$RESET"
       if [[ ! -z "$WORKSPACE_DIR" ]]; then
-
         echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-
         sniper $args | tee $WORKSPACE_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
       else
         echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
-        
         sniper $args | tee $LOOT_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
       fi
       args=""

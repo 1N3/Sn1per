@@ -4,7 +4,7 @@ if [[ "$REPORT" = "1" ]]; then
   if [[ "$OSINT" = "1" ]]; then
     args="$args -o"
   fi
-  if [[ "$AUTOBRUTE" = "1" ]]; then
+  if [[ "$AUTO_BRUTE" = "1" ]]; then
     args="$args -b"
   fi
   if [[ "$FULLNMAPSCAN" = "1" ]]; then
@@ -43,15 +43,19 @@ if [[ ! -z $WORKSPACE ]]; then
 fi
 
 echo "$TARGET" >> $LOOT_DIR/domains/targets.txt
-echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks-unsorted.txt 2> /dev/null
-mv -f $LOOT_DIR/scans/tasks-unsorted.txt /dev/null $LOOT_DIR/scans/tasks.txt 2> /dev/null
+if [[ "$MODE" = "" ]]; then
+  MODE="normal"
+  echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
+else
+  echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
+fi
 echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/${TARGET}-${MODE}.txt 2> /dev/null
 echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
 ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
+echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
 if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-  echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 fi
 
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -60,7 +64,6 @@ echo -e "${OKGREEN}=============================================================
 dig all +short $TARGET > $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
 dig all +short -x $TARGET >> $LOOT_DIR/nmap/dns-$TARGET.txt 2> /dev/null
 host $TARGET 2> /dev/null | grep address 2> /dev/null | awk '{print $4}' 2> /dev/null >> $LOOT_DIR/ips/ips-all-unsorted.txt 2> /dev/null
-#dnsenum -f $INSTALL_DIR/wordlists/vhosts.txt --noreverse $TARGET 2> /dev/null
 mv -f *_ips.txt $LOOT_DIR/ips/ 2>/dev/null
 
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -91,14 +94,6 @@ elif [[ ! -z "$PORT" ]]; then
 else
   nmap -p $DEFAULT_PORTS $NMAP_OPTIONS --open $TARGET -oX $LOOT_DIR/nmap/nmap-$TARGET.xml | sed -r "s/</\&lh\;/g" | tee $LOOT_DIR/nmap/nmap-$TARGET.txt
 fi
-echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
-echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-if [[ -z "$PORT" ]]; then
-  nmap -sU $NMAP_OPTIONS -p $DEFAULT_UDP_PORTS --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
-else
-  nmap -sU $NMAP_OPTIONS -p $PORT --open $TARGET -oX $LOOT_DIR/nmap/nmap-udp-$TARGET.xml
-fi
 
 rm -f $LOOT_DIR/nmap/ports-$TARGET.txt 2> /dev/null
 for PORT in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml $LOOT_DIR/nmap/nmap-$TARGET-*.xml 2>/dev/null | egrep 'state="open"' | cut -d' ' -f3 | cut -d\" -f2 | sort -u | grep '[[:digit:]]'`; do
@@ -118,11 +113,15 @@ if [[ "$SLACK_NOTIFICATIONS_NMAP" == "1" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/ports-$TARGET.txt"
 fi
 
+PORT_CHANGE=$(cat $LOOT_DIR/nmap/ports-$TARGET.diff 2> /dev/null)
+if [[ ${#PORT_CHANGE} -ge 2 ]]; then
+  echo "[xerosecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+  cat $LOOT_DIR/nmap/ports-$TARGET.diff 2> /dev/null | egrep "<|>" >> $LOOT_DIR/scans/notifications_new.txt
+fi
+
 if [[ "$SLACK_NOTIFICATIONS_NMAP_DIFF" == "1" ]] && [[ -s "$LOOT_DIR/nmap/ports-$TARGET.diff" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/ports-$TARGET.diff"
-  echo "[xerosecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
-  cat $LOOT_DIR/nmap/ports-$TARGET.diff | egrep "<|>" >> $LOOT_DIR/scans/notifications.txt
 fi
 
 if [[ "$HTTP_PROBE" == "1" ]]; then
@@ -195,12 +194,12 @@ port_28017=`grep 'portid="28017"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_49180=`grep 'portid="49180"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 port_49152=`grep 'portid="49152"' $LOOT_DIR/nmap/nmap-$TARGET.xml | grep open`
 
-port_67=`grep 'portid="67"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
-port_68=`grep 'portid="68"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
-port_69=`grep 'portid="69"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
-port_123=`grep 'portid="123"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
-port_161=`grep 'portid="161"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
-port_500=`grep 'portid="500"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml | grep open | grep -v filtered`
+port_67=`grep 'portid="67"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml 2> /dev/null | grep open | grep -v filtered`
+port_68=`grep 'portid="68"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml 2> /dev/null | grep open | grep -v filtered`
+port_69=`grep 'portid="69"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml 2> /dev/null | grep open | grep -v filtered`
+port_123=`grep 'portid="123"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml 2> /dev/null  | grep open | grep -v filtered`
+port_161=`grep 'portid="161"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml 2> /dev/null | grep open | grep -v filtered`
+port_500=`grep 'portid="500"' $LOOT_DIR/nmap/nmap-udp-$TARGET.xml 2> /dev/null | grep open | grep -v filtered`
 
 if [[ -z "$port_21" ]];
 then
@@ -396,120 +395,6 @@ else
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     nmap -A -sV -Pn -v --script-timeout 90 --script=finger*,/usr/share/nmap/scripts/vulners -p 79 $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port79.txt
   fi
-fi
-
-if [[ -z "$port_80" ]];
-then
-  echo -e "$OKRED + -- --=[Port 80 closed... skipping.$RESET"
-else
-  echo -e "$OKORANGE + -- --=[Port 80 opened... running tests...$RESET"
-  echo "$TARGET" >> $LOOT_DIR/web/webhosts-unsorted.txt 2> /dev/null
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [[ "$VERBOSE" == "1" ]]; then
-    echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null$RESET"
-    echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null$RESET"
-  fi
-  wget -qO- -T 1 --connect-timeout=5 --read-timeout=10 --tries=1 http://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 --max-time 10 -I -s --insecure -R http://$TARGET | tee $LOOT_DIR/web/headers-http-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 -s -R -L --insecure http://$TARGET > $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 --max-time 10 -I -s --insecure -R -X OPTIONS http://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port80.txt 2> /dev/null
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | grep generator | cut -d\" -f4 2> /dev/null | tee $LOOT_DIR/web/webgenerator-http-$TARGET.txt 2> /dev/null
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED DISPLAYING COMMENTS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | grep "<\!\-\-" 2> /dev/null | tee $LOOT_DIR/web/webcomments-http-$TARGET 2> /dev/null
-  sed -r "s/</\&lh\;/g" $LOOT_DIR/web/webcomments-http-$TARGET 2> /dev/null > $LOOT_DIR/web/webcomments-http-$TARGET.txt 2> /dev/null
-  rm -f $LOOT_DIR/web/webcomments-http-$TARGET 2> /dev/null
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  cat $LOOT_DIR/web/websource-http-$TARGET.txt 2> /dev/null | egrep "\"" | cut -d\" -f2 | grep  \/ | sort -u 2> /dev/null | tee $LOOT_DIR/web/weblinks-http-$TARGET.txt 2> /dev/null
-  if [[ "$WAFWOOF" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED CHECKING FOR WAF $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    wafw00f http://$TARGET | tee $LOOT_DIR/web/waf-$TARGET-http.raw 2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/waf-$TARGET-http.raw > $LOOT_DIR/web/waf-$TARGET-http.txt 2> /dev/null
-    rm -f $LOOT_DIR/web/waf-$TARGET-http.raw 2> /dev/null
-    echo ""
-  fi
-  if [[ "$WHATWEB" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED GATHERING HTTP INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    whatweb -a 3 http://$TARGET | tee $LOOT_DIR/web/whatweb-$TARGET-http.raw  2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/whatweb-$TARGET-http.raw > $LOOT_DIR/web/whatweb-$TARGET-http.txt 2> /dev/null
-    rm -f $LOOT_DIR/web/whatweb-$TARGET-http.raw 2> /dev/null
-  fi
-  if [[ "$WIG" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED GATHERING SERVER INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python3 $PLUGINS_DIR/wig/wig.py -d -q http://$TARGET | tee $LOOT_DIR/web/wig-$TARGET-http
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-http > $LOOT_DIR/web/wig-$TARGET-http.txt 2> /dev/null
-    rm -f $LOOT_DIR/web/wig-$TARGET-http 2> /dev/null
-  fi
-  if [[ "$WEBTECH" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    webtech -u http://$TARGET | grep \- | cut -d- -f2- | tee $LOOT_DIR/web/webtech-$TARGET-http.txt
-  fi
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED SCANNING FOR VIRTUAL HOSTS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [[ "$VHOSTS" == "1" ]]; then
-    gobuster vhost -u http://$TARGET -w $INSTALL_DIR/wordlists/vhosts.txt -o $LOOT_DIR/osint/vhosts-http-$TARGET.txt  2> /dev/null
-  fi
-  if [[ "$NMAP_SCRIPTS" == "1" ]]; then
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      nmap -Pn -p 80 -sV -v --script-timeout 90 --script=http-auth-finder,http-auth,http-brute,/usr/share/nmap/scripts/vulners,http-default-accounts --script-args http-default-accounts.fingerprintfile=/usr/share/sniper/bin/http-default-accounts-fingerprints-nndefaccts.lua $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port80
-      sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port80.txt 2> /dev/null
-      rm -f $LOOT_DIR/output/nmap-$TARGET-port80 2> /dev/null
-  fi
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED SAVING SCREENSHOTS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [[ $CUTYCAPT = "1" ]]; then
-    if [[ $DISTRO == "blackarch"  ]]; then
-      /bin/CutyCapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
-    else
-      cutycapt --url=http://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port80.jpg --insecure --max-wait=5000 2> /dev/null
-    fi
-  fi
-  if [[ $WEBSCREENSHOT = "1" ]]; then
-    cd $LOOT_DIR
-    python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium http://$TARGET:80
-  fi
-  
-  source $INSTALL_DIR/modes/normal_webporthttp.sh
-
-  cd $INSTALL_DIR
-  PORT="80"
-  SSL="false"
-  source $INSTALL_DIR/modes/web_autopwn.sh
-
-  if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
-      source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
-
-      for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
-        source $file
-      done
-  fi
-
-  source $INSTALL_DIR/modes/osint_stage_2.sh
-
 fi
 
 if [[ -z "$port_110" ]];
@@ -718,135 +603,6 @@ else
   echo -e "$OKRED RUNNING LDAP ANONYMOUS SEARCH QUERY $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   ldapsearch -h $TARGET 389 -x -s base -b '' "(objectClass=*)" "*" + | tee $LOOT_DIR/output/ldapsearch-$TARGET-port389.txt
-fi
-
-if [[ -z "$port_443" ]];
-then
-  echo -e "$OKRED + -- --=[Port 443 closed... skipping.$RESET"
-else
-  echo -e "$OKORANGE + -- --=[Port 443 opened... running tests...$RESET"
-  echo "$TARGET" >> $LOOT_DIR/web/webhosts-unsorted.txt 2> /dev/null
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [[ "$VERBOSE" == "1" ]]; then
-    echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN wget -qO- -T 1 --connect-timeout=3 --read-timeout=3 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null$RESET"
-    echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$OKGREEN curl --connect-timeout=5 --max-time 3 -I -s -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null$RESET"
-  fi
-  wget -qO- -T 1 --connect-timeout=5 --read-timeout=10 --tries=1 https://$TARGET |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-https-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 --max-time 10 -I -s --insecure -R https://$TARGET | tee $LOOT_DIR/web/headers-https-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 -s -R -L --insecure https://$TARGET > $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null
-  curl --connect-timeout 5 --max-time 10 -I -s --insecure -R -X OPTIONS https://$TARGET | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port443.txt 2> /dev/null
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  cat $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null | grep generator | cut -d\" -f4 2> /dev/null | tee $LOOT_DIR/web/webgenerator-https-$TARGET.txt 2> /dev/null
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED DISPLAYING COMMENTS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  cat $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null | grep "<\!\-\-" 2> /dev/null | tee $LOOT_DIR/web/webcomments-https-$TARGET 2> /dev/null
-  sed -r "s/</\&lh\;/g" $LOOT_DIR/web/webcomments-https-$TARGET 2> /dev/null > $LOOT_DIR/web/webcomments-https-$TARGET.txt 2> /dev/null
-  rm -f $LOOT_DIR/web/webcomments-https-$TARGET 2> /dev/null
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED DISPLAYING SITE LINKS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  cat $LOOT_DIR/web/websource-https-$TARGET.txt 2> /dev/null | egrep "\"" | cut -d\" -f2 | grep  \/ | sort -u 2> /dev/null | tee $LOOT_DIR/web/weblinks-https-$TARGET.txt 2> /dev/null
-  if [[ "$WAFWOOF" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED CHECKING FOR WAF $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    wafw00f https://$TARGET | tee $LOOT_DIR/web/waf-$TARGET-https.raw 2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/waf-$TARGET-https.raw > $LOOT_DIR/web/waf-$TARGET-https.txt 2> /dev/null
-    rm -f $LOOT_DIR/web/waf-$TARGET-https.raw 2> /dev/null
-    echo ""
-  fi
-  if [[ "$WHATWEB" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED GATHERING HTTP INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    whatweb -a 3 https://$TARGET | tee $LOOT_DIR/web/whatweb-$TARGET-https.raw  2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/whatweb-$TARGET-https.raw > $LOOT_DIR/web/whatweb-$TARGET-https.txt 2> /dev/null
-    rm -f $LOOT_DIR/web/whatweb-$TARGET-https.raw 2> /dev/null
-  fi
-  if [[ "$WIG" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED GATHERING SERVER INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python3 $PLUGINS_DIR/wig/wig.py -d -q https://$TARGET | tee $LOOT_DIR/web/wig-$TARGET-https
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wig-$TARGET-https > $LOOT_DIR/web/wig-$TARGET-https.txt 2> /dev/null
-    rm -f $LOOT_DIR/web/wig-$TARGET-https 2> /dev/null
-  fi
-  if [[ "$WEBTECH" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED GATHERING WEB FINGERPRINT $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    webtech -u https://$TARGET | grep \- | cut -d- -f2- | tee $LOOT_DIR/web/webtech-$TARGET-https.txt
-  fi
-  if [[ "$NMAP_SCRIPTS" == "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED RUNNING NMAP HTTP SCRIPTS $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    nmap -sV -Pn -p 443 -v --script-timeout 90 --script=http-auth-finder,http-auth,http-brute,/usr/share/nmap/scripts/vulners,http-default-accounts $TARGET | tee $LOOT_DIR/output/nmap-$TARGET-port443
-    sed -r "s/</\&lh\;/g" $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null > $LOOT_DIR/output/nmap-$TARGET-port443.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/nmap-$TARGET-port443 2> /dev/null
-  fi  
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED SCANNING FOR VIRTUAL HOSTS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [[ "$VHOSTS" == "1" ]]; then
-    gobuster vhost -u https://$TARGET -w $INSTALL_DIR/wordlists/vhosts.txt -o $LOOT_DIR/osint/vhosts-https-$TARGET.txt  2> /dev/null
-  fi
-  if [[ "$SSL" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED GATHERING SSL/TLS INFO $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    sslscan --no-failed $TARGET | tee $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/sslscan-$TARGET.raw > $LOOT_DIR/web/sslscan-$TARGET.txt 2> /dev/null
-    rm -f $LOOT_DIR/web/sslscan-$TARGET.raw 2> /dev/null
-    echo ""
-  fi
-  if [[ "$SSL_INSECURE" == "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED CHECKING FOR INSECURE SSL/TLS CONFIGURATIONS $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    curl https://$TARGET 2> $LOOT_DIR/web/curldebug-$TARGET.txt > /dev/null
-  fi
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED SAVING SCREENSHOTS $RESET"
-  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [[ $DISTRO == "blackarch"  ]]; then
-    /bin/CutyCapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
-  else
-    cutycapt --url=https://$TARGET --out=$LOOT_DIR/screenshots/$TARGET-port443.jpg --insecure --max-wait=5000 2> /dev/null
-  fi
-  echo -e "$OKRED[+]$RESET Screenshot saved to $LOOT_DIR/screenshots/$TARGET-port443.jpg"
-
-  if [[ $WEBSCREENSHOT = "1" ]]; then
-    cd $LOOT_DIR
-    python2 $INSTALL_DIR/bin/webscreenshot.py -r chromium https://$TARGET:443
-  fi
-
-  source $INSTALL_DIR/modes/normal_webporthttps.sh
-
-  cd $INSTALL_DIR
-  PORT="443"
-  SSL="true"
-  source $INSTALL_DIR/modes/web_autopwn.sh
-
-  if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
-      source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
-
-      for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
-        source $file
-      done
-  fi
-
-  source $INSTALL_DIR/modes/osint_stage_2.sh
-
 fi
 
 if [[ -z "$port_445" ]]; then
@@ -1445,22 +1201,22 @@ else
   fi
 fi
 
-if [[ $YASUO = "1" ]]; then
+if [[ "$AUTO_VULNSCAN" = "1" ]]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED SCANNING FOR COMMON VULNERABILITIES $RESET"
+  echo -e "$OKRED PERFORMING AUTO VULNSCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  if [[ $DISTRO == "blackarch" ]]; then
-    /bin/yasuo -r $TARGET -b all | tee $LOOT_DIR/output/yasuo-$TARGET.txt 2> /dev/null
-    tee $LOOT_DIR/output/yasuo-$TARGET.raw 2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/yasuo-$TARGET.raw > $LOOT_DIR/output/yasuo-$TARGET.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/yasuo-$TARGET.raw 2> /dev/null
-  else
-    cd $PLUGINS_DIR/yasuo
-    ruby yasuo.rb -r $TARGET -b all | tee $LOOT_DIR/output/yasuo-$TARGET.raw 2> /dev/null
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/output/yasuo-$TARGET.raw 2> /dev/null > $LOOT_DIR/output/yasuo-$TARGET.txt 2> /dev/null
-    rm -f $LOOT_DIR/output/yasuo-$TARGET.raw 2> /dev/null
-  fi
+  sniper -t $TARGET -m vulnscan -w $WORKSPACE
 fi
+
+echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+echo -e "$OKRED SCANNING ALL HTTP PORTS $RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+for a in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml | grep state\=\"open\" | grep http | grep -v https | grep -v ssl | grep tcp | cut -d\" -f4`; do sniper -t $TARGET -m webporthttp -p $a -w $WORKSPACE; done;
+
+echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+echo -e "$OKRED SCANNING ALL HTTPS PORTS $RESET"
+echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+for a in `cat $LOOT_DIR/nmap/nmap-$TARGET.xml | grep state\=\"open\" | egrep 'https|ssl' | grep tcp | cut -d\" -f4`; do sniper -t $TARGET -m webporthttps -p $a -w $WORKSPACE; done;
 
 if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
     source $INSTALL_DIR/modes/sc0pe-network-scan.sh
@@ -1493,9 +1249,10 @@ echo -e "${OKGREEN}=============================================================
 echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
 rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
 ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+
+echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
 if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
   /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 fi
 if [[ "$LOOT" = "1" ]] && [[ -z "$NOLOOT" ]]; then
   loot

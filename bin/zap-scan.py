@@ -496,11 +496,12 @@ time.sleep(5)
 # If you want to retrieve alerts:
 ## pprint(zap.core.alerts(baseurl=target, start=None, count=None))
 
-# To retrieve ZAP report in XML or HTML format
-## print('XML report')
-## core.xmlreport()
 print('HTML report:')
 pprint(core.htmlreport())
+
+# To retrieve ZAP report in XML or HTML format
+print('XML report')
+pprint(core.xmlreport())
 
 if shutdownOnceFinished:
     # Shutdown ZAP once finished

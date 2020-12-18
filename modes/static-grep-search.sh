@@ -1,4 +1,4 @@
-if [[ $STATIC_GREP_SEARCH ]]; then
+if [[ $STATIC_GREP_SEARCH == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING INTERESTING EXTENSIONS STATIC ANALYSIS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

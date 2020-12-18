@@ -8,7 +8,7 @@ if [[ "$MODE" = "airstrike" ]]; then
   if [[ "$REPORT" = "1" ]]; then
     for a in `cat $FILE`;
     do
-      if [[ "$AUTOBRUTE" = "1" ]]; then
+      if [[ "$AUTO_BRUTE" = "1" ]]; then
         args="$args -b"
       fi
       if [[ "$FULLNMAPSCAN" = "1" ]]; then
@@ -61,9 +61,9 @@ if [[ "$MODE" = "airstrike" ]]; then
       if [[ ! -z "$WORKSPACE_DIR" ]]; then
         echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
         echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$TARGET-$MODE.txt
+        echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
         if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
           /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-          echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
         fi
         sniper $args | tee $WORKSPACE_DIR/output/sniper-$TARGET-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
       else
@@ -74,9 +74,9 @@ if [[ "$MODE" = "airstrike" ]]; then
       args=""
     done
   fi
+  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-    echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
   fi
   if [[ "$LOOT" = "1" ]]; then
     loot

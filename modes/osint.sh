@@ -1,7 +1,7 @@
 if [[ "$OSINT" = "1" ]]; then
+	echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-		echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 	fi	
 	if [[ "$WHOIS" == "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -34,7 +34,7 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		cp -f /etc/theHarvester/api-keys.yaml ~/api-keys.yaml 2> /dev/null
 		cd ~ 2> /dev/null
-		theharvester-3.1 -d $TARGET -b baidu,bing,bingapi,certspotter,crtsh,dnsdumpster,dogpile,duckduckgo,google,hunter,intelx,linkedin,linkedin_links,netcraft,otx,securityTrails,spyse,threatcrowd,trello,twitter,vhost,virustotal,yahoo 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null 
+		theHarvester -d $TARGET -b all 2> /dev/null | tee $LOOT_DIR/osint/theharvester-$TARGET.txt 2> /dev/null 
 		cd $INSTALL_DIR 2> /dev/null
 		if [[ "$SLACK_NOTIFICATIONS_THEHARVESTER" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/theharvester-$TARGET.txt"
@@ -107,9 +107,9 @@ if [[ "$OSINT" = "1" ]]; then
 		diff $LOOT_DIR/osint/github-urls-$ORGANIZATION.txt $LOOT_DIR/osint/github-urls-$ORGANIZATION.old 2> /dev/null > $LOOT_DIR/osint/github-urls-$ORGANIZATION.diff
 		cat $LOOT_DIR/osint/github-urls-$ORGANIZATION.diff 2> /dev/null
 		#python3 gitGraber.py -k wordlists/keywords.txt -q "\"$TARGET\"" -s 2>&1 | tee $LOOT_DIR/osint/gitGrabber-$TARGET.txt 2> /dev/null
-	fi	
+	fi
+	echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-		echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 	fi
 fi

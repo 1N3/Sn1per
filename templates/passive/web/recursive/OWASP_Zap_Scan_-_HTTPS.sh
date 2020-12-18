@@ -61,13 +61,13 @@ awk 'FNR==58' /tmp/risk.txt /tmp/vulns.txt /tmp/desc.txt 2> /dev/null | sed -n -
 awk 'FNR==59' /tmp/risk.txt /tmp/vulns.txt /tmp/desc.txt 2> /dev/null | sed -n -e 'H;${x;s/\n/,/g;s/^,//;p;}' >> /tmp/report.csv  2> /dev/null
 awk 'FNR==60' /tmp/risk.txt /tmp/vulns.txt /tmp/desc.txt 2> /dev/null | sed -n -e 'H;${x;s/\n/,/g;s/^,//;p;}' >> /tmp/report.csv  2> /dev/null
 
-egrep '^High' /tmp/report.csv | awk -v AWK_TARGET="$TARGET" -F',' '$50=AWK_TARGET{print "P2 - HIGH, " $2 ", http://" $50 ", " $3}' > /tmp/report_final.csv 2> /dev/null
-egrep '^Medium' /tmp/report.csv | awk -v AWK_TARGET="$TARGET" -F',' '$50=AWK_TARGET{print "P3 - MEDIUM, " $2 ", http://" $50 ", " $3}' >> /tmp/report_final.csv 2> /dev/null
-egrep '^Low' /tmp/report.csv | awk -v AWK_TARGET="$TARGET" -F',' '$50=AWK_TARGET{print "P4 - LOW, " $2 ", http://" $50 ", " $3}' >> /tmp/report_final.csv 2> /dev/null
-egrep '^Informational' /tmp/report.csv | awk -v AWK_TARGET="$TARGET" -F',' '$50=AWK_TARGET{print "P5 - INFO, " $2 ", http://" $50 ", " $3}' >> /tmp/report_final.csv 2> /dev/null
+egrep '^High' /tmp/report.csv 2> /dev/null | awk -v AWK_TARGET="$TARGET" -F',' '$50=AWK_TARGET{print "P2 - HIGH, " $2 ", http://" $50 ", " $3}' > /tmp/report_final.csv 2> /dev/null
+egrep '^Medium' /tmp/report.csv 2> /dev/null | awk -v AWK_TARGET="$TARGET" -F',' '$50=AWK_TARGET{print "P3 - MEDIUM, " $2 ", http://" $50 ", " $3}' >> /tmp/report_final.csv 2> /dev/null
+egrep '^Low' /tmp/report.csv 2> /dev/null | awk -v AWK_TARGET="$TARGET" -F',' '$50=AWK_TARGET{print "P4 - LOW, " $2 ", http://" $50 ", " $3}' >> /tmp/report_final.csv 2> /dev/null
+egrep '^Informational' /tmp/report.csv 2> /dev/null | awk -v AWK_TARGET="$TARGET" -F',' '$50=AWK_TARGET{print "P5 - INFO, " $2 ", http://" $50 ", " $3}' >> /tmp/report_final.csv 2> /dev/null
 
 mv -f /tmp/report_final.csv $LOOT_DIR/vulnerabilities/sc0pe-$TARGET-$OUTPUT_NAME.txt 2> /dev/null
 
 cat $LOOT_DIR/vulnerabilities/sc0pe-$TARGET-$OUTPUT_NAME.txt 2> /dev/null
 
-rm -f /tmp/report_final.csv /tmp/report.csv /tmp/risk.txt /tmp/vulns.txt /tmp/desc.txt 2> /dev/null 2> /dev/null
+rm -f /tmp/report_final.csv /tmp/report.csv /tmp/risk.txt /tmp/vulns.txt /tmp/desc.txt 2> /dev/null

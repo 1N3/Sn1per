@@ -48,9 +48,10 @@ if [[ "$MODE" = "webscan" ]]; then
 	touch $LOOT_DIR/scans/$TARGET-webscan.txt 2> /dev/null 
 	echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
 	ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+
+	echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-		echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 	fi
 	
     if [[ "$BURP_SCAN" == "1" ]]; then
@@ -102,32 +103,29 @@ if [[ "$MODE" = "webscan" ]]; then
     	echo "[i] Scan complete."
     	echo "[+] Report saved to: $LOOT_DIR/web/zap-report-$TARGET-https-$DATE.html"
     fi
-    if [[ "$ARACHNI_SCAN" == "1" ]]; then
-    	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    	echo -e "$OKRED RUNNING ARACHNI SCAN $RESET"
+	if [[ "$ARACHNI_SCAN" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED RUNNING ARACHNI SCAN $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		DATE=$(date +"%Y%m%d%H%M")
-		mkdir -p $LOOT_DIR/web/http-$TARGET/
-		mkdir -p $LOOT_DIR/web/https-$TARGET/
-		arachni --report-save-path=$LOOT_DIR/web/http-$TARGET/ --output-only-positives http://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-http-${DATE}.txt
-		cp -vf $LOOT_DIR/output/sniper-$TARGET-webscan-http-${DATE}.txt $LOOT_DIR/web/arachni-$TARGET-webscan-http.txt
-		sleep 1
-		arachni --report-save-path=$LOOT_DIR/web/https-$TARGET/ --output-only-positives https://$TARGET | tee $LOOT_DIR/output/sniper-$TARGET-webscan-https-${DATE}.txt
-		cp -vf $LOOT_DIR/output/sniper-$TARGET-webscan-https-${DATE}.txt $LOOT_DIR/web/arachni-$TARGET-webscan-https.txt
-		if [[ "$SLACK_NOTIFICATIONS_ARACHNI_SCAN" == "1" ]]; then
-			bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/output/sniper-$TARGET-webscan-http-$DATE.txt"
-			bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/output/sniper-$TARGET-webscan-https-$DATE.txt"
-		fi
-		cd $LOOT_DIR/web/http-$TARGET/
-		cd $LOOT_DIR/web/https-$TARGET/
-		arachni_reporter $LOOT_DIR/web/http-$TARGET/*.afr --report=html:outfile=$LOOT_DIR/web/http-$TARGET/arachni.zip
-		arachni_reporter $LOOT_DIR/web/https-$TARGET/*.afr --report=html:outfile=$LOOT_DIR/web/https-$TARGET/arachni.zip
-		cd $LOOT_DIR/web/http-$TARGET/
-		unzip arachni.zip
-		cd $LOOT_DIR/web/https-$TARGET/
+		PORT="80"
+		mkdir -p $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
+		arachni --report-save-path=$LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/ --output-only-positives http://$TARGET:$PORT | tee ${LOOT_DIR}/web/arachni_webscan_${TARGET}_${PORT}_${DATE}.txt
+		cd $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
+		arachni_reporter $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/*.afr --report=html:outfile=$LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/arachni.zip
+		cd $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
 		unzip arachni.zip
 		cd $INSTALL_DIR
-	fi
+		DATE=$(date +"%Y%m%d%H%M")
+		PORT="443"
+		mkdir -p $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
+		arachni --report-save-path=$LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/ --output-only-positives https://$TARGET:$PORT | tee ${LOOT_DIR}/web/arachni_webscan_${TARGET}_${PORT}_${DATE}.txt
+		cd $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
+		arachni_reporter $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/*.afr --report=html:outfile=$LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/arachni.zip
+		cd $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
+		unzip arachni.zip
+		cd $INSTALL_DIR
+    fi
 	if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
 	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	    echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
@@ -141,6 +139,7 @@ if [[ "$MODE" = "webscan" ]]; then
 	    source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
 	    source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
 	    source $INSTALL_DIR/modes/sc0pe-network-scan.sh
+	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	fi
 	source $INSTALL_DIR/modes/sc0pe.sh 
 	echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -150,11 +149,10 @@ if [[ "$MODE" = "webscan" ]]; then
     rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
     ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
+    echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-		echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications.txt
 	fi
-
 	loot 
 	exit
 fi

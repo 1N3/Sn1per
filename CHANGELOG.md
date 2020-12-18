@@ -1,4 +1,21 @@
 ## CHANGELOG:
+* v8.9 - Tuned sniper.conf around performance for all scans and recon modes
+* v8.9 - Added out of scope options to config
+* v8.9 - Added automatic HTTP/HTTPS web scans and vulnerability scans to 'normal' mode
+* v8.9 - Added SolarWinds Orion Panel Default Credentials sc0pe template
+* v8.9 - Added SolarWinds Orion Panel sc0pe template
+* v8.9 - Fixed issue with theHarvester not running on Kali 2020.4
+* v8.9 - Added WPScan API support
+* v8.9 - Added CVE-2020-8209 - XenMobile-Citrix Endpoint Management Config Password Disclosure sc0pe template
+* v8.9 - Added CVE-2020-8209 - XenMobile-Citrix Endpoint Management Path Traversal sc0pe template
+* v8.9 - Removed verbose error for chromium on Ubuntu
+* v8.9 - Added CVE-2020-8209 - Citrix XenMobile Server Path Traversal sc0pe template
+* v8.9 - Fixed F+ in CSP Not Enforced sc0pe template
+* v8.9 - Added CVE-2020-14815 - Oracle Business Intelligence Enterprise DOM XSS sc0pe template
+* v8.9 - Fixed issue with dnscan not working in Kali 2020.3
+* v8.9 - Fixed issue with screenshots not working in Ubuntu 2020
+* v8.9 - Added Frontpage Service Password Disclosure sc0pe template
+* v8.9 - Removed Yasuo tool
 * v8.8 - Fixed issue with webscreenshot on Kali 2020.3+
 * v8.8 - Fixed error in install.sh for theharvester sym link
 * v8.8 - Fixed issue with flyover mode not capturing web screenshots
