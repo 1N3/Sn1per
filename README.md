@@ -58,6 +58,7 @@ To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 - [x] Scheduled scans (https://github.com/1N3/Sn1per/wiki/Scheduled-Scans)
 - [x] Sc0pe Templates (https://github.com/1N3/Sn1per/wiki/Sc0pe-Templates)
 - [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
+- [x] WPScan API integration (https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration)
 - [x] Sn1per Configuration Options (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
 - [x] Sn1per Configuration Templates (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
 - [x] Plugins & Tools (https://github.com/1N3/Sn1per/wiki/Plugins-&-Tools)
