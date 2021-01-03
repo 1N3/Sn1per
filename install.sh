@@ -212,15 +212,15 @@ rm -f /usr/share/nmap/scripts/vulners.nse
 wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
 mkdir -p /usr/share/nmap/vulscan/ 2> /dev/null
 cd /usr/share/nmap/vulscan/ 2> /dev/null
-rm -f *.csv 2> /dev/null
-wget https://www.computec.ch/projekte/vulscan/download/cve.csv
-wget https://www.computec.ch/projekte/vulscan/download/exploitdb.csv
-wget https://www.computec.ch/projekte/vulscan/download/openvas.csv
-wget https://www.computec.ch/projekte/vulscan/download/osvdb.csv
-wget https://www.computec.ch/projekte/vulscan/download/scipvuldb.csv
-wget https://www.computec.ch/projekte/vulscan/download/securityfocus.csv
-wget https://www.computec.ch/projekte/vulscan/download/securitytracker.csv
-wget https://www.computec.ch/projekte/vulscan/download/xforce.csv
+rm -f *.csv 2> /dev/null 
+curl https://www.computec.ch/projekte/vulscan/download/cve.csv -o cve.csv
+curl https://www.computec.ch/projekte/vulscan/download/exploitdb.csv -o exploitdb.csv
+curl https://www.computec.ch/projekte/vulscan/download/openvas.csv -o openvas.csv
+curl https://www.computec.ch/projekte/vulscan/download/osvdb.csv -o osvdb.csv
+curl https://www.computec.ch/projekte/vulscan/download/scipvuldb.csv -o scipvuldb.csv
+curl https://www.computec.ch/projekte/vulscan/download/securityfocus.csv -o securityfocus.csv
+curl https://www.computec.ch/projekte/vulscan/download/securitytracker.csv -o securitytracker.csv
+curl https://www.computec.ch/projekte/vulscan/download/xforce.csv -o xforce.csv
 mkdir -p ~/.msf4/modules/exploits/web
 wget https://raw.githubusercontent.com/1N3/Exploits/master/defcon_webmin_unauth_rce.rb -O ~/.msf4/modules/exploits/web/defcon_webmin_unauth_rce.rb
 wget https://github.com/OJ/gobuster/releases/download/v3.0.1/gobuster-linux-amd64.7z -O /tmp/gobuster.7z
