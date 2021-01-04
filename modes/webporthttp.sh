@@ -293,15 +293,18 @@ if [[ "$MODE" = "webporthttp" ]]; then
       echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       if [[ "$WP_API_KEY" ]]; then
-        wpscan --url http://$TARGET:$PORT --no-update --disable-tls-checks --api-key $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.txt
+        wpscan --url http://$TARGET:$PORT --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.raw
         echo ""
-        wpscan --url http://$TARGET:$PORT/wordpress/ --no-update --disable-tls-checks --api-key $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.txt
+        wpscan --url http://$TARGET:$PORT/wordpress/ --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.raw
         echo ""
       else
-        wpscan --url http://$TARGET:$PORT --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.txt
+        wpscan --url http://$TARGET:$PORT --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.raw
         echo ""
-        wpscan --url http://$TARGET:$PORT/wordpress/ --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.txt
+        wpscan --url http://$TARGET:$PORT/wordpress/ --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.raw
       fi
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.txt
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.txt
+      rm -f $LOOT_DIR/web/wpscan-$TARGET-http*.raw 2> /dev/null
     fi
     if [[ "$NIKTO" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -338,7 +341,13 @@ if [[ "$MODE" = "webporthttp" ]]; then
       echo -e "$OKRED RUNNING HTTP REQUEST SMUGGLING DETECTION $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       python3 /usr/share/sniper/plugins/smuggler/smuggler.py --no-color -u http://$TARGET:$PORT | tee $LOOT_DIR/web/smuggler-$TARGET-port${PORT}.txt
-    fi    
+    fi
+    if [[ "$NUCLEI" = "1" ]]; then
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      echo -e "$OKRED RUNNING NUCLEI SCAN $RESET"
+      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+      nuclei -silent -t /usr/share/sniper/plugins/nuclei-templates/ -c $THREADS -target http://$TARGET:$PORT -o $LOOT_DIR/web/nuclei-http-${TARGET}-port${PORT}.txt 
+    fi
     SSL="false"
     source $INSTALL_DIR/modes/web_autopwn.sh
     source $INSTALL_DIR/modes/osint_stage_2.sh    

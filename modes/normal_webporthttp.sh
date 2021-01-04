@@ -1,4 +1,4 @@
-if [[ "$MODE" = "web" ]]; then
+wpif [[ "$MODE" = "web" ]]; then
   echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
   ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
@@ -140,16 +140,19 @@ if [[ "$MODE" = "web" ]]; then
       echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       if [[ "$WP_API_KEY" ]]; then
-        wpscan --url http://$TARGET --no-update --disable-tls-checks --api-key $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-httpa.txt
+        wpscan --url http://$TARGET --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port80a.raw
         echo ""
-        wpscan --url http://$TARGET/wordpress/ --no-update --disable-tls-checks --api-key $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-httpb.txt
+        wpscan --url http://$TARGET/wordpress/ --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port80b.raw
         echo ""
       else
-        wpscan --url http://$TARGET --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-httpa.txt
+        wpscan --url http://$TARGET --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port80a.raw
         echo ""
-        wpscan --url http://$TARGET/wordpress/ --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-httpb.txt
+        wpscan --url http://$TARGET/wordpress/ --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port80b.raw
         echo ""
       fi
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-http-port80a.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-http-port80a.txt
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-http-port80b.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-http-port80b.txt
+      rm -f $LOOT_DIR/web/wpscan-$TARGET-http*.raw 2> /dev/null
   fi
   if [[ "$NIKTO" == "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -180,6 +183,12 @@ if [[ "$MODE" = "web" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 
     python3 /usr/share/sniper/plugins/smuggler/smuggler.py --no-color -u http://$TARGET | tee $LOOT_DIR/web/smuggler-$TARGET-port80.txt
+  fi
+  if [[ "$NUCLEI" = "1" ]]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING NUCLEI SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    nuclei -silent -t /usr/share/sniper/plugins/nuclei-templates/ -c $THREADS -target http://$TARGET -o $LOOT_DIR/web/nuclei-http-10.0.0.19-port80.txt 
   fi
   rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
   ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt

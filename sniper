@@ -17,7 +17,7 @@ SNIPER_PRO=$INSTALL_DIR/pro.sh
 service postgresql start 2> /dev/null
 
 # LOAD DEFAULT SNIPER CONFIGURATION FILE
-source $INSTALL_DIR/sniper.conf
+source $INSTALL_DIR/sniper.conf 
 echo -e "$OKBLUE[*]$RESET Loaded configuration file from $INSTALL_DIR/sniper.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
 
 if [[ -f /root/.sniper.conf ]]; then
@@ -31,7 +31,7 @@ if [[ -f /root/.sniper.conf ]]; then
     source /root/.sniper_api_keys.conf
     echo -e "$OKBLUE[*]$RESET Loaded API keys from /root/.sniper_api_keys.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
   fi
-
+  
 else
   # IF NO USER CONFIG PRESENT, CREATE IT FROM THE DEFAULT TEMPLATE
   cp $INSTALL_DIR/sniper.conf /root/.sniper.conf 2> /dev/null
@@ -168,7 +168,7 @@ function check_update {
     LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [[ "$LATEST_VER" != "$VER" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper v$LATEST_VER is available to download... To update, type$OKRED \"sniper -u\" $RESET"
-    fi
+    fi    
   fi
   touch /tmp/update-check.txt 2> /dev/null
 }
@@ -246,7 +246,7 @@ case $key in
     echo -e "$OKBLUE[*]$RESET Creating backup of existing config to /root/.sniper.conf.bak...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
     cp -f /root/.sniper.conf /root/.sniper.conf.bak
     echo -e "$OKBLUE[*]$RESET Copying $CONFIG to /root/.sniper.conf...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
-    cp -f $CONFIG /root/.sniper.conf
+    cp -f $CONFIG /root/.sniper.conf 
     dos2unix /root/.sniper.conf 2> /dev/null > /dev/null
     source /root/.sniper.conf
     sleep 1
@@ -365,7 +365,7 @@ case $key in
     rm -vf $WORKSPACE_DIR/scans/running_$TARGET_*.txt
     ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $WORKSPACE_DIR/scans/tasks-running.txt 2> /dev/null
     ps -ef | egrep "$TARGET|sniper"
-    ps -ef | egrep "sniper" | awk '{print $2}' | xargs -i sudo kill -9 {}
+    ps -ef | egrep "sniper" | awk '{print $2}' | xargs -i sudo kill -9 {} 
     exit
     shift # past argument
     ;;
@@ -391,7 +391,7 @@ case $key in
       exit
     fi
     echo "Archiving $WORKSPACE to $INSTALL_DIR/loot/$WORKSPACE.tar"
-    cd $INSTALL_DIR/loot/workspace/ && tar -cvf ../$WORKSPACE.tar $WORKSPACE
+    cd $INSTALL_DIR/loot/workspace/ && tar -cvf ../$WORKSPACE.tar $WORKSPACE 
     cp -Rf $WORKSPACE ${WORKSPACE}_`date +"%Y-%m-%d"`
     echo "Done!"
     exit
@@ -574,11 +574,11 @@ function loot {
       wc -l $LOOT_DIR/scans/notifications.txt 2> /dev/null | awk '{print $1}' > $LOOT_DIR/scans/notifications_total.txt 2> /dev/null
       wc -l $LOOT_DIR/scans/notifications_new.txt 2> /dev/null | awk '{print $1}' > $LOOT_DIR/scans/notifications_new_total.txt 2> /dev/null
       cat $LOOT_DIR/scans/tasks-running.txt 2> /dev/null > $LOOT_DIR/scans/tasks-running_total.txt 2> /dev/null
-      wc -l $LOOT_DIR/scans/tasks.txt 2> /dev/null | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/tasks_total.txt 2> /dev/null
-      wc -l $LOOT_DIR/scans/scheduled/*.sh 2> /dev/null | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/scheduled_tasks_total.txt 2> /dev/null
-      grep "Host\ status" $LOOT_DIR/scans/notifications.txt 2> /dev/null | wc -l | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/host_status_changes_total.txt 2> /dev/null
-      grep "Port\ change" $LOOT_DIR/scans/notifications.txt 2> /dev/null | wc -l | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/port_changes_total.txt 2> /dev/null
-      wc -l $LOOT_DIR/domains/domains_new-*.txt 2> /dev/null | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/domain_changes_total.txt 2> /dev/null
+      wc -l $LOOT_DIR/scans/tasks.txt 2> /dev/null | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/tasks_total.txt 2> /dev/null 
+      wc -l $LOOT_DIR/scans/scheduled/*.sh 2> /dev/null | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/scheduled_tasks_total.txt 2> /dev/null 
+      grep "Host\ status" $LOOT_DIR/scans/notifications.txt 2> /dev/null | wc -l | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/host_status_changes_total.txt 2> /dev/null 
+      grep "Port\ change" $LOOT_DIR/scans/notifications.txt 2> /dev/null | wc -l | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/port_changes_total.txt 2> /dev/null 
+      wc -l $LOOT_DIR/domains/domains_new-*.txt 2> /dev/null | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/domain_changes_total.txt 2> /dev/null 
       cat $LOOT_DIR/web/dirsearch-new-*.txt $LOOT_DIR/web/spider-new-*.txt 2> /dev/null | wc -l | awk '{print $1}' 2> /dev/null > $LOOT_DIR/scans/url_changes_total.txt 2> /dev/null
       if [[ -f "$LOOT_DIR/notes/notepad.html" ]]; then
         echo -n "" 2>/dev/null
