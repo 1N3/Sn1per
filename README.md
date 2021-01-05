@@ -17,55 +17,6 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 [![](https://xerosecurity.com/images/xerosecurity-sn1per5.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per6.PNG)](https://xerosecurity.com/)
 
-### Purchase Sn1per Professional:
-To obtain a Sn1per Professional license, go to https://xerosecurity.com.
-
-## SN1PER COMMUNITY FEATURES:
-- [x] Automatically collects basic recon (ie. whois, ping, DNS, etc.)
-- [x] Automatically launches Google hacking queries against a target domain
-- [x] Automatically enumerates open ports via NMap port scanning
-- [x] Automatically exploit common vulnerabilities
-- [x] Automatically brute forces sub-domains, gathers DNS info and checks for zone transfers
-- [x] Automatically checks for sub-domain hijacking
-- [x] Automatically runs targeted NMap scripts against open ports
-- [x] Automatically runs targeted Metasploit scan and exploit modules
-- [x] Automatically scans all web applications for common vulnerabilities
-- [x] Automatically brute forces ALL open services
-- [x] Automatically test for anonymous FTP access
-- [x] Automatically runs WPScan, Arachni and Nikto for all web services
-- [x] Automatically enumerates NFS shares
-- [x] Automatically test for anonymous LDAP access
-- [x] Automatically enumerate SSL/TLS ciphers, protocols and vulnerabilities
-- [x] Automatically enumerate SNMP community strings, services and users
-- [x] Automatically list SMB users and shares, check for NULL sessions and exploit MS08-067
-- [x] Automatically tests for open X11 servers
-- [x] Performs high level enumeration of multiple hosts and subnets
-- [x] Automatically integrates with Metasploit Pro, MSFConsole and Zenmap for reporting
-- [x] Automatically gathers screenshots of all web sites
-- [x] Create individual workspaces to store all scan output
-
-### Help Topics
-
-- [x] Plugins & Tools (https://github.com/1N3/Sn1per/wiki/Plugins-&-Tools)
-- [x] Scheduled scans (https://github.com/1N3/Sn1per/wiki/Scheduled-Scans)
-- [x] Sn1per Configuration Options (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
-- [x] Sn1per Configuration Templates (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Templates)
-- [x] Sc0pe Templates (https://github.com/1N3/Sn1per/wiki/Sc0pe-Templates)
-
-### Integration Guides
-
-- [x] Github API integration (https://github.com/1N3/Sn1per/wiki/Github-API-Integration)
-- [x] Burpsuite Professional 2.x integration (https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
-- [x] OWASP ZAP integration (https://github.com/1N3/Sn1per/wiki/OWASP-ZAP-Integration)
-- [x] Shodan API integration (https://github.com/1N3/Sn1per/wiki/Shodan-Integration)
-- [x] Censys API integration (https://github.com/1N3/Sn1per/wiki/Censys-API-Integration)
-- [x] Hunter.io API integration (https://github.com/1N3/Sn1per/wiki/Hunter.io-API-Integration)
-- [x] Metasploit integration (https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
-- [x] Nessus integration (https://github.com/1N3/Sn1per/wiki/Nessus-Integration)
-- [x] OpenVAS API integration (https://github.com/1N3/Sn1per/wiki/OpenVAS-Integration)
-- [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
-- [x] WPScan API integration (https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration)
-
 ## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL:
 ```
 bash install.sh
@@ -195,8 +146,30 @@ sniper -u|--update
 * **VULNSCAN:** Launches a OpenVAS vulnerability scan.
 * **MASSVULNSCAN:** Launches a "vulnscan" mode scans on multiple targets specified via the "-f" switch.
 
-## SAMPLE OUTPUT:
-https://gist.github.com/1N3/8214ec2da2c91691bcbc
+### Help Topics
+
+- [x] Plugins & Tools (https://github.com/1N3/Sn1per/wiki/Plugins-&-Tools)
+- [x] Scheduled scans (https://github.com/1N3/Sn1per/wiki/Scheduled-Scans)
+- [x] Sn1per Configuration Options (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
+- [x] Sn1per Configuration Templates (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Templates)
+- [x] Sc0pe Templates (https://github.com/1N3/Sn1per/wiki/Sc0pe-Templates)
+
+### Integration Guides
+
+- [x] Github API integration (https://github.com/1N3/Sn1per/wiki/Github-API-Integration)
+- [x] Burpsuite Professional 2.x integration (https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
+- [x] OWASP ZAP integration (https://github.com/1N3/Sn1per/wiki/OWASP-ZAP-Integration)
+- [x] Shodan API integration (https://github.com/1N3/Sn1per/wiki/Shodan-Integration)
+- [x] Censys API integration (https://github.com/1N3/Sn1per/wiki/Censys-API-Integration)
+- [x] Hunter.io API integration (https://github.com/1N3/Sn1per/wiki/Hunter.io-API-Integration)
+- [x] Metasploit integration (https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
+- [x] Nessus integration (https://github.com/1N3/Sn1per/wiki/Nessus-Integration)
+- [x] OpenVAS API integration (https://github.com/1N3/Sn1per/wiki/OpenVAS-Integration)
+- [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
+- [x] WPScan API integration (https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration)
+
+### Purchase Sn1per Professional:
+To obtain a Sn1per Professional license, go to https://xerosecurity.com.
 
 ## LICENSE:
 This software is free to distribute and use with the condition that credit is provided to the creator (@xer0dayz @XeroSecurity), is not renamed and is not for commercial use or resold and rebranded. Permission to distribute any part of the code for sale is strictly prohibited.
