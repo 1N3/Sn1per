@@ -60,8 +60,8 @@ if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	cp /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
 	cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
 	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
-	chown root /root/.Xauthority
-	XAUTHORITY=/root/.Xauthority
+	chown root /root/.Xauthority 2> /dev/null
+	XAUTHORITY=/root/.Xauthority 2> /dev/null
 	snap install chromium 2> /dev/null
 	ln -s /snap/bin/chromium /usr/bin/chromium 2> /dev/null
 	xhost + 2> /dev/null
@@ -170,6 +170,7 @@ git clone https://github.com/achillean/shodan-python
 git clone https://github.com/Dionach/CMSmap.git 
 git clone https://github.com/defparam/smuggler.git
 
+cd $PLUGINS_DIR
 cd LinkFinder
 python setup.py install 
 cd ..
@@ -188,6 +189,9 @@ cd dnsgen
 pip3 install -r requirements.txt
 python3 setup.py install
 cd ..
+GO111MODULE=on go get -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei
+ln -s /root/go/bin/nuclei /usr/local/bin/nuclei 2> /dev/null
+nuclei -update-directory /usr/share/sniper/plugins/ -update-templates
 pip3 install -U webtech
 cd ~/go/bin/;go get github.com/haccer/subjack
 cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
@@ -212,7 +216,7 @@ rm -f /usr/share/nmap/scripts/vulners.nse
 wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
 mkdir -p /usr/share/nmap/vulscan/ 2> /dev/null
 cd /usr/share/nmap/vulscan/ 2> /dev/null
-rm -f *.csv 2> /dev/null 
+rm -f *.csv 2> /dev/null
 curl https://www.computec.ch/projekte/vulscan/download/cve.csv -o cve.csv
 curl https://www.computec.ch/projekte/vulscan/download/exploitdb.csv -o exploitdb.csv
 curl https://www.computec.ch/projekte/vulscan/download/openvas.csv -o openvas.csv
