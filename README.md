@@ -19,6 +19,8 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 
 ## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL:
 ```
+git clone https://github.com/1N3/Sn1per
+cd Sn1per
 bash install.sh
 ```
 
@@ -127,7 +129,7 @@ sniper -c /path/to/sniper.conf -t <TARGET> -w <WORKSPACE_ALIAS>
 sniper -u|--update
 ```
 
-### MODES:
+## MODES:
 * **NORMAL:** Performs basic scan of targets and open ports using both active and passive checks for optimal performance.
 * **STEALTH:** Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking.
 * **FLYOVER:** Fast multi-threaded high level scans of multiple targets (useful for collecting high level data on many hosts quickly).
@@ -146,16 +148,14 @@ sniper -u|--update
 * **VULNSCAN:** Launches a OpenVAS vulnerability scan.
 * **MASSVULNSCAN:** Launches a "vulnscan" mode scans on multiple targets specified via the "-f" switch.
 
-### Help Topics
-
+## HELP TOPICS
 - [x] Plugins & Tools (https://github.com/1N3/Sn1per/wiki/Plugins-&-Tools)
 - [x] Scheduled scans (https://github.com/1N3/Sn1per/wiki/Scheduled-Scans)
 - [x] Sn1per Configuration Options (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
 - [x] Sn1per Configuration Templates (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Templates)
 - [x] Sc0pe Templates (https://github.com/1N3/Sn1per/wiki/Sc0pe-Templates)
 
-### Integration Guides
-
+## INTEGRATION GUIDES
 - [x] Github API integration (https://github.com/1N3/Sn1per/wiki/Github-API-Integration)
 - [x] Burpsuite Professional 2.x integration (https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
 - [x] OWASP ZAP integration (https://github.com/1N3/Sn1per/wiki/OWASP-ZAP-Integration)
@@ -168,14 +168,14 @@ sniper -u|--update
 - [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
 - [x] WPScan API integration (https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration)
 
-### Purchase Sn1per Professional:
-To obtain a Sn1per Professional license, go to https://xerosecurity.com.
-
 ## LICENSE:
 This software is free to distribute and use with the condition that credit is provided to the creator (@xer0dayz @XeroSecurity), is not renamed and is not for commercial use or resold and rebranded. Permission to distribute any part of the code for sale is strictly prohibited.
 
 ## LEGAL DISCLAIMER:
-You may not rent or lease, distribute, modify, sell or transfer the software to a third party. Sn1per Community is free for distribution, and modification with the condition that credit is provided to the creator and not used for commercial use. You may not use software for illegal or nefarious purposes. No liability for consequential damages to the maximum extent permitted by all applicable laws. In no event shall XeroSecurity or any person be liable for any consequential, reliance, incidental, special, direct or indirect damages whatsoever (including without limitation, damages for loss of business profits, business interruption, loss of business information, personal injury, or any other loss) arising out of or in connection with the use or inability to use this product, even if XeroSecurity has been advised of the possibility of such damages. 
+You may not rent or lease, distribute, modify, sell or transfer the software to a third party. Sn1per Community is free for distribution, and modification with the condition that credit is provided to the creator and not used for commercial use. You may not use software for illegal or nefarious purposes. No liability for consequential damages to the maximum extent permitted by all applicable laws. In no event shall XeroSecurity or any person be liable for any consequential, reliance, incidental, special, direct or indirect damages whatsoever (including without limitation, damages for loss of business profits, business interruption, loss of business information, personal injury, or any other loss) arising out of or in connection with the use or inability to use this product, even if XeroSecurity has been advised of the possibility of such damages.
 
 ## COPYRIGHT:
 The software code and logos are owned by XeroSecurity and protected by United States copyright and/or patent laws of international treaty provisions. All rights reserved.
+
+## HOW TO PURCHASE SN1PER PROFESSIONAL
+To obtain a Sn1per Professional license, go to https://xerosecurity.com.
