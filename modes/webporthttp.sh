@@ -212,9 +212,10 @@ if [[ "$MODE" = "webporthttp" ]]; then
       fi
     fi
     if [[ "$INJECTX" == "1" ]]; then
-      rm -f $LOOT_DIR/web/injectx-$TARGET-http.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/injectx-$TARGET-http-${PORT}.raw 2> /dev/null
       #cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep 'http\:' | xargs -P $THREADS -r -n 1 -I '{}' injectx.py -u '{}' -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-http.txt
-      for a in `cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep "http\:" | cut -d '?' -f2 | cut -d '=' -f1 | sort -u`; do for b in `grep $a $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "http\:" | head -n 1`; do injectx.py -u $b -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-http.txt; done; done;
+      for a in `cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep "http\:" | cut -d '?' -f2 | cut -d '=' -f1 | sort -u`; do for b in `grep $a $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "http\:" | head -n 1`; do injectx.py -u $b -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-http-${PORT}.raw; done; done;
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/injectx-$TARGET-http-${PORT}.raw 2> /dev/null > $LOOT_DIR/web/injectx-$TARGET-http-${PORT}.txt
     fi
     source $INSTALL_DIR/modes/static-grep-search.sh
     if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then
@@ -272,20 +273,20 @@ if [[ "$MODE" = "webporthttp" ]]; then
     if [[ "$GOBUSTER" == "1" ]]; then
         sort -u $LOOT_DIR/web/webbrute-$TARGET-*.txt 2> /dev/null > $LOOT_DIR/web/webbrute-$TARGET.txt 2> /dev/null
     fi
-    wget --connect-timeout=5 --read-timeout=10 --tries=1 http://$TARGET:$PORT/robots.txt -O $LOOT_DIR/web/robots-$TARGET:$PORT-http.txt 2> /dev/null
+    wget --connect-timeout=5 --read-timeout=10 --tries=1 http://$TARGET:${PORT}/robots.txt -O $LOOT_DIR/web/robots-$TARGET:${PORT}-http.txt 2> /dev/null
     if [[ "$CLUSTERD" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      clusterd -i $TARGET -p $PORT | tee $LOOT_DIR/web/clusterd-$TARGET-port$PORT.txt
+      clusterd -i $TARGET -p ${PORT} | tee $LOOT_DIR/web/clusterd-$TARGET-port${PORT}.txt
     fi
     if [[ "$CMSMAP" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING CMSMAP $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      cmsmap http://$TARGET:$PORT | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port$PORTa.txt
+      cmsmap http://$TARGET:${PORT} | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port${PORT}a.txt
       echo ""
-      cmsmap http://$TARGET/wordpress/ | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port$PORTb.txt
+      cmsmap http://$TARGET/wordpress/ | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port${PORT}b.txt
       echo ""
     fi
     if [[ "$WPSCAN" == "1" ]]; then
@@ -293,60 +294,60 @@ if [[ "$MODE" = "webporthttp" ]]; then
       echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       if [[ "$WP_API_KEY" ]]; then
-        wpscan --url http://$TARGET:$PORT --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.raw
+        wpscan --url http://$TARGET:${PORT} --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port${PORT}a.raw
         echo ""
-        wpscan --url http://$TARGET:$PORT/wordpress/ --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.raw
+        wpscan --url http://$TARGET:${PORT}/wordpress/ --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port${PORT}b.raw
         echo ""
       else
-        wpscan --url http://$TARGET:$PORT --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.raw
+        wpscan --url http://$TARGET:${PORT} --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port${PORT}a.raw
         echo ""
-        wpscan --url http://$TARGET:$PORT/wordpress/ --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.raw
+        wpscan --url http://$TARGET:${PORT}/wordpress/ --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-http-port${PORT}b.raw
       fi
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTa.txt
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-http-port$PORTb.txt
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-http-port${PORT}a.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-http-port${PORT}a.txt
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-http-port${PORT}b.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-http-port${PORT}b.txt
       rm -f $LOOT_DIR/web/wpscan-$TARGET-http*.raw 2> /dev/null
     fi
     if [[ "$NIKTO" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING WEB VULNERABILITY SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      nikto -h http://$TARGET:$PORT -output $LOOT_DIR/web/nikto-$TARGET-http-port$PORT.txt
-      sed -ir "s/</\&lh\;/g" $LOOT_DIR/web/nikto-$TARGET-http-port$PORT.txt
+      nikto -h http://$TARGET:${PORT} -output $LOOT_DIR/web/nikto-$TARGET-http-port${PORT}.txt
+      sed -ir "s/</\&lh\;/g" $LOOT_DIR/web/nikto-$TARGET-http-port${PORT}.txt
     fi
     cd $INSTALL_DIR
     if [[ "$CLUSTERD" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      clusterd -i $TARGET -p $PORT 2> /dev/null | tee $LOOT_DIR/web/clusterd-$TARGET-http-port$PORT.txt
+      clusterd -i $TARGET -p ${PORT} 2> /dev/null | tee $LOOT_DIR/web/clusterd-$TARGET-http-port${PORT}.txt
     fi
     if [[ "$SHOCKER" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING SHELLSHOCK EXPLOIT SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --port $PORT | tee $LOOT_DIR/web/shocker-$TARGET-port$PORT.txt
+      python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --port ${PORT} | tee $LOOT_DIR/web/shocker-$TARGET-port${PORT}.txt
     fi
     if [[ "$JEXBOSS" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING JEXBOSS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       cd /tmp/
-      python /usr/share/sniper/plugins/jexboss/jexboss.py -u http://$TARGET:$PORT | tee $LOOT_DIR/web/jexboss-$TARGET-port$PORT.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/jexboss-$TARGET-port$PORT.raw > $LOOT_DIR/web/jexboss-$TARGET-port$PORT.txt 2> /dev/null
-      rm -f $LOOT_DIR/web/jexboss-$TARGET-port$PORT.raw 2> /dev/null
+      python /usr/share/sniper/plugins/jexboss/jexboss.py -u http://$TARGET:${PORT} | tee $LOOT_DIR/web/jexboss-$TARGET-port${PORT}.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/jexboss-$TARGET-port${PORT}.raw > $LOOT_DIR/web/jexboss-$TARGET-port${PORT}.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/jexboss-$TARGET-port${PORT}.raw 2> /dev/null
       cd $INSTALL_DIR
     fi
     if [[ "$SMUGGLER" = "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING HTTP REQUEST SMUGGLING DETECTION $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      python3 /usr/share/sniper/plugins/smuggler/smuggler.py --no-color -u http://$TARGET:$PORT | tee $LOOT_DIR/web/smuggler-$TARGET-port${PORT}.txt
+      python3 /usr/share/sniper/plugins/smuggler/smuggler.py --no-color -u http://$TARGET:${PORT} | tee $LOOT_DIR/web/smuggler-$TARGET-port${PORT}.txt
     fi
     if [[ "$NUCLEI" = "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING NUCLEI SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      nuclei -silent -t /usr/share/sniper/plugins/nuclei-templates/ -c $THREADS -target http://$TARGET:$PORT -o $LOOT_DIR/web/nuclei-http-${TARGET}-port${PORT}.txt 
+      nuclei -silent -t /usr/share/sniper/plugins/nuclei-templates/ -c $THREADS -target http://$TARGET:${PORT} -o $LOOT_DIR/web/nuclei-http-${TARGET}-port${PORT}.txt 
     fi
     SSL="false"
     source $INSTALL_DIR/modes/web_autopwn.sh
@@ -378,79 +379,79 @@ if [[ "$MODE" = "webporthttp" ]]; then
       curl -s "http://$BURP_HOST:$BURP_PORT/v0.1/scan/$a" | jq '.issue_events[].issue | "[" + .severity + "] " + .name + " - " + .origin + .path' | sort -u | sed 's/\"//g' | tee $LOOT_DIR/web/burpsuite-$TARGET-$a.txt
     done
     echo "[-] Done!"
-    fi
+  fi
 
-    if [[ "$ZAP_SCAN" == "1" ]]; then
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      echo -e "$OKRED RUNNING OWASP ZAP SCAN $RESET"
+  if [[ "$ZAP_SCAN" == "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo "[i] Scanning: http://$TARGET:$PORT/"
-      sudo python3 /usr/share/sniper/bin/zap-scan.py "http://$TARGET:$PORT/" 
-      DATE=$(date +"%Y%m%d%H%M")
-      sudo grep "'" /usr/share/sniper/bin/zap-report.txt | cut -d\' -f2 | cut -d\\ -f1 > $LOOT_DIR/web/zap-report-$TARGET-http-$DATE.html
-      cp -f $LOOT_DIR/web/zap-report-$TARGET-http-$DATE.html $LOOT_DIR/web/zap-report-$TARGET-http.html 2> /dev/null
-      echo "[i] Scan complete."
-      echo "[+] Report saved to: $LOOT_DIR/web/zap-report-$TARGET-http-$DATE.html"
-    fi
+    echo -e "$OKRED RUNNING OWASP ZAP SCAN $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo "[i] Scanning: http://$TARGET:$PORT/"
+    sudo python3 /usr/share/sniper/bin/zap-scan.py "http://$TARGET:$PORT/" 
+    DATE=$(date +"%Y%m%d%H%M")
+    sudo grep "'" /usr/share/sniper/bin/zap-report.txt | cut -d\' -f2 | cut -d\\ -f1 > $LOOT_DIR/web/zap-report-$TARGET-http-$DATE.html
+    cp -f $LOOT_DIR/web/zap-report-$TARGET-http-$DATE.html $LOOT_DIR/web/zap-report-$TARGET-http.html 2> /dev/null
+    echo "[i] Scan complete."
+    echo "[+] Report saved to: $LOOT_DIR/web/zap-report-$TARGET-http-$DATE.html"
+  fi
 
-    if [[ "$ARACHNI_SCAN" == "1" ]]; then
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      echo -e "$OKRED RUNNING ARACHNI SCAN $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      DATE=$(date +"%Y%m%d%H%M")
-      mkdir -p $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
-      arachni --report-save-path=$LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/ --output-only-positives http://$TARGET:$PORT | tee ${LOOT_DIR}/web/arachni_webscan_${TARGET}_${PORT}_${DATE}.txt
+  if [[ "$ARACHNI_SCAN" == "1" ]]; then
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING ARACHNI SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    DATE=$(date +"%Y%m%d%H%M")
+    mkdir -p $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
+    arachni --report-save-path=$LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/ --output-only-positives http://$TARGET:$PORT | tee ${LOOT_DIR}/web/arachni_webscan_${TARGET}_${PORT}_${DATE}.txt
 
-      cd $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
-      arachni_reporter $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/*.afr --report=html:outfile=$LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/arachni.zip
-      cd $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
-      unzip arachni.zip
-      cd $INSTALL_DIR
-    fi
-
-    if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      SSL="false"
-      source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
-      source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
-      for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
-        source $file
-      done
-      source $INSTALL_DIR/modes/sc0pe-network-scan.sh
-      echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    fi
-    
-    source $INSTALL_DIR/modes/sc0pe.sh
+    cd $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
+    arachni_reporter $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/*.afr --report=html:outfile=$LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/arachni.zip
+    cd $LOOT_DIR/web/arachni_${TARGET}_${PORT}_${DATE}/
+    unzip arachni.zip
     cd $INSTALL_DIR
+  fi
 
+  if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED SCAN COMPLETE! $RESET"
+    echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
-    rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
-    ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
-    rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
-    VULNERABLE_METASPLOIT=$(egrep -h -i -s "may be vulnerable|is vulnerable|IKE response with leak|File saved in" $LOOT_DIR/output/msf-$TARGET-*.txt 2> /dev/null)
-    if [[ ${#VULNERABLE_METASPLOIT} -ge 5 ]]; then
-      echo "$VULNERABLE_METASPLOIT" > $LOOT_DIR/output/vulnerable-metasploit-$TARGET.txt 2> /dev/null
-    fi
-    VULNERABLE_SHELLSHOCK=$(egrep -h -i -s "The following URLs appear to be exploitable:" $LOOT_DIR/web/shocker-$TARGET-*.txt 2> /dev/null)
-    if [[ ${#VULNERABLE_SHELLSHOCK} -ge 5 ]]; then
-      echo "$VULNERABLE_SHELLSHOCK" > $LOOT_DIR/output/vulnerable-shellshock-$TARGET.txt 2> /dev/null
-    fi
-    SHELLED=$(egrep -h -i -s "Meterpreter session|Command executed|File(s) found:|Command Stager progress|File uploaded|Command shell session" $LOOT_DIR/output/msf-$TARGET-*.txt 2> /dev/null)
-    if [[ ${#SHELLED} -ge 5 ]]; then
-      echo "$SHELLED" > $LOOT_DIR/output/shelled-$TARGET.txt 2> /dev/null
-    fi
-    
-    echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: http://$TARGET:$PORT [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
-    if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: http://$TARGET:$PORT [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
-    fi
-    if [[ "$LOOT" = "1" ]]; then
-      loot
-    fi  
-    exit
-  fi 
+    SSL="false"
+    source $INSTALL_DIR/modes/sc0pe-passive-webscan.sh
+    source $INSTALL_DIR/modes/sc0pe-active-webscan.sh
+    for file in `ls $INSTALL_DIR/templates/passive/web/recursive/*.sh 2> /dev/null`; do
+      source $file
+    done
+    source $INSTALL_DIR/modes/sc0pe-network-scan.sh
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  fi
+  
+  source $INSTALL_DIR/modes/sc0pe.sh
+  cd $INSTALL_DIR
+
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo -e "$OKRED SCAN COMPLETE! $RESET"
+  echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+  echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
+  rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
+  ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
+  rm -f $INSTALL_DIR/.fuse_* 2> /dev/null
+  VULNERABLE_METASPLOIT=$(egrep -h -i -s "may be vulnerable|is vulnerable|IKE response with leak|File saved in" $LOOT_DIR/output/msf-$TARGET-*.txt 2> /dev/null)
+  if [[ ${#VULNERABLE_METASPLOIT} -ge 5 ]]; then
+    echo "$VULNERABLE_METASPLOIT" > $LOOT_DIR/output/vulnerable-metasploit-$TARGET.txt 2> /dev/null
+  fi
+  VULNERABLE_SHELLSHOCK=$(egrep -h -i -s "The following URLs appear to be exploitable:" $LOOT_DIR/web/shocker-$TARGET-*.txt 2> /dev/null)
+  if [[ ${#VULNERABLE_SHELLSHOCK} -ge 5 ]]; then
+    echo "$VULNERABLE_SHELLSHOCK" > $LOOT_DIR/output/vulnerable-shellshock-$TARGET.txt 2> /dev/null
+  fi
+  SHELLED=$(egrep -h -i -s "Meterpreter session|Command executed|File(s) found:|Command Stager progress|File uploaded|Command shell session" $LOOT_DIR/output/msf-$TARGET-*.txt 2> /dev/null)
+  if [[ ${#SHELLED} -ge 5 ]]; then
+    echo "$SHELLED" > $LOOT_DIR/output/shelled-$TARGET.txt 2> /dev/null
+  fi
+  
+  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: http://$TARGET:$PORT [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+  if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: http://$TARGET:$PORT [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+  fi
+  if [[ "$LOOT" = "1" ]]; then
+    loot
+  fi  
+  exit
+fi 

@@ -228,9 +228,10 @@ if [[ "$MODE" = "webporthttps" ]]; then
       fi
     fi
     if [[ "$INJECTX" == "1" ]]; then
-      rm -f $LOOT_DIR/web/injectx-$TARGET-https.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/injectx-$TARGET-https-${PORT}.raw 2> /dev/null
       #cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep 'https\:' | xargs -P $THREADS -r -n 1 -I '{}' injectx.py -u '{}' -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-https.txt
-      for a in `cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep "https\:" | cut -d '?' -f2 | cut -d '=' -f1 | sort -u`; do for b in `grep $a $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "https\:" | head -n 1`; do injectx.py -u $b -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-https.txt; done; done;
+      for a in `cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep "https\:" | cut -d '?' -f2 | cut -d '=' -f1 | sort -u`; do for b in `grep $a $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "https\:" | head -n 1`; do injectx.py -u $b -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-https-${PORT}.txt; done; done;
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/injectx-$TARGET-https-${PORT}.raw 2> /dev/null > $LOOT_DIR/web/injectx-$TARGET-https-${PORT}.txt
     fi
     source $INSTALL_DIR/modes/static-grep-search.sh
     if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then
@@ -288,20 +289,20 @@ if [[ "$MODE" = "webporthttps" ]]; then
     if [[ "$GOBUSTER" == "1" ]]; then
         sort -u $LOOT_DIR/web/webbrute-$TARGET-*.txt 2> /dev/null > $LOOT_DIR/web/webbrute-$TARGET.txt 2> /dev/null
     fi
-    wget --connect-timeout=5 --read-timeout=10 --tries=1 https://$TARGET:$PORT/robots.txt -O $LOOT_DIR/web/robots-$TARGET:$PORT-https.txt 2> /dev/null
+    wget --connect-timeout=5 --read-timeout=10 --tries=1 https://$TARGET:${PORT}/robots.txt -O $LOOT_DIR/web/robots-$TARGET:${PORT}-https.txt 2> /dev/null
     if [[ "$CLUSTERD" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      clusterd --sVl -i $TARGET -p $PORT 2> /dev/null | tee $LOOT_DIR/web/clusterd-$TARGET-port$PORT.txt
+      clusterd --sVl -i $TARGET -p ${PORT} 2> /dev/null | tee $LOOT_DIR/web/clusterd-$TARGET-port${PORT}.txt
     fi
     if [[ "$CMSMAP" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING CMSMAP $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      cmsmap https://$TARGET:$PORT | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port$PORTa.txt
+      cmsmap https://$TARGET:${PORT} | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port${PORT}a.txt
       echo ""
-      cmsmap https://$TARGET:$PORT/wordpress/ | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port$PORTb.txt
+      cmsmap https://$TARGET:${PORT}/wordpress/ | tee $LOOT_DIR/web/cmsmap-$TARGET-http-port${PORT}b.txt
       echo ""
     fi
     if [[ "$WPSCAN" == "1" ]]; then
@@ -309,53 +310,53 @@ if [[ "$MODE" = "webporthttps" ]]; then
       echo -e "$OKRED RUNNING WORDPRESS VULNERABILITY SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       if [[ "$WP_API_KEY" ]]; then
-        wpscan --url https://$TARGET:$PORT --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-https-port$PORTa.raw
+        wpscan --url https://$TARGET:${PORT} --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-https-port${PORT}a.raw
         echo ""
-        wpscan --url https://$TARGET:$PORT/wordpress/ --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-https-port$PORTb.raw
+        wpscan --url https://$TARGET:${PORT}/wordpress/ --no-update --disable-tls-checks --api-token $WP_API_KEY 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-https-port${PORT}b.raw
         echo ""
       else
-        wpscan --url https://$TARGET:$PORT --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-https-port$PORTa.raw
+        wpscan --url https://$TARGET:${PORT} --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-https-port${PORT}a.raw
         echo ""
-        wpscan --url https://$TARGET:$PORT/wordpress/ --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-https-port$PORTb.raw
+        wpscan --url https://$TARGET:${PORT}/wordpress/ --no-update --disable-tls-checks 2> /dev/null | tee $LOOT_DIR/web/wpscan-$TARGET-https-port${PORT}b.raw
       fi
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-https-port$PORTa.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-https-port$PORTa.txt
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-https-port$PORTb.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-https-port$PORTb.txt
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-https-port${PORT}a.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-https-port${PORT}a.txt
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/wpscan-$TARGET-https-port${PORT}b.raw 2> /dev/null > $LOOT_DIR/web/wpscan-$TARGET-https-port${PORT}b.txt
       rm -f $LOOT_DIR/web/wpscan-$TARGET-http*.raw 2> /dev/null
     fi
     if [[ "$NIKTO" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING WEB VULNERABILITY SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      nikto -h https://$TARGET:$PORT -output $LOOT_DIR/web/nikto-$TARGET-https-port$PORT.txt
-      sed -ir "s/</\&lh\;/g" $LOOT_DIR/web/nikto-$TARGET-https-port$PORT.txt
+      nikto -h https://$TARGET:${PORT} -output $LOOT_DIR/web/nikto-$TARGET-https-port${PORT}.txt
+      sed -ir "s/</\&lh\;/g" $LOOT_DIR/web/nikto-$TARGET-https-port${PORT}.txt
     fi
     if [[ "$SHOCKER" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING SHELLSHOCK EXPLOIT SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --sVl --port $PORT | tee $LOOT_DIR/web/shocker-$TARGET-port$PORT.txt
+      python $PLUGINS_DIR/shocker/shocker.py -H $TARGET --cgilist $PLUGINS_DIR/shocker/shocker-cgi_list --sVl --port ${PORT} | tee $LOOT_DIR/web/shocker-$TARGET-port${PORT}.txt
     fi
     if [[ "$JEXBOSS" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING JEXBOSS $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       cd /tmp/
-      python /usr/share/sniper/plugins/jexboss/jexboss.py -u https://$TARGET:$PORT | tee $LOOT_DIR/web/jexboss-$TARGET-port$PORT.raw
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/jexboss-$TARGET-port$PORT.raw > $LOOT_DIR/web/jexboss-$TARGET-port$PORT.txt 2> /dev/null
-      rm -f $LOOT_DIR/web/jexboss-$TARGET-port$PORT.raw 2> /dev/null
+      python /usr/share/sniper/plugins/jexboss/jexboss.py -u https://$TARGET:${PORT} | tee $LOOT_DIR/web/jexboss-$TARGET-port${PORT}.raw
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/jexboss-$TARGET-port${PORT}.raw > $LOOT_DIR/web/jexboss-$TARGET-port${PORT}.txt 2> /dev/null
+      rm -f $LOOT_DIR/web/jexboss-$TARGET-port${PORT}.raw 2> /dev/null
       cd $INSTALL_DIR
     fi
     if [[ "$SMUGGLER" = "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING HTTP REQUEST SMUGGLING DETECTION $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      python3 /usr/share/sniper/plugins/smuggler/smuggler.py --no-color -u https://$TARGET:$PORT | tee $LOOT_DIR/web/smuggler-$TARGET-port${PORT}.txt
+      python3 /usr/share/sniper/plugins/smuggler/smuggler.py --no-color -u https://$TARGET:${PORT} | tee $LOOT_DIR/web/smuggler-$TARGET-port${PORT}.txt
     fi
     if [[ "$NUCLEI" = "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING NUCLEI SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      nuclei -silent -t /usr/share/sniper/plugins/nuclei-templates/ -c $THREADS -target https://$TARGET:$PORT -o $LOOT_DIR/web/nuclei-https-${TARGET}-port${PORT}.txt 
+      nuclei -silent -t /usr/share/sniper/plugins/nuclei-templates/ -c $THREADS -target https://$TARGET:${PORT} -o $LOOT_DIR/web/nuclei-https-${TARGET}-port${PORT}.txt 
     fi
     cd $INSTALL_DIR
     SSL="true"

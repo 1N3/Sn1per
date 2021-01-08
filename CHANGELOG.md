@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v9.0 - Added Fortinet FortiGate SSL VPN Panel Detected sc0pe template
+* v9.0 - Added CVE-2020-17519 - Apache Flink Path Traversal sc0pe template
 * v9.0 - Added RabbitMQ Management Interface Detected sc0pe template
 * v9.0 - Added CVE-2020-29583 Zyxel SSH Hardcoded Credentials via BruteX
 * v9.0 - Removed vulnscan NMap CSV updates/downloads to save space/bandwidth
@@ -7,6 +9,7 @@
 * v9.0 - Added Wordpress WPScan sc0pe vulnerability parser
 * v9.0 - Fixed issue with wrong WPscan API key command
 * v9.0 - Added CVE-2020-11738 - WordPress Duplicator plugin Directory Traversal sc0pe template
+* v9.0 - Renamed AUTO_VULNSCAN setting to "VULNSCAN" in sniper.conf to perform vulnerability scans via 'normal' mode
 * v8.9 - Tuned sniper.conf around performance for all scans and recon modes
 * v8.9 - Added out of scope options to config
 * v8.9 - Added automatic HTTP/HTTPS web scans and vulnerability scans to 'normal' mode

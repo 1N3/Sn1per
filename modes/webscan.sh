@@ -126,6 +126,13 @@ if [[ "$MODE" = "webscan" ]]; then
 		unzip arachni.zip
 		cd $INSTALL_DIR
     fi
+	if [[ "$NUCLEI" = "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED RUNNING NUCLEI SCAN $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		nuclei -silent -t /usr/share/sniper/plugins/nuclei-templates/ -c $THREADS -target http://$TARGET -o $LOOT_DIR/web/nuclei-http-${TARGET}-port80.txt
+		nuclei -silent -t /usr/share/sniper/plugins/nuclei-templates/ -c $THREADS -target https://$TARGET -o $LOOT_DIR/web/nuclei-https-${TARGET}-port443.txt 
+	fi
 	if [[ "$SC0PE_VULNERABLITY_SCANNER" == "1" ]]; then
 	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 	    echo -e "$OKRED RUNNING SC0PE WEB VULNERABILITY SCAN $RESET"

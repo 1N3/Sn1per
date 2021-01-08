@@ -1201,9 +1201,9 @@ else
   fi
 fi
 
-if [[ "$AUTO_VULNSCAN" = "1" ]]; then
+if [[ "$VULNSCAN" = "1" ]]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo -e "$OKRED PERFORMING AUTO VULNSCAN $RESET"
+  echo -e "$OKRED PERFORMING VULNERABILITYSCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   sniper -t $TARGET -m vulnscan -w $WORKSPACE
 fi

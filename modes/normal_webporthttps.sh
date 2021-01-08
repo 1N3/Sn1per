@@ -57,8 +57,9 @@ if [[ "$MODE" = "web" ]]; then
     fi
   fi
   if [[ "$INJECTX" == "1" ]]; then
-    rm -f $LOOT_DIR/web/injectx-$TARGET-https.txt 2> /dev/null
-    for a in `cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep "https\:" | cut -d '?' -f2 | cut -d '=' -f1 | sort -u`; do for b in `grep $a $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "https\:" | head -n 1`; do injectx.py -u $b -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-https.txt; done; done;
+    rm -f $LOOT_DIR/web/injectx-$TARGET-https.raw 2> /dev/null
+    for a in `cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep "https\:" | cut -d '?' -f2 | cut -d '=' -f1 | sort -u`; do for b in `grep $a $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "https\:" | head -n 1`; do injectx.py -u $b -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-https.raw; done; done;
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/injectx-$TARGET-https.raw 2> /dev/null > $LOOT_DIR/web/injectx-$TARGET-https.txt
   fi
   source $INSTALL_DIR/modes/static-grep-search.sh
   if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then

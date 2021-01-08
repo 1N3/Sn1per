@@ -129,7 +129,7 @@ sniper -c /path/to/sniper.conf -t <TARGET> -w <WORKSPACE_ALIAS>
 sniper -u|--update
 ```
 
-## MODES:
+## MODES
 * **NORMAL:** Performs basic scan of targets and open ports using both active and passive checks for optimal performance.
 * **STEALTH:** Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking.
 * **FLYOVER:** Fast multi-threaded high level scans of multiple targets (useful for collecting high level data on many hosts quickly).

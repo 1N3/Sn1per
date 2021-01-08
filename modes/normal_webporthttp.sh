@@ -59,9 +59,10 @@ wpif [[ "$MODE" = "web" ]]; then
     fi
   fi
   if [[ "$INJECTX" == "1" ]]; then
-    rm -f $LOOT_DIR/web/injectx-$TARGET-http.txt 2> /dev/null
+    rm -f $LOOT_DIR/web/injectx-$TARGET-http.raw 2> /dev/null
     #cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep 'http\:' | xargs -P $THREADS -r -n 1 -I '{}' injectx.py -u '{}' -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-http.txt
-    for a in `cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep "http\:" | cut -d '?' -f2 | cut -d '=' -f1 | sort -u`; do for b in `grep $a $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "http\:" | head -n 1`; do injectx.py -u $b -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-http.txt; done; done;
+    for a in `cat $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep '?' | grep "http\:" | cut -d '?' -f2 | cut -d '=' -f1 | sort -u`; do for b in `grep $a $LOOT_DIR/web/spider-$TARGET.txt 2> /dev/null | grep "http\:" | head -n 1`; do injectx.py -u $b -vy | tee -a $LOOT_DIR/web/injectx-$TARGET-http.raw; done; done;
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/web/injectx-$TARGET-http.raw 2> /dev/null > $LOOT_DIR/web/injectx-$TARGET-http.txt
   fi
   source $INSTALL_DIR/modes/static-grep-search.sh
   if [[ "$WEB_JAVASCRIPT_ANALYSIS" == "1" ]]; then
