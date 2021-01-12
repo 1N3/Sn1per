@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v9.1 - Updated default aux mode options in default sniper.conf
 * v9.0 - Added Fortinet FortiGate SSL VPN Panel Detected sc0pe template
 * v9.0 - Added CVE-2020-17519 - Apache Flink Path Traversal sc0pe template
 * v9.0 - Added RabbitMQ Management Interface Detected sc0pe template
