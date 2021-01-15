@@ -12,7 +12,7 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 
 [![](https://xerosecurity.com/images/xerosecurity-sn1per1b.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per2.PNG)](https://xerosecurity.com/)
-[![](https://xerosecurity.com/images/xerosecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=K-8QHDafhcA)
+[![](https://xerosecurity.com/images/xerosecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=Fyi8eLm-5x8)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per4b.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per5.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per6.PNG)](https://xerosecurity.com/)
