@@ -1,4 +1,6 @@
 ## CHANGELOG:
+* v9.1 - Fixed issue with bruteforce running automatically due to changes in conf file
+* v9.1 - Added verbose scan notifications for disabled conf options
 * v9.1 - Updated default aux mode options in default sniper.conf
 * v9.0 - Added Fortinet FortiGate SSL VPN Panel Detected sc0pe template
 * v9.0 - Added CVE-2020-17519 - Apache Flink Path Traversal sc0pe template
