@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v9.1 - Fixed issue with carriage returns in conf
 * v9.1 - Fixed issue with DNS resolution in 'discover' mode scans causing duplicate hosts
 * v9.1 - Fixed issue with bruteforce running automatically due to changes in conf file
 * v9.1 - Added verbose scan notifications for disabled conf options

@@ -17,7 +17,8 @@ SNIPER_PRO=$INSTALL_DIR/pro.sh
 service postgresql start 2> /dev/null
 
 # LOAD DEFAULT SNIPER CONFIGURATION FILE
-source $INSTALL_DIR/sniper.conf 
+dos2unix $INSTALL_DIR/sniper.conf 2> /dev/null > /dev/null
+source $INSTALL_DIR/sniper.conf
 echo -e "$OKBLUE[*]$RESET Loaded configuration file from $INSTALL_DIR/sniper.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
 
 if [[ -f /root/.sniper.conf ]]; then
@@ -28,13 +29,15 @@ if [[ -f /root/.sniper.conf ]]; then
 
   if [[ -f /root/.sniper_api_keys.conf ]]; then
     # LOAD USER API KEYS (PERSISTENT CONFIG)
+    dos2unix /root/.sniper_api_keys.conf 2> /dev/null > /dev/null
     source /root/.sniper_api_keys.conf
     echo -e "$OKBLUE[*]$RESET Loaded API keys from /root/.sniper_api_keys.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
   fi
-  
+
 else
   # IF NO USER CONFIG PRESENT, CREATE IT FROM THE DEFAULT TEMPLATE
   cp $INSTALL_DIR/sniper.conf /root/.sniper.conf 2> /dev/null
+  dos2unix /root/.sniper.conf 2> /dev/null > /dev/null
   source /root/.sniper.conf
   echo -e "$OKBLUE[*]$RESET Loaded configuration file from /root/.sniper.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
 fi
@@ -163,12 +166,17 @@ function check_update {
   if [[ "$ENABLE_AUTO_UPDATES" == "1" ]] && [[ "$ONLINE" == "1" ]]; then
     if [[ -f "$INSTALL_DIR/pro/settings.php" ]]; then
       LICENSE_KEY=$(grep "LICENSE_KEY" $INSTALL_DIR/pro/settings.php | cut -d\" -f2 2> /dev/null)
-      PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER" 2> /dev/null > /dev/null | bash - 2> /dev/null > /dev/null)
+      VERSION=$(grep 9.0 $INSTALL_DIR/pro.sh | wc -c)
+      if [[ $VERSION = "71" ]]; then
+        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/9.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
+      else
+        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
+      fi
     fi
     LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [[ "$LATEST_VER" != "$VER" ]]; then
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE] sniper v$LATEST_VER is available to download... To update, type$OKRED \"sniper -u\" $RESET"
-    fi    
+    fi
   fi
   touch /tmp/update-check.txt 2> /dev/null
 }
@@ -184,9 +192,9 @@ function update {
       LICENSE_KEY=$(grep "LICENSE_KEY" $INSTALL_DIR/pro/settings.php | cut -d\" -f2 )
       VERSION=$(grep 9.0 $INSTALL_DIR/pro.sh | wc -c)
       if [[ $VERSION = "71" ]]; then
-        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/9.0/$LICENSE_KEY/updates.txt?ver=$VER" 2> /dev/null | bash - 2> /dev/null > /dev/null)
+        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/9.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
       else
-        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER" 2> /dev/null | bash - 2> /dev/null > /dev/null)
+        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
       fi
     fi
     LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
@@ -213,7 +221,7 @@ fi
 
 # CHECK IF ONLINE
 function check_online {
-  ONLINE=$(curl --connect-timeout 3 --insecure -s "https://xerosecurity.com/community/updates.txt?$VER" 2> /dev/null)
+  ONLINE=$(curl --connect-timeout 3 --insecure -s "https://xerosecurity.com/community/updates.txt?$VER&mid=$(cat /etc/machine-id)" 2> /dev/null)
   if [[ -z "$ONLINE" ]]; then
     ONLINE=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [[ -z "$ONLINE" ]]; then
@@ -246,7 +254,7 @@ case $key in
     echo -e "$OKBLUE[*]$RESET Creating backup of existing config to /root/.sniper.conf.bak...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
     cp -f /root/.sniper.conf /root/.sniper.conf.bak
     echo -e "$OKBLUE[*]$RESET Copying $CONFIG to /root/.sniper.conf...$OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
-    cp -f $CONFIG /root/.sniper.conf 
+    cp -f $CONFIG /root/.sniper.conf 2> /dev/null
     dos2unix /root/.sniper.conf 2> /dev/null > /dev/null
     source /root/.sniper.conf
     sleep 1
