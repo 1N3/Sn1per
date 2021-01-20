@@ -44,17 +44,17 @@ if [[ "$MODE" = "discover" ]]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING PING DISCOVERY SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  nmap -sP $TARGET | tee $LOOT_DIR/ips/sniper-$OUT_FILE-ping.txt
+  nmap -n -sP $TARGET | tee $LOOT_DIR/ips/sniper-$OUT_FILE-ping.txt
   cat $LOOT_DIR/ips/sniper-$OUT_FILE-ping.txt 2> /dev/null | grep "scan report" | awk '{print $5}' > $LOOT_DIR/ips/sniper-$OUT_FILE-ping-sorted.txt
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING TCP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  nmap -v -p $QUICK_PORTS $NMAP_OPTIONS -sS $TARGET -Pn 2> /dev/null | grep "open port" | tee $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt 2>/dev/null 
+  nmap -n -v -p $QUICK_PORTS $NMAP_OPTIONS -sS $TARGET -Pn 2> /dev/null | grep "open port" | tee $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt 2>/dev/null
   cat $LOOT_DIR/ips/sniper-$OUT_FILE-tcp.txt | grep open | grep on | awk '{print $6}' > $LOOT_DIR/ips/sniper-$OUT_FILE-tcpips.txt
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING UDP PORT SCAN $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  nmap -v -p $DEFAULT_UDP_PORTS $NMAP_OPTIONS -sU -Pn $TARGET 2> /dev/null | grep "open port" | tee $LOOT_DIR/ips/sniper-$OUT_FILE-udp.txt 2>/dev/null 
+  nmap -n -v -p $DEFAULT_UDP_PORTS $NMAP_OPTIONS -sU -Pn $TARGET 2> /dev/null | grep "open port" | tee $LOOT_DIR/ips/sniper-$OUT_FILE-udp.txt 2>/dev/null
   cat $LOOT_DIR/ips/sniper-$OUT_FILE-udp.txt | grep open | grep on | awk '{print $6}' > $LOOT_DIR/ips/sniper-$OUT_FILE-udpips.txt
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED CURRENT TARGETS $RESET"
