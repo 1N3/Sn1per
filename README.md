@@ -1,4 +1,4 @@
-[![XeroSecurity](https://github.com/1N3/Sn1per/blob/master/Sn1per.gif)](https://xerosecurity.com)
+[![XeroSecurity](https://xerosecurity.com/images/Sn1per-Professional-Elite-Bundle.png)](https://xerosecurity.com)
 
 [![GitHub release](https://img.shields.io/github/release/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/releases)
 [![GitHub issues](https://img.shields.io/github/issues/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/issues)
@@ -13,7 +13,6 @@ Sn1per Community Edition is an automated scanner that can be used during a penet
 [![](https://xerosecurity.com/images/xerosecurity-sn1per1b.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per2.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=Fyi8eLm-5x8)
-[![](https://xerosecurity.com/images/xerosecurity-sn1per4b.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per5.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per6.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/Sn1per-Diagram.png)](https://xerosecurity.com/)
