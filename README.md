@@ -8,14 +8,70 @@
 [![Follow on Twitter](https://img.shields.io/twitter/follow/xer0dayz.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=xer0dayz)
 
 ## ABOUT:
-Sn1per Community Edition is an automated scanner that can be used during a penetration test to enumerate and scan for vulnerabilities. Sn1per Professional is Xero Security's premium reporting addon for Professional Penetration Testers, Bug Bounty Researchers and Corporate Security teams to manage large environments and pentest scopes. For more information regarding Sn1per Professional, go to https://xerosecurity.com.
+Discover the attack surface and prioritize risks with our continuous Attack Surface Management (ASM) platform - Sn1per Professional. For more information, go to https://xerosecurity.com.
 
 [![](https://xerosecurity.com/images/xerosecurity-sn1per1b.PNG)](https://xerosecurity.com/)
-[![](https://xerosecurity.com/images/xerosecurity-sn1per2.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=Fyi8eLm-5x8)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per5.PNG)](https://xerosecurity.com/)
 [![](https://xerosecurity.com/images/xerosecurity-sn1per6.PNG)](https://xerosecurity.com/)
-[![](https://xerosecurity.com/images/Sn1per-Diagram.png)](https://xerosecurity.com/)
+
+## FEATURES:
+
+### Attack Surface Discovery
+
+Easily discover the attack surface (IPs, domain names, open ports, HTTP headers, etc.).
+
+### Penetration Testing
+
+Automate the discovery of vulnerabilities and ethical exploitation using the latest hacking and open source security tools.
+
+### Visual Recon
+
+Perform visual recon against all hosts in your workspace using the Slideshow widget and thumbnails.
+
+### IT Asset Inventory
+
+Search, sort and filter for DNS, IP, title, status, server headers, WAF and open TCP/UDP ports of the entire attack surface inventory.
+
+### Red Team
+
+Strengthen "blue team" response and detection capabilities against automated penetration testing techniques.
+
+### Notepad
+
+Store and access multiple notes in a single location to help manage your data and keep things organized.
+
+### Vulnerability Management
+
+Quickly scan for the latest vulnerabilities and CVEs using the latest commercial and open source vulnerability scanners.
+
+### Web Application Scans
+
+Launch web application scans via Burpsuite Professional 2.x, Arachni and Nikto.
+
+### Reporting
+
+Export the entire attack surface host list and vulnerability reports to CSV, XLS or PDF format to filter, sort and view all attack surface data.
+
+### OSINT Collection
+
+Collect online documents, meta data, email addresses and contact information automatically.
+
+### Continuous Scan Coverage
+
+Schedule scans on a daily, weekly or monthly basis for continuous coverage for changes.
+
+### Bug Bounty
+
+Automate the discovery of the attack surface and scan for the latest vulnerabilities and CVEs easily.
+
+### Notifications & Changes
+
+Receive notifications for scan and host status changes, URL and domain changes and new vulnerabilities discovered.
+
+### Domain Takeovers
+
+List all DNS records vulnerable to domain hijacking and takeover.
 
 ## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL:
 ```
@@ -179,3 +235,5 @@ The software code and logos are owned by XeroSecurity and protected by United St
 
 ## PURCHASE SN1PER PROFESSIONAL:
 To obtain a Sn1per Professional license, go to https://xerosecurity.com.
+
+Attack Surface Management (ASM) | Continuous Attack Surface Testing (CAST) | Attack Surface Software | Attack Surface Platform | Continuous Automated Red Teaming (CART) |  Vulnerability & Attack Surface Management | Red Team | Threat Intel | Application Security | Cybersecurity | IT Asset Discovery | Automated Penetration Testing | Hacking Tools | Recon Tool | Bug Bounty Tool | Vulnerability Scanner | Attack Surface Analysis | Attack Surface Reduction | Attack Surface Detector | Attack Surface Monitoring | Attack Surface Review | Attack Surface Discovery | Digital Threat Management | Risk Assessment | Threat Remediation | Offensive Security Framework | Automated Penetration Testing Framework | External Threat Management | Internal IT Asset Discovery | Security Orchestration and Automation (SOAR)
