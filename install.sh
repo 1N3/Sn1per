@@ -161,7 +161,6 @@ git clone https://github.com/hisxo/gitGraber.git
 git clone https://github.com/1N3/LinkFinder
 git clone https://github.com/christophetd/censys-subdomain-finder.git
 git clone https://github.com/rbsec/dnscan.git
-git clone https://github.com/infosec-au/altdns.git 
 git clone https://github.com/blechschmidt/massdns.git
 git clone https://github.com/ProjectAnte/dnsgen
 git clone https://github.com/scipag/vulscan
@@ -177,10 +176,7 @@ cd ..
 pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt
 pip3 install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
-cd altdns
-pip3 install -r requirements.txt 
-python2 setup.py install 
-pip3 install py-altdns 2> /dev/null
+pip3 install py-altdns
 cd ..
 cd massdns
 make && make install
