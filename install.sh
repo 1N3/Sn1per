@@ -177,7 +177,6 @@ pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt
 pip3 install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
 pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
 pip3 install py-altdns
-cd ..
 cd massdns
 make && make install
 cd ..
