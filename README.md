@@ -10,7 +10,7 @@
 ## ABOUT:
 Discover the attack surface and prioritize risks with our continuous Attack Surface Management (ASM) platform - Sn1per Professional. For more information, go to https://sn1persecurity.com.
 
-[![](https://sn1persecurity.com/images/sn1persecurity-attack-surface-management-solutions.PNG)](https://sn1persecurity.com/)
+[![](https://sn1persecurity.com/images/Sn1perSecurity-attack-surface-management-header2.png)](https://sn1persecurity.com/)
 
 ## FEATURES:
 
