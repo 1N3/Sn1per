@@ -1,4 +1,4 @@
-[![XeroSecurity](https://xerosecurity.com/images/Sn1per-Professional-Elite-Bundle.png)](https://xerosecurity.com)
+[![Sn1perSecurity](https://sn1persecurity.com/images/Sn1per-Professional-Elite-Bundle.png)](https://sn1persecurity.com)
 
 [![GitHub release](https://img.shields.io/github/release/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/releases)
 [![GitHub issues](https://img.shields.io/github/issues/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/issues)
@@ -8,12 +8,12 @@
 [![Follow on Twitter](https://img.shields.io/twitter/follow/xer0dayz.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=xer0dayz)
 
 ## ABOUT:
-Discover the attack surface and prioritize risks with our continuous Attack Surface Management (ASM) platform - Sn1per Professional. For more information, go to https://xerosecurity.com.
+Discover the attack surface and prioritize risks with our continuous Attack Surface Management (ASM) platform - Sn1per Professional. For more information, go to https://sn1persecurity.com.
 
-[![](https://xerosecurity.com/images/xerosecurity-sn1per1b.PNG)](https://xerosecurity.com/)
-[![](https://xerosecurity.com/images/xerosecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=Fyi8eLm-5x8)
-[![](https://xerosecurity.com/images/xerosecurity-sn1per5.PNG)](https://xerosecurity.com/)
-[![](https://xerosecurity.com/images/xerosecurity-sn1per6.PNG)](https://xerosecurity.com/)
+[![](https://sn1persecurity.com/images/sn1persecurity-sn1per1b.PNG)](https://sn1persecurity.com/)
+[![](https://sn1persecurity.com/images/sn1persecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=Fyi8eLm-5x8)
+[![](https://sn1persecurity.com/images/sn1persecurity-sn1per5.PNG)](https://sn1persecurity.com/)
+[![](https://sn1persecurity.com/images/sn1persecurity-sn1per6.PNG)](https://sn1persecurity.com/)
 
 ## FEATURES:
 
@@ -81,7 +81,7 @@ bash install.sh
 ```
 
 ## DOCKER INSTALL:
-[![](https://xerosecurity.com/images/docker-logo.png)](https://hub.docker.com/r/xerosecurity/sn1per)
+[![](https://sn1persecurity.com/images/docker-logo.png)](https://hub.docker.com/r/sn1persecurity/sn1per)
 
 From a new Docker console, run the following commands.
 ```
@@ -91,8 +91,8 @@ docker run -it sn1per /bin/bash
 
 or 
 
-docker pull xerosecurity/sn1per
-docker run -it xerosecurity/sn1per /bin/bash
+docker pull sn1persecurity/sn1per
+docker run -it sn1persecurity/sn1per /bin/bash
 ```
 
 ## USAGE:
@@ -225,15 +225,15 @@ sniper -u|--update
 - [x] WPScan API integration (https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration)
 
 ## LICENSE:
-This software is free to distribute and use with the condition that credit is provided to the creator (@xer0dayz @XeroSecurity), is not renamed and is not for commercial use or resold and rebranded. Permission to distribute any part of the code for sale is strictly prohibited.
+This software is free to distribute and use with the condition that credit is provided to the creator (@xer0dayz @Sn1perSecurity), is not renamed and is not for commercial use or resold and rebranded. Permission to distribute any part of the code for sale is strictly prohibited.
 
 ## LEGAL DISCLAIMER:
-You may not rent or lease, distribute, modify, sell or transfer the software to a third party. Sn1per Community is free for distribution, and modification with the condition that credit is provided to the creator and not used for commercial use. You may not use software for illegal or nefarious purposes. No liability for consequential damages to the maximum extent permitted by all applicable laws. In no event shall XeroSecurity or any person be liable for any consequential, reliance, incidental, special, direct or indirect damages whatsoever (including without limitation, damages for loss of business profits, business interruption, loss of business information, personal injury, or any other loss) arising out of or in connection with the use or inability to use this product, even if XeroSecurity has been advised of the possibility of such damages.
+You may not rent or lease, distribute, modify, sell or transfer the software to a third party. Sn1per Community is free for distribution, and modification with the condition that credit is provided to the creator and not used for commercial use. You may not use software for illegal or nefarious purposes. No liability for consequential damages to the maximum extent permitted by all applicable laws. In no event shall Sn1perSecurity or any person be liable for any consequential, reliance, incidental, special, direct or indirect damages whatsoever (including without limitation, damages for loss of business profits, business interruption, loss of business information, personal injury, or any other loss) arising out of or in connection with the use or inability to use this product, even if Sn1perSecurity has been advised of the possibility of such damages.
 
 ## COPYRIGHT:
-The software code and logos are owned by XeroSecurity and protected by United States copyright and/or patent laws of international treaty provisions. All rights reserved.
+The software code and logos are owned by Sn1perSecurity and protected by United States copyright and/or patent laws of international treaty provisions. All rights reserved.
 
 ## PURCHASE SN1PER PROFESSIONAL:
-To obtain a Sn1per Professional license, go to https://xerosecurity.com.
+To obtain a Sn1per Professional license, go to https://sn1persecurity.com.
 
 Attack Surface Management (ASM) | Continuous Attack Surface Testing (CAST) | Attack Surface Software | Attack Surface Platform | Continuous Automated Red Teaming (CART) |  Vulnerability & Attack Surface Management | Red Team | Threat Intel | Application Security | Cybersecurity | IT Asset Discovery | Automated Penetration Testing | Hacking Tools | Recon Tool | Bug Bounty Tool | Vulnerability Scanner | Attack Surface Analysis | Attack Surface Reduction | Attack Surface Detector | Attack Surface Monitoring | Attack Surface Review | Attack Surface Discovery | Digital Threat Management | Risk Assessment | Threat Remediation | Offensive Security Framework | Automated Penetration Testing Framework | External Threat Management | Internal IT Asset Discovery | Security Orchestration and Automation (SOAR)

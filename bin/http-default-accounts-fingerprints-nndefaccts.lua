@@ -9879,7 +9879,7 @@ table.insert(fingerprints, {
 })
 
 table.insert(fingerprints, {
-  name = "Xerox CentreWare (var.1)",
+  name = "Sn1perx CentreWare (var.1)",
   category = "printer",
   paths = {
     {path = "/"}
@@ -9900,7 +9900,7 @@ table.insert(fingerprints, {
                   webPassword=pass,
                   frmaltDomain="default"}
     local resp = http_post_simple(host, port,
-                                 url.absolute(path, "userpost/xerox.set"),
+                                 url.absolute(path, "userpost/sn1perx.set"),
                                  nil, form)
     return resp.status == 200
            and (resp.body or ""):find("%Wwindow%.opener%.top%.location%s*=%s*window%.opener%.top%.location%.pathname%s*;")
@@ -9908,7 +9908,7 @@ table.insert(fingerprints, {
 })
 
 table.insert(fingerprints, {
-  name = "Xerox CentreWare (var.2)",
+  name = "Sn1perx CentreWare (var.2)",
   category = "printer",
   paths = {
     {path = "/"}
@@ -9939,7 +9939,7 @@ table.insert(fingerprints, {
 })
 
 table.insert(fingerprints, {
-  name = "Xerox CentreWare (basic auth)",
+  name = "Sn1perx CentreWare (basic auth)",
   category = "printer",
   paths = {
     {path = "/"}
@@ -9957,7 +9957,7 @@ table.insert(fingerprints, {
 })
 
 table.insert(fingerprints, {
-  name = "Xerox CentreWare (basic auth var.1)",
+  name = "Sn1perx CentreWare (basic auth var.1)",
   category = "printer",
   paths = {
     {path = "/"}
@@ -9985,7 +9985,7 @@ table.insert(fingerprints, {
 })
 
 table.insert(fingerprints, {
-  name = "Xerox CentreWare (basic auth var.2)",
+  name = "Sn1perx CentreWare (basic auth var.2)",
   category = "printer",
   paths = {
     {path = "/"}
@@ -10008,7 +10008,7 @@ table.insert(fingerprints, {
 })
 
 table.insert(fingerprints, {
-  name = "Xerox CentreWare (basic auth var.3)",
+  name = "Sn1perx CentreWare (basic auth var.3)",
   category = "printer",
   paths = {
     {path = "/"}
@@ -10021,8 +10021,8 @@ table.insert(fingerprints, {
     local resp = http_get_simple(host, port, url.absolute(path, "home.html"))
     return resp.status == 200
            and resp.body
-           and resp.body:find("Xerox", 1, true)
-           and resp.body:lower():find("<title>[^<]-%f[%w]xerox%f[%W]")
+           and resp.body:find("Sn1perx", 1, true)
+           and resp.body:lower():find("<title>[^<]-%f[%w]sn1perx%f[%W]")
   end,
   login_combos = {
     {username = "admin", password = "1111"}
@@ -10035,7 +10035,7 @@ table.insert(fingerprints, {
 })
 
 table.insert(fingerprints, {
-  name = "Xerox CentreWare (basic auth var.4)",
+  name = "Sn1perx CentreWare (basic auth var.4)",
   category = "printer",
   paths = {
     {path = "/"}
@@ -10043,7 +10043,7 @@ table.insert(fingerprints, {
   target_check = function (host, port, path, response)
     return response.status == 200
            and response.body
-           and response.body:find("Xerox", 1, true)
+           and response.body:find("Sn1perx", 1, true)
            and response.body:find("/status/statusAlerts.dhtml", 1, true)
            and response.body:find("/tabsFrame.dhtml", 1, true)
            and get_tag(response.body, "frame", {src="/tabsframe%.dhtml$"})
@@ -10059,7 +10059,7 @@ table.insert(fingerprints, {
 })
 
 table.insert(fingerprints, {
-  name = "Xerox CentreWare (basic auth var.5)",
+  name = "Sn1perx CentreWare (basic auth var.5)",
   category = "printer",
   paths = {
     {path = "/"}
@@ -10068,7 +10068,7 @@ table.insert(fingerprints, {
     return response.status == 200
            and not response.header["server"]
            and response.body
-           and response.body:find("Xerox", 1, true)
+           and response.body:find("Sn1perx", 1, true)
            and response.body:find("/js/deviceStatus.dhtml", 1, true)
            and response.body:find("/tabsFrame.dhtml", 1, true)
            and get_tag(response.body, "frame", {src="/tabsframe%.dhtml$"})
@@ -10084,16 +10084,16 @@ table.insert(fingerprints, {
 })
 
 table.insert(fingerprints, {
-  name = "Xerox CentreWare (basic auth var.6)",
+  name = "Sn1perx CentreWare (basic auth var.6)",
   category = "printer",
   paths = {
     {path = "/"}
   },
   target_check = function (host, port, path, response)
     return response.status == 200
-           and (response.header["server"] or ""):find("^Xerox_MicroServer")
+           and (response.header["server"] or ""):find("^Sn1perx_MicroServer")
            and response.body
-           and response.body:find("Xerox", 1, true)
+           and response.body:find("Sn1perx", 1, true)
            and response.body:find("/js/deviceStatus.dhtml", 1, true)
            and response.body:find("/tabsFrame.dhtml", 1, true)
            and get_tag(response.body, "frame", {src="/tabsframe%.dhtml$"})

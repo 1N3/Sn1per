@@ -34,7 +34,7 @@ echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
 echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
-echo -e "$OKORANGE + -- --=[https://xerosecurity.com"
+echo -e "$OKORANGE + -- --=[https://sn1persecurity.com"
 echo -e "$OKORANGE + -- --=[Sn1per v$VER by @xer0dayz"
 echo -e "$RESET"
 
@@ -53,9 +53,9 @@ echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/${TARGET}-
 echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
 ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
-echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+echo "[sn1persecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
 if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 fi
 
 echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -115,12 +115,12 @@ fi
 
 PORT_CHANGE=$(cat $LOOT_DIR/nmap/ports-$TARGET.diff 2> /dev/null)
 if [[ ${#PORT_CHANGE} -ge 2 ]]; then
-  echo "[xerosecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+  echo "[sn1persecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
   cat $LOOT_DIR/nmap/ports-$TARGET.diff 2> /dev/null | egrep "<|>" >> $LOOT_DIR/scans/notifications_new.txt
 fi
 
 if [[ "$SLACK_NOTIFICATIONS_NMAP_DIFF" == "1" ]] && [[ -s "$LOOT_DIR/nmap/ports-$TARGET.diff" ]]; then
-  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Port change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/ports-$TARGET.diff"
 fi
 
@@ -1250,9 +1250,9 @@ echo "$TARGET" >> $LOOT_DIR/scans/updated.txt
 rm -f $LOOT_DIR/scans/running_${TARGET}_${MODE}.txt 2> /dev/null
 ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
 
-echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+echo "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
 if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+  /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [${MODE}] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 fi
 if [[ "$LOOT" = "1" ]] && [[ -z "$NOLOOT" ]]; then
   loot

@@ -18,16 +18,16 @@ if [[ "$MODE" = "discover" ]]; then
     OUT_FILE="$(echo $TARGET | tr / -)"
     echo "$TARGET $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -t $TARGET -m $MODE --noreport $args" >> $LOOT_DIR/scans/$OUT_FILE-$MODE.txt 2> /dev/null
-    echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+    echo "[sn1persecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Started Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     fi
     sniper -t $TARGET -m $MODE --noreport $args | tee $LOOT_DIR/output/sniper-$MODE-`date +"%Y%m%d%H%M"`.txt 2>&1
     exit
   fi
   echo -e "$OKRED                                                              ____ /\\"
-  echo -e "$OKRED   Sn1per by @xer0dayz @XeroSecurity                               \ \\"
-  echo -e "$OKRED   https://xerosecurity.com                                         \ \\"
+  echo -e "$OKRED   Sn1per by @xer0dayz @Sn1perSecurity                               \ \\"
+  echo -e "$OKRED   https://sn1persecurity.com                                         \ \\"
   echo -e "$OKRED                                                                ___ /  \\"
   echo -e "$OKRED                                                                    \   \\"
   echo -e "$OKRED                                                                 === > [ \\"
@@ -69,9 +69,9 @@ if [[ "$MODE" = "discover" ]]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED SCAN COMPLETE! $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+  echo "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   sniper -f $LOOT_DIR/ips/discover-$OUT_FILE-sorted.txt -m flyover -w $WORKSPACE
   exit

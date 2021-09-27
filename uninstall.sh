@@ -1,6 +1,6 @@
 #!/bin/bash
 # Uninstall script for Sn1per
-# Created by @xer0dayz - https://xerosecurity.com
+# Created by @xer0dayz - https://sn1persecurity.com
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 
@@ -21,7 +21,7 @@ echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
 echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
-echo -e "$OKORANGE + -- --=[https://xerosecurity.com$RESET"
+echo -e "$OKORANGE + -- --=[https://sn1persecurity.com$RESET"
 echo ""
 
 INSTALL_DIR=/usr/share/sniper

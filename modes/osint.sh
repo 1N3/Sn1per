@@ -1,7 +1,7 @@
 if [[ "$OSINT" = "1" ]]; then
-	echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+	echo "[sn1persecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi	
 	if [[ "$WHOIS" == "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
@@ -108,8 +108,8 @@ if [[ "$OSINT" = "1" ]]; then
 		cat $LOOT_DIR/osint/github-urls-$ORGANIZATION.diff 2> /dev/null
 		#python3 gitGraber.py -k wordlists/keywords.txt -q "\"$TARGET\"" -s 2>&1 | tee $LOOT_DIR/osint/gitGrabber-$TARGET.txt 2> /dev/null
 	fi
-	echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+	echo "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi
 fi

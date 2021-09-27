@@ -20,7 +20,7 @@ REPORT="1"
 LOOT="1"
 
 # OUT OF SCOPE
-OUT_OF_SCOPE=("www.xerosecurity.com" "xerosecurity.com" "*.xerosecurity.com")
+OUT_OF_SCOPE=("www.sn1persecurity.com" "sn1persecurity.com" "*.sn1persecurity.com")
 
 # SN1PER PROFESSIONAL SETTINGS
 SNIPER_PRO_CONSOLE_OUTPUT="0"

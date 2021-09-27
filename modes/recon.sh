@@ -1,7 +1,7 @@
 if [[ "$RECON" = "1" ]]; then
-  echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per recon scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+  echo "[sn1persecurity.com] •?((¯°·._.• Started Sn1per recon scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per recon scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Started Sn1per recon scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
 
   touch $LOOT_DIR/domains/domains_old-$TARGET.txt 2> /dev/null
@@ -177,10 +177,10 @@ if [[ "$RECON" = "1" ]]; then
   cat $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null
 
   if [[ $(wc -c $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null | awk '{print $1}') > 3 ]]; then
-    echo "[xerosecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+    echo "[sn1persecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
     cat $LOOT_DIR/domains/domains_new-$TARGET.txt 2> /dev/null >> $LOOT_DIR/scans/notifications_new.txt 2> /dev/null 
     if [[ "$SLACK_NOTIFICATIONS_DOMAINS_NEW" == "1" ]]; then
-      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• New domains detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
       /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/domains/domains_new-$TARGET.txt"
     fi
   fi
@@ -275,8 +275,8 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     sniper -f $LOOT_DIR/domains/domains-$TARGET-full.txt -m flyover -w $WORKSPACE
   fi
-  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+  echo "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per scan: $TARGET [recon] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
 fi

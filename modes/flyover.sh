@@ -40,9 +40,9 @@ if [[ "$MODE" = "flyover" ]]; then
     echo "$FILE $MODE `date +"%Y-%m-%d %H:%M"`" 2> /dev/null >> $LOOT_DIR/scans/tasks.txt 2> /dev/null
     echo "sniper -f $FILE -m $MODE --noreport $args" >> $LOOT_DIR/scans/running_${WORKSPACE}_${MODE}.txt
     ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
-    echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+    echo "[sn1persecurity.com] •?((¯°·._.• Started Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Started Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     fi
     args=""
     cp $LOOT_DIR/nmap/livehosts-sorted.txt $LOOT_DIR/nmap/livehosts-sorted.old 2> /dev/null
@@ -128,10 +128,10 @@ if [[ "$MODE" = "flyover" ]]; then
     diff $LOOT_DIR/nmap/livehosts-sorted.old $LOOT_DIR/nmap/livehosts-sorted.txt 2> /dev/null > $LOOT_DIR/nmap/livehosts-sorted.diff 2> /dev/null
 
     if [[ -s "$LOOT_DIR/nmap/livehosts-sorted.diff" ]]; then
-      echo "[xerosecurity.com] •?((¯°·._.• Host status change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+      echo "[sn1persecurity.com] •?((¯°·._.• Host status change detected on $TARGET (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
       cat $LOOT_DIR/nmap/livehosts-sorted.diff | egrep "<|>" >> $LOOT_DIR/scans/notifications_new.txt
       if [[ "$SLACK_NOTIFICATIONS_NMAP_DIFF" == "1" ]]; then
-        /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Host status change detected on $WORKSPACE (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+        /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Host status change detected on $WORKSPACE (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
         /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/livehosts-sorted.diff"
       fi
     fi
@@ -140,10 +140,10 @@ if [[ "$MODE" = "flyover" ]]; then
     do
       diff $LOOT_DIR/nmap/ports-$a.old $LOOT_DIR/nmap/ports-$a.txt 2> /dev/null > $LOOT_DIR/nmap/ports-$a.diff 2> /dev/null
       if [[ -s "$LOOT_DIR/nmap/ports-$a.diff" ]]; then
-        echo "[xerosecurity.com] •?((¯°·._.• Port change detected on $a (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+        echo "[sn1persecurity.com] •?((¯°·._.• Port change detected on $a (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
         cat $LOOT_DIR/nmap/ports-$a.diff | egrep "<|>" >> $LOOT_DIR/scans/notifications_new.txt
         if [[ "$SLACK_NOTIFICATIONS_NMAP_DIFF" == "1" ]]; then
-          /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Port change detected on $a (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+          /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Port change detected on $a (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
           /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/ports-$a.diff"
         fi
       fi
@@ -152,9 +152,9 @@ if [[ "$MODE" = "flyover" ]]; then
     rm -f $LOOT_DIR/scans/running_${WORKSPACE}_${MODE}.txt 2> /dev/null
     ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $LOOT_DIR/scans/tasks-running.txt
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+    echo "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
     if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+      /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per scan: $FILE [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
     fi
     if [[ "$LOOT" = "1" ]]; then
       loot

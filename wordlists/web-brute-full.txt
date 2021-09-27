@@ -8718,7 +8718,7 @@ About.vb
 about.vm
 aboutwho
 about_wwf
-about-xerox
+about-sn1perx
 about.xhtml
 about.xml
 about_zencart.html
@@ -175485,7 +175485,7 @@ xeon
 xerces
 xermace
 xermde
-xerox
+sn1perx
 xert
 xerta
 xf

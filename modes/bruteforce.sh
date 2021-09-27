@@ -4,9 +4,9 @@ if [[ "$AUTO_BRUTE" = "1" ]]; then
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
   echo -e "$OKRED RUNNING BRUTE FORCE $RESET"
   echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-  echo "[xerosecurity.com] •?((¯°·._.• Started Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+  echo "[sn1persecurity.com] •?((¯°·._.• Started Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Started Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Started Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
   brutex $TARGET | tee $LOOT_DIR/credentials/brutex-$TARGET 2> /dev/null
   sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $LOOT_DIR/credentials/brutex-$TARGET 2> /dev/null > $LOOT_DIR/credentials/brutex-$TARGET.txt 2> /dev/null
@@ -25,9 +25,9 @@ if [[ "$AUTO_BRUTE" = "1" ]]; then
   if [[ "$SLACK_NOTIFICATIONS_BRUTEFORCE" == "1" ]]; then
     /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/credentials/brutex-$TARGET.txt"
   fi
-  echo "[xerosecurity.com] •?((¯°·._.• Finished Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
+  echo "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•" >> $LOOT_DIR/scans/notifications_new.txt
   if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
-    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[xerosecurity.com] •?((¯°·._.• Finished Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
+    /bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Finished Sn1per brute force: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
   fi
 else
   echo -e "$OKORANGE + -- --=[ AUTO_BRUTE setting disabled in sniper.conf... skipping.$RESET"

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Slack API Integration script for Sn1per
-# By @xer0dayz - https://xerosecurity.com
+# By @xer0dayz - https://sn1persecurity.com
 #
 
 source /usr/share/sniper/sniper.conf 2> /dev/null

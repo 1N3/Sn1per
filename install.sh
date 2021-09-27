@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install script for sn1per
-# Created by @xer0dayz - https://xerosecurity.com
+# Created by @xer0dayz - https://sn1persecurity.com
 
 OKBLUE='\033[94m'
 OKRED='\033[91m'
@@ -15,7 +15,7 @@ echo -e "$OKRED  (__  ) / / // // /_/ /  __/ /    $RESET"
 echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
-echo -e "$OKORANGE + -- --=[ https://xerosecurity.com $RESET"
+echo -e "$OKORANGE + -- --=[ https://sn1persecurity.com $RESET"
 echo -e "$OKORANGE + -- --=[ Sn1per by @xer0dayz $RESET"
 echo ""
 
@@ -35,9 +35,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 mkdir -p $INSTALL_DIR 2> /dev/null
-chmod 777 -Rf $INSTALL_DIR 2> /dev/null
+chmod 755 -Rf $INSTALL_DIR 2> /dev/null
 chown root $INSTALL_DIR/sniper 2> /dev/null
-chmod 4777 $INSTALL_DIR/sniper 2> /dev/null
 mkdir -p $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/domains 2> /dev/null
 mkdir $LOOT_DIR/screenshots 2> /dev/null

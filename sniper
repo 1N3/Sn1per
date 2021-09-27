@@ -1,6 +1,6 @@
 #!/bin/bash
 # + -- --=[Sn1per Community Edition by @xer0dayz
-# + -- --=[https://xerosecurity.com
+# + -- --=[https://sn1persecurity.com
 # 
 
 if [[ $EUID -ne 0 ]]; then
@@ -152,7 +152,7 @@ function logo {
   echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
   echo -e "$OKRED               /_/                 $RESET"
   echo ""
-  echo -e "$OKORANGE + -- --=[ https://xerosecurity.com$RESET"
+  echo -e "$OKORANGE + -- --=[ https://sn1persecurity.com$RESET"
   echo -e "$OKORANGE + -- --=[ Sn1per v$VER by @xer0dayz$RESET"
   echo ""
 }
@@ -168,9 +168,9 @@ function check_update {
       LICENSE_KEY=$(grep "LICENSE_KEY" $INSTALL_DIR/pro/settings.php | cut -d\" -f2 2> /dev/null)
       VERSION=$(grep 9.0 $INSTALL_DIR/pro.sh | wc -c)
       if [[ $VERSION = "71" ]]; then
-        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/9.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
+        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://sn1persecurity.com/pro/9.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
       else
-        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
+        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://sn1persecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
       fi
     fi
     LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
@@ -192,9 +192,9 @@ function update {
       LICENSE_KEY=$(grep "LICENSE_KEY" $INSTALL_DIR/pro/settings.php | cut -d\" -f2 )
       VERSION=$(grep 9.0 $INSTALL_DIR/pro.sh | wc -c)
       if [[ $VERSION = "71" ]]; then
-        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/9.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
+        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://sn1persecurity.com/pro/9.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
       else
-        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://xerosecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
+        PRO_UPDATE=$(curl --insecure --connect-timeout 5 -s --user-agent "`hostname` - `uname -a`" "https://sn1persecurity.com/pro/8.0/$LICENSE_KEY/updates.txt?ver=$VER&mid=$(cat /etc/machine-id)" 2> /dev/null | bash - 2> /dev/null > /dev/null)
       fi
     fi
     LATEST_VER=$(curl --connect-timeout 5 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
@@ -221,7 +221,7 @@ fi
 
 # CHECK IF ONLINE
 function check_online {
-  ONLINE=$(curl --connect-timeout 3 --insecure -s "https://xerosecurity.com/community/updates.txt?$VER&mid=$(cat /etc/machine-id)" 2> /dev/null)
+  ONLINE=$(curl --connect-timeout 3 --insecure -s "https://sn1persecurity.com/community/updates.txt?$VER&mid=$(cat /etc/machine-id)" 2> /dev/null)
   if [[ -z "$ONLINE" ]]; then
     ONLINE=$(curl --connect-timeout 3 -s https://api.github.com/repos/1N3/Sn1per/tags | grep -Po '"name":.*?[^\\]",'| head -1 | cut -c11-13)
     if [[ -z "$ONLINE" ]]; then
@@ -604,8 +604,8 @@ function loot {
         source $INSTALL_DIR/pro.sh
       fi
     else
-      echo -e "$OKRED + -- --=[ Sn1per Professional is not installed. To download Sn1per Professional, go to https://xerosecurity.com. $RESET"
-      sudo $LAST_USER -c $BROWSER https://xerosecurity.com 2> /dev/null > /dev/null &
+      echo -e "$OKRED + -- --=[ Sn1per Professional is not installed. To download Sn1per Professional, go to https://sn1persecurity.com. $RESET"
+      sudo $LAST_USER -c $BROWSER https://sn1persecurity.com 2> /dev/null > /dev/null &
     fi
     rm -f $UPDATED_TARGETS 2> /dev/null
     touch $UPDATED_TARGETS 2> /dev/null
