@@ -1,4 +1,4 @@
-[![Sn1perSecurity](https://sn1persecurity.com/images/Sn1per-Professional-Elite-Bundle.png)](https://sn1persecurity.com)
+[![Sn1perSecurity](https://sn1persecurity.com/images/Sn1perSecurity-Attack-Surface-Management-header1.png)](https://sn1persecurity.com)
 
 [![GitHub release](https://img.shields.io/github/release/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/releases)
 [![GitHub issues](https://img.shields.io/github/issues/1N3/Sn1per.svg)](https://github.com/1N3/Sn1per/issues)
