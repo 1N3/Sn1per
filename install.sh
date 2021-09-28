@@ -35,9 +35,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 mkdir -p $INSTALL_DIR 2> /dev/null
-chmod 777 -Rf $INSTALL_DIR 2> /dev/null
+chmod 755 -Rf $INSTALL_DIR 2> /dev/null
 chown root $INSTALL_DIR/sniper 2> /dev/null
-chmod 4777 $INSTALL_DIR/sniper 2> /dev/null
 mkdir -p $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/domains 2> /dev/null
 mkdir $LOOT_DIR/screenshots 2> /dev/null
