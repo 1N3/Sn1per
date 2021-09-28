@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install script for sn1per
+# Install script for Sn1per CE
 # Created by @xer0dayz - https://sn1persecurity.com
 
 OKBLUE='\033[94m'
@@ -16,7 +16,7 @@ echo -e "$OKRED /____/_/ /_/___/ .___/\___/_/     $RESET"
 echo -e "$OKRED               /_/                 $RESET"
 echo -e "$RESET"
 echo -e "$OKORANGE + -- --=[ https://sn1persecurity.com $RESET"
-echo -e "$OKORANGE + -- --=[ Sn1per by @xer0dayz $RESET"
+echo -e "$OKORANGE + -- --=[ Sn1per CE by @xer0dayz $RESET"
 echo ""
 
 INSTALL_DIR=/usr/share/sniper
@@ -24,19 +24,20 @@ LOOT_DIR=/usr/share/sniper/loot
 PLUGINS_DIR=/usr/share/sniper/plugins
 GO_DIR=~/go/bin
 
-echo -e "$OKRED[>]$RESET This script will install sn1per under $INSTALL_DIR. Are you sure you want to continue? (Hit Ctrl+C to exit)$RESET"
+echo -e "$OKRED[>]$RESET This script will install Sn1per under $INSTALL_DIR. Are you sure you want to continue? (Hit Ctrl+C to exit)$RESET"
 if [[ "$1" != "force" ]]; then
 	read answer
 fi
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
+   echo "This script must be run as root"
    exit 1
 fi
 
 mkdir -p $INSTALL_DIR 2> /dev/null
-chmod 755 -Rf $INSTALL_DIR 2> /dev/null
+chmod 777 -Rf $INSTALL_DIR 2> /dev/null
 chown root $INSTALL_DIR/sniper 2> /dev/null
+chmod 4777 $INSTALL_DIR/sniper 2> /dev/null
 mkdir -p $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/domains 2> /dev/null
 mkdir $LOOT_DIR/screenshots 2> /dev/null
@@ -58,13 +59,16 @@ UBUNTU_CHECK=$(egrep DISTRIB_ID /etc/lsb-release 2> /dev/null)
 if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	cp /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
 	cp -a /run/user/1000/gdm/Xauthority /root/.Xauthority 2> /dev/null
-	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null 
+	cp -a /home/user/.Xauthority /root/.Xauthority 2> /dev/null
 	chown root /root/.Xauthority 2> /dev/null
 	XAUTHORITY=/root/.Xauthority 2> /dev/null
 	snap install chromium 2> /dev/null
 	ln -s /snap/bin/chromium /usr/bin/chromium 2> /dev/null
 	xhost + 2> /dev/null
 	mkdir -p /run/user/0 2> /dev/null
+	add-apt-repository ppa:longsleep/golang-backports
+	sudo apt update
+	apt install golang
 fi
 
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
@@ -111,6 +115,10 @@ apt-get install -y jsbeautifier
 apt-get install -y theharvester 2> /dev/null
 apt-get install -y phantomjs 2> /dev/null
 apt-get install -y chromium 2> /dev/null
+apt-get install -y xvfb
+apt-get install -y urlcrazy
+apt-get install -y iputils-ping
+apt-get install -y enum4linux
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
@@ -121,17 +129,11 @@ pip3 install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
 echo -e "$OKBLUE[*]$RESET Installing gem dependencies...$RESET"
-echo -e "$OKBLUE[*]$RESET Installing rake...$RESET"
 gem install rake 2> /dev/null > /dev/null
-echo -e "$OKBLUE[*]$RESET Installing ruby-nmap...$RESET"
 gem install ruby-nmap 2> /dev/null > /dev/null
-echo -e "$OKBLUE[*]$RESET Installing net-http-persistent...$RESET"
 gem install net-http-persistent 2> /dev/null > /dev/null
-echo -e "$OKBLUE[*]$RESET Installing mechanize...$RESET"
 gem install mechanize 2> /dev/null > /dev/null
-echo -e "$OKBLUE[*]$RESET Installing text-table...$RESET"
 gem install text-table 2> /dev/null > /dev/null
-echo -e "$OKBLUE[*]$RESET Installing public_suffix...$RESET"
 gem install public_suffix 2> /dev/null > /dev/null
 
 echo -e "$OKBLUE[*]$RESET Setting up Ruby...$RESET"
@@ -144,90 +146,223 @@ cd $PLUGINS_DIR
 mkdir -p $GO_DIR 2> /dev/null
 
 echo -e "$OKBLUE[*]$RESET Downloading extensions...$RESET"
-git clone https://github.com/1N3/BruteX.git 
-git clone https://github.com/1N3/Findsploit.git 
-git clone https://github.com/1N3/Goohak.git
-git clone https://github.com/1N3/BlackWidow
+
+# SUBLIST3R INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Sublist3r...$RESET"
 git clone https://github.com/1N3/Sublist3r.git
-git clone https://github.com/nccgroup/shocker.git 
-git clone https://github.com/BishopFox/spoofcheck.git
-git clone https://github.com/arthepsy/ssh-audit 
+
+# SHOCKER INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Shocker...$RESET"
+git clone https://github.com/nccgroup/shocker.git
+
+# SSH-AUDIT INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing SSH-Audit...$RESET"
+git clone https://github.com/arthepsy/ssh-audit
+
+# JEXBOSS INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Jexboss...$RESET"
 git clone https://github.com/1N3/jexboss.git
-git clone https://github.com/maurosoria/dirsearch.git
+
+# WIG INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Wig...$RESET"
 git clone https://github.com/jekyc/wig.git
+
+# CORSTEST INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing CORStest...$RESET"
 git clone https://github.com/RUB-NDS/CORStest.git
-git clone https://github.com/hisxo/gitGraber.git
-git clone https://github.com/1N3/LinkFinder
-git clone https://github.com/christophetd/censys-subdomain-finder.git
-git clone https://github.com/rbsec/dnscan.git
-git clone https://github.com/blechschmidt/massdns.git
-git clone https://github.com/ProjectAnte/dnsgen
+
+# VULSCAN INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Vulscan...$RESET"
 git clone https://github.com/scipag/vulscan
+
+# METAGOOFIL INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Metagoofil...$RESET"
 git clone https://github.com/laramies/metagoofil.git
+
+# SHODAN INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Shodan...$RESET"
 git clone https://github.com/achillean/shodan-python
-git clone https://github.com/Dionach/CMSmap.git 
+
+# CMSMAP INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing CMSMap...$RESET"
+git clone https://github.com/Dionach/CMSmap.git
+
+# SMUGGLER INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Smuggler...$RESET"
 git clone https://github.com/defparam/smuggler.git
 
-cd $PLUGINS_DIR
+# DIRSEARCH INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Dirsearch...$RESET"
+git clone https://github.com/maurosoria/dirsearch.git
+
+# SECRETFINDER INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing SecretFinder...$RESET"
+git clone https://github.com/m4ll0k/SecretFinder.git secretfinder
+pip install -r $PLUGINS_DIR/secretfinder/requirements.txt
+
+# LINKFINDER INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing LinkFinder...$RESET"
+git clone https://github.com/1N3/LinkFinder
 cd LinkFinder
-python setup.py install 
+python3 setup.py install
 cd ..
-pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt
+
+# GITGRABER INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing GitGrabber...$RESET"
+git clone https://github.com/hisxo/gitGraber.git
+pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt 2> /dev/null
+
+# CENSYS-SUBDOMAIN-FINDER INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Censys-Subdomain-Finder...$RESET"
+git clone https://github.com/christophetd/censys-subdomain-finder.git
 pip3 install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
-pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt 
+
+# DNSCAN INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing DNScan...$RESET"
+git clone https://github.com/rbsec/dnscan.git
+pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt
+
+# ALTDNS INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing AltDNS...$RESET"
+git clone https://github.com/infosec-au/altdns.git
+cd altdns
+pip3 install -r requirements.txt
+python3 setup.py install
 pip3 install py-altdns
+cd ..
+
+# MASSDNS INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing MassDNS...$RESET"
+git clone https://github.com/blechschmidt/massdns.git
 cd massdns
 make && make install
 cd ..
+
+# DNSGEN INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing DNSGen...$RESET"
+git clone https://github.com/ProjectAnte/dnsgen
 cd dnsgen
 pip3 install -r requirements.txt
 python3 setup.py install
 cd ..
+
+# NUCLEI UPDATES
+echo -e "$OKBLUE[*]$RESET Installing Nuclei...$RESET"
 GO111MODULE=on go get -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei
-ln -s /root/go/bin/nuclei /usr/local/bin/nuclei 2> /dev/null
-nuclei -update-directory /usr/share/sniper/plugins/ -update-templates
+if [ ! -f "/root/go/bin/nuclei" ]; then
+	wget https://github.com/projectdiscovery/nuclei/releases/download/v2.3.7/nuclei_2.3.7_linux_amd64.tar.gz -O /tmp/nuclei.tar.gz
+	cd /tmp
+	tar -zxvf /tmp/nuclei.tar.gz
+	mv nuclei /root/go/bin/nuclei
+	cd $INSTALL_DIR
+	ln -s /root/go/bin/nuclei /usr/local/bin/nuclei 2> /dev/null
+fi
+
+# NUCLEI TEMPLATES UPDATE
+echo -e "$OKBLUE[*]$RESET Installing Nuclei Templates...$RESET"
+cd $PLUGINS_DIR
+rm -Rf nuclei-templates
+git clone https://github.com/projectdiscovery/nuclei-templates.git
+nuclei -update-directory /usr/share/sniper/plugins/nuclei-templates/ -update-templates
+
+# INSTALL WEBTECH
+echo -e "$OKBLUE[*]$RESET Installing WebTech...$RESET"
 pip3 install -U webtech
+
+# INSTALL SUBJACK
+echo -e "$OKBLUE[*]$RESET Installing SubJack...$RESET"
 cd ~/go/bin/;go get github.com/haccer/subjack
+
+# INSTALL SUBOVER
+echo -e "$OKBLUE[*]$RESET Installing SubOver...$RESET"
 cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
+
+# INSTALL FPROBE
+echo -e "$OKBLUE[*]$RESET Installing FProbe...$RESET"
 GO111MODULE=on go get -u github.com/theblackturtle/fprobe; ln -fs ~/go/bin/fprobe /usr/bin/fprobe
+
+# INSTALL ASNIP
+echo -e "$OKBLUE[*]$RESET Installing ASnip...$RESET"
 go get github.com/harleo/asnip
 ln -s ~/go/bin/asnip /usr/bin/asnip 2>/dev/null
+
+# GAU INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing GAU...$RESET"
 GO111MODULE=on go get -u -v github.com/lc/gau
-ln -s /root/go/bin/gau /usr/bin/gau2 2> /dev/null
+rm -f /usr/bin/gau 2> /dev/null
+ln -s /root/go/bin/gau /usr/bin/gau 2> /dev/null
+
+# INSTALL HTTPX
+echo -e "$OKBLUE[*]$RESET Installing HTTPX...$RESET"
 GO111MODULE=auto go get -u -v github.com/projectdiscovery/httpx/cmd/httpx
 ln -s /root/go/bin/httpx /usr/bin/httpx 2> /dev/null
-rm -Rf ~/go/src/amass*
-wget https://github.com/OWASP/Amass/releases/download/v3.5.4/amass_v3.5.4_linux_amd64.zip -O ~/go/src/amass.zip
-cd ~/go/src/
-unzip ~/go/src/amass.zip
-mv amass_v3.5.4_linux_amd64 amass 2> /dev/null
-cd amass
-cp amass /usr/bin/amass -f 2> /dev/null
-rm -f ~/go/src/amass.zip 2> /dev/null
+
+# INSTALL FFUF
+echo -e "$OKBLUE[*]$RESET Installing FFuF...$RESET"
+go get -u github.com/ffuf/ffuf
+ln -s /root/go/bin/ffuf /usr/bin/ffuf 2> /dev/null
+
+# GITHUB-ENDPOINTS INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Github-Endpoints...$RESET"
+go get -u github.com/gwen001/github-endpoints
+ln -s /root/go/bin/github-endpoints /usr/bin/github-endpoints 2> /dev/null
+
+# PUREDNS INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing PureDNS...$RESET"
+GO111MODULE=on go get github.com/d3mondev/puredns/v2
+ln -s /root/go/bin/puredns /usr/bin/puredns 2> /dev/null
+
+# AMASS INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing AMass...$RESET"
+export GO111MODULE=on
+go get -v github.com/OWASP/Amass/cmd/amass
+cd /root/go/bin/
+
+# SUBFINDER INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing SubFinder...$RESET"
 cd ~/go/bin; wget https://github.com/projectdiscovery/subfinder/releases/download/v2.2.4/subfinder-linux-amd64.tar; tar -xvf subfinder-linux-amd64.tar; rm -f subfinder-linux-amd64.tar; mv subfinder-linux-amd64 /usr/local/bin/subfinder
+
+# DIRDAR INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing DirDar...$RESET"
+go get -u github.com/1N3/dirdar
+ln -s /root/go/bin/dirdar /usr/local/bin/dirdar 2> /dev/null
+
+# VULNERS NMAP INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Vulners...$RESET"
 cd /usr/share/nmap/scripts/
 rm -f /usr/share/nmap/scripts/vulners.nse
 wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
-mkdir -p ~/.msf4/modules/exploits/web
-wget https://raw.githubusercontent.com/1N3/Exploits/master/defcon_webmin_unauth_rce.rb -O ~/.msf4/modules/exploits/web/defcon_webmin_unauth_rce.rb
+
+# GOBUSTER INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing GoBuster...$RESET"
 wget https://github.com/OJ/gobuster/releases/download/v3.0.1/gobuster-linux-amd64.7z -O /tmp/gobuster.7z
 cd /tmp/
 7z e gobuster.7z
-chmod +rx gobuster 
-mv gobuster /usr/bin/gobuster 
+chmod +rx gobuster
+mv gobuster /usr/bin/gobuster
+
+# SHODAN INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing Shodan...$RESET"
 cd $PLUGINS_DIR
-cd shodan-python 
+cd shodan-python
 python setup.py install
 cd ..
-pip3 install spyse.py
-pip3 install h8mail 2> /dev/null 
+
+# H8MAIL INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing H8Mail...$RESET"
+pip3 install h8mail 2> /dev/null
+
+# CMSMAP INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing CMSMap...$RESET"
 cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
+
 cd $PLUGINS_DIR
 
 # ARACHNI MANUAL INSTALL
+echo -e "$OKBLUE[*]$RESET Installing Arachni...$RESET"
 wget https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -O /tmp/arachni.tar.gz
 cd /tmp/
-tar -zxf arachni.tar.gz 
+tar -zxf arachni.tar.gz
 rm -f /tmp/arachni.tar.gz 2> /dev/null
 cd arachni-*
 mkdir -p /usr/share/arachni 2> /dev/null
@@ -235,7 +370,11 @@ cp -Rf * /usr/share/arachni/ 2> /dev/null
 cd /usr/share/arachni/bin/
 for a in `ls`; do ln -fs $PWD/$a /usr/bin/$a; done;
 
+# REMOVE CVE TEMPLATES (ALL CVEs GOING FORWARD COVERED BY NUCLEI)
+rm -f /usr/share/sniper/templates/active/CVE*
+
 # PHANTOMJS MANUAL INSTALL
+echo -e "$OKBLUE[*]$RESET Installing PhantomJS...$RESET"
 cd /usr/local/share
 wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 2> /dev/null
 tar xjf phantomjs-1.9.7-linux-x86_64.tar.bz2 2> /dev/null
@@ -243,13 +382,39 @@ ln -s /usr/local/share/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/sha
 ln -s /usr/local/share/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs 2> /dev/null
 ln -s /usr/local/share/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/bin/phantomjs 2> /dev/null
 
-echo -e "$OKBLUE[*]$RESET Setting up environment...$RESET"
-cd $PLUGINS_DIR/BlackWidow/ && bash install.sh force 2> /dev/null
-cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
-cd $PLUGINS_DIR/Findsploit/ && bash install.sh 2> /dev/null
-cd $PLUGINS_DIR/spoofcheck/ && pip3 install -r requirements.txt 2> /dev/null
+# DNS RESOLVERS DOWNLOAD
+echo -e "$OKBLUE[*]$RESET Installing DNS Resolvers...$RESET"
+wget https://raw.githubusercontent.com/janmasarik/resolvers/master/resolvers.txt -O /usr/share/sniper/wordlists/resolvers.txt
 
-cd $INSTALL_DIR 
+# THEHARVESTER KALI SETUP
+echo -e "$OKBLUE[*]$RESET Installing TheHarvester...$RESET"
+cp -f /usr/bin/theHarvester /usr/bin/theharvester 2> /dev/null
+
+# BLACKWIDOW INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing BlackWidow...$RESET"
+cd $PLUGINS_DIR
+git clone https://github.com/1N3/BlackWidow
+cd $PLUGINS_DIR/BlackWidow/ && bash install.sh force 2> /dev/null
+
+# BRUTEX INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing BruteX...$RESET"
+cd $PLUGINS_DIR
+git clone https://github.com/1N3/BruteX.git
+cd $PLUGINS_DIR/BruteX/ && bash install.sh 2> /dev/null
+
+# FINDSPLOIT INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing FindSploit...$RESET"
+cd $PLUGINS_DIR
+git clone https://github.com/1N3/Findsploit.git
+cd $PLUGINS_DIR/Findsploit/ && bash install.sh 2> /dev/null
+
+# GOOHAK INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing GooHak...$RESET"
+cd $PLUGINS_DIR
+git clone https://github.com/1N3/Goohak.git
+
+echo -e "$OKBLUE[*]$RESET Setting up environment...$RESET"
+cd $INSTALL_DIR
 mkdir $LOOT_DIR 2> /dev/null
 mkdir $LOOT_DIR/screenshots/ -p 2> /dev/null
 mkdir $LOOT_DIR/nmap -p 2> /dev/null
@@ -261,9 +426,9 @@ chmod +x $PLUGINS_DIR/Goohak/goohak
 rm -f /usr/bin/sniper
 rm -f /usr/bin/goohak
 rm -f /usr/bin/dirsearch
-ln -s $INSTALL_DIR/sniper /usr/bin/sniper
-ln -s $PLUGINS_DIR/Goohak/goohak /usr/bin/goohak
-ln -s $PLUGINS_DIR/dirsearch/dirsearch.py /usr/bin/dirsearch
+ln -s $INSTALL_DIR/sniper /usr/bin/sniper 2> /dev/null
+ln -s $PLUGINS_DIR/Goohak/goohak /usr/bin/goohak 2> /dev/null
+ln -s $PLUGINS_DIR/dirsearch/dirsearch.py /usr/bin/dirsearch 2> /dev/null
 ln -s /usr/share/sniper /sniper 2> /dev/null
 ln -s /usr/share/sniper /usr/share/sn1per 2> /dev/null
 ln -s /usr/share/sniper/loot/workspace /workspace 2> /dev/null
@@ -277,7 +442,18 @@ msfdb init 2> /dev/null
 
 echo -e "$OKBLUE[*]$RESET Adding start menu and desktop shortcuts... $RESET"
 cp -f $INSTALL_DIR/sn1per.desktop /usr/share/applications/ 2> /dev/null
+cp -f $INSTALL_DIR/sn1per.desktop /usr/share/applications/sn1per.desktop 2> /dev/null
+cp -f $INSTALL_DIR/sn1per.desktop /usr/share/kali-menu/applications/sn1per.desktop 2> /dev/null
 cp -f $INSTALL_DIR/sn1per.png /usr/share/pixmaps/ 2> /dev/null
+cp -f $PLUGINS_DIR/BruteX/brutex.desktop /usr/share/applications/ 2> /dev/null
+cp -f $PLUGINS_DIR/BruteX/brutex.desktop /usr/share/applications/brutex.desktop 2> /dev/null
+cp -f $PLUGINS_DIR/BruteX/brutex.desktop /usr/share/kali-menu/applications/brutex.desktop 2> /dev/null
+cp -f $PLUGINS_DIR/BlackWidow/blackwidow.desktop /usr/share/applications/ 2> /dev/null
+cp -f $PLUGINS_DIR/BlackWidow/blackwidow.desktop /usr/share/applications/blackwidow.desktop 2> /dev/null
+cp -f $PLUGINS_DIR/BlackWidow/blackwidow.desktop /usr/share/kali-menu/applications/blackwidow.desktop 2> /dev/null
+cp -f $PLUGINS_DIR/Findsploit/findsploit.desktop /usr/share/applications/ 2> /dev/null
+cp -f $PLUGINS_DIR/Findsploit/findsploit.desktop /usr/share/applications/findsploit.desktop 2> /dev/null
+cp -f $PLUGINS_DIR/Findsploit/findsploit.desktop /usr/share/kali-menu/applications/findsploit.desktop 2> /dev/null
 mkdir -p /usr/share/sniper/loot/workspaces/ 2> /dev/null
 ln -fs /usr/share/sniper/loot/workspaces/ /home/kali/Desktop/workspaces 2> /dev/null
 ln -fs /usr/share/sniper/loot/workspaces/ /root/Desktop/workspaces 2> /dev/null

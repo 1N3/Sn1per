@@ -1,4 +1,10 @@
 ## CHANGELOG:
+* v9.1 - Fixed issue with Nuclei sc0pe parser not parsing results correctly
+* v9.1 - Fixed issue with Dirsearch not running due to invalid command settings
+* v9.1 - Fixed issue with Nuclei templates not being installed
+* v9.1 - Fixed issue with enum4linux command not being installed
+* v9.1 - Fixed HackerTarget API integration
+* v9.1 - Fixed issue with ping command not being installed
 * v9.1 - Fixed issue with carriage returns in conf
 * v9.1 - Fixed issue with DNS resolution in 'discover' mode scans causing duplicate hosts
 * v9.1 - Fixed issue with bruteforce running automatically due to changes in conf file
