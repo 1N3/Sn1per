@@ -90,8 +90,8 @@ docker run -it sn1per /bin/bash
 
 or 
 
-docker pull sn1persecurity/sn1per
-docker run -it sn1persecurity/sn1per /bin/bash
+docker pull xer0dayz/sn1per
+docker run -it xer0dayz/sn1per /bin/bash
 ```
 
 ## USAGE:
