@@ -84,8 +84,8 @@ if [[ "$MODE" = "webporthttp" ]]; then
     echo -e "$OKRED CHECKING HTTP HEADERS AND METHODS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     wget -qO- -T 1 --connect-timeout=5 --read-timeout=10 --tries=1 http://$TARGET:$PORT |  perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si' >> $LOOT_DIR/web/title-http-$TARGET-$PORT.txt 2> /dev/null
-    curl --connect-timeout 5 -I -s -R --insecure http://$TARGET:$PORT | tee $LOOT_DIR/web/headers-http-$TARGET-$PORT.txt 2> /dev/null
-    curl --connect-timeout 5 -I -s -R -L --insecure http://$TARGET:$PORT | tee $LOOT_DIR/web/websource-http-$TARGET-$PORT.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 10 -I -s -R --insecure http://$TARGET:$PORT | tee $LOOT_DIR/web/headers-http-$TARGET-$PORT.txt 2> /dev/null
+    curl --connect-timeout 5 --max-time 10 -I -s -R -L --insecure http://$TARGET:$PORT | tee $LOOT_DIR/web/websource-http-$TARGET-$PORT.txt 2> /dev/null
     curl --connect-timeout 5 --max-time 10 -I -s -R --insecure -X OPTIONS http://$TARGET:$PORT | grep Allow\: | tee $LOOT_DIR/web/http_options-$TARGET-port$PORT.txt 2> /dev/null
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED DISPLAYING META GENERATOR TAGS $RESET"
