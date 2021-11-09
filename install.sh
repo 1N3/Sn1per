@@ -254,8 +254,8 @@ if [ ! -f "/root/go/bin/nuclei" ]; then
 	tar -zxvf /tmp/nuclei.tar.gz
 	mv nuclei /root/go/bin/nuclei
 	cd $INSTALL_DIR
-	ln -s /root/go/bin/nuclei /usr/local/bin/nuclei 2> /dev/null
 fi
+ln -s /root/go/bin/nuclei /usr/local/bin/nuclei 2> /dev/null
 
 # NUCLEI TEMPLATES UPDATE
 echo -e "$OKBLUE[*]$RESET Installing Nuclei Templates...$RESET"

@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v9.1 - Fixed issue with Nuclei symlink missing in installer
 * v9.1 - Fixed issue with Nuclei sc0pe parser not parsing results correctly
 * v9.1 - Fixed issue with Dirsearch not running due to invalid command settings
 * v9.1 - Fixed issue with Nuclei templates not being installed
