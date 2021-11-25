@@ -15,6 +15,18 @@ if [[ "$OSINT" = "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/whois-$TARGET.txt"
 		fi
 	fi
+    if [[ "$SPOOF_CHECK" = "1" ]]; then
+	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	    echo -e "$OKRED CHECKING FOR EMAIL SECURITY $RESET"
+	    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+	    dig $TARGET txt | egrep -i 'spf|DMARC|dkim' | tee $LOOT_DIR/nmap/email-$TARGET.txt 2>/dev/null
+	    dig iport._domainkey.${TARGET} txt | egrep -i 'spf|DMARC|DKIM' | tee -a $LOOT_DIR/nmap/email-$TARGET.txt 2>/dev/null
+	    dig _dmarc.${TARGET} txt | egrep -i 'spf|DMARC|DKIM' | tee -a $LOOT_DIR/nmap/email-$TARGET.txt 2>/dev/null
+	    echo ""
+	    if [[ "$SLACK_NOTIFICATIONS_EMAIL_SECURITY" == "1" ]]; then
+	      /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/email-$TARGET.txt"
+	    fi
+	fi
 	if [[ "$ULTRATOOLS" == "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		echo -e "$OKRED GATHERING ULTATOOLS DNS INFO $RESET"

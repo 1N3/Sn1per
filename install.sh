@@ -319,7 +319,8 @@ cd /root/go/bin/
 
 # SUBFINDER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing SubFinder...$RESET"
-cd ~/go/bin; wget https://github.com/projectdiscovery/subfinder/releases/download/v2.2.4/subfinder-linux-amd64.tar; tar -xvf subfinder-linux-amd64.tar; rm -f subfinder-linux-amd64.tar; mv subfinder-linux-amd64 /usr/local/bin/subfinder
+GO111MODULE=on go get -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+ln -s /root/go/bin/subfinder /usr/local/bin/subfinder 2> /dev/null
 
 # DIRDAR INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing DirDar...$RESET"

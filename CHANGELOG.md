@@ -1,4 +1,7 @@
 ## CHANGELOG:
+* v9.1 - Updated subfinder to latest version
+* v9.1 - Added new email spoofing security checks to OSINT mode (-o)
+* v9.1 - Removed spoofcheck.py
 * v9.1 - Updated timeout settings for curl which was causing sockets/scans to hang
 * v9.1 - Fixed issue with Nuclei symlink missing in installer
 * v9.1 - Fixed issue with Nuclei sc0pe parser not parsing results correctly

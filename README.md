@@ -14,8 +14,6 @@ Discover the attack surface and prioritize risks with our continuous Attack Surf
 
 [![](https://sn1persecurity.com/images/Sn1perSecurity-attack-surface-management-header2.png)](https://sn1persecurity.com/)
 [![](https://sn1persecurity.com/images/Sn1perSecurity-sn1per3.PNG)](https://sn1persecurity.com/)
-[![](https://sn1persecurity.com/images/Sn1perSecurity-sn1per-4.PNG)](https://sn1persecurity.com/)
-[![](https://sn1persecurity.com/images/Sn1perSecurity-sn1per5.PNG)](https://sn1persecurity.com/)
 
 ## FEATURES:
 

@@ -33,9 +33,10 @@ if [[ "$RECON" = "1" ]]; then
   fi
   if [[ "$SUBFINDER" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBFINDER (THIS COULD TAKE A WHILE...) $RESET"
+    echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBFINDER $RESET"
+    echo -e "$OKBLUE[*]$RESET Running: subfinder -o $LOOT_DIR/domains/domains-$TARGET-subfinder.txt -d $TARGET -t 100 $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    subfinder -o $LOOT_DIR/domains/domains-$TARGET-subfinder.txt -b -d $TARGET -w $DOMAINS_DEFAULT -t 100 2>/dev/null
+    subfinder -o $LOOT_DIR/domains/domains-$TARGET-subfinder.txt -d $TARGET -nW -rL /sniper/wordlists/resolvers.txt -t $THREADS 2>/dev/null > /dev/null
     wc -l $LOOT_DIR/domains/domains-$TARGET-subfinder.txt 2> /dev/null
   fi  
   if [[ "$DNSCAN" = "1" ]]; then
@@ -190,16 +191,6 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "$OKRED DISPLAYING INTERESTING DOMAINS SEARCH $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     egrep -iE "GREP_INTERESTING_SUBDOMAINS" $LOOT_DIR/domains/domains-$TARGET-full.txt 2> /dev/null | tee $LOOT_DIR/domains/domains_interesting-$TARGET.txt | head -n "$GREP_MAX_LINES"
-  fi
-  if [[ "$SPOOF_CHECK" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED CHECKING FOR EMAIL SECURITY $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python $PLUGINS_DIR/spoofcheck/spoofcheck.py $TARGET | tee $LOOT_DIR/nmap/email-$TARGET.txt 2>/dev/null
-    echo ""
-    if [[ "$SLACK_NOTIFICATIONS_EMAIL_SECURITY" == "1" ]]; then
-      /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/email-$TARGET.txt"
-    fi
   fi
   if [[ "$SUBHIJACK_CHECK" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
