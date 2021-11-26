@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v9.1 - Fixed issue with gau in webscan modes not running
 * v9.1 - Updated subfinder to latest version
 * v9.1 - Added new email spoofing security checks to OSINT mode (-o)
 * v9.1 - Removed spoofcheck.py
