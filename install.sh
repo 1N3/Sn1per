@@ -65,7 +65,6 @@ if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	ln -s /snap/bin/chromium /usr/bin/chromium 2> /dev/null
 	xhost + 2> /dev/null
 	mkdir -p /run/user/0 2> /dev/null
-	add-apt-repository ppa:longsleep/golang-backports
 	sudo apt update
 fi
 
@@ -98,7 +97,6 @@ apt-get install -y nikto
 apt-get install -y whatweb
 apt-get install -y sslscan
 apt-get install -y jq
-apt-get install -y golang
 apt-get install -y adb
 apt-get install -y xsltproc
 apt-get install -y ldapscripts
