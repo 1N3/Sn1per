@@ -67,7 +67,6 @@ if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	mkdir -p /run/user/0 2> /dev/null
 	add-apt-repository ppa:longsleep/golang-backports
 	sudo apt update
-	apt install golang
 fi
 
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
