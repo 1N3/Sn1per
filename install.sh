@@ -312,6 +312,11 @@ echo -e "$OKBLUE[*]$RESET Installing PureDNS...$RESET"
 go install github.com/d3mondev/puredns/v2@latest
 ln -s /root/go/bin/puredns /usr/bin/puredns 2> /dev/null
 
+# AMASS INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing AMass...$RESET"
+go get github.com/OWASP/Amass/VS/...
+cd /root/go/bin/
+
 # SUBFINDER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing SubFinder...$RESET"
 go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
