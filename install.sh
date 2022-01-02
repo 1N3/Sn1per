@@ -267,30 +267,34 @@ pip3 install -U webtech
 
 # INSTALL SUBJACK
 echo -e "$OKBLUE[*]$RESET Installing SubJack...$RESET"
-cd ~/go/bin/;go get github.com/haccer/subjack
+cd ~/go/bin/
+go install github.com/haccer/subjack@latest
 
 # INSTALL SUBOVER
 echo -e "$OKBLUE[*]$RESET Installing SubOver...$RESET"
-cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
+cd ~/go/bin/
+go install github.com/Ice3man543/SubOver@latest
+mv SubOver /usr/local/bin/subover
 
 # INSTALL FPROBE
 echo -e "$OKBLUE[*]$RESET Installing FProbe...$RESET"
-GO111MODULE=on go get -u github.com/theblackturtle/fprobe; ln -fs ~/go/bin/fprobe /usr/bin/fprobe
+go install github.com/theblackturtle/fprobe@latest
+ln -fs ~/go/bin/fprobe /usr/bin/fprobe
 
 # INSTALL ASNIP
 echo -e "$OKBLUE[*]$RESET Installing ASnip...$RESET"
-go get github.com/harleo/asnip
+go install github.com/harleo/asnip@latest
 ln -s ~/go/bin/asnip /usr/bin/asnip 2>/dev/null
 
 # GAU INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing GAU...$RESET"
-GO111MODULE=on go get -u -v github.com/lc/gau
+go install github.com/lc/gau@latest
 rm -f /usr/bin/gau 2> /dev/null
 ln -s /root/go/bin/gau /usr/bin/gau 2> /dev/null
 
 # INSTALL HTTPX
 echo -e "$OKBLUE[*]$RESET Installing HTTPX...$RESET"
-GO111MODULE=auto go get -u -v github.com/projectdiscovery/httpx/cmd/httpx
+go install github.com/projectdiscovery/httpx/cmd/httpx@latest
 ln -s /root/go/bin/httpx /usr/bin/httpx 2> /dev/null
 
 # INSTALL FFUF
