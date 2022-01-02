@@ -295,33 +295,32 @@ ln -s /root/go/bin/httpx /usr/bin/httpx 2> /dev/null
 
 # INSTALL FFUF
 echo -e "$OKBLUE[*]$RESET Installing FFuF...$RESET"
-go get -u github.com/ffuf/ffuf
+go install github.com/ffuf/ffuf@latest
 ln -s /root/go/bin/ffuf /usr/bin/ffuf 2> /dev/null
 
 # GITHUB-ENDPOINTS INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing Github-Endpoints...$RESET"
-go get -u github.com/gwen001/github-endpoints
+go install github.com/gwen001/github-endpoints@latest
 ln -s /root/go/bin/github-endpoints /usr/bin/github-endpoints 2> /dev/null
 
 # PUREDNS INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing PureDNS...$RESET"
-GO111MODULE=on go get github.com/d3mondev/puredns/v2
+go install github.com/d3mondev/puredns/v2@latest
 ln -s /root/go/bin/puredns /usr/bin/puredns 2> /dev/null
 
 # AMASS INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing AMass...$RESET"
-export GO111MODULE=on
-go get -v github.com/OWASP/Amass/cmd/amass
+go get github.com/OWASP/Amass/v3/...
 cd /root/go/bin/
 
 # SUBFINDER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing SubFinder...$RESET"
-GO111MODULE=on go get -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
 ln -s /root/go/bin/subfinder /usr/local/bin/subfinder 2> /dev/null
 
 # DIRDAR INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing DirDar...$RESET"
-go get -u github.com/1N3/dirdar
+go install github.com/1N3/dirdar@latest
 ln -s /root/go/bin/dirdar /usr/local/bin/dirdar 2> /dev/null
 
 # VULNERS NMAP INSTALLER
