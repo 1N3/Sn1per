@@ -10,10 +10,10 @@
 ## ABOUT:
 Discover the attack surface and prioritize risks with our continuous Attack Surface Management (ASM) platform - Sn1per Professional. For more information, go to https://sn1persecurity.com.
 
-[[Website](https://sn1persecurity.com/wordpress/)] [[Blog](https://sn1persecurity.com/wordpress/blog/)] [[Shop](https://sn1persecurity.com/wordpress/shop)] [[Documentation](https://sn1persecurity.com/wordpress/documentation/)] [[Buy Now](https://sn1persecurity.com/wordpress/shop/)] [[Find Out More](https://sn1persecurity.com/wordpress/sn1per-professional-v10-released/)]
+[[Website](https://sn1persecurity.com/wordpress/)] [[Blog](https://sn1persecurity.com/wordpress/blog/)] [[Shop](https://sn1persecurity.com/wordpress/shop)] [[Documentation](https://sn1persecurity.com/wordpress/documentation/)] [[Demo](https://www.youtube.com/watch?v=bsUvB4Vca7Y&list=PL40Vp978dDP9KX2V3VLnNzgJuf4nJrRo9&index=1)] [[Find Out More](https://sn1persecurity.com/wordpress/sn1per-professional-v10-released/)]
 
 [![](https://sn1persecurity.com/images/Sn1perSecurity-attack-surface-management-header2.png)](https://sn1persecurity.com/)
-[![](https://sn1persecurity.com/images/Sn1perSecurity-sn1per3.PNG)](https://sn1persecurity.com/)
+[![](https://sn1persecurity.com/images/Sn1perSecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=bsUvB4Vca7Y&list=PL40Vp978dDP9KX2V3VLnNzgJuf4nJrRo9&index=1)
 
 ## FEATURES:
 
@@ -221,6 +221,7 @@ sniper -u|--update
 - [x] Metasploit integration (https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
 - [x] Nessus integration (https://github.com/1N3/Sn1per/wiki/Nessus-Integration)
 - [x] OpenVAS API integration (https://github.com/1N3/Sn1per/wiki/OpenVAS-Integration)
+- [x] GVM 21.x integration (https://github.com/1N3/Sn1per/wiki/GVM-21.x-Integration)
 - [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
 - [x] WPScan API integration (https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration)
 
