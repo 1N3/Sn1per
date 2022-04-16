@@ -289,6 +289,7 @@ echo -e "$OKBLUE[*]$RESET Installing GAU...$RESET"
 go install github.com/lc/gau@latest
 rm -f /usr/bin/gau 2> /dev/null
 ln -fs /root/go/bin/gau /usr/bin/gau
+ln -fs /root/go/bin/gau /usr/bin/gau2
 
 # INSTALL HTTPX
 echo -e "$OKBLUE[*]$RESET Installing HTTPX...$RESET"
