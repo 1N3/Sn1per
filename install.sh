@@ -247,7 +247,7 @@ cd ..
 
 # NUCLEI UPDATES
 echo -e "$OKBLUE[*]$RESET Installing Nuclei...$RESET"
-GO111MODULE=on go get -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei
+go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 if [ ! -f "/root/go/bin/nuclei" ]; then
 	wget https://github.com/projectdiscovery/nuclei/releases/download/v2.3.7/nuclei_2.3.7_linux_amd64.tar.gz -O /tmp/nuclei.tar.gz
 	cd /tmp
@@ -255,7 +255,7 @@ if [ ! -f "/root/go/bin/nuclei" ]; then
 	mv nuclei /root/go/bin/nuclei
 	cd $INSTALL_DIR
 fi
-ln -s /root/go/bin/nuclei /usr/local/bin/nuclei 2> /dev/null
+ln -fs /root/go/bin/nuclei /usr/local/bin/nuclei 
 
 # NUCLEI TEMPLATES UPDATE
 echo -e "$OKBLUE[*]$RESET Installing Nuclei Templates...$RESET"
@@ -270,62 +270,55 @@ pip3 install -U webtech
 
 # INSTALL SUBJACK
 echo -e "$OKBLUE[*]$RESET Installing SubJack...$RESET"
-cd ~/go/bin/;go get github.com/haccer/subjack
+cd ~/go/bin/;go install github.com/haccer/subjack@latest
 
 # INSTALL SUBOVER
 echo -e "$OKBLUE[*]$RESET Installing SubOver...$RESET"
-cd ~/go/bin/;go get -u github.com/Ice3man543/SubOver; mv SubOver /usr/local/bin/subover
+cd ~/go/bin/;go install github.com/Ice3man543/SubOver@latest; mv /root/go/bin/SubOver /usr/local/bin/subover
 
 # INSTALL FPROBE
 echo -e "$OKBLUE[*]$RESET Installing FProbe...$RESET"
-GO111MODULE=on go get -u github.com/theblackturtle/fprobe; ln -fs ~/go/bin/fprobe /usr/bin/fprobe
+go install github.com/theblackturtle/fprobe@latest; ln -fs ~/go/bin/fprobe /usr/bin/fprobe
 
 # INSTALL ASNIP
 echo -e "$OKBLUE[*]$RESET Installing ASnip...$RESET"
-go get github.com/harleo/asnip
-ln -s ~/go/bin/asnip /usr/bin/asnip 2>/dev/null
+go install github.com/harleo/asnip@latest; ln -fs ~/go/bin/asnip /usr/bin/asnip
 
 # GAU INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing GAU...$RESET"
-GO111MODULE=on go get -u -v github.com/lc/gau
+go install github.com/lc/gau@latest
 rm -f /usr/bin/gau 2> /dev/null
-ln -s /root/go/bin/gau /usr/bin/gau 2> /dev/null
+ln -fs /root/go/bin/gau /usr/bin/gau
+ln -fs /root/go/bin/gau /usr/bin/gau2
 
 # INSTALL HTTPX
 echo -e "$OKBLUE[*]$RESET Installing HTTPX...$RESET"
-GO111MODULE=auto go get -u -v github.com/projectdiscovery/httpx/cmd/httpx
-ln -s /root/go/bin/httpx /usr/bin/httpx 2> /dev/null
+go install github.com/projectdiscovery/httpx@latest; ln -fs /root/go/bin/httpx /usr/bin/httpx
 
 # INSTALL FFUF
 echo -e "$OKBLUE[*]$RESET Installing FFuF...$RESET"
-go get -u github.com/ffuf/ffuf
-ln -s /root/go/bin/ffuf /usr/bin/ffuf 2> /dev/null
+go install github.com/ffuf/ffuf@latest; ln -fs /root/go/bin/ffuf /usr/bin/ffuf
 
 # GITHUB-ENDPOINTS INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing Github-Endpoints...$RESET"
-go get -u github.com/gwen001/github-endpoints
-ln -s /root/go/bin/github-endpoints /usr/bin/github-endpoints 2> /dev/null
+go install github.com/gwen001/github-endpoints@latest; ln -fs /root/go/bin/github-endpoints /usr/bin/github-endpoints
 
 # PUREDNS INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing PureDNS...$RESET"
-GO111MODULE=on go get github.com/d3mondev/puredns/v2
-ln -s /root/go/bin/puredns /usr/bin/puredns 2> /dev/null
+go install github.com/d3mondev/puredns/v2@latest; ln -fs /root/go/bin/puredns /usr/bin/puredns
 
 # AMASS INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing AMass...$RESET"
-export GO111MODULE=on
-go get -v github.com/OWASP/Amass/cmd/amass
+go install -v github.com/OWASP/Amass/v3/...@master
 cd /root/go/bin/
 
 # SUBFINDER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing SubFinder...$RESET"
-GO111MODULE=on go get -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-ln -s /root/go/bin/subfinder /usr/local/bin/subfinder 2> /dev/null
+go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest; ln -fs /root/go/bin/subfinder /usr/local/bin/subfinder
 
 # DIRDAR INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing DirDar...$RESET"
-go get -u github.com/1N3/dirdar
-ln -s /root/go/bin/dirdar /usr/local/bin/dirdar 2> /dev/null
+go install github.com/1N3/dirdar@latest; ln -fs /root/go/bin/dirdar /usr/local/bin/dirdar
 
 # VULNERS NMAP INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing Vulners...$RESET"
