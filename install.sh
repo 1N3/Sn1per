@@ -416,8 +416,6 @@ mkdir $LOOT_DIR/output -p 2> /dev/null
 mkdir $LOOT_DIR/reports -p 2> /dev/null
 chmod +x $INSTALL_DIR/sniper
 chmod +x $PLUGINS_DIR/Goohak/goohak
-rm -f /usr/bin/sniper
-rm -f /usr/bin/goohak
 rm -f /usr/bin/dirsearch
 ln -s $INSTALL_DIR/sniper /usr/bin/sniper 2> /dev/null
 ln -s $PLUGINS_DIR/Goohak/goohak /usr/bin/goohak 2> /dev/null
