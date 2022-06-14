@@ -5,7 +5,7 @@ Sn1perSecurity LLC grants you the right to download, use, and distribute in part
 
 (1) You agree to give credit to the original author @xer0dayz and link back to https://sn1persecurity.com (Sn1perSecurity LLC)
 (2) You may not rename or rebrand the Project.
-(3) You agree not to create any product or service from any part of the Code from this Project, paid or free.
+(3) You agree not to create any product or service from any par of the Code from this Project, paid or free.
 (4) You agree not to re-license the Code.
 (5) You may not use the Code for illegal or nefarious purposes, which violates any laws (in your jurisdiction, the jurisdiction in which the Software is running, the jurisdiction in which the Software is targeting, and the United States of America).
 (6) You agree not to scan a target in a manner that is considered unlawful, illegal, or that you do not have explicit permission to do so.
