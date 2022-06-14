@@ -225,8 +225,8 @@ sniper -u|--update
 - [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
 - [x] WPScan API integration (https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration)
 
-## LICENSE:
-For license info and legal information, refer to the LICENSE.md file in this repository. 
+## LICENSE & LEGAL AGREEMENT:
+For license and legal information, refer to the LICENSE.md (https://github.com/1N3/Sn1per/blob/master/LICENSE.md) file in this repository. 
 
 ## PURCHASE SN1PER PROFESSIONAL:
 To obtain a Sn1per Professional license, go to https://sn1persecurity.com.
