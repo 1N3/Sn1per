@@ -16,32 +16,31 @@ Sn1per is an automated reconnaissance scanner that can be used to discover asset
 
 [![](https://sn1persecurity.com/images/Sn1perSecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=bsUvB4Vca7Y&list=PL40Vp978dDP9KX2V3VLnNzgJuf4nJrRo9&index=1)
 
-## All-In-One Solution
-Save time and money by addressing business and IT risk with a single solution.
+## USE CASES
 
-## Attack Surface Management
+### Attack Surface Management
 Discover the attack surface and prioritize risk with our continuous Attack Surface Management platform.
 
-## Automated OSINT & Reconnaissance
+### Automated OSINT & Reconnaissance
 Automate the collection of open source intelligence data using our integrations with 3rd party API's, frameworks and automated workflows to get the data you need.
 
-## Penetration Testing
+### Penetration Testing
 Save time by automating the execution of the best open source and commercial security tools to discover and exploit vulnerabilities automatically.
 
-## Automated Red Team Simulation
+### Automated Red Team Simulation
 Simulate real world attackers with our automated attack platform in order to strengthen blue team response and defensive controls.
 
-## Vulnerability & Risk Management
+### Vulnerability & Risk Management
 Integrate with the leading commercial and open source vulnerability scanners to scan for the latest vulnerabilities and prioritize risk with our aggregated vulnerability
 reports.
 
-## Dynamic Application Security Testing
+### Dynamic Application Security Testing
 Scan your web applications for vulnerabilities and aggregate data from multiple open source and commercial security scanners into our centralized reporting interface.
 
-## Threat Intelligence
+### Threat Intelligence
 Stay up-to-date with the latest emerging security threats, vulnerabilities, data breaches and exploit releases.
 
-## Bug Bounty Automation
+### Bug Bounty Automation
 Get the tools you need to manage large attack surfaces and gain the edge over the competition.
 
 ## FEATURES:
