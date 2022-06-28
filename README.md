@@ -85,7 +85,7 @@ bash install.sh
 ## AWS AMI (FREE TIER) VPS
 [![](https://sn1persecurity.com/wordpress/wp-content/uploads/2022/06/AWS-Marketplace.png)](https://aws.amazon.com/marketplace/pp/prodview-rmloab6wnymno)
 
-To install Sn1per using a AWS EC2:
+To install Sn1per using an AWS EC2 instance:
 
 1. Go to https://aws.amazon.com/marketplace/pp/prodview-rmloab6wnymno and click the “Continue to Subscribe” button
 2. Click the “Continue to Configuration” button
