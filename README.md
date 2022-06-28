@@ -7,7 +7,7 @@
 [![Tweet](https://img.shields.io/twitter/url/http/xer0dayz.svg?style=social)](https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Fdeveloper.twitter.com%2Fen%2Fdocs%2Ftwitter-for-websites%2Ftweet-button%2Foverview&ref_src=twsrc%5Etfw&text=Sn1per%20-%20Automated%20Pentest%20Recon%20Scanner&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2F1N3%2FSn1per)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/xer0dayz.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=xer0dayz)
 
-## ABOUT:
+## ABOUT
 Sn1per is an automated reconnaissance scanner that can be used to discover assets and scan for vulnerabilities using the latest open source tools and techniques. For our Professional and Enterprise versions of Sn1per, which includes a full featured web UI, go to https://sn1persecurity.com
 
 [[Website](https://sn1persecurity.com/wordpress/)] [[Blog](https://sn1persecurity.com/wordpress/blog/)] [[Shop](https://sn1persecurity.com/wordpress/shop)] [[Documentation](https://sn1persecurity.com/wordpress/documentation/)] [[Demo](https://www.youtube.com/watch?v=bsUvB4Vca7Y&list=PL40Vp978dDP9KX2V3VLnNzgJuf4nJrRo9&index=1)] [[Find Out More](https://sn1persecurity.com/wordpress/sn1per-professional-v10-released/)]
@@ -75,7 +75,7 @@ Export your entire attack surface inventory (ie. sub-domains, DNS, open ports, H
 ### Vulnerability Reports
 Export vulnerability reports in CSV, XLS or PDF format for your entire attack surface.
 
-## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL:
+## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL
 ```
 git clone https://github.com/1N3/Sn1per
 cd Sn1per
@@ -92,7 +92,7 @@ To install Sn1per using a AWS EC2:
 3. Click the “Continue to Launch” button
 4. Login via SSH using the public IP of the new EC2 instance
 
-## DOCKER INSTALL:
+## DOCKER INSTALL
 [![](https://sn1persecurity.com/images/docker-logo.png)](https://hub.docker.com/r/sn1persecurity/sn1per)
 
 From a new Docker console, run the following commands.
@@ -107,7 +107,7 @@ docker pull xer0dayz/sn1per
 docker run -it xer0dayz/sn1per /bin/bash
 ```
 
-## USAGE:
+## USAGE
 ```
 [*] NORMAL MODE
 sniper -t <TARGET>
@@ -197,7 +197,7 @@ sniper -c /path/to/sniper.conf -t <TARGET> -w <WORKSPACE_ALIAS>
 sniper -u|--update
 ```
 
-## MODES:
+## MODES
 * **NORMAL:** Performs basic scan of targets and open ports using both active and passive checks for optimal performance.
 * **STEALTH:** Quickly enumerate single targets using mostly non-intrusive scans to avoid WAF/IPS blocking.
 * **FLYOVER:** Fast multi-threaded high level scans of multiple targets (useful for collecting high level data on many hosts quickly).
@@ -216,14 +216,14 @@ sniper -u|--update
 * **VULNSCAN:** Launches a OpenVAS vulnerability scan.
 * **MASSVULNSCAN:** Launches a "vulnscan" mode scans on multiple targets specified via the "-f" switch.
 
-## HELP TOPICS:
+## HELP TOPICS
 - [x] Plugins & Tools (https://github.com/1N3/Sn1per/wiki/Plugins-&-Tools)
 - [x] Scheduled scans (https://github.com/1N3/Sn1per/wiki/Scheduled-Scans)
 - [x] Sn1per Configuration Options (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
 - [x] Sn1per Configuration Templates (https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Templates)
 - [x] Sc0pe Templates (https://github.com/1N3/Sn1per/wiki/Sc0pe-Templates)
 
-## INTEGRATION GUIDES:
+## INTEGRATION GUIDES
 - [x] Github API integration (https://github.com/1N3/Sn1per/wiki/Github-API-Integration)
 - [x] Burpsuite Professional 2.x integration (https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
 - [x] OWASP ZAP integration (https://github.com/1N3/Sn1per/wiki/OWASP-ZAP-Integration)
@@ -237,10 +237,10 @@ sniper -u|--update
 - [x] Slack API integration (https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
 - [x] WPScan API integration (https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration)
 
-## LICENSE & LEGAL AGREEMENT:
+## LICENSE & LEGAL AGREEMENT
 For license and legal information, refer to the LICENSE.md (https://github.com/1N3/Sn1per/blob/master/LICENSE.md) file in this repository. 
 
-## PURCHASE SN1PER PROFESSIONAL:
+## PURCHASE SN1PER PROFESSIONAL
 To obtain a Sn1per Professional license, go to https://sn1persecurity.com.
 
 Attack Surface Management (ASM) | Continuous Attack Surface Testing (CAST) | Attack Surface Software | Attack Surface Platform | Continuous Automated Red Teaming (CART) |  Vulnerability & Attack Surface Management | Red Team | Threat Intel | Application Security | Cybersecurity | IT Asset Discovery | Automated Penetration Testing | Hacking Tools | Recon Tool | Bug Bounty Tool | Vulnerability Scanner | Attack Surface Analysis | Attack Surface Reduction | Attack Surface Detector | Attack Surface Monitoring | Attack Surface Review | Attack Surface Discovery | Digital Threat Management | Risk Assessment | Threat Remediation | Offensive Security Framework | Automated Penetration Testing Framework | External Threat Management | Internal IT Asset Discovery | Security Orchestration and Automation (SOAR) | Sn1per tutorial | Sn1per tool | Sn1per metasploit | Sn1per for windows | Sn1per review | Sn1per download | how to use Sn1per | Sn1per professional download | Sn1per professional crack | automated pentesting framework | pentest-tools github | ad pentest tools | pentest-tools review | security testing tools | ubuntu pentesting tools | pentesting tools for mac | cloud-based pen-testing tools
