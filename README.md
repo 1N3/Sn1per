@@ -75,7 +75,6 @@ Receive notifications for scan and host status changes, URL and domain changes a
 List all DNS records vulnerable to domain hijacking and takeover.
 
 ## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL:
-[![](https://sn1persecurity.com/wordpress/wp-content/uploads/2022/06/kali-linux.png)]()
 ```
 git clone https://github.com/1N3/Sn1per
 cd Sn1per
@@ -85,7 +84,7 @@ bash install.sh
 ## AWS AMI (FREE TIER) VPS
 [![](https://sn1persecurity.com/wordpress/wp-content/uploads/2022/06/AWS-Marketplace.png)](https://aws.amazon.com/marketplace/pp/prodview-rmloab6wnymno)
 
-To install Sn1per Professional using a AWS EC2:
+To install Sn1per using a AWS EC2:
 
 1. Go to https://aws.amazon.com/marketplace/pp/prodview-rmloab6wnymno and click the “Continue to Subscribe” button
 2. Click the “Continue to Configuration” button
