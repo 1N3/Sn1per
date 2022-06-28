@@ -8,7 +8,7 @@
 [![Follow on Twitter](https://img.shields.io/twitter/follow/xer0dayz.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=xer0dayz)
 
 ## ABOUT:
-Discover the attack surface and prioritize risks with our continuous Attack Surface Management (ASM) platform - Sn1per Professional. For more information, go to https://sn1persecurity.com.
+Sn1per is an automated reconnaissance scanner that can be used to discover assets and scan for vulnerabilities using the latest open source tools and techniques. For our Professional and Enterprise versions of Sn1per, which includes a full featured web UI, go to https://sn1persecurity.com
 
 [[Website](https://sn1persecurity.com/wordpress/)] [[Blog](https://sn1persecurity.com/wordpress/blog/)] [[Shop](https://sn1persecurity.com/wordpress/shop)] [[Documentation](https://sn1persecurity.com/wordpress/documentation/)] [[Demo](https://www.youtube.com/watch?v=bsUvB4Vca7Y&list=PL40Vp978dDP9KX2V3VLnNzgJuf4nJrRo9&index=1)] [[Find Out More](https://sn1persecurity.com/wordpress/sn1per-professional-v10-released/)]
 
@@ -16,63 +16,65 @@ Discover the attack surface and prioritize risks with our continuous Attack Surf
 
 [![](https://sn1persecurity.com/images/Sn1perSecurity-sn1per3.PNG)](https://www.youtube.com/watch?v=bsUvB4Vca7Y&list=PL40Vp978dDP9KX2V3VLnNzgJuf4nJrRo9&index=1)
 
+## All-In-One Solution
+Save time and money by addressing business and IT risk with a single solution.
+
+## Attack Surface Management
+Discover the attack surface and prioritize risk with our continuous Attack Surface Management platform.
+
+## Automated OSINT & Reconnaissance
+Automate the collection of open source intelligence data using our integrations with 3rd party API's, frameworks and automated workflows to get the data you need.
+
+## Penetration Testing
+Save time by automating the execution of the best open source and commercial security tools to discover and exploit vulnerabilities automatically.
+
+## Automated Red Team Simulation
+Simulate real world attackers with our automated attack platform in order to strengthen blue team response and defensive controls.
+
+## Vulnerability & Risk Management
+Integrate with the leading commercial and open source vulnerability scanners to scan for the latest vulnerabilities and prioritize risk with our aggregated vulnerability
+reports.
+
+## Dynamic Application Security Testing
+Scan your web applications for vulnerabilities and aggregate data from multiple open source and commercial security scanners into our centralized reporting interface.
+
+## Threat Intelligence
+Stay up-to-date with the latest emerging security threats, vulnerabilities, data breaches and exploit releases.
+
+## Bug Bounty Automation
+Get the tools you need to manage large attack surfaces and gain the edge over the competition.
+
 ## FEATURES:
 
-### Attack Surface Discovery
+### Quick Installation
+Get up and running with our platform in minutes with our quick and easy one-line installation script.
 
-Easily discover the attack surface (IPs, domain names, open ports, HTTP headers, etc.).
+### Safe Execution
+Get full control over your scans by setting the the scope and configuration options to ensure safe execution in your environment.
 
-### Penetration Testing
+### Full Attack Surface Coverage
+Discover both internal (on-prem) and external (cloud/hybrid) attack vectors for full asset visibility and vulnerability coverage.
 
-Automate the discovery of vulnerabilities and ethical exploitation using the latest hacking and open source security tools.
+### Vulnerability Scanning
+Scan for the latest CVE's and vulnerabilities using the latest open source and commercial vulnerability scanners.
 
-### Visual Recon
-
-Perform visual recon against all hosts in your workspace using the Slideshow widget and thumbnails.
-
-### IT Asset Inventory
-
-Search, sort and filter for DNS, IP, title, status, server headers, WAF and open TCP/UDP ports of the entire attack surface inventory.
-
-### Red Team
-
-Strengthen "blue team" response and detection capabilities against automated penetration testing techniques.
-
-### Notepad
-
-Store and access multiple notes in a single location to help manage your data and keep things organized.
-
-### Vulnerability Management
-
-Quickly scan for the latest vulnerabilities and CVEs using the latest commercial and open source vulnerability scanners.
-
-### Web Application Scans
-
-Launch web application scans via Burpsuite Professional 2.x, Arachni and Nikto.
-
-### Reporting
-
-Export the entire attack surface host list and vulnerability reports to CSV, XLS or PDF format to filter, sort and view all attack surface data.
-
-### OSINT Collection
-
-Collect online documents, meta data, email addresses and contact information automatically.
+### Integrations
+Aggregate data from the leading security tools, API's and 3rd party services into our centralized reporting interface.
 
 ### Continuous Scan Coverage
-
-Schedule scans on a daily, weekly or monthly basis for continuous coverage for changes.
-
-### Bug Bounty
-
-Automate the discovery of the attack surface and scan for the latest vulnerabilities and CVEs easily.
+Schedule scans on a daily, weekly or monthly basis to identify changes in your attack surface and remediate new vulnerabilities as they appear.
 
 ### Notifications & Changes
+Receive notifications for changes in your environment, such as: new domains, new URLs, port changes and more.
 
-Receive notifications for scan and host status changes, URL and domain changes and new vulnerabilities discovered.
+### IT Asset Inventory
+Build a centralized repository of your company's assets that can be easily searched, sorted and filtered to provide full visibility into your attack surface.
 
-### Domain Takeovers
+### Attack Surface Reports
+Export your entire attack surface inventory (ie. sub-domains, DNS, open ports, HTTP headers, risk score, etc.) to CSV, XLS or PDF format.
 
-List all DNS records vulnerable to domain hijacking and takeover.
+### Vulnerability Reports
+Export vulnerability reports in CSV, XLS or PDF format for your entire attack surface.
 
 ## KALI/UBUNTU/DEBIAN/PARROT LINUX INSTALL:
 ```
