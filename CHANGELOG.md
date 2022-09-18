@@ -1,4 +1,8 @@
 ## CHANGELOG:
+* v9.1 - Fixed issue with GAU installer/commmand not working
+* v9.1 - Fixed issue with passive URL fetching 
+* v9.1 - Fixed issue with nuclei not being installed
+* v9.1 - Removed error in hackertarget URL fetching
 * v9.1 - Added dnsutils to installer to fix missing deps
 * v9.1 - Fixed issue with gau in webscan modes not running
 * v9.1 - Updated subfinder to latest version

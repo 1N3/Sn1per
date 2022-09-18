@@ -248,22 +248,10 @@ cd ..
 
 # NUCLEI UPDATES
 echo -e "$OKBLUE[*]$RESET Installing Nuclei...$RESET"
-go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-if [ ! -f "/root/go/bin/nuclei" ]; then
-	wget https://github.com/projectdiscovery/nuclei/releases/download/v2.3.7/nuclei_2.3.7_linux_amd64.tar.gz -O /tmp/nuclei.tar.gz
-	cd /tmp
-	tar -zxvf /tmp/nuclei.tar.gz
-	mv nuclei /root/go/bin/nuclei
-	cd $INSTALL_DIR
-fi
-ln -fs /root/go/bin/nuclei /usr/local/bin/nuclei
-
-# NUCLEI TEMPLATES UPDATE
-echo -e "$OKBLUE[*]$RESET Installing Nuclei Templates...$RESET"
-cd $PLUGINS_DIR
-rm -Rf nuclei-templates
-git clone https://github.com/projectdiscovery/nuclei-templates.git
-nuclei -update-directory /usr/share/sniper/plugins/nuclei-templates/ -update-templates
+GO111MODULE=on go install github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
+ln -fs /root/go/bin/nuclei /usr/local/bin/nuclei 2> /dev/null
+nuclei --update
+nuclei
 
 # INSTALL WEBTECH
 echo -e "$OKBLUE[*]$RESET Installing WebTech...$RESET"
@@ -287,10 +275,9 @@ go install github.com/harleo/asnip@latest; ln -fs ~/go/bin/asnip /usr/bin/asnip
 
 # GAU INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing GAU...$RESET"
-go install github.com/lc/gau@latest
+GO111MODULE=on go get github.com/lc/gau@latest
 rm -f /usr/bin/gau 2> /dev/null
-ln -fs /root/go/bin/gau /usr/bin/gau
-ln -fs /root/go/bin/gau /usr/bin/gau2
+ln -fs /root/go/bin/gau /usr/bin/gau 2> /dev/null
 
 # INSTALL HTTPX
 echo -e "$OKBLUE[*]$RESET Installing HTTPX...$RESET"
