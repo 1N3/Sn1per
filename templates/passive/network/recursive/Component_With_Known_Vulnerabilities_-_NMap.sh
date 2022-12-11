@@ -1,6 +1,7 @@
 AUTHOR='@xer0dayz'
 VULN_NAME='Component With Known Vulnerabilities - NMap'
 FILENAME="$LOOT_DIR/nmap/nmap-$TARGET.txt $LOOT_DIR/output/nmap-$TARGET.txt $LOOT_DIR/output/nmap-$TARGET-*.txt"
+OUTPUT_NAME=$(echo $VULN_NAME | sed -E 's/[^[:alnum:]]+/_/g')
 MATCH="vulners.com"
 GREP_OPTIONS='-ih'
 TYPE="network"

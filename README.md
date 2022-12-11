@@ -16,7 +16,7 @@
 [![](https://sn1persecurity.com/wordpress/wp-content/uploads/2022/05/Sn1per-Enterprise-workspace-navigator1-3.png)](https://sn1persecurity.com/)
 
 ## The ultimate pentesting toolkit.
-See how Sn1per can help your security team
+Integrate with the leading commercial and open source vulnerability scanners to scan for the latest CVEs and vulnerabilities. 
 
 [![](https://sn1persecurity.com/wordpress/wp-content/uploads/2022/05/Sn1per-Enterprise-workspace-report1-3.png)](https://sn1persecurity.com/)
 
@@ -26,7 +26,7 @@ Security tools are expensive and time-consuming, but with Sn1per, you can save t
 [![](https://sn1persecurity.com/wordpress/wp-content/uploads/2022/05/Sn1per-Enterprise-host-list3-1.png)](https://sn1persecurity.com/)
 
 ### Find what you can't see.
-Hacking is a problem that's only getting worse. But, with Sn1per, you can find what you can’t see—hidden assets and vulnerabilities in your environment. Integrate with the leading commercial and open source vulnerability scanners to scan for the latest CVEs and vulnerabilities. Find out quickly how hackers can attack your business or organization before it’s too late.
+Hacking is a problem that's only getting worse. But, with Sn1per, you can find what you can’t see—hidden assets and vulnerabilities in your environment. 
 
 [![](https://sn1persecurity.com/wordpress/wp-content/uploads/2022/05/Sn1per-Enterprise-host-list2-1.png)](https://sn1persecurity.com/)
 

@@ -347,7 +347,7 @@ if [[ "$MODE" = "webporthttp" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING NUCLEI SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      nuclei -silent -t /usr/share/sniper/plugins/nuclei-templates/ -c $THREADS -target http://$TARGET:${PORT} -o $LOOT_DIR/web/nuclei-http-${TARGET}-port${PORT}.txt 
+      nuclei -silent -t /root/nuclei-templates/ -c $THREADS -target http://$TARGET:${PORT} -o $LOOT_DIR/web/nuclei-http-${TARGET}-port${PORT}.txt
     fi
     SSL="false"
     source $INSTALL_DIR/modes/web_autopwn.sh
