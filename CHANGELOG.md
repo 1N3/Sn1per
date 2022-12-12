@@ -1,4 +1,5 @@
 ## CHANGELOG:
+* v9.1 - Fixed issue with dirsearch installation/command syntax update
 * v9.1 - Updated Nuclei sc0pe templates
 * v9.1 - Fixed issue with Nuclei sc0pe parsers not working
 * v9.1 - Fixed issue with GAU installer/commmand not working

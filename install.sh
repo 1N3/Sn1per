@@ -139,6 +139,9 @@ gem install public_suffix 2> /dev/null > /dev/null
 echo -e "$OKBLUE[*]$RESET Setting up Ruby...$RESET"
 dpkg-reconfigure ruby
 
+echo -e "$OKBLUE[*]$RESET Upgrading Pip...$RESET"
+python3 -m pip install --upgrade pip
+
 echo -e "$OKBLUE[*]$RESET Cleaning up old extensions...$RESET"
 rm -Rf $PLUGINS_DIR 2> /dev/null
 mkdir $PLUGINS_DIR 2> /dev/null
@@ -193,7 +196,14 @@ git clone https://github.com/defparam/smuggler.git
 
 # DIRSEARCH INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing Dirsearch...$RESET"
-git clone https://github.com/maurosoria/dirsearch.git
+cd $PLUGINS_DIR
+rm -Rf dirsearch/ 2> /dev/null
+wget https://github.com/maurosoria/dirsearch/archive/refs/tags/v0.4.2.tar.gz
+tar -zxvf v0.4.2.tar.gz
+mv dirsearch-0.4.2/ dirsearch/
+cd dirsearch/
+pip3 install -r requirements.txt
+cd $PLUGINS_DIR
 
 # SECRETFINDER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing SecretFinder...$RESET"
