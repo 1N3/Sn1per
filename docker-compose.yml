@@ -1,0 +1,19 @@
+version: '3.9'
+
+x-logging: &default-logging
+  options:
+    max-size: "40m"
+    max-file: "10"
+  driver: json-file
+
+services:
+  kali-linux:
+    container_name: kali-linux
+    build:
+      context: .
+      dockerfile: Dockerfile
+  blackarch:
+    container_name: blackarch
+    build:
+      context: .
+      dockerfile: Dockerfile.blackarch
