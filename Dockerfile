@@ -1,4 +1,4 @@
-FROM kalilinux/kali-rolling
+FROM docker.io/kalilinux/kali-rolling:latest
 
 LABEL org.label-schema.name='Sn1per - Kali Linux' \
     org.label-schema.description='Automated pentest framework for offensive security experts' \
@@ -14,21 +14,21 @@ RUN echo "deb http://http.kali.org/kali kali-rolling main contrib non-free" > /e
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN set -x \
-        && apt-get -yqq update \
-        && apt-get -yqq dist-upgrade \
-        && apt-get clean
-RUN apt-get install -y metasploit-framework
+        && apt -yqq update \
+        && apt -yqq full-upgrade \
+        && apt clean
+RUN apt install --yes metasploit-framework
 
 RUN sed -i 's/systemctl status ${PG_SERVICE}/service ${PG_SERVICE} status/g' /usr/bin/msfdb && \
     service postgresql start && \
     msfdb reinit
 
-RUN apt-get --yes install git \
-    && mkdir -p security \
-    && cd security \
-    && git clone https://github.com/1N3/Sn1per.git \
+WORKDIR /usr/src/app
+
+RUN apt --yes install git bash
+RUN git clone https://github.com/1N3/Sn1per.git \
     && cd Sn1per \
     && ./install.sh \
     && sniper -u force
 
-CMD ["bash"]
+CMD ["sniper"]
