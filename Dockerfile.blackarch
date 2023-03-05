@@ -1,0 +1,9 @@
+FROM docker.io/blackarchlinux/blackarch:latest
+
+# Upgrade system
+RUN pacman -Syu --noconfirm
+
+# Install sn1per from official repository
+RUN pacman -Sy sn1per --noconfirm
+
+CMD ["sn1per"]
