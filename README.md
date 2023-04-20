@@ -82,18 +82,33 @@ To install Sn1per using an AWS EC2 instance:
 
 [![](https://sn1persecurity.com/images/docker-logo.png)](https://hub.docker.com/r/sn1persecurity/sn1per)
 
-From a new Docker console, run the following commands.
+### Kali Linux-based Sn1per
 
-```
-Download https://raw.githubusercontent.com/1N3/Sn1per/master/Dockerfile
-docker build -t sn1per . 
-docker run -it sn1per /bin/bash
+1. Run the Docker Compose file
 
-or 
+    ```bash
+    sudo docker compose up
+    ```
 
-docker pull xer0dayz/sn1per
-docker run -it xer0dayz/sn1per /bin/bash
-```
+1. Run the container
+
+    ```bash
+    sudo docker run -it sn1per-kali-linux /bin/bash
+    ```
+
+### BlackArch-based Sn1per
+
+1. Run the Docker Compose file
+
+    ```bash
+    sudo docker compose -f docker-compose-blackarch
+    ```
+
+1. Run the container
+
+    ```bash
+    sudo docker run -it sn1per-blackarch /bin/bash
+    ```
 
 ## Usage
 
