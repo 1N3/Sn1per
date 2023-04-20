@@ -7,8 +7,8 @@ x-logging: &default-logging
   driver: json-file
 
 services:
-  kali-linux:
-    container_name: kali-linux
+  blackarch:
+    container_name: blackarch
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.blackarch
