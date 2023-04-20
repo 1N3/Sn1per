@@ -101,7 +101,7 @@ To install Sn1per using an AWS EC2 instance:
 1. Run the Docker Compose file
 
     ```bash
-    sudo docker compose -f docker-compose-blackarch
+    sudo docker compose -f docker-compose-blackarch.yml up
     ```
 
 1. Run the container
