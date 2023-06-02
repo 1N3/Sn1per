@@ -39,6 +39,11 @@ Sn1per is a next-generation information gathering tool that provides automated, 
 [![](https://sn1persecurity.com/wordpress/wp-content/uploads/2022/10/Sn1perbootcampseries1.png)](https://www.youtube.com/c/Sn1perSecurity/videos)
 
 ### News
+- #### [Automated Penetration Testing: A Comprehensive Guide to Securing Your Digital Assets](https://sn1persecurity.com/wordpress/automated-penetration-testing-a-comprehensive-guide-to-securing-your-digital-assets/)
+- #### [Sn1per Enterprise v20230516 Released!](https://sn1persecurity.com/wordpress/sn1per-enterprise-v20230516-released/)
+- #### [Dark Web Monitoring: Securing Your External Attack Surface](https://sn1persecurity.com/wordpress/dark-web-monitoring-securing-your-external-attack-surface/)
+- #### [Sn1per Scan Engine v10.4 Released!](https://sn1persecurity.com/wordpress/sn1per-scan-engine-v10-4-released/)
+- #### [Sn1per: The Next Generation of Tools for Security Professionals](https://sn1persecurity.com/wordpress/sn1per-the-next-generation-of-tools-for-security-professionals/)
 - #### [Sn1per Scan Engine v10.3 Released!](https://sn1persecurity.com/wordpress/sn1per-scan-engine-v10-3-released/)
 - #### [5 Ways Sn1per Can Automate Your Security Workflow](https://sn1persecurity.com/wordpress/5-ways-sn1per-can-automate-your-security-workflow/)
 - #### [External Attack Surface Management with Sn1per](https://sn1persecurity.com/wordpress/external-attack-surface-management-with-sn1per/)
