@@ -604,7 +604,7 @@ function loot {
         source $INSTALL_DIR/pro.sh
       fi
     else
-      echo -e "$OKRED + -- --=[ Sn1per Professional is not installed. To download Sn1per Professional, go to https://sn1persecurity.com. $RESET"
+      echo -e "$OKRED + -- --=[ Sn1per Professional is not installed. Go to https://sn1persecurity.com to request your FREE trial today! $RESET"
       sudo $LAST_USER -c $BROWSER https://sn1persecurity.com 2> /dev/null > /dev/null &
     fi
     rm -f $UPDATED_TARGETS 2> /dev/null
