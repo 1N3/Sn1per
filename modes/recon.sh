@@ -11,7 +11,7 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING DNS SUBDOMAINS VIA SUBLIST3R $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python /usr/share/sniper/plugins/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null > /dev/null
+    python3 /usr/share/sniper/plugins/Sublist3r/sublist3r.py -d $TARGET -vvv -o $LOOT_DIR/domains/domains-$TARGET.txt 2>/dev/null > /dev/null
     sed -ie 's/<BR>/\n/g' domains-$TARGET-full.txt 2> /dev/null
     mv -f $LOOT_DIR/domains/domains-$TARGET.txte $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
     wc -l $LOOT_DIR/domains/domains-$TARGET.txt 2> /dev/null
@@ -77,7 +77,7 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING CENSYS SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | egrep -v "Searching|Found" > $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null 
+    python3 $PLUGINS_DIR/censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id $CENSYS_APP_ID --censys-api-secret $CENSYS_API_SECRET $TARGET | egrep "\-" | awk '{print $2}' | egrep -v "Searching|Found" > $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null 
     wc -l $LOOT_DIR/domains/domains-$TARGET-censys.txt 2> /dev/null
   fi
   if [[ "$SHODAN" = "1" ]]; then
@@ -129,7 +129,7 @@ if [[ "$RECON" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED GATHERING SUBBRUTE SUBDOMAINS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    python "$INSTALL_DIR/plugins/massdns/scripts/subbrute.py" $INSTALL_DIR/wordlists/domains-all.txt $TARGET 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-subbrute.txt 2> /dev/null
+    python3 "$INSTALL_DIR/plugins/massdns/scripts/subbrute.py" $INSTALL_DIR/wordlists/domains-all.txt $TARGET 2> /dev/null > $LOOT_DIR/domains/domains-$TARGET-subbrute.txt 2> /dev/null
     wc -l $LOOT_DIR/domains/domains-$TARGET-subbrute.txt 2> /dev/null
   fi
   if [[ "$ALT_DNS" = "1" ]]; then
