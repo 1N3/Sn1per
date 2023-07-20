@@ -76,7 +76,7 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "$OKRED COLLECTING OSINT FROM ONLINE DOCUMENTS $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		cd $INSTALL_DIR/plugins/metagoofil/
-		python metagoofil.py -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html 2> /dev/null | tee $LOOT_DIR/osint/metagoofil-$TARGET.txt 2> /dev/null 
+		python3 metagoofil.py -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html 2> /dev/null | tee $LOOT_DIR/osint/metagoofil-$TARGET.txt 2> /dev/null 
 		cd $INSTALL_DIR
 		if [[ "$SLACK_NOTIFICATIONS_METAGOOFIL" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/metagoofil-$TARGET.txt"
