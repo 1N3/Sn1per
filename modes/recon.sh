@@ -231,16 +231,6 @@ if [[ "$RECON" = "1" ]]; then
       /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/subjack_new-$TARGET.txt"
     fi
   fi
-  if [[ "$SLURP" = "1" ]]; then
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    echo -e "$OKRED STARTING PUBLIC S3 BUCKET SCAN $RESET"
-    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-    cd $PLUGINS_DIR/slurp/
-    ./slurp-linux-amd64 domain --domain $TARGET | tee $LOOT_DIR/nmap/takeovers-$TARGET-s3-buckets.txt 2>/dev/null
-    if [[ "$SLACK_NOTIFICATIONS_S3_BUCKETS" == "1" ]]; then
-      /bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/nmap/takeovers-$TARGET-s3-buckets.txt"
-    fi
-  fi
   if [[ "$ASN_CHECK" = "1" ]]; then
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     echo -e "$OKRED RETRIEVING ASN INFO $RESET"
