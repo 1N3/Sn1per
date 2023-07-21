@@ -94,6 +94,12 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		curl -s "https://api.hunter.io/v2/domain-search?domain=$TARGET&api_key=$HUNTERIO_KEY" | egrep "name|value|domain|company|uri|position|phone" 2> /dev/null | tee $LOOT_DIR/osint/hunterio-$TARGET.txt 2> /dev/null
 	fi
+	if [[ "$TOMBAIO" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED GATHERING EMAILS VIA TOMBA.IO $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		curl -H "X-Tomba-Key: $TOMBAIO_KEY" -H "X-Tomba-Secret: $TOMBAIO_SECRET" -s "https://api.tomba.io/v1/domain-search?domain=$TARGET" | egrep "email|organization|uri|position|phone" 2> /dev/null | tee $LOOT_DIR/osint/tombaio$TARGET.txt 2> /dev/null
+	fi
 	if [[ "$METASPLOIT_EXPLOIT" == "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		echo -e "$OKRED GATHERING EMAILS VIA METASPLOIT $RESET"
