@@ -76,7 +76,7 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "$OKRED COLLECTING OSINT FROM ONLINE DOCUMENTS $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		cd $INSTALL_DIR/plugins/metagoofil/
-		python metagoofil.py -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html 2> /dev/null | tee $LOOT_DIR/osint/metagoofil-$TARGET.txt 2> /dev/null 
+		python3 metagoofil.py -d $TARGET -t doc,pdf,xls,csv,txt -l 25 -n 25 -o $LOOT_DIR/osint/ -f $LOOT_DIR/osint/$TARGET.html 2> /dev/null | tee $LOOT_DIR/osint/metagoofil-$TARGET.txt 2> /dev/null 
 		cd $INSTALL_DIR
 		if [[ "$SLACK_NOTIFICATIONS_METAGOOFIL" == "1" ]]; then
 			/bin/bash "$INSTALL_DIR/bin/slack.sh" postfile "$LOOT_DIR/osint/metagoofil-$TARGET.txt"
@@ -93,6 +93,12 @@ if [[ "$OSINT" = "1" ]]; then
 		echo -e "$OKRED GATHERING EMAILS VIA HUNTER.IO $RESET"
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		curl -s "https://api.hunter.io/v2/domain-search?domain=$TARGET&api_key=$HUNTERIO_KEY" | egrep "name|value|domain|company|uri|position|phone" 2> /dev/null | tee $LOOT_DIR/osint/hunterio-$TARGET.txt 2> /dev/null
+	fi
+	if [[ "$TOMBAIO" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED GATHERING EMAILS VIA TOMBA.IO $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		curl -H "X-Tomba-Key: $TOMBAIO_KEY" -H "X-Tomba-Secret: $TOMBAIO_SECRET" -s "https://api.tomba.io/v1/domain-search?domain=$TARGET" | egrep "email|organization|uri|position|phone" 2> /dev/null | tee $LOOT_DIR/osint/tombaio$TARGET.txt 2> /dev/null
 	fi
 	if [[ "$METASPLOIT_EXPLOIT" == "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"

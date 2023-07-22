@@ -604,7 +604,23 @@ function loot {
         source $INSTALL_DIR/pro.sh
       fi
     else
-      echo -e "$OKRED + -- --=[ Sn1per Professional is not installed. To download Sn1per Professional, go to https://sn1persecurity.com. $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET ⚡ Upgrade to Sn1per Professional and unlock a world of powerful benefits! 🚀 $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 💡 Don't miss out on important updates by using the Community version. $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 🔝 The latest Professional version ( ${OKRED}10.4 ${RESET}) offers unparalleled features, including: $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET     💻 Sleek Web UI $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET     🛠️ Extensive add-ons $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET     🔄 Seamless integrations $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 🤝 Experience priority support, continuous updates, and enhanced capabilities tailored for professionals like you. $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 💰 Maximize your investment and achieve exceptional results with Sn1per Professional. $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 🔍 Learn more about the differences between the versions at: ${OKBLUE}https://sn1persecurity.com/wordpress/sn1per-community-vs-professional-whats-the-difference/ $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 🛒 Purchase your Sn1per Professional license now at: ${OKBLUE}https://sn1persecurity.com/ $RESET"
       sudo $LAST_USER -c $BROWSER https://sn1persecurity.com 2> /dev/null > /dev/null &
     fi
     rm -f $UPDATED_TARGETS 2> /dev/null

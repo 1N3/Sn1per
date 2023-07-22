@@ -9,7 +9,8 @@
 
 [[Website](https://sn1persecurity.com/wordpress/)] [[Blog](https://sn1persecurity.com/wordpress/blog/)] [[Shop](https://sn1persecurity.com/wordpress/shop)] [[Documentation](https://sn1persecurity.com/wordpress/documentation/)] [[Demo](https://www.youtube.com/c/Sn1perSecurity/videos)] [[Find Out More](https://sn1persecurity.com/wordpress/external-attack-surface-management-with-sn1per/)]
 
-## Attack Surface Management
+
+## Attack Surface Management Platform
 
 ### Discover hidden assets and vulnerabilities in your environment
 
@@ -47,16 +48,16 @@ Sn1per is a next-generation information gathering tool that provides automated, 
 
 ### News
 
+- #### [Automated Penetration Testing Guide - Your Ultimate Resource](https://sn1persecurity.com/wordpress/penetration-testing-guide/)
+- #### [Sn1per Enterprise v20230516 Released!](https://sn1persecurity.com/wordpress/sn1per-enterprise-v20230516-released/)
+- #### [Dark Web Monitoring: Securing Your External Attack Surface](https://sn1persecurity.com/wordpress/dark-web-monitoring-securing-your-external-attack-surface/)
+- #### [Sn1per Scan Engine v10.4 Released!](https://sn1persecurity.com/wordpress/sn1per-scan-engine-v10-4-released/)
+- #### [Sn1per: The Next Generation of Tools for Security Professionals](https://sn1persecurity.com/wordpress/sn1per-the-next-generation-of-tools-for-security-professionals/)
 - #### [Sn1per Scan Engine v10.3 Released!](https://sn1persecurity.com/wordpress/sn1per-scan-engine-v10-3-released/)
-
 - #### [5 Ways Sn1per Can Automate Your Security Workflow](https://sn1persecurity.com/wordpress/5-ways-sn1per-can-automate-your-security-workflow/)
-
 - #### [External Attack Surface Management with Sn1per](https://sn1persecurity.com/wordpress/external-attack-surface-management-with-sn1per/)
-
 - #### [Sn1per Scan Engine v10.2 Released!](https://sn1persecurity.com/wordpress/sn1per-scan-engine-v10-2-update/)
-
 - #### [Sn1per Enterprise Released!](https://sn1persecurity.com/wordpress/sn1per-enterprise-released/)
-
 - #### [Sn1per Professional v10.0 Released!](https://sn1persecurity.com/wordpress/sn1per-professional-v10-released/)
 
 ## Kali/Ubuntu/Debian/Parrot Linux Install
@@ -253,4 +254,4 @@ For license and legal information, refer to the LICENSE.md (<https://github.com/
 
 To obtain a Sn1per Professional license, go to <https://sn1persecurity.com>.
 
-Attack Surface Management (ASM) | Continuous Attack Surface Testing (CAST) | Attack Surface Software | Attack Surface Platform | Continuous Automated Red Teaming (CART) |  Vulnerability & Attack Surface Management | Red Team | Threat Intel | Application Security | Cybersecurity | IT Asset Discovery | Automated Penetration Testing | Hacking Tools | Recon Tool | Bug Bounty Tool | Vulnerability Scanner | Attack Surface Analysis | Attack Surface Reduction | Attack Surface Detector | Attack Surface Monitoring | Attack Surface Review | Attack Surface Discovery | Digital Threat Management | Risk Assessment | Threat Remediation | Offensive Security Framework | Automated Penetration Testing Framework | External Threat Management | Internal IT Asset Discovery | Security Orchestration and Automation (SOAR) | Sn1per tutorial | Sn1per tool | Sn1per metasploit | Sn1per for windows | Sn1per review | Sn1per download | how to use Sn1per | Sn1per professional download | Sn1per professional crack | automated pentesting framework | pentest-tools github | ad pentest tools | pentest-tools review | security testing tools | ubuntu pentesting tools | pentesting tools for mac | cloud-based pen-testing tools
+External attack surface management, Attack surface monitoring, Attack Surface Management Platform, Attack Surface Management Solutions, Vulnerability management, Threat intelligence, Cybersecurity risk assessment, Security posture assessment, Digital footprint analysis, Attack surface mapping, Web application security, Network security, Infrastructure security, Cloud security, Third-party risk management, Incident response, Penetration testing, Asset discovery, Patch management, Security scanning, Firewall configuration, Intrusion detection system, Security awareness training, Data breach prevention, Web server security, Endpoint security, Phishing protection, Vulnerability assessment, Network security, Web application testing, Ethical hacking, Security assessment, Information security, Red teaming, Cybersecurity testing, Pen testing tools, Exploitation techniques, Wireless network testing, Social engineering, Security auditing, Incident response, Intrusion detection, Firewall testing, Security assessment methodology, Risk assessment, Security controls, Web vulnerability scanning, Password cracking, Security testing services, Security architecture, System hardening, Network reconnaissance, Red teaming, Penetration testing, Cybersecurity, Vulnerability assessment, Attack simulation, Threat intelligence, Risk assessment, Security testing, Adversarial tactics, Incident response, Security assessment, Network security, Defensive measures, Security controls, Social engineering, Exploitation techniques, Security awareness, Defensive strategies, Risk mitigation, Blue teaming, Security operations, Intrusion detection, Security frameworks, Cyber defense, Information security
