@@ -6,7 +6,7 @@ on:
       - main
       - development
       - feat*
-      -gh-action
+      - gh-action
     tags:
       - "v*"
   pull_request:
