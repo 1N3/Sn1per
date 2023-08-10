@@ -25,10 +25,15 @@ jobs:
           echo "repolower=${${{ github.event.repository.name }},,}" >>${GITHUB_ENV}
 
 
+      - name: Ubuntu GitHub Actions environment variables List
+        run: env
+
       - name: 'Build Inventory Image'
         env:
           REPO_NAME: '${{ github.event.repository.name }}'
         run: |
+          echo $REPO_NAME
+          echo ${{ github.event.repository.name }}
           echo "repolower=${REPO_NAME,,}" >>${GITHUB_ENV}
           echo "$repolower"
           echo "${repolower}"
