@@ -24,8 +24,7 @@ jobs:
         env:
           REPO_NAME: '${{ github.event.repository.name }}'
         run: |
-          echo REPONAME: $REPO_NAME
-          echo {REPONAME}: ${REPO_NAME}
-          echo {{REPONAME}}: ${{REPO_NAME}}
-          docker build . -f Dockerfile.base --tag ghcr.io/abnerrizzi/${REPO_NAME}:latest
-          docker push ghcr.io/abnerrizzi/${REPO_NAME}:latest
+          echo "OWNER_LC=${github.event.repository.name,,}" >>${GITHUB_ENV}
+          echo {OWNER_LC}: ${OWNER_LC}
+          # docker build . -f Dockerfile.base --tag ghcr.io/abnerrizzi/${REPO_NAME}:latest
+          # docker push ghcr.io/abnerrizzi/${REPO_NAME}:latest
