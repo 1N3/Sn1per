@@ -1,6 +1,3 @@
-
-
-
 name: Build and Push docker
 
 on:
@@ -21,7 +18,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  push-docker-image:
+  deploy-docker-hello-world:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -45,12 +42,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: Dockerfile.base
-          #push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-')}}
-          push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-') || startsWith(github.ref_name, 'gh-action') }}
-          #tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}
-          #labels: ${{ steps.meta.outputs.labels }}
+          push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-')}}
+          tags: ${steps.meta.outputs.tags}
+          labels: ${{ steps.meta.outputs.labels }}
