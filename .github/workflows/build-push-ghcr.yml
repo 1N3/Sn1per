@@ -29,13 +29,13 @@ jobs:
           context: .
           file: Dockerfile.base
           push: true
-          tags: ghcr.io/${{ REPO_NAME }}:${{ github.sha }}
+          tags: ghcr.io/${REPO_NAME}:${{ github.sha }}
 
       - name: Docker image metadata
         id: image_meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/${{ REPO_NAME }}
+          images: ghcr.io/${REPO_NAME}
           flavor: latest=true
           tags: |
             type=sha
@@ -48,7 +48,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push metadata to image
-        run: docker push ghcr.io/${{ REPO_NAME }}
+        run: docker push ghcr.io/${REPO_NAME}
 
       - name: Push tags to image
         run: docker push ${{ steps.image_meta.outputs.tags }}
