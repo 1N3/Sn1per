@@ -21,10 +21,9 @@ jobs:
           password: ${{secrets.GITHUB_TOKEN}}
 
       - name: downcase REPO
-        run: |
-          echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-          echo "${{  github.event.repository.name  }}"
-          echo "REPO_NAME: ${{github.event.repository.name,,}}"
+        run:
+          - echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+          - echo " ${{  github.event.repository.name  }} "
       - name: 'Build Inventory Image'
         env:
           REPO_NAME: '${{ github.event.repository.name }}'
