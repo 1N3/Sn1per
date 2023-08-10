@@ -20,8 +20,7 @@ jobs:
       - name: Setting parameters
         run: |-
           REPO_NAME=${{ github.repository }}
-          echo ${REPO_NAME}
-          echo ${REPO_NAME,,}
+          echo "REPO_NAME={REPO_NAME,,}" >> $GITHUB_ENV
 
       - name: Build and push Docker image
         id: docker_build
@@ -30,13 +29,13 @@ jobs:
           context: .
           file: Dockerfile.base
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          tags: ghcr.io/${{ REPO_NAME }}:${{ github.sha }}
 
       - name: Docker image metadata
         id: image_meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ghcr.io/${{ REPO_NAME }}
           flavor: latest=true
           tags: |
             type=sha
@@ -49,7 +48,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push metadata to image
-        run: docker push ghcr.io/${{ github.repository }}
+        run: docker push ghcr.io/${{ REPO_NAME }}
 
       - name: Push tags to image
         run: docker push ${{ steps.image_meta.outputs.tags }}
