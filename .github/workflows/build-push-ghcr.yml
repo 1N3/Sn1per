@@ -15,7 +15,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository | lower }}  # Convert repository name to lowercase
 
 jobs:
   deploy-docker-hello-world:
@@ -47,5 +47,5 @@ jobs:
           context: .
           file: Dockerfile.base
           push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-')}}
-          tags: ${{ steps.meta.outputs.tags | lower }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
