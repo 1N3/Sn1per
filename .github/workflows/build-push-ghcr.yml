@@ -15,9 +15,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the hello-docker Docker image
         run: |
+          echo "Builing and push..."
           repo_name=${{ github.repository }}
           repo_name=${repo_name,,}
-          echo  ${reponame}
           docker build . -f Dockerfile.base --tag ghcr.io/${repo_name}:latest
-          #docker run ghcr.io/deselikem/hello-docker-gcr-demo:latest
-          #docker push ghcr.io/deselikem/hello-docker-gcr-demo:latest
+          docker run ghcr.io/${repo_name}:latest
+          docker push ghcr.io/${repo_name}:latest
