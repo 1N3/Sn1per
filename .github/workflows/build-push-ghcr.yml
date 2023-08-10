@@ -27,7 +27,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY}}/${ env.IMAGE_NAME,, }
+          images: ${{ env.REGISTRY}}/${env.IMAGE_NAME,,}
           flavor: latest=true
           tags: |
             type=ref,event=branch
@@ -45,7 +45,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: Dockerfile
+          file: Dockerfile.base
           push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-')}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
