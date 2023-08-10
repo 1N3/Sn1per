@@ -29,7 +29,7 @@ jobs:
           context: .
           file: Dockerfile.base
           push: true
-          tags: ghcr.io/${REPO_NAME}:${{ github.sha }}
+          tags: "ghcr.io/${REPO_NAME}:${{ github.sha }}""
 
       - name: Docker image metadata
         id: image_meta
