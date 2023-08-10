@@ -1,52 +1,48 @@
-name: Build and Push docker
+name: Build and Push Docker Image
 
 on:
   push:
     branches:
       - main
-      - development
-      - feat*
-      - gh-action
-    tags:
-      - "v*"
-  pull_request:
-    branches:
-      - master
-
-env:
-  REGISTRY: ghcr.io
-  RAW_IMAGE_NAME: ${{ github.repository }}
-  IMAGE_NAME: ${RAW_IMAGE_NAME,,}  # Convert repository name to lowercase
 
 jobs:
-  deploy-docker-hello-world:
+  build-and-push:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}  # Use the original name for metadata
-          flavor: latest=true
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      - name: Login to image repository
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
+      - name: Build and push Docker image
+        id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: .
           file: Dockerfile.base
-          push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-')}}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+      - name: Docker image metadata
+        id: image_meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}
+          flavor: latest=true
+          tags: |
+            type=sha
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push metadata to image
+        run: docker push ghcr.io/${{ github.repository }}
+
+      - name: Push tags to image
+        run: docker push ${{ steps.image_meta.outputs.tags }}
