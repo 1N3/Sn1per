@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main  # Change this to the appropriate branch if needed
+      - gh-action
 
 jobs:
   build-and-push:
