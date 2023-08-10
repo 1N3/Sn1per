@@ -17,6 +17,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Setting parameters
+        shell: |-
+          echo abc
+          ls -al
+
       - name: Build and push Docker image
         id: docker_build
         uses: docker/build-push-action@v2
