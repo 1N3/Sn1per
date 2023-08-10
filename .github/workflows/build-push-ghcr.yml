@@ -28,5 +28,5 @@ jobs:
 
       - name: 'Build Inventory Image'
         run: |
-          docker build . -f Dockerfile.base --tag ghcr.io/abnerrizzi/${{ REPO_NAME }}:latest
-          docker push ghcr.io/abnerrizzi/${{ REPO_NAME }}:latest
+          docker build . -f Dockerfile.base --tag ghcr.io/abnerrizzi/${REPO_NAME}:latest
+          docker push ghcr.io/abnerrizzi/${REPO_NAME}:latest
