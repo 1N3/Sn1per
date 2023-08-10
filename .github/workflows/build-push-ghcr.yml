@@ -19,8 +19,9 @@ jobs:
 
       - name: Setting parameters
         run: |-
-          echo abc
-          ls -al
+          REPO_NAME=${{ github.repository }}
+          echo ${REPO_NAME}
+          echo ${REPO_NAME,,}
 
       - name: Build and push Docker image
         id: docker_build
