@@ -12,7 +12,11 @@ name: Publish Docker image
 on:
   release:
     types: [published]
-  branch: gh-action
+  push:
+    branches:
+      - main
+      - gh-action
+    - gh-action
 
 jobs:
   push_to_registry:
