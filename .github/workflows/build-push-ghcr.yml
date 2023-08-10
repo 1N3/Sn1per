@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - gh-action
 
 jobs:
   build-and-push:
