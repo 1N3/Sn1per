@@ -16,7 +16,7 @@ on:
 env:
   REGISTRY: ghcr.io
   RAW_IMAGE_NAME: ${{ github.repository }}
-  IMAGE_NAME: ${{ env.RAW_IMAGE_NAME | lower }}  # Convert repository name to lowercase
+  IMAGE_NAME: ${RAW_IMAGE_NAME,,}  # Convert repository name to lowercase
 
 jobs:
   deploy-docker-hello-world:
