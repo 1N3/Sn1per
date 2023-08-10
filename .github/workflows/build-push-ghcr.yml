@@ -28,7 +28,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY}}/${{ env.RAW_IMAGE_NAME }}  # Use the original name for metadata
+          images: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}  # Use the original name for metadata
           flavor: latest=true
           tags: |
             type=ref,event=branch
