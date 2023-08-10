@@ -47,5 +47,5 @@ jobs:
           context: .
           file: Dockerfile.base
           push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-')}}
-          tags: ${steps.meta.outputs.tags}
+          tags: ${{ steps.meta.outputs.tags | lower }}
           labels: ${{ steps.meta.outputs.labels }}
