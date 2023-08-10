@@ -1,23 +1,50 @@
-name: publish
+name: Build and Push docker
+
 on:
   push:
+    branches:
+      - main
+      - development
+      - feat*
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - master
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  publish-to-ghcr:
+  deploy-docker-hello-world:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+      - uses: actions/checkout@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          registry: ghcr.io
+          images: ${{ env.REGISTRY}}/${ env.IMAGE_NAME,, }
+          flavor: latest=true
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+
+      - name: Login to image repository
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build the hello-docker Docker image
-        run: |
-          echo "Builing and push..."
-          repo_name=${{ github.repository }}
-          repo_name=${repo_name,,}
-          docker build . -f Dockerfile.base --tag ghcr.io/${repo_name}:latest
-          docker run ghcr.io/${repo_name}:latest
-          docker push ghcr.io/${repo_name}:latest
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-')}}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
