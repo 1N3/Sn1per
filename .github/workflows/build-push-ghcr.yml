@@ -20,23 +20,9 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
 
-      - name: name1
-        run: |
-          echo "repolower=${${{ github.event.repository.name }},,}" >>${GITHUB_ENV}
-
-
-      - name: Ubuntu GitHub Actions environment variables List
-        run: env
-
-      - name: 'Build Inventory Image'
+      - name: 'Build and Push Docker image to ghcr.io'
         env:
           REPO_NAME: '${{ github.event.repository.name }}'
         run: |
-          echo $REPO_NAME
-          echo ${{ github.event.repository.name }}
-          echo "repolower=${REPO_NAME,,}" >>${GITHUB_ENV}
-          echo "$repolower"
-          echo "${repolower}"
-
-          # docker build . -f Dockerfile.base --tag ghcr.io/abnerrizzi/${REPO_NAME}:latest
-          # docker push ghcr.io/abnerrizzi/${REPO_NAME}:latest
+          docker build . -f Dockerfile.base --tag ghcr.io/${GITHUB_REPOSITORY,,}:latest
+          docker push ghcr.io/${GITHUB_REPOSITORY,,}:latest
