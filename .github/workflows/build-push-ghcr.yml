@@ -3,7 +3,7 @@ on:
   push:
 
 jobs:
-  publish-to_ghcr:
+  publish-to-ghcr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,7 +15,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the hello-docker Docker image
         run: |
-          container_img = ghcr.io/deselikem/hello-docker-gcr-demo
+          container_img=ghcr.io/deselikem/hello-docker-gcr-demo
           echo $container_img
           docker build . -f Dockerfile.base --tag ghcr.io/deselikem/hello-docker-gcr-demo:latest
           #docker run ghcr.io/deselikem/hello-docker-gcr-demo:latest
