@@ -29,7 +29,9 @@ jobs:
         env:
           REPO_NAME: '${{ github.event.repository.name }}'
         run: |
-          "repolower=${REPO_NAME,,}" >>${GITHUB_ENV}
+          echo "repolower=${REPO_NAME,,}" >>${GITHUB_ENV}
+          echo $repolower
+          echo ${repolower}
 
           # docker build . -f Dockerfile.base --tag ghcr.io/abnerrizzi/${REPO_NAME}:latest
           # docker push ghcr.io/abnerrizzi/${REPO_NAME}:latest
