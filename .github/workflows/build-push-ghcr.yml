@@ -17,6 +17,7 @@ jobs:
         run: |
           container_img=ghcr.io/deselikem/hello-docker-gcr-demo
           echo $container_img
+          echo ${github.repository}
           docker build . -f Dockerfile.base --tag ghcr.io/deselikem/hello-docker-gcr-demo:latest
           #docker run ghcr.io/deselikem/hello-docker-gcr-demo:latest
           #docker push ghcr.io/deselikem/hello-docker-gcr-demo:latest
