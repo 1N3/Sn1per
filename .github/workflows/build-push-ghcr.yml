@@ -22,7 +22,7 @@ jobs:
 
       - name: name1
         run: |
-          echo "REPO=${${{ github.event.repository.name }},,}" >>${GITHUB_ENV}
+          echo "repolower=${${{ github.event.repository.name }},,}" >>${GITHUB_ENV}
 
 
       - name: 'Build Inventory Image'
