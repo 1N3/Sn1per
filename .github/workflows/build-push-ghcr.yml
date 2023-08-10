@@ -1,54 +1,55 @@
-name: Build and Push Docker Image
+name: Build and Push
 
 on:
   push:
     branches:
       - main
-      - gh-action
+      - development
+      - feat*
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - master
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  deploy-docker-hello-world:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      - name: Setting environment variables
+        run: |
+          echo "repo_name=${{ env.IMAGE_NAME }}" >> $GITHUB_ENV
 
-      - name: Setting parameters
-        run: |-
-          REPO_NAME=${{ github.repository }}
-          echo "REPO_NAME={REPO_NAME,,}" >> $GITHUB_ENV
+      - uses: actions/checkout@v3
 
-      - name: Build and push Docker image
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: Dockerfile.base
-          push: true
-          tags: "ghcr.io/${REPO_NAME}:${{ github.sha }}""
-
-      - name: Docker image metadata
-        id: image_meta
+      - name: Docker meta
+        id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/${REPO_NAME}
+          images: ${{ env.REGISTRY}}/${{ env.repo_name }}
           flavor: latest=true
           tags: |
-            type=sha
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
 
-      - name: Login to ghcr.io
+      - name: Login to image repository
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push metadata to image
-        run: docker push ghcr.io/${REPO_NAME}
-
-      - name: Push tags to image
-        run: docker push ${{ steps.image_meta.outputs.tags }}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-')}}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
