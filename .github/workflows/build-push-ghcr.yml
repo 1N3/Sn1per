@@ -1,4 +1,4 @@
-name: ci
+name: build and push
 
 on:
   push:
@@ -22,5 +22,5 @@ jobs:
 
       - name: 'Build Inventory Image'
         run: |
-          docker build . --tag ghcr.io/abnerrizzi/store:latest
-          docker push ghcr.io/abnerrizzi/store:latest
+          docker build . --tag -f Dockerfile.base ghcr.io/abnerrizzi/${{ github.event.repository.name }}:latest
+          docker push ghcr.io/abnerrizzi/${{ github.event.repository.name }}:latest
