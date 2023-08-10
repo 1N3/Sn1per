@@ -21,10 +21,10 @@ jobs:
           password: ${{secrets.GITHUB_TOKEN}}
 
       - name: name1
-        run:
-          - echo 1
-          - echo 2
-          - echo 3
+        run: |
+          echo 1
+          echo 2
+          echo 3
       - name: downcase REPO
         run: |
           echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
