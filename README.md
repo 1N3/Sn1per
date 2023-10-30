@@ -223,30 +223,30 @@ sniper -u|--update
 
 ## Help Topics
 
-- [x] Plugins & Tools (<https://github.com/1N3/Sn1per/wiki/Plugins-&-Tools>)
-- [x] Scheduled scans (<https://github.com/1N3/Sn1per/wiki/Scheduled-Scans>)
-- [x] Sn1per Configuration Options (<https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options>)
-- [x] Sn1per Configuration Templates (<https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Templates>)
-- [x] Sc0pe Templates (<https://github.com/1N3/Sn1per/wiki/Sc0pe-Templates>)
+- [x] [Plugins & Tools](https://github.com/1N3/Sn1per/wiki/Plugins-&-Tools)
+- [x] [Scheduled Scans](https://github.com/1N3/Sn1per/wiki/Scheduled-Scans)
+- [x] [Sn1per Configuration Options](https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Options)
+- [x] [Sn1per Configuration Templates](https://github.com/1N3/Sn1per/wiki/Sn1per-Configuration-Templates)
+- [x] [Sc0pe Templates](https://github.com/1N3/Sn1per/wiki/Sc0pe-Templates)
 
 ## Integration Guides
 
-- [x] Github API integration (<https://github.com/1N3/Sn1per/wiki/Github-API-Integration>)
-- [x] Burpsuite Professional 2.x integration (<https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration>)
-- [x] OWASP ZAP integration (<https://github.com/1N3/Sn1per/wiki/OWASP-ZAP-Integration>)
-- [x] Shodan API integration (<https://github.com/1N3/Sn1per/wiki/Shodan-Integration>)
-- [x] Censys API integration (<https://github.com/1N3/Sn1per/wiki/Censys-API-Integration>)
-- [x] Hunter.io API integration (<https://github.com/1N3/Sn1per/wiki/Hunter.io-API-Integration>)
-- [x] Metasploit integration (<https://github.com/1N3/Sn1per/wiki/Metasploit-Integration>)
-- [x] Nessus integration (<https://github.com/1N3/Sn1per/wiki/Nessus-Integration>)
-- [x] OpenVAS API integration (<https://github.com/1N3/Sn1per/wiki/OpenVAS-Integration>)
-- [x] GVM 21.x integration (<https://github.com/1N3/Sn1per/wiki/GVM-21.x-Integration>)
-- [x] Slack API integration (<https://github.com/1N3/Sn1per/wiki/Slack-API-Integration>)
-- [x] WPScan API integration (<https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration>)
+- [x] [Github API integration](https://github.com/1N3/Sn1per/wiki/Github-API-Integration)
+- [x] [Burpsuite Professional 2.x integration](https://github.com/1N3/Sn1per/wiki/Burpsuite-Professional-2.x-Integration)
+- [x] [OWASP ZAP integration](https://github.com/1N3/Sn1per/wiki/OWASP-ZAP-Integration)
+- [x] [Shodan API integration](https://github.com/1N3/Sn1per/wiki/Shodan-Integration)
+- [x] [Censys API integration](https://github.com/1N3/Sn1per/wiki/Censys-API-Integration)
+- [x] [Hunter.io API integration](https://github.com/1N3/Sn1per/wiki/Hunter.io-API-Integration)
+- [x] [Metasploit integration](https://github.com/1N3/Sn1per/wiki/Metasploit-Integration)
+- [x] [Nessus integration](https://github.com/1N3/Sn1per/wiki/Nessus-Integration)
+- [x] [OpenVAS API integration](https://github.com/1N3/Sn1per/wiki/OpenVAS-Integration)
+- [x] [GVM 21.x integration](https://github.com/1N3/Sn1per/wiki/GVM-21.x-Integration)
+- [x] [Slack API integration](https://github.com/1N3/Sn1per/wiki/Slack-API-Integration)
+- [x] [WPScan API integration](https://github.com/1N3/Sn1per/wiki/WPScan-API-Integration)
 
 ## License & Legal Agreement
 
-For license and legal information, refer to the LICENSE.md (<https://github.com/1N3/Sn1per/blob/master/LICENSE.md>) file in this repository.
+For license and legal information, refer to the [LICENSE.md](https://github.com/1N3/Sn1per/blob/master/LICENSE.md) file in this repository.
 
 ## Purchase Sn1per Professional
 
