@@ -3,6 +3,19 @@ if [[ "$OSINT" = "1" ]]; then
 	if [[ "$SLACK_NOTIFICATIONS" == "1" ]]; then
 		/bin/bash "$INSTALL_DIR/bin/slack.sh" "[sn1persecurity.com] •?((¯°·._.• Started Sn1per OSINT scan: $TARGET [$MODE] (`date +"%Y-%m-%d %H:%M"`) •._.·°¯))؟•"
 	fi	
+	if [[ "$PAGODO" == "1" ]]; then
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		echo -e "$OKRED STARTING PAGODO PASSIVE SCANNER $RESET"
+		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+		cd $INSTALL_DIR/plugins/pagodo
+		if [[ "$PAGODO_PROXYCHAIN" == "1" ]]; then
+			proxychains4 python3 pagodo.py -d $TARGET -g ./dorks/all_google_dorks.txt -i 30 -x 120 -m 2 -s $LOOT_DIR/osint/dorks-$TARGET.txt &> $LOOT_DIR/osint/pagodo-logs-$TARGET.log &
+		elif [[ "$PAGODO_PROXYCHAIN" == "0" ]]; then
+			python3 pagodo.py -d $TARGET -g ./dorks/all_google_dorks.txt -i 30 -x 120 -m 2 -s $LOOT_DIR/osint/dorks-$TARGET.txt &> $LOOT_DIR/osint/pagodo-logs-$TARGET.log &
+		else
+			python3 pagodo.py -d $TARGET -g ./dorks/all_google_dorks.txt -i 30 -x 120 -m 2 -s $LOOT_DIR/osint/dorks-$TARGET.txt -p $PAGODO_PROXYCHAIN &> $LOOT_DIR/osint/pagodo-logs-$TARGET.log &
+		fi
+	fi
 	if [[ "$WHOIS" == "1" ]]; then
 		echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
 		echo -e "$OKRED GATHERING WHOIS INFO $RESET"
