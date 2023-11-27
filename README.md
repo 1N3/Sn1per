@@ -66,6 +66,14 @@ cd Sn1per
 bash install.sh
 ```
 
+## Arch Based Linux Install
+
+```
+git clone https://github.com/1N3/Sn1per
+cd Sn1per
+bash install-arch.sh
+```
+
 ## AWS AMI (Free Tier) VPS Install
 
 [![](https://sn1persecurity.com/wordpress/wp-content/uploads/2022/06/AWS-Marketplace.png)](https://aws.amazon.com/marketplace/pp/prodview-rmloab6wnymno)
