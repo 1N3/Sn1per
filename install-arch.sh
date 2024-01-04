@@ -75,53 +75,53 @@ fi
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
 
 pacman -Syu
-pacman -Sy python3-paramiko
-pacman -Sy nfs-common
-apt install -Sy nodejs
-apt install -Sy wafw00f
-apt install -Sy xdg-utils
-apt install -Sy ruby
-apt install -Sy rubygems
-apt install -Sy python
-apt install -Sy dos2unix
-apt install -Sy aha
-apt install -Sy libxml2-utils
-apt install -Sy rpcbind
-apt install -Sy cutycapt
-apt install -Sy host
-apt install -Sy whois
-apt install -Sy dnsrecon
-apt install -Sy curl
-apt install -Sy nmap
-apt install -Sy php7.4
-apt install -Sy php7.4-curl
-apt install -Sy hydra
-apt install -Sy sqlmap
-apt install -Sy nbtscan
-apt install -Sy nikto
-apt install -Sy whatweb
-apt install -Sy sslscan
-apt install -Sy jq
-apt install -Sy golang
-apt install -Sy adb
-apt install -Sy xsltproc
-apt install -Sy ldapscripts
-apt install -Sy libssl-dev 2> /dev/null
-apt install -Sy python-pip 2> /dev/null
-apt purge -Sy python3-pip
-apt install -y python3-pip
-apt install -y xmlstarlet
-apt install -y net-tools
-apt install -y p7zip-full
-apt install -y jsbeautifier
-apt install -y theharvester 2> /dev/null
-apt install -y phantomjs 2> /dev/null
-apt install -y chromium 2> /dev/null
-apt install -y xvfb
-apt install -y urlcrazy
-apt install -y iputils-ping
-apt install -y enum4linux
-apt install -y dnsutils
+pacman -Sy --noconfirm python3-paramiko
+pacman -Sy --noconfirm nfs-common
+pacman -Sy --noconfirm nodejs
+pacman -Sy --noconfirm wafw00f
+pacman -Sy --noconfirm xdg-utils
+pacman -Sy --noconfirm ruby
+pacman -Sy --noconfirm rubygems
+pacman -Sy --noconfirm python
+pacman -Sy --noconfirm dos2unix
+pacman -Sy --noconfirm aha
+pacman -Sy --noconfirm libxml2-utils
+pacman -Sy --noconfirm rpcbind
+pacman -Sy --noconfirm cutycapt
+pacman -Sy --noconfirm host
+pacman -Sy --noconfirm whois
+pacman -Sy --noconfirm dnsrecon
+pacman -Sy --noconfirm curl
+pacman -Sy --noconfirm nmap
+pacman -Sy --noconfirm php7.4
+pacman -Sy --noconfirm php7.4-curl
+pacman -Sy --noconfirm hydra
+pacman -Sy --noconfirm sqlmap
+pacman -Sy --noconfirm nbtscan
+pacman -Sy --noconfirm nikto
+pacman -Sy --noconfirm whatweb
+pacman -Sy --noconfirm sslscan
+pacman -Sy --noconfirm jq
+pacman -Sy --noconfirm golang
+pacman -Sy --noconfirm adb
+pacman -Sy --noconfirm xsltproc
+pacman -Sy --noconfirm ldapscripts
+pacman -Sy --noconfirm libssl-dev 2> /dev/null
+pacman -Sy --noconfirm python-pip 2> /dev/null
+pacman -Rs --noconfirm python3-pip
+pacman -Sy --noconfirm python3-pip
+pacman -Sy --noconfirm xmlstarlet
+pacman -Sy --noconfirm net-tools
+pacman -Sy --noconfirm p7zip-full
+pacman -Sy --noconfirm jsbeautifier
+pacman -Sy --noconfirm theharvester 2> /dev/null
+pacman -Sy --noconfirm phantomjs 2> /dev/null
+pacman -Sy --noconfirm chromium 2> /dev/null
+pacman -Sy --noconfirm xvfb
+pacman -Sy --noconfirm urlcrazy
+pacman -Sy --noconfirm iputils-ping
+pacman -Sy --noconfirm enum4linux
+pacman -Sy --noconfirm dnsutils
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
@@ -131,13 +131,14 @@ chmod 755 /tmp/msfinstall
 pip3 install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
+gem source -r https://rubygems.org/
 echo -e "$OKBLUE[*]$RESET Installing gem dependencies...$RESET"
-gem install rake 2> /dev/null > /dev/null
-gem install ruby-nmap 2> /dev/null > /dev/null
-gem install net-http-persistent 2> /dev/null > /dev/null
-gem install mechanize 2> /dev/null > /dev/null
-gem install text-table 2> /dev/null > /dev/null
-gem install public_suffix 2> /dev/null > /dev/null
+gem install -V rake 
+gem install -V ruby-nmap
+gem install -V net-http-persistent
+gem install -V mechanize
+gem install -V text-table
+gem install -V public_suffix
 
 echo -e "$OKBLUE[*]$RESET Setting up Ruby...$RESET"
 dpkg-reconfigure ruby
