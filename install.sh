@@ -72,53 +72,33 @@ fi
 
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
 apt update
-apt install -y python3-paramiko
-apt install -y nfs-common
-apt install -y nodejs
-apt install -y wafw00f
-apt install -y xdg-utils
-apt install -y ruby
-apt install -y rubygems
-apt install -y python
-apt install -y dos2unix
-apt install -y aha
-apt install -y libxml2-utils
-apt install -y rpcbind
-apt install -y cutycapt
-apt install -y host
-apt install -y whois
-apt install -y dnsrecon
-apt install -y curl
-apt install -y nmap
-apt install -y php7.4
-apt install -y php7.4-curl
-apt install -y hydra
-apt install -y sqlmap
-apt install -y nbtscan
-apt install -y nikto
-apt install -y whatweb
-apt install -y sslscan
-apt install -y jq
-apt install -y golang
-apt install -y adb
-apt install -y xsltproc
-apt install -y ldapscripts
+
+tools=("python3-paramiko" "nfs-common" "nodejs" "wafw00f" "xdg-utils" "ruby" "rubygems" "python" "dos2unix" "aha" "libxml2-utils" "rpcbind" "cutycapt" "host" "whois" "dnsrecon" "curl" "nmap" "php7.4" "php7.4-curl" "hydra" "sqlmap" "nbtscan" "nikto" "whatweb" "sslscan" "jq" "golang" "adb" "xsltproc" "ldapscripts" "xvfb" "urlcrazy" "iputils-ping" "enum4linux" "dnsutils" "xmlstarlet" "net-tools" "p7zip-full" "jsbeautifier")
+# Looping and installing all the tools
+for tool in "${tools[@]}"; do
+    if ! command -v "$tool" &> /dev/null; then
+        echo "[*] Installing $tool..."
+        apt install -y $tools  # 
+        # Check if the installation was successful
+        if ! command -v "$tool" &> /dev/null; then
+            echo "[!] Error: Installation of $tool failed. Please install it manually."
+            failed_tools+=("$tool")
+        else
+            echo "[*] $tool installed successfully."
+        fi
+    else
+        echo "[*] $tool is already installed."
+    fi
+done
+
 apt install -y libssl-dev 2> /dev/null
 apt install -y python-pip 2> /dev/null
 apt purge -y python3-pip
 apt install -y python3-pip
-apt install -y xmlstarlet
-apt install -y net-tools
-apt install -y p7zip-full
-apt install -y jsbeautifier
 apt install -y theharvester 2> /dev/null
 apt install -y phantomjs 2> /dev/null
 apt install -y chromium 2> /dev/null
-apt install -y xvfb
-apt install -y urlcrazy
-apt install -y iputils-ping
-apt install -y enum4linux
-apt install -y dnsutils
+
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
