@@ -211,7 +211,7 @@ sniper -u|--update
 - **DISCOVER:** Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.
 - **PORT:** Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
 - **FULLPORTONLY:** Performs a full detailed port scan and saves results to XML.
-- **MASSPORTSCAN:** Runs a "fullportonly" scan on mutiple targets specified via the "-f" switch.
+- **MASSPORTSCAN:** Runs a "fullportonly" scan on multiple targets specified via the "-f" switch.
 - **WEB:** Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.
 - **MASSWEB:** Runs "web" mode scans on multiple targets specified via the "-f" switch.
 - **WEBPORTHTTP:** Launches a full HTTP web application scan against a specific host and port.
