@@ -48,6 +48,7 @@ Sn1per is a next-generation information gathering tool that provides automated, 
 
 ### News
 
+- #### [Sn1per Enterprise v20240608 Released!](https://sn1persecurity.com/wordpress/sn1per-enterprise-v20240608-released/)
 - #### [Sn1per Scan Engine v10.6 Released!](https://sn1persecurity.com/wordpress/sn1per-scan-engine-v10-6-released/)
 - #### [Sn1per Enterprise v20231025 Released!](https://sn1persecurity.com/wordpress/sn1per-enterprise-v20231025-released/)
 - #### [Automated Penetration Testing Guide - Your Ultimate Resource](https://sn1persecurity.com/wordpress/penetration-testing-guide/)
