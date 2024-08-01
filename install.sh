@@ -119,6 +119,7 @@ apt install -y urlcrazy
 apt install -y iputils-ping
 apt install -y enum4linux
 apt install -y dnsutils
+apt install -y wtmpdb
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
