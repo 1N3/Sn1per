@@ -72,14 +72,17 @@ fi
 
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
 apt update
-apt install -y python3-paramiko
 apt install -y nfs-common
 apt install -y nodejs
 apt install -y wafw00f
 apt install -y xdg-utils
 apt install -y ruby
 apt install -y rubygems
-apt install -y python
+apt install -y python2
+apt install -y python3
+apt install -y python3-paramiko
+apt purge -y python3-pip
+apt install -y python3-pip
 apt install -y dos2unix
 apt install -y aha
 apt install -y libxml2-utils
@@ -104,9 +107,6 @@ apt install -y adb
 apt install -y xsltproc
 apt install -y ldapscripts
 apt install -y libssl-dev 2> /dev/null
-apt install -y python-pip 2> /dev/null
-apt purge -y python3-pip
-apt install -y python3-pip
 apt install -y xmlstarlet
 apt install -y net-tools
 apt install -y p7zip-full
