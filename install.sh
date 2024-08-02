@@ -90,8 +90,8 @@ apt install -y whois
 apt install -y dnsrecon
 apt install -y curl
 apt install -y nmap
-apt install -y php7.4
-apt install -y php7.4-curl
+apt install -y php8.2
+apt install -y php8.2-curl
 apt install -y hydra
 apt install -y sqlmap
 apt install -y nbtscan
