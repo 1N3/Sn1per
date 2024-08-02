@@ -448,5 +448,8 @@ mkdir -p /usr/share/sniper/loot/workspaces/ 2> /dev/null
 ln -fs /usr/share/sniper/loot/workspaces/ /home/kali/Desktop/workspaces 2> /dev/null
 ln -fs /usr/share/sniper/loot/workspaces/ /root/Desktop/workspaces 2> /dev/null
 
+echo -e "$OKBLUE[*]$RESET Cleaning up installation files... $RESET"
+rm -Rf /tmp/arachni* /tmp/gobuster* /tmp/msfinstall /tmp/openssl.cnf 2> /dev/null
+
 echo -e "$OKRED[>]$RESET Done! $RESET"
 echo -e "$OKRED[>]$RESET To run, type 'sniper'! $RESET"
