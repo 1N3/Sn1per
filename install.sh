@@ -122,6 +122,7 @@ apt install -y dnsutils
 apt install -y wtmpdb
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
+rm -f /usr/share/keyrings/metasploit-framework.gpg 2> /dev/null
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
 chmod 755 /tmp/msfinstall
 /tmp/msfinstall
