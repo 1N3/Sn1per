@@ -70,60 +70,59 @@ if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	apt install golang
 fi
 
-# CHECK FOR ARCH... (Check if this is actually needed)
-
 echo -e "$OKBLUE[*]$RESET Installing package dependencies...$RESET"
-
-pacman -Syu
-pacman -Sy --noconfirm python3-paramiko
-pacman -Sy --noconfirm nfs-common
-pacman -Sy --noconfirm nodejs
-pacman -Sy --noconfirm wafw00f
-pacman -Sy --noconfirm xdg-utils
-pacman -Sy --noconfirm ruby
-pacman -Sy --noconfirm rubygems
-pacman -Sy --noconfirm python
-pacman -Sy --noconfirm dos2unix
-pacman -Sy --noconfirm aha
-pacman -Sy --noconfirm libxml2-utils
-pacman -Sy --noconfirm rpcbind
-pacman -Sy --noconfirm cutycapt
-pacman -Sy --noconfirm host
-pacman -Sy --noconfirm whois
-pacman -Sy --noconfirm dnsrecon
-pacman -Sy --noconfirm curl
-pacman -Sy --noconfirm nmap
-pacman -Sy --noconfirm php7.4
-pacman -Sy --noconfirm php7.4-curl
-pacman -Sy --noconfirm hydra
-pacman -Sy --noconfirm sqlmap
-pacman -Sy --noconfirm nbtscan
-pacman -Sy --noconfirm nikto
-pacman -Sy --noconfirm whatweb
-pacman -Sy --noconfirm sslscan
-pacman -Sy --noconfirm jq
-pacman -Sy --noconfirm golang
-pacman -Sy --noconfirm adb
-pacman -Sy --noconfirm xsltproc
-pacman -Sy --noconfirm ldapscripts
-pacman -Sy --noconfirm libssl-dev 2> /dev/null
-pacman -Sy --noconfirm python-pip 2> /dev/null
-pacman -Rs --noconfirm python3-pip
-pacman -Sy --noconfirm python3-pip
-pacman -Sy --noconfirm xmlstarlet
-pacman -Sy --noconfirm net-tools
-pacman -Sy --noconfirm p7zip-full
-pacman -Sy --noconfirm jsbeautifier
-pacman -Sy --noconfirm theharvester 2> /dev/null
-pacman -Sy --noconfirm phantomjs 2> /dev/null
-pacman -Sy --noconfirm chromium 2> /dev/null
-pacman -Sy --noconfirm xvfb
-pacman -Sy --noconfirm urlcrazy
-pacman -Sy --noconfirm iputils-ping
-pacman -Sy --noconfirm enum4linux
-pacman -Sy --noconfirm dnsutils
+apt update
+apt install -y nfs-common
+apt install -y nodejs
+apt install -y wafw00f
+apt install -y xdg-utils
+apt install -y ruby
+apt install -y rubygems
+apt install -y python2
+apt install -y python3
+apt install -y python3-paramiko
+apt purge -y python3-pip
+apt install -y python3-pip
+apt install -y dos2unix
+apt install -y aha
+apt install -y libxml2-utils
+apt install -y rpcbind
+apt install -y cutycapt
+apt install -y host
+apt install -y whois
+apt install -y dnsrecon
+apt install -y curl
+apt install -y nmap
+apt install -y php8.2
+apt install -y php8.2-curl
+apt install -y hydra
+apt install -y sqlmap
+apt install -y nbtscan
+apt install -y nikto
+apt install -y whatweb
+apt install -y sslscan
+apt install -y jq
+apt install -y golang
+apt install -y adb
+apt install -y xsltproc
+apt install -y ldapscripts
+apt install -y libssl-dev 2> /dev/null
+apt install -y xmlstarlet
+apt install -y net-tools
+apt install -y p7zip-full
+apt install -y jsbeautifier
+apt install -y theharvester 2> /dev/null
+apt install -y phantomjs 2> /dev/null
+apt install -y chromium 2> /dev/null
+apt install -y xvfb
+apt install -y urlcrazy
+apt install -y iputils-ping
+apt install -y enum4linux
+apt install -y dnsutils
+apt install -y wtmpdb
 
 echo -e "$OKBLUE[*]$RESET Installing Metasploit...$RESET"
+rm -f /usr/share/keyrings/metasploit-framework.gpg 2> /dev/null
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > /tmp/msfinstall
 chmod 755 /tmp/msfinstall
 /tmp/msfinstall
@@ -131,14 +130,13 @@ chmod 755 /tmp/msfinstall
 pip3 install dnspython colorama tldextract urllib3 ipaddress requests
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
-gem source -r https://rubygems.org/
 echo -e "$OKBLUE[*]$RESET Installing gem dependencies...$RESET"
-gem install -V rake 
-gem install -V ruby-nmap
-gem install -V net-http-persistent
-gem install -V mechanize
-gem install -V text-table
-gem install -V public_suffix
+gem install rake 2> /dev/null > /dev/null
+gem install ruby-nmap 2> /dev/null > /dev/null
+gem install net-http-persistent 2> /dev/null > /dev/null
+gem install mechanize 2> /dev/null > /dev/null
+gem install text-table 2> /dev/null > /dev/null
+gem install public_suffix 2> /dev/null > /dev/null
 
 echo -e "$OKBLUE[*]$RESET Setting up Ruby...$RESET"
 dpkg-reconfigure ruby
@@ -450,6 +448,9 @@ cp -f $PLUGINS_DIR/Findsploit/findsploit.desktop /usr/share/kali-menu/applicatio
 mkdir -p /usr/share/sniper/loot/workspaces/ 2> /dev/null
 ln -fs /usr/share/sniper/loot/workspaces/ /home/kali/Desktop/workspaces 2> /dev/null
 ln -fs /usr/share/sniper/loot/workspaces/ /root/Desktop/workspaces 2> /dev/null
+
+echo -e "$OKBLUE[*]$RESET Cleaning up installation files... $RESET"
+rm -Rf /tmp/arachni* /tmp/gobuster* /tmp/msfinstall /tmp/openssl.cnf 2> /dev/null
 
 echo -e "$OKRED[>]$RESET Done! $RESET"
 echo -e "$OKRED[>]$RESET To run, type 'sniper'! $RESET"
