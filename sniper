@@ -46,101 +46,105 @@ DISTRO=$(cat /etc/*-release | grep DISTRIB_ID= | cut -d'=' -f2)
 
 function help {
   logo
-  echo ""
-  echo -e "$OKBLUE[*]$RESET NORMAL MODE"
-  echo ' sniper -t <TARGET>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET SPECIFY CUSTOM CONFIG FILE"
-  echo ' sniper -c /full/path/to/sniper.conf -t <TARGET> -m <MODE> -w <WORKSPACE>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET NORMAL MODE + OSINT + RECON"
-  echo ' sniper -t <TARGET> -o -re'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET STEALTH MODE + OSINT + RECON"
-  echo ' sniper -t <TARGET> -m stealth -o -re'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET DISCOVER MODE"
-  echo ' sniper -t <CIDR> -m discover -w <WORSPACE_ALIAS>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET SCAN ONLY SPECIFIC PORT"
-  echo ' sniper -t <TARGET> -m port -p <portnum>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET FULLPORTONLY SCAN MODE"
-  echo ' sniper -t <TARGET> -fp'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET WEB MODE - PORT 80 + 443 ONLY!"
-  echo ' sniper -t <TARGET> -m web'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET HTTP WEB PORT MODE"
-  echo ' sniper -t <TARGET> -m webporthttp -p <port>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET HTTPS WEB PORT MODE"
-  echo ' sniper -t <TARGET> -m webporthttps -p <port>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET HTTP WEBSCAN MODE"
-  echo ' sniper -t <TARGET> -m webscan '
-  echo ""
-  echo -e "$OKBLUE[*]$RESET ENABLE BRUTEFORCE"
-  echo ' sniper -t <TARGET> -b'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET AIRSTRIKE MODE"
-  echo ' sniper -f targets.txt -m airstrike'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET NUKE MODE WITH TARGET LIST, BRUTEFORCE ENABLED, FULLPORTSCAN ENABLED, OSINT ENABLED, RECON ENABLED, WORKSPACE & LOOT ENABLED"
-  echo ' sniper -f targets.txt -m nuke -w <WORKSPACE_ALIAS>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET MASS PORT SCAN MODE"
-  echo ' sniper -f targets.txt -m massportscan -w <WORKSPACE_ALIAS>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET MASS WEB SCAN MODE"
-  echo ' sniper -f targets.txt -m massweb -w <WORKSPACE_ALIAS>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET MASS WEBSCAN SCAN MODE"
-  echo ' sniper -f targets.txt -m masswebscan -w <WORKSPACE_ALIAS>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET MASS VULN SCAN MODE"
-  echo ' sniper -f targets.txt -m massvulnscan -w <WORKSPACE_ALIAS>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET PORT SCAN MODE"
-  echo ' sniper -t <TARGET> -m port -p <PORT_NUM>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET LIST WORKSPACES"
-  echo ' sniper --list'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET DELETE WORKSPACE"
-  echo ' sniper -w <WORKSPACE_ALIAS> -d'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET DELETE HOST FROM WORKSPACE"
-  echo ' sniper -w <WORKSPACE_ALIAS> -t <TARGET> -dh'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET DELETE TASKS FROM WORKSPACE"
-  echo ' sniper -w <WORKSPACE_ALIAS> -t <TARGET> -dt'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET GET SNIPER SCAN STATUS"
-  echo ' sniper --status'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET LOOT REIMPORT FUNCTION"
-  echo ' sniper -w <WORKSPACE_ALIAS> --reimport'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET LOOT REIMPORTALL FUNCTION"
-  echo ' sniper -w <WORKSPACE_ALIAS> --reimportall'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET LOOT REIMPORT FUNCTION"
-  echo ' sniper -w <WORKSPACE_ALIAS> --reload'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET LOOT EXPORT FUNCTION"
-  echo ' sniper -w <WORKSPACE_ALIAS> --export'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET SCHEDULED SCANS"
-  echo ' sniper -w <WORKSPACE_ALIAS> -s daily|weekly|monthly'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET USE A CUSTOM CONFIG"
-  echo ' sniper -c /path/to/sniper.conf -t <TARGET> -w <WORKSPACE_ALIAS>'
-  echo ""
-  echo -e "$OKBLUE[*]$RESET UPDATE SNIPER"
-  echo ' sniper -u|--update'
-  echo ""
-  echo ""
+  local star
+  printf -v star "$OKBLUE[*]$RESET"
+  cat <<EOHELP
+
+$star NORMAL MODE
+ sniper -t <TARGET>
+
+$star SPECIFY CUSTOM CONFIG FILE
+ sniper -c /full/path/to/sniper.conf -t <TARGET> -m <MODE> -w <WORKSPACE>
+
+$star NORMAL MODE + OSINT + RECON
+ sniper -t <TARGET> -o -re
+
+$star STEALTH MODE + OSINT + RECON
+ sniper -t <TARGET> -m stealth -o -re
+
+$star DISCOVER MODE
+ sniper -t <CIDR> -m discover -w <WORSPACE_ALIAS>
+
+$star SCAN ONLY SPECIFIC PORT
+ sniper -t <TARGET> -m port -p <portnum>
+
+$star FULLPORTONLY SCAN MODE
+ sniper -t <TARGET> -fp
+
+$star WEB MODE - PORT 80 + 443 ONLY!
+ sniper -t <TARGET> -m web
+
+$star HTTP WEB PORT MODE
+ sniper -t <TARGET> -m webporthttp -p <port>
+
+$star HTTPS WEB PORT MODE
+ sniper -t <TARGET> -m webporthttps -p <port>
+
+$star HTTP WEBSCAN MODE
+ sniper -t <TARGET> -m webscan
+
+$star ENABLE BRUTEFORCE
+ sniper -t <TARGET> -b
+
+$star AIRSTRIKE MODE
+ sniper -f targets.txt -m airstrike
+
+$star NUKE MODE WITH TARGET LIST, BRUTEFORCE ENABLED, FULLPORTSCAN ENABLED, OSINT ENABLED, RECON ENABLED, WORKSPACE & LOOT ENABLED
+ sniper -f targets.txt -m nuke -w <WORKSPACE_ALIAS>
+
+$star MASS PORT SCAN MODE
+ sniper -f targets.txt -m massportscan -w <WORKSPACE_ALIAS>
+
+$star MASS WEB SCAN MODE
+ sniper -f targets.txt -m massweb -w <WORKSPACE_ALIAS>
+
+$star MASS WEBSCAN SCAN MODE
+ sniper -f targets.txt -m masswebscan -w <WORKSPACE_ALIAS>
+
+$star MASS VULN SCAN MODE
+ sniper -f targets.txt -m massvulnscan -w <WORKSPACE_ALIAS>
+
+$star PORT SCAN MODE
+ sniper -t <TARGET> -m port -p <PORT_NUM>
+
+$star LIST WORKSPACES
+ sniper --list
+
+$star DELETE WORKSPACE
+ sniper -w <WORKSPACE_ALIAS> -d
+
+$star DELETE HOST FROM WORKSPACE
+ sniper -w <WORKSPACE_ALIAS> -t <TARGET> -dh
+
+$star DELETE TASKS FROM WORKSPACE
+ sniper -w <WORKSPACE_ALIAS> -t <TARGET> -dt
+
+$star GET SNIPER SCAN STATUS
+ sniper --status
+
+$star LOOT REIMPORT FUNCTION
+ sniper -w <WORKSPACE_ALIAS> --reimport
+
+$star LOOT REIMPORTALL FUNCTION
+ sniper -w <WORKSPACE_ALIAS> --reimportall
+
+$star LOOT REIMPORT FUNCTION
+ sniper -w <WORKSPACE_ALIAS> --reload
+
+$star LOOT EXPORT FUNCTION
+ sniper -w <WORKSPACE_ALIAS> --export
+
+$star SCHEDULED SCANS
+ sniper -w <WORKSPACE_ALIAS> -s daily|weekly|monthly
+
+$star USE A CUSTOM CONFIG
+ sniper -c /path/to/sniper.conf -t <TARGET> -w <WORKSPACE_ALIAS>
+
+$star UPDATE SNIPER
+ sniper -u|--update
+
+
+EOHELP
   exit
 }
 
@@ -590,7 +594,7 @@ function loot {
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 💡 Don't miss out on important updates by using the Community version. $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
-      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 🔝 The latest Professional version ( ${OKRED}10.5 ${RESET}) offers unparalleled features, including: $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 🔝 The latest Professional version ( ${OKRED}10.7 ${RESET}) offers unparalleled features, including: $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET     💻 Sleek Web UI $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET     🛠️ Extensive add-ons $RESET"

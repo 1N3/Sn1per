@@ -48,13 +48,10 @@ Sn1per is a next-generation information gathering tool that provides automated, 
 
 ### News
 
+- #### [Sn1per Scan Engine v10.7 Released!](https://sn1persecurity.com/wordpress/sn1per-scan-engine-v10-7-released/)
+- #### [Sn1per Enterprise v20240608 Released!](https://sn1persecurity.com/wordpress/sn1per-enterprise-v20240608-released/)
+- #### [Sn1per Scan Engine v10.6 Released!](https://sn1persecurity.com/wordpress/sn1per-scan-engine-v10-6-released/)
 - #### [Sn1per Enterprise v20231025 Released!](https://sn1persecurity.com/wordpress/sn1per-enterprise-v20231025-released/)
-- #### [Automated Penetration Testing Guide - Your Ultimate Resource](https://sn1persecurity.com/wordpress/penetration-testing-guide/)
-- #### [Dark Web Monitoring: Securing Your External Attack Surface](https://sn1persecurity.com/wordpress/dark-web-monitoring-securing-your-external-attack-surface/)
-- #### [Sn1per Scan Engine v10.4 Released!](https://sn1persecurity.com/wordpress/sn1per-scan-engine-v10-4-released/)
-- #### [Sn1per: The Next Generation of Tools for Security Professionals](https://sn1persecurity.com/wordpress/sn1per-the-next-generation-of-tools-for-security-professionals/)
-- #### [5 Ways Sn1per Can Automate Your Security Workflow](https://sn1persecurity.com/wordpress/5-ways-sn1per-can-automate-your-security-workflow/)
-- #### [External Attack Surface Management with Sn1per](https://sn1persecurity.com/wordpress/external-attack-surface-management-with-sn1per/)
 - #### [Sn1per Enterprise Released!](https://sn1persecurity.com/wordpress/sn1per-enterprise-released/)
 - #### [Sn1per Professional v10.0 Released!](https://sn1persecurity.com/wordpress/sn1per-professional-v10-released/)
 
@@ -219,7 +216,7 @@ sniper -u|--update
 - **DISCOVER:** Parses all hosts on a subnet/CIDR (ie. 192.168.0.0/16) and initiates a sniper scan against each host. Useful for internal network scans.
 - **PORT:** Scans a specific port for vulnerabilities. Reporting is not currently available in this mode.
 - **FULLPORTONLY:** Performs a full detailed port scan and saves results to XML.
-- **MASSPORTSCAN:** Runs a "fullportonly" scan on mutiple targets specified via the "-f" switch.
+- **MASSPORTSCAN:** Runs a "fullportonly" scan on multiple targets specified via the "-f" switch.
 - **WEB:** Adds full automatic web application scans to the results (port 80/tcp & 443/tcp only). Ideal for web applications but may increase scan time significantly.
 - **MASSWEB:** Runs "web" mode scans on multiple targets specified via the "-f" switch.
 - **WEBPORTHTTP:** Launches a full HTTP web application scan against a specific host and port.
