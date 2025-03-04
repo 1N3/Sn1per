@@ -258,6 +258,14 @@ pip3 install -r requirements.txt
 python3 setup.py install
 cd ..
 
+# PAGODO INSTALLER
+echo -e "$OKBLUE[*]$RESET Installing pagodo...$RESET"
+git clone https://github.com/opsdisk/pagodo.git
+cd pagodo
+pip3 install -r requirements.txt
+python ghdb_scraper.py -s -j -i
+cd ..
+
 # NUCLEI UPDATES
 echo -e "$OKBLUE[*]$RESET Installing Nuclei...$RESET"
 GO111MODULE=on go install github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
