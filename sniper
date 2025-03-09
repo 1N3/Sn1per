@@ -594,7 +594,7 @@ function loot {
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 💡 Don't miss out on important updates by using the Community version. $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
-      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 🔝 The latest Professional version ( ${OKRED}10.7 ${RESET}) offers unparalleled features, including: $RESET"
+      echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET 🔝 The latest Professional version ( ${OKRED}10.8 ${RESET}) offers unparalleled features, including: $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET  $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET     💻 Sleek Web UI $RESET"
       echo -e "$OKBLUE[$RESET${OKRED}i${RESET}$OKBLUE]$RESET     🛠️ Extensive add-ons $RESET"
