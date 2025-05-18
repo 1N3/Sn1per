@@ -90,7 +90,7 @@ To install Sn1per using an AWS EC2 instance:
 1. Run the container
 
     ```bash
-    sudo docker run -it sn1per-kali-linux /bin/bash
+    sudo docker run --privileged -it sn1per-kali-linux /bin/bash
     ```
 
 ### BlackArch-based Sn1per
@@ -104,7 +104,7 @@ To install Sn1per using an AWS EC2 instance:
 1. Run the container
 
     ```bash
-    sudo docker run -it sn1per-blackarch /bin/bash
+    sudo docker run --privileged -it sn1per-blackarch /bin/bash
     ```
 
 ## Usage
