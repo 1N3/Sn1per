@@ -1,0 +1,43 @@
+# Example Gitpod automation file for Sn1per
+tasks:
+    - name: Setup
+      init: |
+          bash install.sh
+      command: |
+          echo "Sn1per dev environment ready."tasks:
+      hello:
+          name: Hello World
+          command: |
+              echo "Hello, World!"
+          triggeredBy:
+              - manual
+          # - postEnvironmentStart
+          # - postDevcontainerStart
+
+services:
+    example-service:
+        name: Example Service
+        description: Example service simulating a backend
+        commands:
+            start: |
+                echo "Starting backend service..."
+                touch /tmp/backend.started
+                while true; do
+                    sleep 1
+                    date
+                done
+            ready: |
+                if [ -f /tmp/backend.started ]; then
+                    echo "Backend service is ready"
+                    exit 0
+                else
+                    echo "Backend service is not ready"
+                    exit 1
+                fi
+            # stop: |
+            #   echo "Stopping backend service..."
+            #   rm /tmp/backend.started
+            #   pkill backend
+        triggeredBy:
+            - postEnvironmentStart
+            # - postDevcontainerStart
