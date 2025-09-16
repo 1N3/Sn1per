@@ -2,8 +2,9 @@
 # Uninstall script for Sn1per
 # Created by @xer0dayz - https://sn1persecurity.com
 
+# Check if root
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
+   echo -e "This script must be run as root\nplease use sudo or switch to root" 
    exit 1
 fi
 
@@ -26,10 +27,14 @@ echo ""
 
 INSTALL_DIR=/usr/share/sniper
 
+# check if user is sure
 echo -e "$OKRED[>]$RESET This script will uninstall sniper and remove ALL files under $INSTALL_DIR. Are you sure you want to continue?$RESET"
 read answer
 
+# Remove all files for Sn1per
+echo -e "$OKBLUE removing Sn1per from your system."
 rm -Rf /usr/share/sniper/
 rm -f /usr/bin/sniper
 
+# Inform user sniper is removed
 echo -e "$OKBLUE[*]$RESET Done!$RESET"
