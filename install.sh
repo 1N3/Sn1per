@@ -130,7 +130,7 @@ curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/t
 chmod 755 /tmp/msfinstall
 /tmp/msfinstall
 
-pip3 install dnspython colorama tldextract urllib3 ipaddress requests
+pip3 install dnspython colorama tldextract urllib3 ipaddress requests --break-system-packages
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 
 echo -e "$OKBLUE[*]$RESET Installing gem dependencies...$RESET"
@@ -145,7 +145,7 @@ echo -e "$OKBLUE[*]$RESET Setting up Ruby...$RESET"
 dpkg-reconfigure ruby
 
 echo -e "$OKBLUE[*]$RESET Upgrading Pip...$RESET"
-python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade pip --break-system-packages
 
 echo -e "$OKBLUE[*]$RESET Cleaning up old extensions...$RESET"
 rm -Rf $PLUGINS_DIR 2> /dev/null
@@ -207,13 +207,13 @@ wget https://github.com/maurosoria/dirsearch/archive/refs/tags/v0.4.2.tar.gz
 tar -zxvf v0.4.2.tar.gz
 mv dirsearch-0.4.2/ dirsearch/
 cd dirsearch/
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt --break-system-packages
 cd $PLUGINS_DIR
 
 # SECRETFINDER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing SecretFinder...$RESET"
 git clone https://github.com/m4ll0k/SecretFinder.git secretfinder
-pip install -r $PLUGINS_DIR/secretfinder/requirements.txt
+pip install -r $PLUGINS_DIR/secretfinder/requirements.txt --break-system-packages
 
 # LINKFINDER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing LinkFinder...$RESET"
@@ -225,25 +225,25 @@ cd ..
 # GITGRABER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing GitGrabber...$RESET"
 git clone https://github.com/hisxo/gitGraber.git
-pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt 2> /dev/null
+pip3 install -r $PLUGINS_DIR/gitGraber/requirements.txt --break-system-packages 2> /dev/null
 
 # CENSYS-SUBDOMAIN-FINDER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing Censys-Subdomain-Finder...$RESET"
 git clone https://github.com/christophetd/censys-subdomain-finder.git
-pip3 install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt
+pip3 install -r $PLUGINS_DIR/censys-subdomain-finder/requirements.txt --break-system-packages
 
 # DNSCAN INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing DNScan...$RESET"
 git clone https://github.com/rbsec/dnscan.git
-pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt
+pip3 install -r $PLUGINS_DIR/dnscan/requirements.txt --break-system-packages
 
 # ALTDNS INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing AltDNS...$RESET"
 git clone https://github.com/infosec-au/altdns.git
 cd altdns
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt --break-system-packages
 python3 setup.py install
-pip3 install py-altdns
+pip3 install py-altdns --break-system-packages
 cd ..
 
 # MASSDNS INSTALLER
@@ -257,7 +257,7 @@ cd ..
 echo -e "$OKBLUE[*]$RESET Installing DNSGen...$RESET"
 git clone https://github.com/ProjectAnte/dnsgen
 cd dnsgen
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt --break-system-packages
 python3 setup.py install
 cd ..
 
@@ -270,7 +270,7 @@ nuclei
 
 # INSTALL WEBTECH
 echo -e "$OKBLUE[*]$RESET Installing WebTech...$RESET"
-pip3 install -U webtech
+pip3 install -U webtech --break-system-packages
 
 # INSTALL SUBJACK
 echo -e "$OKBLUE[*]$RESET Installing SubJack...$RESET"
@@ -346,11 +346,11 @@ cd ..
 
 # H8MAIL INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing H8Mail...$RESET"
-pip3 install h8mail 2> /dev/null
+pip3 install h8mail --break-system-packages 2> /dev/null
 
 # CMSMAP INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing CMSMap...$RESET"
-cd $PLUGINS_DIR/CMSmap/ && pip3 install . && python3 setup.py install
+cd $PLUGINS_DIR/CMSmap/ && pip3 install .  --break-system-packages && python3 setup.py install
 
 cd $PLUGINS_DIR
 
