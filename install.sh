@@ -274,6 +274,7 @@ nuclei
 # INSTALL WEBTECH
 echo -e "$OKBLUE[*]$RESET Installing WebTech...$RESET"
 pip3 install -U webtech --break-system-packages
+mkdir -p /root/.local/share/webtech
 
 # INSTALL SUBJACK
 echo -e "$OKBLUE[*]$RESET Installing SubJack...$RESET"
