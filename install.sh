@@ -70,6 +70,9 @@ if [[ $UBUNTU_CHECK == "DISTRIB_ID=Ubuntu" ]]; then
 	apt install golang
 fi
 
+echo -e "$OKBLUE[*]$RESET Installing base dependencies...$RESET"
+apt install -y sudo gpg curl
+
 echo -e "$OKBLUE[*]$RESET Updating repositories... $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
 curl -fsSL https://archive.kali.org/archive-key.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/kali.gpg --yes
 
