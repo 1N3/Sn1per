@@ -331,6 +331,10 @@ echo -e "$OKBLUE[*]$RESET Installing Vulners...$RESET"
 cd /usr/share/nmap/scripts/
 rm -f /usr/share/nmap/scripts/vulners.nse
 wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
+# ensure readable permissions
+sudo chmod 644 /usr/share/nmap/scripts/vulners.nse
+# update Nmap's script DB so --script-help and autocompletion see it
+sudo nmap --script-updatedb
 
 # GOBUSTER INSTALLER
 echo -e "$OKBLUE[*]$RESET Installing GoBuster...$RESET"
