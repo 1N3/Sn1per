@@ -511,7 +511,7 @@ else
     echo -e "$OKRED RUNNING SMB ENUMERATION $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     enum4linux $TARGET | tee $LOOT_DIR/output/enum4linux-$TARGET-port139.txt
-    python3 $SAMRDUMP $TARGET | tee $LOOT_DIR/output/samrdump-$TARGET-port139.txt
+    python3 /usr/share/doc/python3-impacket/examples/samrdump.py $TARGET | tee $LOOT_DIR/output/samrdump-$TARGET-port139.txt
     nbtscan $TARGET | tee $LOOT_DIR/output/nbtscan-$TARGET-port139.txt
   fi
   if [[ "$NMAP_SCRIPTS" = "1" ]]; then
@@ -616,7 +616,7 @@ else
     echo -e "$OKRED ENUMERATING SMB/NETBIOS $RESET"
     echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
     enum4linux $TARGET | tee $LOOT_DIR/output/enum4linux-$TARGET-port445.txt
-    python3 $SAMRDUMP $TARGET | tee $LOOT_DIR/output/samrdump-$TARGET-port445.txt
+    python3 /usr/share/doc/python3-impacket/examples/samrdump.py $TARGET | tee $LOOT_DIR/output/samrdump-$TARGET-port445.txt
     nbtscan $TARGET | tee $LOOT_DIR/output/nbtscan-$TARGET-port445.txt
   fi
   if [[ "$NMAP_SCRIPTS" = "1" ]]; then
