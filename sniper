@@ -464,7 +464,7 @@ function init {
   service postgresql start 2> /dev/null > /dev/null
   msfdb start 2> /dev/null > /dev/null
   chown root /run/user/1000/gdm/Xauthority 2> /dev/null
-  LAST_USER=$(last | head -n 1 | awk '{print $1}')
+  LAST_USER=$(last 2> /dev/null | head -n 1 | awk '{print $1}')
   sudo cp -a /home/$LAST_USER/.Xauthority /root/.Xauthority 2> /dev/null
   sudo cp -a /root/.Xauthority /root/.Xauthority.bak 2> /dev/null
   sudo cp -a /home/$USER/.Xauthority /root/.Xauthority 2> /dev/null
