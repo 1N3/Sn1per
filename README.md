@@ -48,6 +48,7 @@ Sn1per is a next-generation information gathering tool that provides automated, 
 
 ### News
 
+- #### [Introducing SILENTCHAIN AI Community Edition v1.1.3]([https://sn1persecurity.com/wordpress/sn1per-se-v11-released/)
 - #### [🔥 Sn1per SE v11.0 Now Available – Major Refactor, New Tools, Faster Recon, Smarter Resumes](https://sn1persecurity.com/wordpress/sn1per-se-v11-released/)
 - #### [🔐 Sn1per Enterprise v20250522 Released – Next-Level Offensive Security & Vulnerability Scanning](https://sn1persecurity.com/wordpress/sn1per-enterprise-v20250522-released/)
 - #### [Sn1per Enterprise Released!](https://sn1persecurity.com/wordpress/sn1per-enterprise-released/)
