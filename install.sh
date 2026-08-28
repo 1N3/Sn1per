@@ -720,16 +720,22 @@ install_additional_tools() {
     # Arachni (Linux only)
     if [[ "$OS" != "macos" ]] && [[ ! -d "/usr/share/arachni" ]]; then
         echo -e "$OKBLUE[*]$RESET Installing Arachni..."
-        wget -q https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -O /tmp/arachni.tar.gz
-        cd /tmp && tar -xzf arachni.tar.gz && rm -f arachni.tar.gz
-        mkdir -p /usr/share/arachni 2>/dev/null
-        cp -Rf arachni-*/* /usr/share/arachni/ 2>/dev/null
-        rm -rf arachni-*
-        # Create symlinks
-        cd /usr/share/arachni/bin/
-        for binary in *; do
-            ln -fs "$PWD/$binary" /usr/bin/"$binary" 2>/dev/null || true
-        done
+        # The upstream release asset is no longer published. Treat a failed
+        # download as a skip so it cannot abort the whole install under set -e.
+        if wget -q https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -O /tmp/arachni.tar.gz; then
+            cd /tmp && tar -xzf arachni.tar.gz && rm -f arachni.tar.gz
+            mkdir -p /usr/share/arachni 2>/dev/null
+            cp -Rf arachni-*/* /usr/share/arachni/ 2>/dev/null
+            rm -rf arachni-*
+            # Create symlinks
+            cd /usr/share/arachni/bin/
+            for binary in *; do
+                ln -fs "$PWD/$binary" /usr/bin/"$binary" 2>/dev/null || true
+            done
+        else
+            echo -e "$OKORANGE[!]$RESET Arachni download unavailable, skipping"
+            rm -f /tmp/arachni.tar.gz
+        fi
     fi
     
     # Vulners Nmap Script
