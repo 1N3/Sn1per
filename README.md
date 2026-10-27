@@ -13,13 +13,13 @@
 
 [[Products](https://sn1persecurity.com/wordpress/shop/)] [[Attack Surface Management](https://sn1persecurity.com/wordpress/use-cases/)] [[About Sn1per](https://sn1persecurity.com/wordpress/about/)] [[News](https://sn1persecurity.com/wordpress/blog/)] [[Contact](https://sn1persecurity.com/wordpress/home/contact/)] [[Demo](https://sn1persecurity.com/wordpress/#video)] [[Pricing](https://sn1persecurity.com/wordpress/product/sn1per-professional-2026-license/)] [[Shop](https://sn1persecurity.com/wordpress/shop/)]
 
-# Sn1per — The Offensive-Security Platform for Modern Teams
+# Sn1per - The Offensive-Security Platform for Modern Teams
 
-> Recon, scanning, exploitation, and reporting in a single workspace — whether you're a solo pentester or a global SOC.
+> Recon, scanning, exploitation, and reporting in a single workspace - whether you're a solo pentester or a global SOC.
 
 > ## Sn1per Professional 2026 is here
 >
-> The largest release since v10.0 — Docker-first deployment, Bootstrap 5 / Tabler UI, Workspace Navigator, Workspace + Host Reports with CSV / Excel / PDF export, JSON API v1.0, an Offcanvas Quick Commands sidebar with 13 panels, and expanded modules for ReverseAPK, MassPwn, Threat Intel, Nessus, and Burp.
+> The largest release since v10.0 - Docker-first deployment, Bootstrap 5 / Tabler UI, Workspace Navigator, Workspace + Host Reports with CSV / Excel / PDF export, JSON API v1.0, an Offcanvas Quick Commands sidebar with 13 panels, and expanded modules for ReverseAPK, MassPwn, Threat Intel, Nessus, and Burp.
 >
 > [Read the release notes →](https://sn1persecurity.com/wordpress/sn1per-professional-2026-release/) · [View pricing →](https://sn1persecurity.com/wordpress/product/sn1per-professional-2026-license/)
 
@@ -34,6 +34,7 @@
 - [Usage](#usage)
 - [Scan Modes](#scan-modes)
 - [Integrations](#integrations)
+- [Use Sn1per from AI assistants (MCP)](#use-sn1per-from-ai-assistants-mcp)
 - [Documentation & Help](#documentation--help)
 - [News & Releases](#news--releases)
 - [Community & Support](#community--support)
@@ -42,7 +43,7 @@
 
 ## About Sn1per
 
-Sn1per is an offensive-security platform that consolidates reconnaissance, vulnerability scanning, exploitation, and reporting into a single workspace. Built by pentesters since 2015, it ships in three editions — a free Community Edition (source-available, custom EULA — see LICENSE.md) in this repository, a paid Professional edition for individual operators and small teams, and an Enterprise edition for global SOCs — all backed by the same core scanning engine.
+Sn1per is an offensive-security platform that consolidates reconnaissance, vulnerability scanning, exploitation, and reporting into a single workspace. Built by pentesters since 2015, it ships in three editions - a free Community Edition (source-available, custom EULA - see LICENSE.md) in this repository, a paid Professional edition for individual operators and small teams, and an Enterprise edition for global SOCs - all backed by the same core scanning engine.
 
 Sn1per orchestrates 90+ third-party tools, ships with 600+ exploits and 10,000+ detections, and is used by 500+ teams worldwide. Battle-tested by the community. Built by pentesters, for pentesters.
 
@@ -59,26 +60,28 @@ Sn1per ships as one platform that covers the core jobs offensive security teams 
 
 ## What's New in 2026
 
+> **New (October 2026):** the [Sn1per MCP Server](https://sn1persecurity.com/wordpress/sn1per-mcp-server/) (beta) lets AI assistants like Claude Code launch Sn1per scans and read the results. [Details below](#use-sn1per-from-ai-assistants-mcp).
+
 [![Sn1per Pro 2026 Workspace Navigator](https://sn1persecurity.com/wordpress/wp-content/uploads/2026/04/sn1per-pro-2026-workspace-navigator.png)](https://sn1persecurity.com/wordpress/sn1per-professional-2026-release/)
 
-*Workspace Navigator — switch contexts across hosts, scopes, and engagements.*
+*Workspace Navigator - switch contexts across hosts, scopes, and engagements.*
 
 [![Sn1per Pro 2026 Dashboard](https://sn1persecurity.com/wordpress/wp-content/uploads/2026/04/sn1per-pro-2026-dashboard.png)](https://sn1persecurity.com/wordpress/sn1per-professional-2026-release/)
 
-*Dashboard — at-a-glance scan posture, top findings, and exploitable assets.*
+*Dashboard - at-a-glance scan posture, top findings, and exploitable assets.*
 
 ### Highlights
 
-- **Docker-first deployment** — same image, every distro
-- **Bootstrap 5 / Tabler UI** — refreshed responsive interface with light + dark mode
-- **Workspace Navigator** — fast workspace switching with state preservation
-- **Workspace & Host Reports** — CSV, Excel, and PDF export
-- **JSON API v1.0** — programmatic access for CI / SOAR / SIEM pipelines
-- **Offcanvas Quick Commands** — 13 panels, every common action one click away
-- **Expanded modules** — ReverseAPK, MassPwn, Threat Intel, Nessus, Burp Suite
-- **Maturing SC0PE framework** — more parsers, better noise reduction
-- **Hardened PHP library stack** — modern dependencies, audited components
-- **New CLI flags** — `-v` (verbose), `-db` (debug), `-rr` (remove resume files)
+- **Docker-first deployment** - same image, every distro
+- **Bootstrap 5 / Tabler UI** - refreshed responsive interface with light + dark mode
+- **Workspace Navigator** - fast workspace switching with state preservation
+- **Workspace & Host Reports** - CSV, Excel, and PDF export
+- **JSON API v1.0** - programmatic access for CI / SOAR / SIEM pipelines
+- **Offcanvas Quick Commands** - 13 panels, every common action one click away
+- **Expanded modules** - ReverseAPK, MassPwn, Threat Intel, Nessus, Burp Suite
+- **Maturing SC0PE framework** - more parsers, better noise reduction
+- **Hardened PHP library stack** - modern dependencies, audited components
+- **New CLI flags** - `-v` (verbose), `-db` (debug), `-rr` (remove resume files)
 
 > *"Sn1per Professional 2026 is the largest release since the v10.0 line."*
 
@@ -92,15 +95,15 @@ The [Community Edition](https://sn1persecurity.com/wordpress/sn1per-community-ed
 |---|---|---|
 | **Price** | $984 / year (per seat) | Get a quote |
 | **Subscription** | 1 year | 1 year |
-| **— Included —** | | |
+| **- Included -** | | |
 | Web UI | Professional Web UI | Enterprise Web UI |
 | Scan Engine & UI Updates | ✓ | ✓ |
 | All Modules & Integrations | ✓ | ✓ |
 | On-Prem (Self Hosted) | ✓ | ✓ |
 | Email Support | 1 Year | 1 Year |
-| Improved Speed & Scalability | — | ✓ |
-| Cutting-Edge Features | — | ✓ |
-| **— Limits & Quotas —** | | |
+| Improved Speed & Scalability | - | ✓ |
+| Cutting-Edge Features | - | ✓ |
+| **- Limits & Quotas -** | | |
 | Max Scans | Unlimited | Unlimited |
 | Max Assets / Workspace | 30 | Unlimited |
 | Max Workspaces | 5 | Unlimited |
@@ -146,7 +149,7 @@ Subscribe via [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-r
 1. Click **Continue to Subscribe**
 2. Click **Continue to Configuration**, choose region/instance type
 3. Click **Continue to Launch**
-4. SSH to the EC2 public IP — Sn1per is preinstalled
+4. SSH to the EC2 public IP - Sn1per is preinstalled
 
 ## Quick Start
 
@@ -286,9 +289,33 @@ Sn1per ships with native integrations for **90+ tools and services**. Featured p
 | **Exploitation** | [Metasploit](https://github.com/1N3/Sn1per/wiki/Metasploit-Integration) |
 | **Reconnaissance** | [Shodan](https://github.com/1N3/Sn1per/wiki/Shodan-Integration) · [Censys](https://github.com/1N3/Sn1per/wiki/Censys-API-Integration) · [Hunter.io](https://github.com/1N3/Sn1per/wiki/Hunter.io-API-Integration) · VirusTotal · Nmap |
 | **AI / LLM** | OpenAI · Claude · Gemini |
+| **AI assistants (MCP)** | [Sn1per MCP Server](https://github.com/1N3/sn1per-mcp) - drive Sn1per from Claude Code, Codex CLI, and other MCP clients |
 | **Notifications & DevOps** | [Slack](https://github.com/1N3/Sn1per/wiki/Slack-API-Integration) · [GitHub API](https://github.com/1N3/Sn1per/wiki/Github-API-Integration) |
 
 [Browse all integrations on the wiki →](https://github.com/1N3/Sn1per/wiki)
+
+## Use Sn1per from AI assistants (MCP)
+
+Sn1per does the scanning. The [Sn1per MCP Server](https://github.com/1N3/sn1per-mcp) (beta) lets the AI assistant you already use drive it. It is a [Model Context Protocol](https://modelcontextprotocol.io/) server that runs locally over stdio beside your Sn1per installation. It:
+
+- refuses scan requests for targets outside the scope you configure;
+- records every scan, cancel, delete and export request in a local audit log;
+- returns Sn1per's findings, open ports, subdomains and technologies as structured data, with secrets redacted by default;
+- keeps brute-force, exploitation and destructive tools off by default.
+
+It supports Sn1per Community Edition 9.x and the 11.x engine used by SE, Professional and Enterprise. The MCP server is free and open source (Apache-2.0) and installs from [PyPI](https://pypi.org/project/sn1per-mcp/) with `pipx install sn1per-mcp`.
+
+- [Sn1per MCP Server Beta: Drive Sn1per From Your AI Assistant](https://sn1persecurity.com/wordpress/sn1per-mcp-server/) - launch post: what it does, how it works, and an example session
+- [Sn1per MCP Server documentation](https://sn1persecurity.com/wordpress/documentation/mcp/) - install, scope, sudo, and client setup
+- [sn1per-mcp on GitHub](https://github.com/1N3/sn1per-mcp) - source, quick start, security model, and edition matrix
+
+Example prompt, once a target you are authorized to test is in the server's scope:
+
+```text
+Run sniper_status. Then start a stealth scan of app.example, check scan_status until it finishes, and summarize the open ports, technologies and findings.
+```
+
+> For authorized security testing only. Use the Sn1per MCP Server only against systems you own or are explicitly permitted, in writing, to test.
 
 ## Documentation & Help
 
@@ -299,10 +326,11 @@ Sn1per ships with native integrations for **90+ tools and services**. Featured p
 - [Architecture](docs/architecture.md)
 - [Integrations](docs/integrations.md)
 - [Troubleshooting](docs/troubleshooting.md)
-- [Wiki — full reference](https://github.com/1N3/Sn1per/wiki)
+- [Sn1per MCP Server documentation](https://sn1persecurity.com/wordpress/documentation/mcp/)
+- [Wiki - full reference](https://github.com/1N3/Sn1per/wiki)
 - [Sn1per Documentation Hub](https://sn1persecurity.com/wordpress/documentation/)
 - [Passive Reconnaissance Techniques for Penetration Testers](https://sn1persecurity.com/wordpress/passive-reconnaissance-techniques-for-penetration-testing/)
-- [CVE-2024-21733 — Apache Tomcat HTTP Request Smuggling writeup](https://sn1persecurity.com/wordpress/cve-2024-21733-apache-tomcat-http-request-smuggling/)
+- [CVE-2024-21733 - Apache Tomcat HTTP Request Smuggling writeup](https://sn1persecurity.com/wordpress/cve-2024-21733-apache-tomcat-http-request-smuggling/)
 
 ### Configuration & Templates
 
@@ -314,6 +342,7 @@ Sn1per ships with native integrations for **90+ tools and services**. Featured p
 
 ## News & Releases
 
+- **[Sn1per MCP Server Beta: Drive Sn1per From Your AI Assistant](https://sn1persecurity.com/wordpress/sn1per-mcp-server/)** - October 18, 2026
 - **[Sn1per Professional 2026 Released](https://sn1persecurity.com/wordpress/sn1per-professional-2026-release/)** - April 26, 2026
 - [Introducing SILENTCHAIN AI Community Edition v1.1.3](https://sn1persecurity.com/wordpress/introducing-silentchain-ai-community-edition-v1-1-3/) - February 11, 2026
 - [Sn1per SE v11.0 Now Available](https://sn1persecurity.com/wordpress/sn1per-se-v11-released/) - January 8, 2026
@@ -354,7 +383,7 @@ Sn1per ships with native integrations for **90+ tools and services**. Featured p
 
 Pull requests welcome. For substantial changes, open an issue first to discuss the design.
 
-- Mode scripts live in [`modes/`](modes/) — one bash file per scan mode
+- Mode scripts live in [`modes/`](modes/) - one bash file per scan mode
 - Test changes against a controlled target before opening a PR
 - Follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format in [`CHANGELOG.md`](CHANGELOG.md)
 
@@ -370,6 +399,6 @@ Pull requests welcome. For substantial changes, open an issue first to discuss t
 
 ## About Sn1perSecurity
 
-Sn1per is built and maintained by [Sn1perSecurity](https://sn1persecurity.com), the team behind the [Sn1per attack surface management and automated penetration testing platform](https://sn1persecurity.com/wordpress/external-attack-surface-management-with-sn1per/). Small team of pentesters shipping offensive-security tooling since 2015. We focus on the workflows we want to use ourselves — fast recon, ergonomic reporting, honest pricing, and a Community Edition that genuinely keeps up with the commercial editions. If that resonates, [say hi](https://twitter.com/xer0dayz).
+Sn1per is built and maintained by [Sn1perSecurity](https://sn1persecurity.com), the team behind the [Sn1per attack surface management and automated penetration testing platform](https://sn1persecurity.com/wordpress/external-attack-surface-management-with-sn1per/). Small team of pentesters shipping offensive-security tooling since 2015. We focus on the workflows we want to use ourselves - fast recon, ergonomic reporting, honest pricing, and a Community Edition that genuinely keeps up with the commercial editions. If that resonates, [say hi](https://twitter.com/xer0dayz).
 
 **Topics:** `penetration-testing` · `offensive-security` · `attack-surface-management` · `vulnerability-scanner` · `recon` · `osint` · `red-team` · `bug-bounty` · `security-tools`
