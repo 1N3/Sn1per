@@ -1,0 +1,9 @@
+# Build metadata not needed inside the image
+.git
+.github
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Scan output from local runs
+loot

@@ -6,6 +6,7 @@ on:
       - main
       - development
       - feat*
+      - master
     tags:
       - "v*"
   pull_request:
@@ -28,11 +29,11 @@ jobs:
         run: |
           echo "repo_name=${{ env.IMAGE_NAME }}" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY}}/${{ env.repo_name }}
           flavor: latest=true
@@ -42,17 +43,17 @@ jobs:
             type=semver,pattern={{version}}
 
       - name: Login to image repository
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile
-          push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || startsWith(github.ref_name, 'feat-')}}
+          push: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || github.ref_name == 'master' || startsWith(github.ref_name, 'feat')}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
