@@ -290,6 +290,120 @@ if [[ "$MODE" = "webporthttps" ]]; then
         sort -u $LOOT_DIR/web/webbrute-$TARGET-*.txt 2> /dev/null > $LOOT_DIR/web/webbrute-$TARGET.txt 2> /dev/null
     fi
     wget --connect-timeout=5 --read-timeout=10 --tries=1 https://$TARGET:${PORT}/robots.txt -O $LOOT_DIR/web/robots-$TARGET:${PORT}-https.txt 2> /dev/null
+
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING KITERUNNER API DISCOVERY $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    KITERUNNER_PATH=$(command -v kr)
+    if [ -z "$KITERUNNER_PATH" ]; then
+      echo -e "${OKRED}Kiterunner (kr) not found. Attempting to install...${RESET}"
+      if command -v go &> /dev/null; then
+        go install github.com/assetnote/kiterunner/cmd/kr@latest
+        KITERUNNER_PATH=$(command -v kr) 
+        if [ -z "$KITERUNNER_PATH" ]; then 
+            KITERUNNER_PATH="$HOME/go/bin/kr"
+        fi
+      else
+        echo -e "${OKRED}Go is not installed. Cannot install Kiterunner automatically. Please install Kiterunner manually.${RESET}"
+      fi
+    fi
+
+    if [ -f "$KITERUNNER_PATH" ]; then
+      echo -e "$OKORANGE + -- --=[Running Kiterunner on https://$TARGET:$PORT...$RESET"
+      "$KITERUNNER_PATH" scan https://$TARGET:$PORT -A=routes-large.kite --fail-status-codes 400,401,403,404,405,500 -x 10 --ignore-length 0 -o json > "$LOOT_DIR/web/kiterunner-$TARGET-$PORT-https.json" 2>/dev/null
+      if [ -f "$LOOT_DIR/web/kiterunner-$TARGET-$PORT-https.json" ]; then
+        cat "$LOOT_DIR/web/kiterunner-$TARGET-$PORT-https.json" | jq -r '.[] | .url' 2>/dev/null > "$LOOT_DIR/web/kiterunner_urls_https-$TARGET-$PORT.txt"
+        echo -e "$OKGREEN + -- --=[Kiterunner scan complete for https://$TARGET:$PORT. Output saved to $LOOT_DIR/web/kiterunner_urls_https-$TARGET-$PORT.txt $RESET"
+      else
+        echo -e "$OKRED + -- --=[Kiterunner did not produce an output file for https://$TARGET:$PORT $RESET"
+      fi
+    else
+      echo -e "${OKRED}Kiterunner (kr) still not found or installation failed. Skipping Kiterunner API discovery.${RESET}"
+      echo -e "${OKRED}Please ensure Kiterunner is installed and in your PATH or $HOME/go/bin.${RESET}"
+    fi
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+
+    # Users can place custom API Nuclei templates in /root/nuclei-templates/custom/api/
+    NUCLEI_CUSTOM_API_TEMPLATES_DIR="/root/nuclei-templates/custom/api/"
+    if [ -d "$NUCLEI_CUSTOM_API_TEMPLATES_DIR" ] && [ -n "$(ls -A $NUCLEI_CUSTOM_API_TEMPLATES_DIR/*.yaml 2>/dev/null)" ]; then
+      if [ -f "$LOOT_DIR/web/kiterunner_urls_https-$TARGET-$PORT.txt" ] && [ -s "$LOOT_DIR/web/kiterunner_urls_https-$TARGET-$PORT.txt" ]; then
+        echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+        echo -e "$OKRED RUNNING NUCLEI SCAN ON DISCOVERED API ENDPOINTS (HTTPS) $RESET"
+        echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+        echo -e "$OKORANGE + -- --=[Found custom API Nuclei templates and Kiterunner output. Starting API scan...$RESET"
+        
+        API_NUCLEI_OUTPUT_DIR_HTTPS="$LOOT_DIR/web/nuclei_api_scans_https-$TARGET-$PORT/"
+        mkdir -p "$API_NUCLEI_OUTPUT_DIR_HTTPS" 2>/dev/null
+
+        while IFS= read -r api_url; do
+          safe_filename=$(echo "$api_url" | sed 's|http[s]*://||g' | sed 's|/|_|g' | sed 's|[^a-zA-Z0-9_-]||g')
+          if [ -z "$safe_filename" ]; then
+            safe_filename="api_endpoint_$(date +%s%N)" 
+          fi
+          echo -e "$OKORANGE + -- --=[Scanning API endpoint: $api_url $RESET"
+          nuclei -silent -t "$NUCLEI_CUSTOM_API_TEMPLATES_DIR" -c "$THREADS" -target "$api_url" -o "$API_NUCLEI_OUTPUT_DIR_HTTPS/nuclei_api_scan_$(echo $TARGET)_$(echo $PORT)_${safe_filename}.txt" 2>/dev/null
+        done < "$LOOT_DIR/web/kiterunner_urls_https-$TARGET-$PORT.txt"
+        echo -e "$OKGREEN + -- --=[Nuclei API scan complete for https://$TARGET:$PORT. Output saved to $API_NUCLEI_OUTPUT_DIR_HTTPS $RESET"
+      else
+        echo -e "$OKORANGE + -- --=[Custom API Nuclei templates found, but no Kiterunner API endpoints discovered for https://$TARGET:$PORT. Skipping Nuclei API scan.$RESET"
+      fi
+    else
+      echo -e "$OKORANGE + -- --=[Custom API Nuclei template directory '$NUCLEI_CUSTOM_API_TEMPLATES_DIR' not found or is empty.$RESET"
+      echo -e "$OKORANGE + -- --=[To enable API scanning with Nuclei, create this directory and add your API-specific .yaml template files.$RESET"
+    fi
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+
+    # TODO: Make SQLMap options configurable via sniper.conf (e.g., SQLMAP_ENABLE, SQLMAP_LEVEL, SQLMAP_RISK, SQLMAP_TAMPERS)
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    echo -e "$OKRED RUNNING SQLMAP SCAN $RESET"
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+    if ! command -v sqlmap &> /dev/null; then
+      echo -e "${OKRED}SQLMap not found. Skipping SQLMap scan. Please install it first.${RESET}"
+    else
+      echo -e "$OKORANGE + -- --=[Searching for URLs with parameters for SQLMap...$RESET"
+      SQLMAP_TARGET_DIR_HOST=$(echo "$TARGET" | sed -e 's|^[^/]*//||' -e 's|/.*$||')
+      SQLMAP_OUTPUT_DIR="$LOOT_DIR/web/sqlmap/$SQLMAP_TARGET_DIR_HOST-$PORT"
+      mkdir -p "$SQLMAP_OUTPUT_DIR" 2> /dev/null
+
+      FOUND_URLS_FOR_SQLMAP=0
+
+      # Collect URLs from spider results
+      if [[ -f "$LOOT_DIR/web/spider-$TARGET.txt" ]]; then
+        grep '?' "$LOOT_DIR/web/spider-$TARGET.txt" | grep "https://" | sort -u > "$LOOT_DIR/web/sqlmap_urls_https_temp.txt"
+      else
+        touch "$LOOT_DIR/web/sqlmap_urls_https_temp.txt" # ensure file exists for cat
+      fi
+
+      # Consider URLs from dirsearch/gobuster if they exist and might have params (less common)
+      # For dirsearch (ensure it's the final processed file, not the raw output)
+      if [[ -f "$LOOT_DIR/web/dirsearch-$TARGET.txt" ]]; then
+         grep '?' "$LOOT_DIR/web/dirsearch-$TARGET.txt" | grep "https://" | sort -u >> "$LOOT_DIR/web/sqlmap_urls_https_temp.txt"
+      fi
+      # For gobuster (usually no params, but added for completeness if format changes)
+      if [[ -f "$LOOT_DIR/web/webbrute-$TARGET.txt" ]]; then
+         grep '?' "$LOOT_DIR/web/webbrute-$TARGET.txt" | grep "https://" | sort -u >> "$LOOT_DIR/web/sqlmap_urls_https_temp.txt"
+      fi
+
+      sort -u "$LOOT_DIR/web/sqlmap_urls_https_temp.txt" > "$LOOT_DIR/web/sqlmap_urls_https-$TARGET-$PORT.txt"
+      rm -f "$LOOT_DIR/web/sqlmap_urls_https_temp.txt"
+
+      if [[ -s "$LOOT_DIR/web/sqlmap_urls_https-$TARGET-$PORT.txt" ]]; then
+        FOUND_URLS_FOR_SQLMAP=1
+        echo -e "$OKORANGE + -- --=[Found $(wc -l < "$LOOT_DIR/web/sqlmap_urls_https-$TARGET-$PORT.txt") unique URLs with parameters. Starting SQLMap...$RESET"
+        while IFS= read -r url; do
+          echo -e "$OKORANGE + -- --=[Running SQLMap on: $url$RESET"
+          # Ensure URL is properly quoted for sqlmap command
+          sqlmap -u "$url" --batch --random-agent --level=2 --risk=1 --tamper=space2comment,randomcase --output-dir="$SQLMAP_OUTPUT_DIR" --hostname --threads=5 2>/dev/null
+        done < "$LOOT_DIR/web/sqlmap_urls_https-$TARGET-$PORT.txt"
+        echo -e "$OKGREEN + -- --=[SQLMap scan complete for https://$TARGET:$PORT. Output saved to $SQLMAP_OUTPUT_DIR $RESET"
+      fi
+
+      if [[ "$FOUND_URLS_FOR_SQLMAP" -eq 0 ]]; then
+        echo -e "$OKORANGE + -- --=[No URLs with parameters found for SQLMap in https://$TARGET:$PORT $RESET"
+      fi
+    fi
+    echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
+
     if [[ "$CLUSTERD" == "1" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED ENUMERATING WEB SOFTWARE $RESET"
@@ -356,7 +470,25 @@ if [[ "$MODE" = "webporthttps" ]]; then
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
       echo -e "$OKRED RUNNING NUCLEI SCAN $RESET"
       echo -e "${OKGREEN}====================================================================================${RESET}•x${OKGREEN}[`date +"%Y-%m-%d](%H:%M)"`${RESET}x•"
-      nuclei -silent -t /root/nuclei-templates/ -c $THREADS -target https://$TARGET:${PORT} -o $LOOT_DIR/web/nuclei-https-${TARGET}-port${PORT}.txt
+      NUCLEI_GENERAL_TEMPLATES_DIR="/root/nuclei-templates/"
+      # Users can place custom SSTI Nuclei templates in $NUCLEI_USER_TEMPLATES_DIR/custom/ssti/
+      # For Sn1per, NUCLEI_USER_TEMPLATES_DIR is assumed to be /root/nuclei-templates/
+      NUCLEI_CUSTOM_SSTI_TEMPLATES_DIR="/root/nuclei-templates/custom/ssti/"
+      NUCLEI_TEMPLATES_TO_RUN="-t $NUCLEI_GENERAL_TEMPLATES_DIR"
+
+      if [ -d "$NUCLEI_CUSTOM_SSTI_TEMPLATES_DIR" ]; then
+        if [ -n "$(ls -A $NUCLEI_CUSTOM_SSTI_TEMPLATES_DIR/*.yaml 2>/dev/null)" ]; then
+          echo -e "$OKORANGE + -- --=[Found custom SSTI Nuclei templates. Adding to scan...$RESET"
+          NUCLEI_TEMPLATES_TO_RUN="$NUCLEI_TEMPLATES_TO_RUN -t $NUCLEI_CUSTOM_SSTI_TEMPLATES_DIR"
+        else
+          echo -e "$OKORANGE + -- --=[Custom SSTI template directory '$NUCLEI_CUSTOM_SSTI_TEMPLATES_DIR' is empty. Skipping custom SSTI scan.$RESET"
+        fi
+      else
+        echo -e "$OKORANGE + -- --=[Custom SSTI template directory '$NUCLEI_CUSTOM_SSTI_TEMPLATES_DIR' not found. Skipping custom SSTI scan.$RESET"
+        echo -e "$OKORANGE + -- --=[To enable, create this directory and add your SSTI .yaml template files.$RESET"
+      fi
+      
+      nuclei -silent $NUCLEI_TEMPLATES_TO_RUN -c $THREADS -target https://$TARGET:${PORT} -o $LOOT_DIR/web/nuclei-https-${TARGET}-port${PORT}.txt
     fi
     cd $INSTALL_DIR
     SSL="true"
