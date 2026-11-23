@@ -356,8 +356,8 @@ case $key in
     ;;
     -dt|--delete-task)
     echo "Removing all running $TARGET tasks from $WORKSPACE"
-    rm -vf $WORKSPACE_DIR/scans/running_$TARGET_*.txt
-    ls -lh $LOOT_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $WORKSPACE_DIR/scans/tasks-running.txt 2> /dev/null
+    rm -vf $WORKSPACE_DIR/scans/running_${TARGET}_*.txt
+    ls -lh $WORKSPACE_DIR/scans/running_*.txt 2> /dev/null | wc -l 2> /dev/null > $WORKSPACE_DIR/scans/tasks-running.txt 2> /dev/null
     ps -ef | egrep "$TARGET|sniper"
     ps -ef | egrep "sniper" | awk '{print $2}' | xargs -i sudo kill -9 {} 
     exit
