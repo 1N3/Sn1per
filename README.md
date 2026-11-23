@@ -60,6 +60,8 @@ Sn1per ships as one platform that covers the core jobs offensive security teams 
 
 ## What's New in 2026
 
+> **New (November 2026):** [Sn1per SE v11.1](https://sn1persecurity.com/wordpress/sn1per-se-v11-1-released/) adds agentic AI pentesting, Playwright XSS verification, and an Active Directory scan mode for Sn1per Professional and Enterprise customers (update with `sniper -u`).
+>
 > **New (October 2026):** the [Sn1per MCP Server](https://sn1persecurity.com/wordpress/sn1per-mcp-server/) (beta) lets AI assistants like Claude Code launch Sn1per scans and read the results. [Details below](#use-sn1per-from-ai-assistants-mcp).
 
 [![Sn1per Pro 2026 Workspace Navigator](https://sn1persecurity.com/wordpress/wp-content/uploads/2026/04/sn1per-pro-2026-workspace-navigator.png)](https://sn1persecurity.com/wordpress/sn1per-professional-2026-release/)
@@ -342,6 +344,7 @@ Run sniper_status. Then start a stealth scan of app.example, check scan_status u
 
 ## News & Releases
 
+- **[Sn1per SE v11.1: Agentic AI Pentesting, MCP & AD Mode](https://sn1persecurity.com/wordpress/sn1per-se-v11-1-released/)** - November 15, 2026
 - **[Sn1per MCP Server Beta: Drive Sn1per From Your AI Assistant](https://sn1persecurity.com/wordpress/sn1per-mcp-server/)** - October 18, 2026
 - **[Sn1per Professional 2026 Released](https://sn1persecurity.com/wordpress/sn1per-professional-2026-release/)** - April 26, 2026
 - [Introducing SILENTCHAIN AI Community Edition v1.1.3](https://sn1persecurity.com/wordpress/introducing-silentchain-ai-community-edition-v1-1-3/) - February 11, 2026
